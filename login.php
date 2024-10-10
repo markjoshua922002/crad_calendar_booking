@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
-            header('Location: calendar.php');
+            header('Location: index.php');
             exit();
         } else {
             $login_error = "Invalid username or password!";

@@ -28,7 +28,7 @@ if (isset($_POST['add_booking'])) {
     $stmt->execute();
     $stmt->close();
 
-    header('Location: calendar.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -40,7 +40,7 @@ if (isset($_POST['add_department'])) {
     $stmt->bind_param("ss", $department_name, $color); // Bind color parameter
     $stmt->execute();
     $stmt->close();
-    header('Location: calendar.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -51,7 +51,7 @@ if (isset($_POST['add_room'])) {
     $stmt->bind_param("s", $room_name);
     $stmt->execute();
     $stmt->close();
-    header('Location: calendar.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -133,9 +133,9 @@ while ($row = $bookings->fetch_assoc()) {
 
     <!-- Calendar Navigation -->
     <div class="navigation">
-        <a href="calendar.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+        <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
         <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-        <a href="calendar.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+        <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
     </div>
 
     <!-- Calendar Grid -->
