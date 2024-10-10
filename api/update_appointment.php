@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Database connection
-$conn = new mysqli('localhost', 'root', '', 'calendar_booking');
+$conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
