@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli('localhost', 'root', 'crad', 'crad_calendar_booking');
+$conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 
 
 if ($conn->connect_error) {
