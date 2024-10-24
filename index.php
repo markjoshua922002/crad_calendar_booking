@@ -4,9 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
-?>
 
-<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
@@ -35,9 +33,9 @@ if (isset($_POST['add_booking'])) {
 // Handle department addition
 if (isset($_POST['add_department'])) {
     $department_name = $_POST['department_name'];
-    $color = $_POST['color']; // Get the color input
+    $color = $_POST['color'];
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
-    $stmt->bind_param("ss", $department_name, $color); // Bind color parameter
+    $stmt->bind_param("ss", $department_name, $color);
     $stmt->execute();
     $stmt->close();
     header('Location: index.php');
@@ -91,6 +89,34 @@ while ($row = $bookings->fetch_assoc()) {
 <body>
 
 <div class="container">
+    <!-- Sidebar integration -->
+    <div class="sidebar" id="sidebar">
+        <a href="index.php">Home</a>
+        <div class="menu-item" onclick="toggleSubmenu('graduates-submenu')">Graduates &#9660;</div>
+        <div class="submenu" id="graduates-submenu">
+            <a href="#">Set Schedule</a>
+            <a href="#">Student's in Queue</a>
+            <a href="#">Status Tracking</a>
+            <a href="#">Grad Photos</a>
+        </div>
+        
+        <div class="menu-item" onclick="toggleSubmenu('managements-submenu')">Managements &#9660;</div>
+        <div class="submenu" id="managements-submenu">
+            <a href="#">Manage Logs</a>
+            <a href="#">Manage Access</a>
+        </div>
+
+        <div class="menu-item" onclick="toggleSubmenu('submodules-submenu')">Sub Modules &#9660;</div>
+        <div class="submenu" id="submodules-submenu">
+            <a href="#">Registrar Page</a>
+            <a href="#">Human Resource</a>
+            <a href="#">IT System</a>
+        </div>
+
+        <a href="logout.php">Logout</a>
+        <div class="collapse-toggle" onclick="toggleSidebar()">&#9776;</div>
+    </div>
+    
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
@@ -233,4 +259,3 @@ while ($row = $bookings->fetch_assoc()) {
 <script src="js/script.js"></script> <!-- External JavaScript File -->
 </body>
 </html>
-
