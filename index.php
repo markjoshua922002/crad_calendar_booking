@@ -118,6 +118,7 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
     
     <header>
+        <div class="menu-button" onclick="toggleSidebar()">&#9776;</div>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
         <a href="logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
