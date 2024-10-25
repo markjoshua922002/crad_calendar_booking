@@ -1,70 +1,9 @@
 <?php
-// Set secure cookie parameters
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => 'crad.schoolmanagementsystem2.com', // Set to your domain
-    'secure' => true, // Only send over HTTPS
-    'httponly' => true, // Prevent JavaScript access
-    'samesite' => 'Strict' // Prevent CSRF
-]);
-
 session_start();
-use \Firebase\JWT\JWT; // Ensure to include the JWT namespace
-
-// Include Composer autoload
-require 'vendor/autoload.php'; // Adjust the path if needed
-
-// Function to verify the JWT
-function verifyJWT($token) {
-    $key = 'your_secret_key'; // Same secret key used to sign the JWT
-
-    try {
-        $decoded = JWT::decode($token, $key, ['HS256']);
-        return $decoded; // You can return the decoded data (user info, etc.)
-    } catch (Exception $e) {
-        return null; // Token is invalid
-    }
-}
-
-// Check if the JWT cookie is set
-if (isset($_COOKIE['jwt'])) {
-    $decoded = verifyJWT($_COOKIE['jwt']);
-    if ($decoded) {
-        // User is authenticated, proceed with application logic
-        $_SESSION['user_id'] = $decoded->userId; // Store user ID in session if needed
-    } else {
-        // Token is invalid, redirect to login
-        header('Location: login.php');
-        exit();
-    }
-} else {
-    // No token found, redirect to login
-    header('Location: login.php');
-    exit();
-}
-
-// Regenerate session ID upon login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
-
-// Regenerate session ID
-if (!isset($_SESSION['SESSION_CREATED'])) {
-    session_regenerate_id(true);
-    $_SESSION['SESSION_CREATED'] = time();
-}
-
-// CSRF Protection
-function generateCsrfToken() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-$csrf_token = generateCsrfToken();
 ?>
 
 <?php
@@ -76,11 +15,6 @@ if ($conn->connect_error) {
 
 // Handle form submissions
 if (isset($_POST['add_booking'])) {
-    // Check CSRF token
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed');
-    }
-
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
     $department = $_POST['department'];
@@ -100,11 +34,6 @@ if (isset($_POST['add_booking'])) {
 
 // Handle department addition
 if (isset($_POST['add_department'])) {
-    // Check CSRF token
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed');
-    }
-
     $department_name = $_POST['department_name'];
     $color = $_POST['color']; // Get the color input
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
@@ -117,11 +46,6 @@ if (isset($_POST['add_department'])) {
 
 // Handle room addition
 if (isset($_POST['add_room'])) {
-    // Check CSRF token
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed');
-    }
-
     $room_name = $_POST['room_name'];
     $stmt = $conn->prepare("INSERT INTO rooms (name) VALUES (?)");
     $stmt->bind_param("s", $room_name);
@@ -177,7 +101,6 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="form-actions">
         <div class="form-container">
             <form method="POST" class="form">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                 <div class="form-grid">
                     <input type="text" name="name" placeholder="Name" required>
                     <input type="text" name="id_number" placeholder="ID Number" required>
@@ -231,46 +154,83 @@ while ($row = $bookings->fetch_assoc()) {
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
             <div class="day">
-                <strong><?= $day ?></strong>
+                <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" style="background-color: <?= $appointment['color'] ?>;">
-                            <?= htmlspecialchars($appointment['name']) ?> <br>
-                            <?= htmlspecialchars($appointment['reason']) ?>
+                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
+                            <?= $appointment['name'] ?><br>
+                            <?= $appointment['department_name'] ?><br>
+                            <?= $appointment['booking_time'] ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         <?php endfor; ?>
     </div>
+</div>
 
-    <!-- Modals -->
-    <div id="addDepartmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add Department</h2>
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                <input type="text" name="department_name" placeholder="Department Name" required>
-                <input type="color" name="color" required> <!-- Color input -->
-                <button type="submit" name="add_department">Add Department</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="addRoomModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add Room</h2>
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                <input type="text" name="room_name" placeholder="Room Name" required>
-                <button type="submit" name="add_room">Add Room</button>
-            </form>
-        </div>
+<!-- Edit Appointment Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm">
+            <input type="hidden" name="appointment_id" id="appointment_id">
+            <input type="text" name="edit_name" id="edit_name" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" required>
+            <input type="date" name="edit_date" id="edit_date" required>
+            <input type="time" name="edit_time" id="edit_time" required>
+            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php
+                // Resetting departments pointer to the beginning
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php
+                // Resetting rooms pointer to the beginning
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" id="save_button">Save Changes</button>
+            <button type="button" id="delete_button">Delete Appointment</button>
+        </form>
     </div>
 </div>
 
-<script src="js/script.js"></script> <!-- External JS File -->
+<!-- Add Department Modal -->
+<div id="addDepartmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
+        <h2>Add Department</h2>
+        <form method="POST">
+            <input type="text" name="department_name" placeholder="Department Name" required>
+            <input type="color" name="color" value="#ff0000" required> <!-- Color Picker -->
+            <button type="submit" name="add_department">Add Department</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Room Modal -->
+<div id="addRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddRoomModal">&times;</span>
+        <h2>Add Room</h2>
+        <form method="POST">
+            <input type="text" name="room_name" placeholder="Room Name" required>
+            <button type="submit" name="add_room">Add Room</button>
+        </form>
+    </div>
+</div>
+
+<script src="js/script.js"></script> <!-- External JavaScript File -->
 </body>
 </html>
+
