@@ -1,17 +1,30 @@
 <?php
 session_start();
 
-// Implementing session hijacking protection: Regenerate session ID upon login
+// Regenerate session ID upon login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-// Generate CSRF token if it doesn't exist
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// Regenerate session ID
+if (!isset($_SESSION['SESSION_CREATED'])) {
+    session_regenerate_id(true);
+    $_SESSION['SESSION_CREATED'] = time();
 }
 
+// CSRF Protection
+function generateCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+$csrf_token = generateCsrfToken();
+?>
+
+<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
@@ -20,9 +33,9 @@ if ($conn->connect_error) {
 
 // Handle form submissions
 if (isset($_POST['add_booking'])) {
-    // Validate CSRF token
+    // Check CSRF token
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed.');
+        die('CSRF token validation failed');
     }
 
     $name = $_POST['name'];
@@ -44,15 +57,15 @@ if (isset($_POST['add_booking'])) {
 
 // Handle department addition
 if (isset($_POST['add_department'])) {
-    // Validate CSRF token
+    // Check CSRF token
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed.');
+        die('CSRF token validation failed');
     }
 
     $department_name = $_POST['department_name'];
-    $color = $_POST['color'];
+    $color = $_POST['color']; // Get the color input
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
-    $stmt->bind_param("ss", $department_name, $color);
+    $stmt->bind_param("ss", $department_name, $color); // Bind color parameter
     $stmt->execute();
     $stmt->close();
     header('Location: index.php');
@@ -61,9 +74,9 @@ if (isset($_POST['add_department'])) {
 
 // Handle room addition
 if (isset($_POST['add_room'])) {
-    // Validate CSRF token
+    // Check CSRF token
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        die('CSRF token validation failed.');
+        die('CSRF token validation failed');
     }
 
     $room_name = $_POST['room_name'];
@@ -111,36 +124,7 @@ while ($row = $bookings->fetch_assoc()) {
 <body>
 
 <div class="container">
-    <!-- Sidebar integration -->
-    <div class="sidebar" id="sidebar">
-        <a href="index.php">Home</a>
-        <div class="menu-item" onclick="toggleSubmenu('graduates-submenu')">Graduates &#9660;</div>
-        <div class="submenu" id="graduates-submenu">
-            <a href="#">Set Schedule</a>
-            <a href="#">Student's in Queue</a>
-            <a href="#">Status Tracking</a>
-            <a href="#">Grad Photos</a>
-        </div>
-        
-        <div class="menu-item" onclick="toggleSubmenu('managements-submenu')">Managements &#9660;</div>
-        <div class="submenu" id="managements-submenu">
-            <a href="#">Manage Logs</a>
-            <a href="#">Manage Access</a>
-        </div>
-
-        <div class="menu-item" onclick="toggleSubmenu('submodules-submenu')">Sub Modules &#9660;</div>
-        <div class="submenu" id="submodules-submenu">
-            <a href="#">Registrar Page</a>
-            <a href="#">Human Resource</a>
-            <a href="#">IT System</a>
-        </div>
-
-        <a href="logout.php">Logout</a>
-        <div class="collapse-toggle" onclick="toggleSidebar()">&#9776;</div>
-    </div>
-    
     <header>
-        <div class="menu-button" onclick="toggleSidebar()">&#9776;</div>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
         <a href="logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
@@ -150,7 +134,7 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="form-actions">
         <div class="form-container">
             <form method="POST" class="form">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"> <!-- CSRF token -->
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                 <div class="form-grid">
                     <input type="text" name="name" placeholder="Name" required>
                     <input type="text" name="id_number" placeholder="ID Number" required>
@@ -204,11 +188,13 @@ while ($row = $bookings->fetch_assoc()) {
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
             <div class="day">
-                <?= $day ?>
+                <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" style="background-color: <?= htmlspecialchars($appointment['color']) ?>;">
-                            <?= htmlspecialchars($appointment['reason']) ?>
+                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
+                            <?= $appointment['name'] ?><br>
+                            <?= $appointment['department_name'] ?><br>
+                            <?= $appointment['booking_time'] ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -217,33 +203,62 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Modal for Adding Department -->
-<div id="departmentModal" class="modal">
+<!-- Edit Appointment Modal -->
+<div id="editModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="close_department">&times;</span>
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm">
+            <input type="hidden" name="appointment_id" id="appointment_id">
+            <input type="text" name="edit_name" id="edit_name" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" required>
+            <input type="date" name="edit_date" id="edit_date" required>
+            <input type="time" name="edit_time" id="edit_time" required>
+            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" name="edit_appointment">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Department Modal -->
+<div id="addDepartmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
         <h2>Add Department</h2>
-        <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"> <!-- CSRF token -->
-            <input type="text" name="department_name" placeholder="Department Name" required>
-            <input type="color" name="color" value="#ffffff">
-            <button type="submit" name="add_department" class="add-button">Add</button>
+        <form method="POST" class="form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <input type="text" name="department_name" required>
+            <input type="color" name="color" required>
+            <button type="submit" name="add_department">Add Department</button>
         </form>
     </div>
 </div>
 
-<!-- Modal for Adding Room -->
-<div id="roomModal" class="modal">
+<!-- Add Room Modal -->
+<div id="addRoomModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="close_room">&times;</span>
+        <span class="close" id="closeAddRoomModal">&times;</span>
         <h2>Add Room</h2>
-        <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"> <!-- CSRF token -->
-            <input type="text" name="room_name" placeholder="Room Name" required>
-            <button type="submit" name="add_room" class="add-button">Add</button>
+        <form method="POST" class="form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <input type="text" name="room_name" required>
+            <button type="submit" name="add_room">Add Room</button>
         </form>
     </div>
 </div>
 
-<script src="js/script.js"></script> <!-- External JS File -->
+<script src="js/script.js"></script>
 </body>
 </html>
