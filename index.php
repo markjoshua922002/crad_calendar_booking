@@ -1,4 +1,15 @@
 <?php
+// Set secure cookie parameters
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => 'crad.schoolmanagementsystem2.com', // Set to your domain
+    'secure' => true, // Only send over HTTPS
+    'httponly' => true, // Prevent JavaScript access
+    'samesite' => 'Strict' // Prevent CSRF
+]);
+
+
 session_start();
 
 // Regenerate session ID upon login
