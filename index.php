@@ -9,8 +9,40 @@ session_set_cookie_params([
     'samesite' => 'Strict' // Prevent CSRF
 ]);
 
-
 session_start();
+use \Firebase\JWT\JWT; // Ensure to include the JWT namespace
+
+// Include Composer autoload
+require 'vendor/autoload.php'; // Adjust the path if needed
+
+// Function to verify the JWT
+function verifyJWT($token) {
+    $key = 'your_secret_key'; // Same secret key used to sign the JWT
+
+    try {
+        $decoded = JWT::decode($token, $key, ['HS256']);
+        return $decoded; // You can return the decoded data (user info, etc.)
+    } catch (Exception $e) {
+        return null; // Token is invalid
+    }
+}
+
+// Check if the JWT cookie is set
+if (isset($_COOKIE['jwt'])) {
+    $decoded = verifyJWT($_COOKIE['jwt']);
+    if ($decoded) {
+        // User is authenticated, proceed with application logic
+        $_SESSION['user_id'] = $decoded->userId; // Store user ID in session if needed
+    } else {
+        // Token is invalid, redirect to login
+        header('Location: login.php');
+        exit();
+    }
+} else {
+    // No token found, redirect to login
+    header('Location: login.php');
+    exit();
+}
 
 // Regenerate session ID upon login
 if (!isset($_SESSION['user_id'])) {
@@ -199,77 +231,46 @@ while ($row = $bookings->fetch_assoc()) {
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
             <div class="day">
-                <div class="day-number"><?= $day ?></div>
+                <strong><?= $day ?></strong>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
-                            <?= $appointment['name'] ?><br>
-                            <?= $appointment['department_name'] ?><br>
-                            <?= $appointment['booking_time'] ?>
+                        <div class="appointment" style="background-color: <?= $appointment['color'] ?>;">
+                            <?= htmlspecialchars($appointment['name']) ?> <br>
+                            <?= htmlspecialchars($appointment['reason']) ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         <?php endfor; ?>
     </div>
-</div>
 
-<!-- Edit Appointment Modal -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeEditModal">&times;</span>
-        <h2>Edit Appointment</h2>
-        <form id="editForm">
-            <input type="hidden" name="appointment_id" id="appointment_id">
-            <input type="text" name="edit_name" id="edit_name" required>
-            <input type="text" name="edit_id_number" id="edit_id_number" required>
-            <input type="date" name="edit_date" id="edit_date" required>
-            <input type="time" name="edit_time" id="edit_time" required>
-            <textarea name="edit_reason" id="edit_reason" required></textarea>
-            <select name="edit_department" id="edit_department" required>
-                <option value="">Department</option>
-                <?php while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <select name="edit_room" id="edit_room" required>
-                <option value="">Room Number</option>
-                <?php while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <button type="submit" name="edit_appointment">Save Changes</button>
-        </form>
+    <!-- Modals -->
+    <div id="addDepartmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Department</h2>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                <input type="text" name="department_name" placeholder="Department Name" required>
+                <input type="color" name="color" required> <!-- Color input -->
+                <button type="submit" name="add_department">Add Department</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addRoomModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Room</h2>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                <input type="text" name="room_name" placeholder="Room Name" required>
+                <button type="submit" name="add_room">Add Room</button>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- Add Department Modal -->
-<div id="addDepartmentModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeAddDepartmentModal">&times;</span>
-        <h2>Add Department</h2>
-        <form method="POST" class="form">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-            <input type="text" name="department_name" required>
-            <input type="color" name="color" required>
-            <button type="submit" name="add_department">Add Department</button>
-        </form>
-    </div>
-</div>
-
-<!-- Add Room Modal -->
-<div id="addRoomModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeAddRoomModal">&times;</span>
-        <h2>Add Room</h2>
-        <form method="POST" class="form">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-            <input type="text" name="room_name" required>
-            <button type="submit" name="add_room">Add Room</button>
-        </form>
-    </div>
-</div>
-
-<script src="js/script.js"></script>
+<script src="js/script.js"></script> <!-- External JS File -->
 </body>
 </html>
