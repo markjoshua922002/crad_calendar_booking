@@ -1,11 +1,11 @@
-/* Body and container styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #e6f7ff;
     background-image: url('../assets/bcpbg.jpg');
-    background-size: cover; /* Make the background cover the entire body */
+    background-size: cover;
+ /* Make the background cover the entire body */
     background-position: center; /* Center the background image */
     background-repeat: no-repeat; /* Prevent the background from repeating */
 }
@@ -18,82 +18,6 @@ body {
     border-radius: 10px;
 }
 
-/* Menu Button Style */
-.menu-button {
-    font-size: 30px;
-    cursor: pointer;
-    color: white;
-    background-color: #101f60; /* Matches sidebar color */
-    padding: 10px;
-    border: none;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1000; /* Ensure it appears above other elements */
-}
-
-.menu-button:hover {
-    background-color: #000080; /* Darken on hover */
-}
-
-
-/* Sidebar Styles */
-.sidebar {
-    width: 250px;
-    background-color: #101f60; /* Sidebar background color */
-    position: fixed;
-    height: 100%;
-    left: 0;
-    transition: width 0.3s;
-}
-
-.sidebar a {
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    color: white;
-}
-
-.sidebar .menu-item {
-    padding: 15px;
-    cursor: pointer;
-    background-color: #000080; /* Button background */
-}
-
-.sidebar .submenu {
-    display: none;
-    background-color: #1a3a72;
-}
-
-.sidebar .submenu a {
-    padding-left: 30px;
-}
-
-.sidebar.collapsed {
-    width: 60px;
-}
-
-.sidebar.collapsed a {
-    text-align: center;
-    padding-left: 0;
-    font-size: 0;
-}
-
-.sidebar.collapsed a::before {
-    font-size: 18px;
-}
-
-.collapse-toggle {
-    position: absolute;
-    top: 10px;
-    right: -50px;
-    background-color: #101f60;
-    color: white;
-    padding: 10px;
-    cursor: pointer;
-}
-
-/* Header styles */
 header {
     display: flex;
     align-items: center;
@@ -106,7 +30,6 @@ header {
     margin-right: 20px; /* Space between logo and title */
 }
 
-/* Form styles */
 .form-container {
     flex: 1;
     margin-right: 20px;
@@ -172,7 +95,6 @@ button:hover,
     background-color: #0056b3;
 }
 
-/* Navigation and calendar styles */
 .navigation {
     display: flex;
     align-items: center;
@@ -204,7 +126,6 @@ button:hover,
     color: #333; /* Darker color for better contrast */
 }
 
-/* Calendar grid styles */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);

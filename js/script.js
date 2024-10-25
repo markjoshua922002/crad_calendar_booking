@@ -17,22 +17,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show Add Department modal
     addDepartmentButton.onclick = function () {
         addDepartmentModal.style.display = "block"; 
-    };
+    }
 
     // Show Add Room modal
     addRoomButton.onclick = function () {
         addRoomModal.style.display = "block"; 
-    };
+    }
 
     // Close Add Department modal
     closeAddDepartmentModal.onclick = function () {
         addDepartmentModal.style.display = "none"; 
-    };
+    }
 
     // Close Add Room modal
     closeAddRoomModal.onclick = function () {
         addRoomModal.style.display = "none"; 
-    };
+    }
 
     // Close modals when clicking outside
     window.onclick = function (event) {
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target === addRoomModal) {
             addRoomModal.style.display = "none"; 
         }
-    };
+    }
 
     // Existing appointment modal functionality
     document.querySelectorAll(".appointment").forEach(item => {
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Close existing appointment modal
     closeModal.onclick = function () {
         modal.style.display = "none"; 
-    };
+    }
 
     // Handle save changes for existing appointments
     editForm.addEventListener("submit", function (event) {
@@ -108,16 +108,4 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
-
-    // Toggle submenu visibility
-    function toggleSubmenu(submenuId) {
-        const submenu = document.getElementById(submenuId);
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    // Toggle sidebar collapse
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('collapsed');
-    }
 });
