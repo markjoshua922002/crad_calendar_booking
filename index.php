@@ -84,29 +84,6 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     
-<!-- Sidebar Navigation -->
-<div id="sidebar" class="bg-light text-center shadow">
-    <div class="p-3">
-        <img src="./css/bcp_logo.png" alt="Logo" class="logo">
-        <h4 class="mb-4">Dashboard</h4>
-        <ul class="nav flex-column">
-            <li class="nav-item mb-1"><a class="nav-link active rounded" href="dashboard_admin.php">Home</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="index.php">Student List</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="picture.php">Pictures</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="logs.php">Logbook</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="users.php">Users</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="registrar.php">Registrar</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="hr.php">HR</a></li>
-            <li class="nav-item mb-1"><a class="nav-link rounded" href="its.php">ITS</a></li>
-            <li class="nav-item"><a class="nav-link rounded text-danger" href="logout.php">Logout</a></li>
-        </ul>
-    </div>
-</div>
-
-<!-- Toggle Sidebar Button -->
-<button id="sidebar-toggle">Menu</button>
-
-
 <div class="container">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
