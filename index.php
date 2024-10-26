@@ -156,7 +156,7 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
 <!-- Toggle Sidebar Button -->
-<button id="sidebar-toggle">Toggle Sidebar</button>
+<button id="sidebar-toggle">Menu</button>
 
 <div class="container">
     <header>
