@@ -87,52 +87,10 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css"> <!-- External CSS File -->
-    <style>
-        /* Sidebar styles */
-        #sidebar {
-            height: 100vh; /* Full height */
-            width: 250px; /* Fixed width */
-            position: fixed; /* Fixed position */
-            top: 0;
-            left: 0;
-            background-color: #f8f9fa; /* Light background */
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        #page-content {
-            margin-left: 250px; /* Space for sidebar */
-            transition: margin-left 0.3s ease; /* Smooth transition */
-        }
-    </style>
 </head>
 <body>
 
-<div id="sidebar" class="bg-light text-center shadow">
-    <div class="p-3">
-        <img src="./css/bcp_logo.png" alt="Logo" class="logo">
-        <h4 class="mb-4">Dashboard</h4>
-        <ul class="nav flex-column">
-            <li class="nav-item mb-1">
-                <a class="nav-link active rounded" href="dashboard_admin.php">Home</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link rounded" href="#">Bookings</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link rounded" href="#">Departments</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link rounded" href="#">Rooms</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link rounded" href="logout.php">Logout</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<div class="container" id="page-content">
+<div class="container">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
@@ -214,13 +172,35 @@ while ($row = $bookings->fetch_assoc()) {
 <!-- Edit Appointment Modal -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
-        <form method="POST">
+        <form id="editForm">
             <input type="hidden" name="appointment_id" id="appointment_id">
-            <input type="text" name="edit_name" id="edit_name" placeholder="Name" required>
-            <input type="text" name="edit_reason" id="edit_reason" placeholder="Reason" required>
-            <button type="submit" name="edit_booking" class="save-button">Save Changes</button>
+            <input type="text" name="edit_name" id="edit_name" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" required>
+            <input type="date" name="edit_date" id="edit_date" required>
+            <input type="time" name="edit_time" id="edit_time" required>
+            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php
+                // Resetting departments pointer to the beginning
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php
+                // Resetting rooms pointer to the beginning
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" id="save_button">Save Changes</button>
+            <button type="button" id="delete_button">Delete Appointment</button>
         </form>
     </div>
 </div>
@@ -228,12 +208,12 @@ while ($row = $bookings->fetch_assoc()) {
 <!-- Add Department Modal -->
 <div id="addDepartmentModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
         <h2>Add Department</h2>
         <form method="POST">
             <input type="text" name="department_name" placeholder="Department Name" required>
-            <input type="color" name="color" required> <!-- Color Picker -->
-            <button type="submit" name="add_department" class="save-button">Add Department</button>
+            <input type="color" name="color" value="#ff0000" required> <!-- Color Picker -->
+            <button type="submit" name="add_department">Add Department</button>
         </form>
     </div>
 </div>
@@ -241,15 +221,16 @@ while ($row = $bookings->fetch_assoc()) {
 <!-- Add Room Modal -->
 <div id="addRoomModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeAddRoomModal">&times;</span>
         <h2>Add Room</h2>
         <form method="POST">
             <input type="text" name="room_name" placeholder="Room Name" required>
-            <button type="submit" name="add_room" class="save-button">Add Room</button>
+            <button type="submit" name="add_room">Add Room</button>
         </form>
     </div>
 </div>
 
-<script src="js/script.js"></script> <!-- External JS File -->
+<script src="js/script.js"></script> <!-- External JavaScript File -->
 </body>
 </html>
+
