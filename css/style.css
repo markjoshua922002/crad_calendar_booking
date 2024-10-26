@@ -91,7 +91,6 @@ header {
     margin-right: 20px; /* Space between logo and title */
 }
 
-/* Form Container Styles */
 .form-container {
     flex: 1;
     margin-right: 20px;
@@ -124,7 +123,7 @@ header {
     border-radius: 5px;
 }
 
-/* Button Styles */
+/* Button styles */
 button,
 .add-action {
     padding: 10px 15px;
@@ -142,7 +141,7 @@ button:hover,
     background-color: #0056b3; /* Darker shade on hover */
 }
 
-/* Book Button Styling */
+/* Book button styling */
 .book-button {
     grid-column: span 3; /* Book button takes full width */
     padding: 10px;
@@ -157,7 +156,6 @@ button:hover,
     background-color: #0056b3;
 }
 
-/* Navigation Styles */
 .navigation {
     display: flex;
     align-items: center;
@@ -166,6 +164,7 @@ button:hover,
     width: 100%;
 }
 
+/* Navigation button styles */
 .navigation a {
     padding: 10px 15px; /* Make it similar to button style */
     background-color: #007BFF; /* Button color */
@@ -180,7 +179,7 @@ button:hover,
     background-color: #0056b3; /* Darker shade on hover */
 }
 
-/* Month-Year Styles */
+/* Updated month-year styles */
 .month-year {
     font-size: 24px; /* Increased font size */
     font-weight: bold;
@@ -188,7 +187,6 @@ button:hover,
     color: #333; /* Darker color for better contrast */
 }
 
-/* Calendar Styles */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -237,7 +235,7 @@ button:hover,
     font-weight: bold;
 }
 
-/* Modal Styles */
+/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -320,7 +318,7 @@ button:hover,
     cursor: pointer;
 }
 
-/* Logout Button Styling */
+/* Logout button styling */
 .logout-button {
     padding: 10px 15px; /* Same padding as other buttons */
     background-color: #FF4C4C; /* Red color for logout button */
