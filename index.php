@@ -1,10 +1,16 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
+
+// Check if the user is authenticated
+if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+    // Redirect to login if not authenticated
     header('Location: login.php');
     exit();
 }
+
+// The rest of your index.php content
 ?>
+
 
 <?php
 // Database connection
