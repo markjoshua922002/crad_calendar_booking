@@ -105,7 +105,11 @@
         <a href="osas.php">OSAS</a>
     </div>
 
-
+     <!-- Logout Button -->
+    <header>
+   
+        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
+    </header>
 
     <!-- Centered Content -->
     <div class="content">
