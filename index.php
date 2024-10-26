@@ -69,6 +69,7 @@ if (isset($_POST['search_booking'])) {
 
 // Advanced search
 $advanced_search_results = [];
+$show_edit_modal = false; // Flag to determine if modal should be shown
 if (isset($_POST['advanced_search'])) {
     $search_id_number = $_POST['search_id_number'];
     $search_date = $_POST['search_date'];
@@ -78,6 +79,12 @@ if (isset($_POST['advanced_search'])) {
     $stmt->execute();
     $advanced_search_results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
+
+    // Check if any results were found
+    if (count($advanced_search_results) > 0) {
+        $searched_appointment = $advanced_search_results[0]; // Get the first result
+        $show_edit_modal = true; // Set flag to true to show modal
+    }
 }
 
 // Fetch departments and rooms
@@ -231,9 +238,8 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 
     <div class="navigation">
-        <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
-        <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-        <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+        <a href="?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+        <a href="?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
     </div>
 
     <div class="calendar">
@@ -254,7 +260,7 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<div id="editModal" class="modal">
+<div id="editModal" class="modal" style="display: <?= $show_edit_modal ? 'block' : 'none' ?>;">
     <div class="modal-content">
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
@@ -313,7 +319,7 @@ while ($row = $bookings->fetch_assoc()) {
 <script src="js/script.js"></script>
 <script>
     // Open the edit modal if a searched appointment is found
-    <?php if ($searched_appointment): ?>
+    <?php if ($show_edit_modal): ?>
         document.getElementById('editModal').style.display = 'block';
     <?php endif; ?>
 
