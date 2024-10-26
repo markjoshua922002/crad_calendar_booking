@@ -83,59 +83,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
-     <style>
-        /* Sidebar Styles */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px; /* Adjust as needed */
-            height: 100%;
-            background-color: #f8f9fa; /* Light background color */
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Ensure it's above other content */
-            transition: transform 0.3s ease; /* Smooth transition */
-            transform: translateX(0); /* Show by default */
-        }
-
-        /* Hidden Sidebar */
-        #sidebar.hidden {
-            transform: translateX(-100%); /* Hide by moving out of view */
-        }
-
-        /* Sidebar Links */
-        #sidebar .nav-link {
-            color: #333; /* Link color */
-            text-decoration: none; /* Remove underline */
-            padding: 10px; /* Add some padding */
-            display: block; /* Make links block elements */
-        }
-
-        #sidebar .nav-link:hover {
-            background-color: #e9ecef; /* Change background on hover */
-        }
-
-        /* Button Styles */
-        #sidebar-toggle {
-            background-color: #007bff; /* Button color */
-            color: white; /* Button text color */
-            border: none; /* Remove border */
-            padding: 10px 15px; /* Button padding */
-            border-radius: 5px; /* Rounded corners */
-            cursor: pointer; /* Change cursor to pointer */
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000; /* Ensure button is above other content */
-        }
-
-        #sidebar-toggle:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-        }
-    </style>
-</head>
-<body>
-
+    
 <!-- Sidebar Navigation -->
 <div id="sidebar" class="bg-light text-center shadow">
     <div class="p-3">
