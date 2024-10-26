@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             background-color: #e6f7ff;
-            background-image: url('.../assets/bcpbg1.jpg');
+            background-image: url('../assets/bcpbg1.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;

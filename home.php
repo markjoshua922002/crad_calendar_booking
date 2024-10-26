@@ -49,16 +49,42 @@
             background-color: #003f7a;
         }
 
-        /* Centered Content Styles */
-        .content {
-            text-align: center;
-            color: #333;
+        /* Header Styles */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space between logo and button */
+            width: calc(100% - 150px); /* Full width minus sidebar */
+            padding: 20px; /* Add some padding */
+            background-color: rgba(255, 255, 255, 0.8); /* Light background for the header */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
         }
 
         /* Logo Styles */
         .logo {
-            width: 150px; /* Adjust size as needed */
-            margin-bottom: 20px;
+            width: 100px; /* Adjust size as needed */
+        }
+
+        /* Logout Button Styles */
+        .logout-button {
+            padding: 10px 15px;
+            background-color: #FF4C4C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout-button:hover {
+            background-color: #cc0000;
+        }
+
+        /* Centered Content Styles */
+        .content {
+            text-align: center;
+            color: #333;
+            margin-top: 20px; /* Spacing from the header */
         }
 
         /* Title Styles */
@@ -66,9 +92,8 @@
             font-size: 48px; /* Font size for professionalism */
             font-weight: bold; /* Bold weight */
             color: #0056b3; /* Main color */
-            margin: 0; /* Remove default margin */
+            margin: 20px 0; /* Add margin above and below */
             padding: 10px; /* Add padding */
-            border-radius: 5px; /* Rounded corners */
             background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
             display: inline-block; /* Allow margin adjustments */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
@@ -87,9 +112,14 @@
         <a href="osas.php">OSAS</a>
     </div>
 
+    <!-- Header with Logo and Logout Button -->
+    <header>
+        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
+        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
+    </header>
+
     <!-- Centered Content -->
     <div class="content">
-        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
         <h1 class="title">BCP CRAD 2024</h1>
     </div>
 
