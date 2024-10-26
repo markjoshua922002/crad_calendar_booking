@@ -1,5 +1,3 @@
-<!-- hr.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Management</title>
     <style>
-        /* Copying and modifying CSS from index.php */
-
+        /* Body and Background Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -18,74 +15,70 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            display: flex; /* To align sidebar and content side-by-side */
         }
 
-        /* Sidebar styles */
+        /* Sidebar Styles */
         .sidebar {
-            width: 250px;
-            background-color: #007BFF;
-            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 150px;
+            background-color: #0056b3;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            position: fixed;
-            height: 100%;
+            align-items: center;
+            padding-top: 20px;
         }
-
         .sidebar a {
             color: white;
             padding: 15px;
-            margin-bottom: 10px;
-            background-color: #007BFF;
+            text-align: center;
             text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-
         .sidebar a:hover {
-            background-color: #0056b3;
+            background-color: #003f7a;
         }
 
-        /* Adjust main content to sit next to sidebar */
-        .main-content {
-            margin-left: 270px; /* Space for the sidebar */
+        /* Main Container Styles */
+        .container {
+            margin-left: 170px; /* Adjust based on sidebar width */
+            max-width: 1200px;
             padding: 20px;
-            width: calc(100% - 270px);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Logout button styling within sidebar */
-        .logout-button {
-            padding: 10px 15px;
-            background-color: #FF4C4C;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            margin-top: auto;
+        /* Header Styles */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 100px;
+            margin-right: 20px;
         }
 
-        .logout-button:hover {
-            background-color: #cc0000;
-        }
-
-        /* Form container styling */
+        /* Form Container Styles */
         .form-container {
             background: #f8f8f8;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
-
         .form-container h2 {
             font-size: 24px;
             color: #333;
             margin-bottom: 20px;
             text-align: center;
         }
-
         .form-container input[type="text"],
         .form-container select,
         .form-container textarea {
@@ -96,7 +89,6 @@
             border-radius: 5px;
             font-size: 14px;
         }
-
         .form-container button {
             padding: 10px 15px;
             background-color: #007BFF;
@@ -107,9 +99,24 @@
             cursor: pointer;
             width: 100%;
         }
-
         .form-container button:hover {
             background-color: #0056b3;
+        }
+
+        /* Logout Button Styles */
+        .logout-button {
+            padding: 10px 15px;
+            background-color: #FF4C4C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        .logout-button:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
@@ -117,20 +124,22 @@
 
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <img src="../assets/logo.png" alt="Logo" class="logo" style="width: 100%; margin-bottom: 20px;">
-        
-        <a href="home.php">Home</a>
-        <a href="booking.php">Booking</a>
+        <a href="home.php">HOME</a>
+        <a href="index.php">BOOKING</a>
         <a href="hr.php">HR</a>
         <a href="its.php">ITS</a>
         <a href="osas.php">OSAS</a>
-        
-        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container form-container">
+    <!-- Header with Logo and Logout Button -->
+    <header>
+        <img src="../assets/logo.png" alt="Logo" class="logo">
+        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
+    </header>
+
+    <!-- Main Container with Form -->
+    <div class="container">
+        <div class="form-container">
             <h2>HR Request Form</h2>
             <form method="POST" action="submit_request.php">
                 <!-- Name Input -->
