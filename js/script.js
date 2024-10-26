@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('page-content');
+    const toggleButton = document.getElementById('toggle-sidebar');
+
+    // Sidebar toggle functionality
+    toggleButton.addEventListener('click', function () {
+        sidebar.classList.toggle('collapsed');
+        content.classList.toggle('collapsed');
+    });
+
     const modal = document.getElementById("editModal");
     const closeModal = document.getElementsByClassName("close")[0];
     const editForm = document.getElementById("editForm");

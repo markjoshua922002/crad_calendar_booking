@@ -233,17 +233,6 @@ while ($row = $bookings->fetch_assoc()) {
 
     <script src="js/script.js"></script> <!-- External JavaScript File -->
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var sidebar = document.getElementById('sidebar');
-            var content = document.getElementById('page-content');
-            var toggleButton = document.getElementById('toggle-sidebar');
-
-            toggleButton.addEventListener('click', function () {
-                sidebar.classList.toggle('collapsed');
-                content.classList.toggle('collapsed');
-            });
-        });
-    </script>
+   
 </body>
 </html>
