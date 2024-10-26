@@ -89,7 +89,7 @@
 
     <!-- Centered Content -->
     <div class="content">
-        <img src="../assets/logo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
+        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
         <h1 class="title">BCP CRAD 2024</h1>
     </div>
 
