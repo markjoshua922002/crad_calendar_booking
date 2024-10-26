@@ -119,7 +119,7 @@ while ($row = $bookings->fetch_assoc()) {
 
 <div class="sidebar">
     <a href="home.php">HOME</a>
-    <a href="booking.php">BOOKING</a>
+    <a href="index.php">BOOKING</a>
     <a href="hr.php">HR</a>
     <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
