@@ -106,7 +106,7 @@ while ($row = $bookings->fetch_assoc()) {
             margin-left: 0;
         }
     </style>
-    <script src="./js/jquery/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <!-- Sidebar Section -->
@@ -231,8 +231,67 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
-    <script src="js/script.js"></script> <!-- External JavaScript File -->
+    <!-- Edit Appointment Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeEditModal">&times;</span>
+            <h2>Edit Appointment</h2>
+            <form id="editForm">
+                <input type="hidden" name="appointment_id" id="appointment_id">
+                <input type="text" name="edit_name" id="edit_name" required>
+                <input type="text" name="edit_id_number" id="edit_id_number" required>
+                <input type="date" name="edit_date" id="edit_date" required>
+                <input type="time" name="edit_time" id="edit_time" required>
+                <textarea name="edit_reason" id="edit_reason" required></textarea>
+                <select name="edit_department" id="edit_department" required>
+                    <option value="">Department</option>
+                    <?php
+                    // Resetting departments pointer to the beginning
+                    $departments->data_seek(0);
+                    while ($department = $departments->fetch_assoc()): ?>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <select name="edit_room" id="edit_room" required>
+                    <option value="">Room Number</option>
+                    <?php
+                    // Resetting rooms pointer to the beginning
+                    $rooms->data_seek(0);
+                    while ($room = $rooms->fetch_assoc()): ?>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <button type="submit" id="save_button">Save Changes</button>
+                <button type="button" id="delete_button">Delete Appointment</button>
+            </form>
+        </div>
+    </div>
 
-   
+    <!-- Add Department Modal -->
+    <div id="addDepartmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAddDepartmentModal">&times;</span>
+            <h2>Add Department</h2>
+            <form method="POST">
+                <input type="text" name="department_name" placeholder="Department Name" required>
+                <input type="color" name="color" value="#ff0000" required> <!-- Color Picker -->
+                <button type="submit" name="add_department">Add Department</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div id="addRoomModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAddRoomModal">&times;</span>
+            <h2>Add Room</h2>
+            <form method="POST">
+                <input type="text" name="room_name" placeholder="Room Name" required>
+                <button type="submit" name="add_room">Add Room</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script> <!-- External JavaScript File -->
 </body>
 </html>
