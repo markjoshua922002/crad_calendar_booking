@@ -49,20 +49,32 @@
             background-color: #003f7a;
         }
 
-        /* Header Styles */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Space between logo and button */
-            width: calc(100% - 150px); /* Full width minus sidebar */
-            padding: 20px; /* Add some padding */
-            background-color: rgba(255, 255, 255, 0.8); /* Light background for the header */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+        /* Centered Content Styles */
+        .content {
+            text-align: center;
+            color: #333;
         }
 
         /* Logo Styles */
         .logo {
-            width: 100px; /* Adjust size as needed */
+            width: 150px; /* Adjust size as needed */
+            margin-bottom: 20px;
+        }
+
+        /* Title Styles */
+        .title {
+            font-size: 48px; /* Font size for professionalism */
+            font-weight: bold; /* Bold weight */
+            color: #0056b3; /* Main color */
+            margin: 0; /* Remove default margin */
+            padding: 10px; /* Add padding */
+            border-radius: 5px; /* Rounded corners */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+            display: inline-block; /* Allow margin adjustments */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            text-transform: uppercase; /* Uppercase letters for emphasis */
+
+
         }
 
         /* Logout Button Styles */
@@ -73,31 +85,12 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
         }
-
         .logout-button:hover {
             background-color: #cc0000;
-        }
-
-        /* Centered Content Styles */
-        .content {
-            text-align: center;
-            color: #333;
-            margin-top: 20px; /* Spacing from the header */
-        }
-
-        /* Title Styles */
-        .title {
-            font-size: 48px; /* Font size for professionalism */
-            font-weight: bold; /* Bold weight */
-            color: #0056b3; /* Main color */
-            margin: 20px 0; /* Add margin above and below */
-            padding: 10px; /* Add padding */
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
-            display: inline-block; /* Allow margin adjustments */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-            text-transform: uppercase; /* Uppercase letters for emphasis */
         }
     </style>
 </head>
@@ -112,14 +105,15 @@
         <a href="osas.php">OSAS</a>
     </div>
 
-    <!-- Header with Logo and Logout Button -->
+     <!-- Header with Logo and Logout Button -->
     <header>
-        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
+        <img src="../assets/logo.png" alt="Logo" class="logo">
         <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
     </header>
 
     <!-- Centered Content -->
     <div class="content">
+        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
         <h1 class="title">BCP CRAD 2024</h1>
     </div>
 
