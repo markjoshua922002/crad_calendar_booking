@@ -167,11 +167,15 @@ while ($row = $bookings->fetch_assoc()) {
 
     <div class="form-actions">
         <div class="search-container">
-            <form method="POST">
-                <input type="text" name="search_name" placeholder="Search by Name" required>
-                <button type="submit" name="search_booking">Search</button>
-            </form>
-        </div>
+    <form method="POST">
+        <input type="text" name="search_name" placeholder="Search by Name" required>
+        <button type="submit" name="search_booking">Search</button>
+    </form>
+    <form method="POST" action="download_appointments.php">
+        <button type="submit" name="download_appointments">Download All Appointments</button>
+    </form>
+</div>
+
 
         <div class="form-container">
             <form method="POST" class="form">
