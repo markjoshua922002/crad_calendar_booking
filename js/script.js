@@ -108,4 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
+
+    // Add beforeunload event to trigger logout on tab close
+    window.addEventListener("beforeunload", function () {
+        navigator.sendBeacon('logout.php');
+    });
 });
