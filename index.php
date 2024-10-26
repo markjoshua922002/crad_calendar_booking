@@ -4,7 +4,9 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+?>
 
+<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
@@ -227,7 +229,9 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
                         <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
-                            <?= $appointment['name'] ?> - <?= $appointment['room_name'] ?>
+                            <?= $appointment['name'] ?><br>
+                            <?= $appointment['department_name'] ?><br>
+                            <?= $appointment['booking_time'] ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -236,103 +240,73 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Department Modal -->
-<div id="add_department_modal" class="modal">
+<div id="editModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm">
+            <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+            <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
+            <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+            <input type="time" name="edit_time" id="edit_time" value="<?= $searched_appointment['booking_time'] ?? '' ?>" required>
+            <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" id="save_button">Save Changes</button>
+            <button type="button" id="delete_button">Delete Appointment</button>
+        </form>
+    </div>
+</div>
+
+<div id="addDepartmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
         <h2>Add Department</h2>
         <form method="POST">
             <input type="text" name="department_name" placeholder="Department Name" required>
-            <input type="color" name="color" required>
-            <button type="submit" name="add_department">Add</button>
+            <input type="color" name="color" value="#ff0000" required>
+            <button type="submit" name="add_department">Add Department</button>
         </form>
     </div>
 </div>
 
-<!-- Room Modal -->
-<div id="add_room_modal" class="modal">
+<div id="addRoomModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeAddRoomModal">&times;</span>
         <h2>Add Room</h2>
         <form method="POST">
             <input type="text" name="room_name" placeholder="Room Name" required>
-            <button type="submit" name="add_room">Add</button>
-        </form>
-    </div>
-</div>
-
-<!-- Edit Appointment Modal -->
-<div id="edit_appointment_modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Edit Appointment</h2>
-        <form id="edit_appointment_form">
-            <input type="text" name="edit_name" placeholder="Name" required>
-            <input type="text" name="edit_id_number" placeholder="ID Number" required>
-            <input type="date" name="edit_date" required>
-            <input type="time" name="edit_time" required>
-            <textarea name="edit_reason" placeholder="Reason" required></textarea>
-            <select name="edit_department" required>
-                <option value="">Department</option>
-                <?php while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <select name="edit_room" required>
-                <option value="">Room Number</option>
-                <?php while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <button type="submit" name="edit_booking" class="edit-button">Save Changes</button>
-            <button type="button" id="delete_button">Delete Appointment</button>
+            <button type="submit" name="add_room">Add Room</button>
         </form>
     </div>
 </div>
 
 <script src="js/script.js"></script>
 <script>
-    document.getElementById('add_department_button').onclick = function() {
-        document.getElementById('add_department_modal').style.display = 'block';
-    }
-    document.getElementById('add_room_button').onclick = function() {
-        document.getElementById('add_room_modal').style.display = 'block';
-    }
+    // Open the edit modal if a searched appointment is found
+    <?php if ($searched_appointment): ?>
+        document.getElementById('editModal').style.display = 'block';
+    <?php endif; ?>
 
-    document.querySelectorAll('.close').forEach(item => {
-        item.onclick = function() {
-            this.closest('.modal').style.display = 'none';
-        }
-    });
-
-    // Open edit appointment modal
-    document.querySelectorAll('.appointment').forEach(item => {
-        item.onclick = function() {
-            const appointmentId = this.getAttribute('data-id');
-            // Fetch appointment data with AJAX and populate the edit modal fields
-            fetch('get_appointment.php?id=' + appointmentId)
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelector('input[name="edit_name"]').value = data.name;
-                    document.querySelector('input[name="edit_id_number"]').value = data.id_number;
-                    document.querySelector('input[name="edit_date"]').value = data.booking_date;
-                    document.querySelector('input[name="edit_time"]').value = data.booking_time;
-                    document.querySelector('textarea[name="edit_reason"]').value = data.reason;
-                    document.querySelector('select[name="edit_department"]').value = data.department_id;
-                    document.querySelector('select[name="edit_room"]').value = data.room_id;
-                    document.getElementById('edit_appointment_modal').style.display = 'block';
-                });
-        }
-    });
-
-    document.getElementById('delete_button').onclick = function() {
-        const appointmentId = document.querySelector('.appointment.active').getAttribute('data-id');
-        fetch('delete_appointment.php?id=' + appointmentId, { method: 'DELETE' })
-            .then(() => {
-                document.getElementById('edit_appointment_modal').style.display = 'none';
-                location.reload(); // Refresh the page after deletion
-            });
-    }
+    // Close modal functionality
+    document.getElementById('closeEditModal').onclick = function() {
+        document.getElementById('editModal').style.display = 'none';
+    };
 </script>
 </body>
 </html>
