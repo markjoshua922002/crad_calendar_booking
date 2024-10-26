@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             // Hash the password before saving
             $hashed_password = password_hash($reg_password, PASSWORD_BCRYPT);
             $conn->query("INSERT INTO users (username, password) VALUES ('$reg_username', '$hashed_password')");
-            $register_success = "Registration successful! You can now log in.";
+            $register_success = "Registration successful! You can now log in!";
         }
     } else {
         $register_error = "Invalid registration code!";

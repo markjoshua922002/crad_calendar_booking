@@ -61,7 +61,7 @@
             margin-bottom: 20px;
         }
 
-        /* Title Styles */
+        /* Curved Title Styles */
         .title {
             font-size: 60px; /* Larger font size */
             font-weight: bold; /* Bold weight */
@@ -69,10 +69,25 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
             margin: 0; /* Remove default margin */
             padding: 10px 20px; /* Add some padding */
-            border: 2px solid #0056b3; /* Optional border */
-            border-radius: 10px; /* Rounded corners */
+            border-radius: 50%; /* Rounded corners */
             background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
             display: inline-block; /* Allow margin adjustments */
+            transform: rotate(-10deg); /* Slight tilt for liveliness */
+            position: relative;
+            overflow: hidden; /* Ensures text stays within bounds */
+            white-space: nowrap; /* Prevent line breaks */
+        }
+
+        /* Pseudo-element for the Curved Effect */
+        .title:before {
+            content: attr(data-title); /* Use data-title attribute */
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) rotate(-10deg);
+            font-size: 60px;
+            color: #0056b3;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
@@ -90,7 +105,7 @@
     <!-- Centered Content -->
     <div class="content">
         <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
-        <h1 class="title">BCP CRAD 2024</h1>
+        <h1 class="title" data-title="BCP CRAD 2024">BCP CRAD 2024</h1>
     </div>
 
 </body>
