@@ -83,7 +83,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
+     <style>
         /* Sidebar Styles */
         #sidebar {
             position: fixed;
@@ -104,14 +104,14 @@ while ($row = $bookings->fetch_assoc()) {
         }
 
         /* Sidebar Links */
-        .nav-link {
+        #sidebar .nav-link {
             color: #333; /* Link color */
             text-decoration: none; /* Remove underline */
             padding: 10px; /* Add some padding */
             display: block; /* Make links block elements */
         }
 
-        .nav-link:hover {
+        #sidebar .nav-link:hover {
             background-color: #e9ecef; /* Change background on hover */
         }
 
@@ -157,6 +157,7 @@ while ($row = $bookings->fetch_assoc()) {
 
 <!-- Toggle Sidebar Button -->
 <button id="sidebar-toggle">Menu</button>
+
 
 <div class="container">
     <header>
