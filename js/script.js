@@ -109,8 +109,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Add beforeunload event to trigger logout on tab close
+    // Add beforeunload event to trigger token destruction on tab close
     window.addEventListener("beforeunload", function () {
-        navigator.sendBeacon('logout.php');
+        navigator.sendBeacon('logout.php', JSON.stringify({ action: 'destroy_token' }));
     });
 });
