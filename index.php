@@ -67,6 +67,19 @@ if (isset($_POST['search_booking'])) {
     $stmt->close();
 }
 
+// Advanced search
+$advanced_search_results = [];
+if (isset($_POST['advanced_search'])) {
+    $search_id_number = $_POST['search_id_number'];
+    $search_date = $_POST['search_date'];
+
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE id_number LIKE ? OR booking_date = ?");
+    $stmt->bind_param("ss", $search_id_number, $search_date);
+    $stmt->execute();
+    $advanced_search_results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+}
+
 // Fetch departments and rooms
 $departments = $conn->query("SELECT * FROM departments");
 $rooms = $conn->query("SELECT * FROM rooms");
@@ -146,6 +159,10 @@ while ($row = $bookings->fetch_assoc()) {
         .search-container button:hover {
             background-color: #0073e6;
         }
+        .advanced-search-container {
+            display: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -170,6 +187,15 @@ while ($row = $bookings->fetch_assoc()) {
             <form method="POST">
                 <input type="text" name="search_name" placeholder="Search by Name" required>
                 <button type="submit" name="search_booking">Search</button>
+            </form>
+            <button type="button" id="advanced_search_button">Advanced Search</button>
+        </div>
+
+        <div class="advanced-search-container" id="advancedSearchContainer">
+            <form method="POST">
+                <input type="text" name="search_id_number" placeholder="Search by ID Number">
+                <input type="date" name="search_date" placeholder="Search by Date">
+                <button type="submit" name="advanced_search">Search</button>
             </form>
         </div>
 
@@ -211,24 +237,12 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 
     <div class="calendar">
-        <div>Sunday</div>
-        <div>Monday</div>
-        <div>Tuesday</div>
-        <div>Wednesday</div>
-        <div>Thursday</div>
-        <div>Friday</div>
-        <div>Saturday</div>
-
-        <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-            <div class="day"></div>
-        <?php endfor; ?>
-
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
             <div class="day">
-                <div class="day-number"><?= $day ?></div>
+                <div class="date"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
+                        <div class="appointment" style="background-color: <?= $appointment['color'] ?>;">
                             <?= $appointment['name'] ?><br>
                             <?= $appointment['department_name'] ?><br>
                             <?= $appointment['booking_time'] ?>
@@ -306,6 +320,16 @@ while ($row = $bookings->fetch_assoc()) {
     // Close modal functionality
     document.getElementById('closeEditModal').onclick = function() {
         document.getElementById('editModal').style.display = 'none';
+    };
+
+    // Advanced search toggle
+    document.getElementById('advanced_search_button').onclick = function() {
+        var advancedSearchContainer = document.getElementById('advancedSearchContainer');
+        if (advancedSearchContainer.style.display === 'none' || advancedSearchContainer.style.display === '') {
+            advancedSearchContainer.style.display = 'block';
+        } else {
+            advancedSearchContainer.style.display = 'none';
+        }
     };
 </script>
 </body>
