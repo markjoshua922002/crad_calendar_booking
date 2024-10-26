@@ -4,8 +4,6 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
-
-inlcude 'sidebar_admin.php';
 ?>
 
 <?php
