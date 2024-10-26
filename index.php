@@ -35,9 +35,9 @@ if (isset($_POST['add_booking'])) {
 // Handle department addition
 if (isset($_POST['add_department'])) {
     $department_name = $_POST['department_name'];
-    $color = $_POST['color']; // Get the color input
+    $color = $_POST['color']; 
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
-    $stmt->bind_param("ss", $department_name, $color); // Bind color parameter
+    $stmt->bind_param("ss", $department_name, $color);
     $stmt->execute();
     $stmt->close();
     header('Location: index.php');
@@ -86,18 +86,52 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
-    <link rel="stylesheet" href="css/style.css"> <!-- External CSS File -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 150px;
+            background-color: #0056b3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #003f7a;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
+<div class="sidebar">
+    <a href="home.php">HOME</a>
+    <a href="booking.php">BOOKING</a>
+    <a href="hr.php">HR</a>
+    <a href="its.php">ITS</a>
+    <a href="osas.php">OSAS</a>
+</div>
+
+<div class="container" style="margin-left: 170px;">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
-        <a href="logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
+        <a href="logout.php" class="logout-button">Logout</a>
     </header>
 
-    <!-- Booking Form and Actions Section -->
     <div class="form-actions">
         <div class="form-container">
             <form method="POST" class="form">
@@ -124,21 +158,18 @@ while ($row = $bookings->fetch_assoc()) {
             </form>
         </div>
 
-        <!-- Right Action Section for Add Department/Room -->
         <div class="form-right">
             <button type="button" class="add-action" id="add_department_button">Add Department</button>
             <button type="button" class="add-action" id="add_room_button">Add Room</button>
         </div>
     </div>
 
-    <!-- Calendar Navigation -->
     <div class="navigation">
         <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
         <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
         <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
     </div>
 
-    <!-- Calendar Grid -->
     <div class="calendar">
         <div>Sunday</div>
         <div>Monday</div>
@@ -169,7 +200,6 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Edit Appointment Modal -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeEditModal">&times;</span>
@@ -184,7 +214,6 @@ while ($row = $bookings->fetch_assoc()) {
             <select name="edit_department" id="edit_department" required>
                 <option value="">Department</option>
                 <?php
-                // Resetting departments pointer to the beginning
                 $departments->data_seek(0);
                 while ($department = $departments->fetch_assoc()): ?>
                     <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
@@ -193,7 +222,6 @@ while ($row = $bookings->fetch_assoc()) {
             <select name="edit_room" id="edit_room" required>
                 <option value="">Room Number</option>
                 <?php
-                // Resetting rooms pointer to the beginning
                 $rooms->data_seek(0);
                 while ($room = $rooms->fetch_assoc()): ?>
                     <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
@@ -205,20 +233,18 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Add Department Modal -->
 <div id="addDepartmentModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeAddDepartmentModal">&times;</span>
         <h2>Add Department</h2>
         <form method="POST">
             <input type="text" name="department_name" placeholder="Department Name" required>
-            <input type="color" name="color" value="#ff0000" required> <!-- Color Picker -->
+            <input type="color" name="color" value="#ff0000" required>
             <button type="submit" name="add_department">Add Department</button>
         </form>
     </div>
 </div>
 
-<!-- Add Room Modal -->
 <div id="addRoomModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeAddRoomModal">&times;</span>
@@ -230,7 +256,6 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<script src="js/script.js"></script> <!-- External JavaScript File -->
+<script src="js/script.js"></script>
 </body>
 </html>
-
