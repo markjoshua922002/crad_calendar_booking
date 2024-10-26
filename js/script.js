@@ -1,19 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Toggle Sidebar
-    document.getElementById("sidebar-toggle").onclick = function() {
-        const sidebar = document.getElementById("sidebar");
-        const pageContent = document.getElementById("page-content");
-        
-        if (sidebar.style.display === "none") {
-            sidebar.style.display = "block";
-            pageContent.style.marginLeft = "260px";
-        } else {
-            sidebar.style.display = "none";
-            pageContent.style.marginLeft = "0";
-        }
-    };
-
-    // Modal Elements
     const modal = document.getElementById("editModal");
     const closeModal = document.getElementsByClassName("close")[0];
     const editForm = document.getElementById("editForm");
@@ -32,22 +17,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show Add Department modal
     addDepartmentButton.onclick = function () {
         addDepartmentModal.style.display = "block"; 
-    };
+    }
 
     // Show Add Room modal
     addRoomButton.onclick = function () {
         addRoomModal.style.display = "block"; 
-    };
+    }
 
     // Close Add Department modal
     closeAddDepartmentModal.onclick = function () {
         addDepartmentModal.style.display = "none"; 
-    };
+    }
 
     // Close Add Room modal
     closeAddRoomModal.onclick = function () {
         addRoomModal.style.display = "none"; 
-    };
+    }
 
     // Close modals when clicking outside
     window.onclick = function (event) {
@@ -57,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target === addRoomModal) {
             addRoomModal.style.display = "none"; 
         }
-    };
+    }
 
     // Existing appointment modal functionality
     document.querySelectorAll(".appointment").forEach(item => {
@@ -82,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Close existing appointment modal
     closeModal.onclick = function () {
         modal.style.display = "none"; 
-    };
+    }
 
     // Handle save changes for existing appointments
     editForm.addEventListener("submit", function (event) {
@@ -122,10 +107,5 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert('An error occurred while deleting the appointment.');
             });
         }
-    });
-
-    // Add beforeunload event to trigger token destruction on tab close
-    window.addEventListener("beforeunload", function () {
-        navigator.sendBeacon('logout.php', JSON.stringify({ action: 'destroy_token' }));
     });
 });

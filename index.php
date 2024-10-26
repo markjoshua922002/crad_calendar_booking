@@ -4,14 +4,16 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+?>
 
+<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
 
-// Handle form submissions for booking
+// Handle form submissions
 if (isset($_POST['add_booking'])) {
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
@@ -33,9 +35,9 @@ if (isset($_POST['add_booking'])) {
 // Handle department addition
 if (isset($_POST['add_department'])) {
     $department_name = $_POST['department_name'];
-    $color = $_POST['color'];
+    $color = $_POST['color']; // Get the color input
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
-    $stmt->bind_param("ss", $department_name, $color);
+    $stmt->bind_param("ss", $department_name, $color); // Bind color parameter
     $stmt->execute();
     $stmt->close();
     header('Location: index.php');
@@ -53,16 +55,18 @@ if (isset($_POST['add_room'])) {
     exit();
 }
 
-// Fetch departments, rooms, and bookings
+// Fetch departments and rooms
 $departments = $conn->query("SELECT * FROM departments");
 $rooms = $conn->query("SELECT * FROM rooms");
 
+// Fetch current month and year
 $month = isset($_GET['month']) ? $_GET['month'] : date('m');
 $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 
 $firstDayOfMonth = date('w', strtotime("$year-$month-01"));
 $totalDaysInMonth = date('t', strtotime("$year-$month-01"));
 
+// Fetch bookings for the current month
 $bookings = $conn->query("SELECT bookings.*, departments.name as department_name, departments.color, rooms.name as room_name 
     FROM bookings 
     JOIN departments ON bookings.department_id = departments.id 
@@ -82,37 +86,49 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
-    <link rel="stylesheet" href="css/style.css">
-    
+    <link rel="stylesheet" href="css/style.css"> <!-- External CSS File -->
+</head>
+<body>
+
 <div class="container">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
-        <a href="logout.php" class="logout-button">Logout</a>
+        <a href="logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
     </header>
 
-    <!-- Booking Form -->
-    <div class="form-container">
-        <form method="POST">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="text" name="id_number" placeholder="ID Number" required>
-            <input type="date" name="date" required>
-            <input type="time" name="time" required>
-            <textarea name="reason" placeholder="Reason" required></textarea>
-            <select name="department" required>
-                <option value="">Department</option>
-                <?php while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <select name="room" required>
-                <option value="">Room</option>
-                <?php while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <button type="submit" name="add_booking">Book</button>
-        </form>
+    <!-- Booking Form and Actions Section -->
+    <div class="form-actions">
+        <div class="form-container">
+            <form method="POST" class="form">
+                <div class="form-grid">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="text" name="id_number" placeholder="ID Number" required>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                    <textarea name="reason" placeholder="Reason" required></textarea>
+                    <select name="department" required>
+                        <option value="">Department</option>
+                        <?php while ($department = $departments->fetch_assoc()): ?>
+                            <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                    <select name="room" required>
+                        <option value="">Room Number</option>
+                        <?php while ($room = $rooms->fetch_assoc()): ?>
+                            <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <button type="submit" name="add_booking" class="book-button">Book</button>
+            </form>
+        </div>
+
+        <!-- Right Action Section for Add Department/Room -->
+        <div class="form-right">
+            <button type="button" class="add-action" id="add_department_button">Add Department</button>
+            <button type="button" class="add-action" id="add_room_button">Add Room</button>
+        </div>
     </div>
 
     <!-- Calendar Navigation -->
@@ -124,7 +140,13 @@ while ($row = $bookings->fetch_assoc()) {
 
     <!-- Calendar Grid -->
     <div class="calendar">
-        <div>Sunday</div><div>Monday</div><div>Tuesday</div><div>Wednesday</div><div>Thursday</div><div>Friday</div><div>Saturday</div>
+        <div>Sunday</div>
+        <div>Monday</div>
+        <div>Tuesday</div>
+        <div>Wednesday</div>
+        <div>Thursday</div>
+        <div>Friday</div>
+        <div>Saturday</div>
 
         <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
             <div class="day"></div>
@@ -135,7 +157,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" style="background-color: <?= $appointment['color'] ?>">
+                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                             <?= $appointment['name'] ?><br>
                             <?= $appointment['department_name'] ?><br>
                             <?= $appointment['booking_time'] ?>
@@ -147,23 +169,60 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Modal Templates for Adding Departments, Rooms, and Editing Appointments -->
-<!-- Department Modal -->
+<!-- Edit Appointment Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm">
+            <input type="hidden" name="appointment_id" id="appointment_id">
+            <input type="text" name="edit_name" id="edit_name" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" required>
+            <input type="date" name="edit_date" id="edit_date" required>
+            <input type="time" name="edit_time" id="edit_time" required>
+            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php
+                // Resetting departments pointer to the beginning
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php
+                // Resetting rooms pointer to the beginning
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" id="save_button">Save Changes</button>
+            <button type="button" id="delete_button">Delete Appointment</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Department Modal -->
 <div id="addDepartmentModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeAddDepartmentModal">&times;</span>
+        <h2>Add Department</h2>
         <form method="POST">
             <input type="text" name="department_name" placeholder="Department Name" required>
-            <input type="color" name="color" value="#ff0000" required>
+            <input type="color" name="color" value="#ff0000" required> <!-- Color Picker -->
             <button type="submit" name="add_department">Add Department</button>
         </form>
     </div>
 </div>
 
-<!-- Room Modal -->
+<!-- Add Room Modal -->
 <div id="addRoomModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeAddRoomModal">&times;</span>
+        <h2>Add Room</h2>
         <form method="POST">
             <input type="text" name="room_name" placeholder="Room Name" required>
             <button type="submit" name="add_room">Add Room</button>
@@ -171,40 +230,7 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Edit Appointment Modal -->
-<div id="editAppointmentModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeEditAppointmentModal">&times;</span>
-        <form method="POST" id="editAppointmentForm">
-            <input type="hidden" name="booking_id" id="editBookingId">
-            <input type="text" name="name" id="editName" placeholder="Name" required>
-            <input type="date" name="date" id="editDate" required>
-            <input type="time" name="time" id="editTime" required>
-            <textarea name="reason" id="editReason" placeholder="Reason" required></textarea>
-            <select name="department" id="editDepartment" required>
-                <option value="">Department</option>
-                <?php mysqli_data_seek($departments, 0); while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <select name="room" id="editRoom" required>
-                <option value="">Room</option>
-                <?php mysqli_data_seek($rooms, 0); while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <button type="submit" name="update_booking">Update Appointment</button>
-            <button type="submit" name="delete_booking" class="delete-button">Delete Appointment</button>
-        </form>
-    </div>
-</div>
-
-<script src="js/script.js"></script>
-<script>
-    document.getElementById('sidebar-toggle').onclick = function() {
-        var sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('hidden');
-    };
-</script>
+<script src="js/script.js"></script> <!-- External JavaScript File -->
 </body>
 </html>
+
