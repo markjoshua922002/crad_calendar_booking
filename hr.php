@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Management</title>
     <style>
-        /* Reusing styles from index.php */
+        /* Copying the CSS from index.php */
 
         body {
             font-family: Arial, sans-serif;
@@ -29,49 +29,36 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .sidebar {
-            width: 200px;
-            background-color: #0056b3;
-            color: #fff;
-            padding: 20px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
+        header {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .sidebar h2 {
-            font-size: 18px;
+            justify-content: flex-start;
             margin-bottom: 20px;
-            text-align: center;
         }
 
-        .sidebar a,
-        .sidebar button {
+        .logo {
+            width: 100px;
+            margin-right: 20px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .navigation a {
             padding: 10px 15px;
-            margin: 10px 0;
             background-color: #007BFF;
             color: white;
-            text-decoration: none;
             border-radius: 5px;
-            width: 100%;
-            text-align: center;
-            border: none;
-            cursor: pointer;
+            margin: 0 10px;
+            text-decoration: none;
         }
 
-        .sidebar a:hover,
-        .sidebar button:hover {
+        .navigation a:hover {
             background-color: #0056b3;
-        }
-
-        .main-content {
-            margin-left: 220px;
-            padding: 20px;
         }
 
         .form-container {
@@ -79,8 +66,6 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .form-container h2 {
@@ -102,14 +87,14 @@
         }
 
         .form-container button {
-            padding: 10px;
-            width: 100%;
+            padding: 10px 15px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            width: 100%;
         }
 
         .form-container button:hover {
@@ -135,43 +120,44 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Navigation</h2>
+    <!-- Header with Logo and Logout Button -->
+    <header>
+        <img src="../assets/logo.png" alt="Logo" class="logo">
+        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
+    </header>
+
+    <!-- Navigation Links -->
+    <div class="navigation">
         <a href="home.php">Home</a>
         <a href="booking.php">Booking</a>
         <a href="hr.php">HR</a>
         <a href="its.php">ITS</a>
         <a href="osas.php">OSAS</a>
-        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container">
-            <div class="form-container">
-                <h2>Request Form</h2>
-                <form method="POST" action="submit_request.php">
-                    <!-- Name Input -->
-                    <input type="text" name="name" placeholder="Name" required>
+    <!-- Main Container with Form -->
+    <div class="container">
+        <div class="form-container">
+            <h2>HR Request Form</h2>
+            <form method="POST" action="submit_request.php">
+                <!-- Name Input -->
+                <input type="text" name="name" placeholder="Enter Your Name" required>
 
-                    <!-- Position Dropdown -->
-                    <label for="position">Position:</label>
-                    <select name="position" id="position" required>
-                        <option value="">Choose...</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Staff">Staff</option>
-                        <option value="Intern">Intern</option>
-                        <!-- Add more options as needed -->
-                    </select>
+                <!-- Position Dropdown -->
+                <label for="position">Position:</label>
+                <select name="position" id="position" required>
+                    <option value="">Choose your position...</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Intern">Intern</option>
+                </select>
 
-                    <!-- Text Area for Comments -->
-                    <textarea name="comments" rows="4" placeholder="Enter your request or comments here..." required></textarea>
+                <!-- Request Textarea -->
+                <textarea name="comments" rows="4" placeholder="Enter your request details here..." required></textarea>
 
-                    <!-- Submit Button -->
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+                <!-- Submit Button -->
+                <button type="submit">Submit Request</button>
+            </form>
         </div>
     </div>
 
