@@ -30,7 +30,7 @@ body {
     padding-top: 20px;
 }
 
-#sidebar .logo {
+#sidebar .sidebar-logo {
     width: 80%;
     margin: 0 auto;
     display: block;
@@ -43,16 +43,16 @@ body {
     color: #333;
 }
 
-#sidebar ul {
-    list-style-type: none;
+#sidebar .sidebar-navigation ul {
+    list-style-type: none; /* Specific to sidebar */
     padding: 0;
 }
 
-#sidebar ul li {
+#sidebar .sidebar-navigation ul li {
     margin-bottom: 10px;
 }
 
-#sidebar ul li a {
+#sidebar .sidebar-navigation ul li a {
     color: #555;
     text-decoration: none;
     display: block;
@@ -60,15 +60,15 @@ body {
     border-radius: 5px;
 }
 
-#sidebar ul li a:hover,
-#sidebar ul li a.active {
+#sidebar .sidebar-navigation ul li a:hover,
+#sidebar .sidebar-navigation ul li a.active {
     background-color: #007bff;
     color: #fff;
 }
 
 /* Page Content */
 #page-content {
-    margin-left: 260px;
+    margin-left: 260px; /* Ensure enough space for sidebar */
     padding: 20px;
 }
 
@@ -297,40 +297,9 @@ button:hover,
     color: white; /* Text color */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
+    cursor: pointer; /* Pointer cursor */
 }
 
 .modal-content .modal-footer button:hover {
     background-color: #0056b3; /* Darker shade on hover */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Logout button styling */
-.logout-button {
-    padding: 10px 15px; /* Same padding as other buttons */
-    background-color: #FF4C4C; /* Red color for logout button */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    position: absolute; /* Position it at the top right */
-    right: 20px; /* Space from the right */
-    top: 20px; /* Space from the top */
-}
-
-.logout-button:hover {
-    background-color: #cc0000; /* Darker red on hover */
 }
