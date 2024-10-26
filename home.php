@@ -105,11 +105,7 @@
         <a href="osas.php">OSAS</a>
     </div>
 
-     <!-- Header with Logo and Logout Button -->
-    <header>
-        <img src="../assets/logo.png" alt="Logo" class="logo">
-        <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
-    </header>
+
 
     <!-- Centered Content -->
     <div class="content">
