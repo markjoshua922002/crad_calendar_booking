@@ -61,33 +61,18 @@
             margin-bottom: 20px;
         }
 
-        /* Curved Title Styles */
+        /* Title Styles */
         .title {
-            font-size: 60px; /* Larger font size */
+            font-size: 48px; /* Font size for professionalism */
             font-weight: bold; /* Bold weight */
             color: #0056b3; /* Main color */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
             margin: 0; /* Remove default margin */
-            padding: 10px 20px; /* Add some padding */
-            border-radius: 50%; /* Rounded corners */
-            background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+            padding: 10px; /* Add padding */
+            border-radius: 5px; /* Rounded corners */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
             display: inline-block; /* Allow margin adjustments */
-            transform: rotate(-10deg); /* Slight tilt for liveliness */
-            position: relative;
-            overflow: hidden; /* Ensures text stays within bounds */
-            white-space: nowrap; /* Prevent line breaks */
-        }
-
-        /* Pseudo-element for the Curved Effect */
-        .title:before {
-            content: attr(data-title); /* Use data-title attribute */
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%) rotate(-10deg);
-            font-size: 60px;
-            color: #0056b3;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            text-transform: uppercase; /* Uppercase letters for emphasis */
         }
     </style>
 </head>
@@ -104,8 +89,8 @@
 
     <!-- Centered Content -->
     <div class="content">
-        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
-        <h1 class="title" data-title="BCP CRAD 2024">BCP CRAD 2024</h1>
+        <img src="../assets/logo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
+        <h1 class="title">BCP CRAD 2024</h1>
     </div>
 
 </body>
