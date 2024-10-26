@@ -1,27 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Sidebar elements and functionality
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('page-content');
-    const toggleButton = document.getElementById('toggle-sidebar');
-
-    // Sidebar toggle functionality
-    toggleButton.addEventListener('click', function () {
-        sidebar.classList.toggle('collapsed');
-        content.classList.toggle('collapsed');
-    });
-
-    // Modal elements for editing appointments
     const modal = document.getElementById("editModal");
     const closeModal = document.getElementsByClassName("close")[0];
     const editForm = document.getElementById("editForm");
     const deleteButton = document.getElementById("delete_button");
 
-    // Add Department Modal elements
+    // Add Department Modal
     const addDepartmentModal = document.getElementById("addDepartmentModal");
     const addDepartmentButton = document.getElementById("add_department_button");
     const closeAddDepartmentModal = document.getElementById("closeAddDepartmentModal");
 
-    // Add Room Modal elements
+    // Add Room Modal
     const addRoomModal = document.getElementById("addRoomModal");
     const addRoomButton = document.getElementById("add_room_button");
     const closeAddRoomModal = document.getElementById("closeAddRoomModal");
