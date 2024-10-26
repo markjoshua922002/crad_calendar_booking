@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_appointments'])) {
     // Fetch all appointments
-    $sql = "SELECT id, name, id_number, booking_date, booking_time, reason FROM appointments";
+    $sql = "SELECT id, name, id_number, booking_date, booking_time, reason FROM bookings";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
