@@ -156,6 +156,7 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="hr.php">HR</a>
     <a href="faculty.php">ITS</a>
     <a href="osas.php">OSAS</a>
+    <a href="osas.php">FACULTY</a>
 </div>
 
 <div class="container" style="margin-left: 170px;">

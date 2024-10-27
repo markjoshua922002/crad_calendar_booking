@@ -129,6 +129,8 @@
         <a href="hr.php">HR</a>
         <a href="its.php">ITS</a>
         <a href="osas.php">OSAS</a>
+        <a href="osas.php">FACULTY</a>
+
     </div>
 
     <!-- Header with Logo and Logout Button -->
