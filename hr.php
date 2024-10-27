@@ -150,7 +150,7 @@
                 <!-- Position Dropdown -->
                 <label for="position">Position:</label>
                 <select name="position" id="position" required>
-                    <option value="">Choose your position...</option>
+                    <option value="">Choose position you need...</option>
                     <option value="Manager">Manager</option>
                     <option value="Staff">Staff</option>
                     <option value="Intern">Intern</option>
