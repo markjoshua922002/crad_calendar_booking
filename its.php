@@ -49,28 +49,6 @@
             background-color: #003f7a;
         }
 
-        .search-container {
-            margin-bottom: 20px;
-        }
-        .search-container input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px);
-        }
-        .search-container button {
-            padding: 10px;
-            background-color: #00509e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        .search-container button:hover {
-            background-color: #0073e6;
-        }
-
         /* Centered Content Styles */
         .content {
             text-align: center;
@@ -124,17 +102,9 @@
         <a href="its.php">ITS</a>
         <a href="osas.php">OSAS</a>
         <a href="faculty.php">FACULTY</a>
-
-        <!-- Search Form -->
-        <div class="search-container">
-            <form method="POST">
-                <input type="text" name="search" placeholder="Search..." required>
-                <button type="submit">Search</button>
-            </form>
-        </div>
     </div>
 
-     <!-- Logout Button -->
+    <!-- Logout Button -->
     <header>
         <button class="logout-button" onclick="location.href='logout.php'">Logout</button>
     </header>
