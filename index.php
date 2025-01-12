@@ -97,21 +97,26 @@ while ($row = $bookings->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Calendar System</title>
+    <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
+        <style>
+        /* Sidebar Styles */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             height: 100%;
-            width: 150px;
+            width: 250px;
             background-color: #0056b3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
         }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
         .sidebar a {
             color: white;
             padding: 15px;
@@ -121,36 +126,68 @@ while ($row = $bookings->fetch_assoc()) {
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
+            display: block;
         }
+
         .sidebar a:hover {
             background-color: #003f7a;
         }
-        .search-container {
-            margin-bottom: 20px;
-        }
-        .search-container input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px);
-        }
-        .search-container button {
-            padding: 10px;
-            background-color: #00509e;
-            color: white;
+
+        .hamburger-menu {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+            background: none;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            margin-left: 5px;
+            padding: 10px;
         }
-        .search-container button:hover {
-            background-color: #0073e6;
+
+        .hamburger-menu span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #0056b3;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* Hamburger Animation */
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Container Styles */
+        .container {
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 20px;
+        }
+
+        .container.shifted {
+            margin-left: 270px;
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
+<!-- Hamburger Menu Button -->
+<button class="hamburger-menu" id="toggleMenu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
     <a href="home.php">HOME</a>
     <a href="index.php">BOOKING</a>
     <a href="hr.php">HR</a>
@@ -159,10 +196,50 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="faculty.php">FACULTY</a>
 </div>
 
+
+
+<!-- JavaScript -->
+<script>
+    // Sidebar toggle functionality
+    document.getElementById('toggleMenu').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const container = document.getElementById('mainContainer');
+        const hamburger = document.getElementById('toggleMenu');
+        
+        sidebar.classList.toggle('open');
+        container.classList.toggle('shifted');
+        hamburger.classList.toggle('active');
+    });
+
+    // Mobile responsive adjustments
+    function adjustForMobile() {
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mainContainer').classList.remove('shifted');
+            document.getElementById('toggleMenu').classList.remove('active');
+        }
+    }
+
+    // Event listeners for responsiveness
+    window.addEventListener('resize', adjustForMobile);
+    window.addEventListener('load', adjustForMobile);
+
+    // Mobile link handling
+    if (window.innerWidth <= 768) {
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('mainContainer').classList.remove('shifted');
+                document.getElementById('toggleMenu').classList.remove('active');
+            });
+        });
+    }
+</script>
+
 <div class="container" style="margin-left: 170px;">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
-        <h1>Booking Calendar System</h1>
+        <h1>Smart Scheduling System</h1>
         <a href="logout.php" class="logout-button">Logout</a>
     </header>
 
