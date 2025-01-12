@@ -112,7 +112,7 @@
     <!-- Centered Content -->
     <div class="content">
         <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
-        <h1 class="title">ITS INTEG4</h1>
+        <h1 class="title">ITS INTEG4 test</h1>
     </div>
 
 </body>
