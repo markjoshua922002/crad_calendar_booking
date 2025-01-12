@@ -154,7 +154,7 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="home.php">HOME</a>
     <a href="index.php">BOOKING</a>
     <a href="hr.php">HR</a>
-    <a href="faculty.php">ITS</a>
+    <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
     <a href="faculty.php">FACULTY</a>
 </div>
