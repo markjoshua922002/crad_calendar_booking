@@ -28,13 +28,17 @@
             left: 0;
             top: 0;
             height: 100%;
-            width: 150px;
+            width: 250px;
             background-color: #0056b3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
         }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
         .sidebar a {
             color: white;
             padding: 15px;
@@ -44,9 +48,55 @@
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
+            display: block;
         }
+
         .sidebar a:hover {
             background-color: #003f7a;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #0056b3;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* Animation for hamburger menu */
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Content Shift Styles */
+        .container {
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 20px;
+        }
+
+        .container.shifted {
+            margin-left: 270px;
         }
 
         /* Centered Content Styles */
@@ -57,22 +107,22 @@
 
         /* Logo Styles */
         .logo {
-            width: 150px; /* Adjust size as needed */
+            width: 150px;
             margin-bottom: 20px;
         }
 
         /* Title Styles */
         .title {
-            font-size: 48px; /* Font size for professionalism */
-            font-weight: bold; /* Bold weight */
-            color: #0056b3; /* Main color */
-            margin: 0; /* Remove default margin */
-            padding: 10px; /* Add padding */
-            border-radius: 5px; /* Rounded corners */
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
-            display: inline-block; /* Allow margin adjustments */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-            text-transform: uppercase; /* Uppercase letters for emphasis */
+            font-size: 48px;
+            font-weight: bold;
+            color: #0056b3;
+            margin: 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
         }
 
         /* Logout Button Styles */
@@ -87,6 +137,7 @@
             right: 20px;
             top: 20px;
         }
+
         .logout-button:hover {
             background-color: #cc0000;
         }
@@ -94,12 +145,19 @@
 </head>
 <body>
 
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="toggleMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
     <!-- Sidebar Navigation -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <a href="home.php">HOME</a>
         <a href="index.php">BOOKING</a>
         <a href="hr.php">HR</a>
-        <a href="its.php">ITS</a>
+        <a href="faculty.php">ITS</a>
         <a href="osas.php">OSAS</a>
         <a href="faculty.php">FACULTY</a>
     </div>
@@ -111,9 +169,44 @@
 
     <!-- Centered Content -->
     <div class="content">
-        <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
+        <img src="../assets/bcplogo.png" alt="Logo" class="logo">
         <h1 class="title">ITS INTEG4 test</h1>
     </div>
+
+    <script>
+        // JavaScript to handle the hamburger menu toggle
+        document.getElementById('toggleMenu').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const container = document.getElementById('mainContainer');
+            const hamburger = document.getElementById('toggleMenu');
+            
+            sidebar.classList.toggle('open');
+            container.classList.toggle('shifted');
+            hamburger.classList.toggle('active');
+        });
+
+        // Mobile responsive enhancement
+        function adjustForMobile() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('mainContainer').classList.remove('shifted');
+            }
+        }
+
+        window.addEventListener('resize', adjustForMobile);
+        window.addEventListener('load', adjustForMobile);
+
+        // Auto-close sidebar when clicking a link on mobile
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('mainContainer').classList.remove('shifted');
+                    document.getElementById('toggleMenu').classList.remove('active');
+                });
+            });
+        }
+    </script>
 
 </body>
 </html>
