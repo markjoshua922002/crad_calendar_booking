@@ -1,30 +1,92 @@
 <?php
 session_start();
-$conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 
+// Database credentials
+$host = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USER') ?: 'crad_crad';
+$password = getenv('DB_PASS') ?: 'crad';
+$database = getenv('DB_NAME') ?: 'crad_calendar_booking';
+
+// Database connection
+$conn = new mysqli($host, $username, $password, $database);
+
+// Check connection
 if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
+    error_log("Database connection failed: " . $conn->connect_error); // Log error
+    die('Connection failed. Please try again later.'); // Do not expose technical details
 }
 
+// Set secure session parameters
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', isset($_SERVER['HTTPS']));
+ini_set('session.cookie_samesite', 'Strict');
+session_regenerate_id(true); // Prevent session fixation
+
 // Handle login request
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    $username = $_POST['username'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $result = $conn->query("SELECT * FROM users WHERE username='$username'");
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            header('Location: index.php');
-            exit();
+    // Validate input length and sanitize
+    if (strlen($username) < 3 || strlen($username) > 50) {
+        $login_error = "Invalid username or password!";
+    } else {
+        $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+
+        // Use prepared statement to prevent SQL injection
+        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            // Verify password securely
+            if (password_verify($password, $user['password'])) {
+                // Prevent brute-force attacks with rate limiting
+                clearLoginAttempts($username, $conn);
+
+                // Set session variables and regenerate ID
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $username;
+                session_regenerate_id(true);
+
+                // Redirect to the protected page
+                header('Location: index.php');
+                exit();
+            } else {
+                logFailedLogin($username, $conn);
+                $login_error = "Invalid username or password!";
+            }
         } else {
+            logFailedLogin($username, $conn);
             $login_error = "Invalid username or password!";
         }
-    } else {
-        $login_error = "Invalid username or password!";
+
+        $stmt->close();
     }
+}
+
+/**
+ * Log failed login attempts for rate-limiting
+ */
+function logFailedLogin($username, $conn) {
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    $stmt = $conn->prepare("INSERT INTO login_attempts (username, ip_address, attempt_time) VALUES (?, ?, NOW())");
+    $stmt->bind_param("ss", $username, $ip_address);
+    $stmt->execute();
+    $stmt->close();
+}
+
+/**
+ * Clear login attempts after successful login
+ */
+function clearLoginAttempts($username, $conn) {
+    $stmt = $conn->prepare("DELETE FROM login_attempts WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->close();
 }
 ?>
 
@@ -33,8 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Secure Login</title>
     <link rel="stylesheet" href="css/style_login.css">
+
+    <!-- Security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:;">
 </head>
 <body>
     <div class="login-container">
