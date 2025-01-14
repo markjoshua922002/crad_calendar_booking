@@ -55,6 +55,18 @@ if (isset($_POST['add_room'])) {
     exit();
 }
 
+// Search for appointments
+$searched_appointment = null;
+if (isset($_POST['search_booking'])) {
+    $search_name = $_POST['search_name'];
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE name LIKE ?");
+    $search_param = "%$search_name%";
+    $stmt->bind_param("s", $search_param);
+    $stmt->execute();
+    $searched_appointment = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
+
 // Fetch departments and rooms
 $departments = $conn->query("SELECT * FROM departments");
 $rooms = $conn->query("SELECT * FROM rooms");
@@ -88,18 +100,23 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Sidebar Styles */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             height: 100%;
-            width: 150px;
+            width: 250px;
             background-color: #0056b3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
         }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
         .sidebar a {
             color: white;
             padding: 15px;
@@ -109,23 +126,98 @@ while ($row = $bookings->fetch_assoc()) {
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
+            display: block;
         }
+
         .sidebar a:hover {
             background-color: #003f7a;
+        }
+
+        .hamburger-menu {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #0056b3;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* Container Styles */
+        .container {
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 20px;
+        }
+
+        .container.shifted {
+            margin-left: 270px;
+        }
+
+        /* Search Container Styles */
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+        .search-container button {
+            padding: 10px;
+            background-color: #00509e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .search-container button:hover {
+            background-color: #0073e6;
+        }
+
+        /* Animation for hamburger menu */
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
+<button class="hamburger-menu" id="toggleMenu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div class="sidebar" id="sidebar">
     <a href="home.php">HOME</a>
     <a href="index.php">BOOKING</a>
     <a href="hr.php">HR</a>
-    <a href="its.php">ITS</a>
+    <a href="faculty.php">ITS</a>
     <a href="osas.php">OSAS</a>
+    <a href="faculty.php">FACULTY</a>
 </div>
 
-<div class="container" style="margin-left: 170px;">
+<div class="container" id="mainContainer">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
@@ -133,6 +225,16 @@ while ($row = $bookings->fetch_assoc()) {
     </header>
 
     <div class="form-actions">
+        <div class="search-container">
+            <form method="POST">
+                <input type="text" name="search_name" placeholder="Search by Name" required>
+                <button type="submit" name="search_booking">Search</button>
+            </form>
+            <form method="POST" action="download_appointments.php">
+                <button type="submit" name="download_appointments">Download All Appointments</button>
+            </form>
+        </div>
+
         <div class="form-container">
             <form method="POST" class="form">
                 <div class="form-grid">
@@ -200,23 +302,24 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
+<!-- Modals -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
         <form id="editForm">
-            <input type="hidden" name="appointment_id" id="appointment_id">
-            <input type="text" name="edit_name" id="edit_name" required>
-            <input type="text" name="edit_id_number" id="edit_id_number" required>
-            <input type="date" name="edit_date" id="edit_date" required>
-            <input type="time" name="edit_time" id="edit_time" required>
-            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+            <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
+            <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+            <input type="time" name="edit_time" id="edit_time" value="<?= $searched_appointment['booking_time'] ?? '' ?>" required>
+            <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
             <select name="edit_department" id="edit_department" required>
                 <option value="">Department</option>
                 <?php
                 $departments->data_seek(0);
                 while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <select name="edit_room" id="edit_room" required>
@@ -224,7 +327,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php
                 $rooms->data_seek(0);
                 while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <button type="submit" id="save_button">Save Changes</button>
@@ -256,6 +359,105 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<script src="js/script.js"></script>
+<script>
+// Sidebar toggle functionality
+document.getElementById('toggleMenu').addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const container = document.getElementById('mainContainer');
+    const hamburger = document.getElementById('toggleMenu');
+    
+    sidebar.classList.toggle('open');
+    container.classList.toggle('shifted');
+    hamburger.classList.toggle('active');
+});
+
+// Modal functionality
+document.getElementById('closeEditModal').onclick = function() {
+    document.getElementById('document.getElementById('editModal').style.display = 'none';
+};
+
+// Add Department modal functionality
+document.getElementById('add_department_button').onclick = function() {
+    document.getElementById('addDepartmentModal').style.display = 'block';
+};
+
+document.getElementById('closeAddDepartmentModal').onclick = function() {
+    document.getElementById('addDepartmentModal').style.display = 'none';
+};
+
+// Add Room modal functionality
+document.getElementById('add_room_button').onclick = function() {
+    document.getElementById('addRoomModal').style.display = 'block';
+};
+
+document.getElementById('closeAddRoomModal').onclick = function() {
+    document.getElementById('addRoomModal').style.display = 'none';
+};
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+};
+
+// Open edit modal when clicking on an appointment
+document.querySelectorAll('.appointment').forEach(function(appointment) {
+    appointment.addEventListener('click', function() {
+        const appointmentId = this.getAttribute('data-id');
+        // You can add AJAX call here to fetch appointment details
+        document.getElementById('editModal').style.display = 'block';
+    });
+});
+
+// Handle edit form submission
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Add your edit form submission logic here
+    // You can use AJAX to submit the form data
+});
+
+// Handle appointment deletion
+document.getElementById('delete_button').addEventListener('click', function() {
+    if (confirm('Are you sure you want to delete this appointment?')) {
+        const appointmentId = document.getElementById('appointment_id').value;
+        // Add your deletion logic here
+        // You can use AJAX to send delete request
+    }
+});
+
+// Search functionality enhancement
+document.querySelector('[name="search_name"]').addEventListener('input', function(e) {
+    // You can add real-time search functionality here
+    // Using AJAX to fetch results as user types
+});
+
+// Mobile responsive enhancements
+function adjustForMobile() {
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('mainContainer').classList.remove('shifted');
+    }
+}
+
+window.addEventListener('resize', adjustForMobile);
+window.addEventListener('load', adjustForMobile);
+
+// Auto-close sidebar when clicking a link on mobile
+if (window.innerWidth <= 768) {
+    document.querySelectorAll('.sidebar a').forEach(link => {
+        link.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mainContainer').classList.remove('shifted');
+            document.getElementById('toggleMenu').classList.remove('active');
+        });
+    });
+}
+
+// Show edit modal if searched appointment exists
+<?php if ($searched_appointment): ?>
+    document.getElementById('editModal').style.display = 'block';
+<?php endif; ?>
+</script>
 </body>
 </html>
