@@ -55,6 +55,18 @@ if (isset($_POST['add_room'])) {
     exit();
 }
 
+// Search for appointments
+$searched_appointment = null;
+if (isset($_POST['search_booking'])) {
+    $search_name = $_POST['search_name'];
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE name LIKE ?");
+    $search_param = "%$search_name%";
+    $stmt->bind_param("s", $search_param);
+    $stmt->execute();
+    $searched_appointment = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
+
 // Fetch departments and rooms
 $departments = $conn->query("SELECT * FROM departments");
 $rooms = $conn->query("SELECT * FROM rooms");
@@ -156,23 +168,24 @@ while ($row = $bookings->fetch_assoc()) {
 
     <div class="form-actions">
         <div class="search-container">
-            <form method="POST">
-                <input type="text" name="search_name" placeholder="Search by Name" required>
-                <button type="submit" name="search_booking">Search</button>
-            </form>
-            <form method="POST" action="download_appointments.php">
-                <button type="submit" name="download_appointments">Download All Appointments</button>
-            </form>
-        </div>
+    <form method="POST">
+        <input type="text" name="search_name" placeholder="Search by Name" required>
+        <button type="submit" name="search_booking">Search</button>
+    </form>
+    <form method="POST" action="download_appointments.php">
+        <button type="submit" name="download_appointments">Download All Appointments</button>
+    </form>
+</div>
+
 
         <div class="form-container">
             <form method="POST" class="form">
                 <div class="form-grid">
-                    <input type="text" name="name" placeholder="Name" required>
-                    <input type="text" name="id_number" placeholder="ID Number" required>
+                    <input type="text" name="name" placeholder="Gruop Name" required>
+                    <input type="text" name="id_number" placeholder="Code Number" required>
                     <input type="date" name="date" required>
                     <input type="time" name="time" required>
-                    <textarea name="reason" placeholder="Reason" required></textarea>
+                    <textarea name="reason" placeholder="Purpose" required></textarea>
                     <select name="department" required>
                         <option value="">Department</option>
                         <?php while ($department = $departments->fetch_assoc()): ?>
@@ -216,11 +229,11 @@ while ($row = $bookings->fetch_assoc()) {
         <?php endfor; ?>
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-            <div class="day" onclick="showAppointments(<?= $day ?>)">
+            <div class="day">
                 <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" data-id="<?= $appointment['id'] ?>" onclick="openEditModal(<?= $appointment['id'] ?>)" style="background-color: <?= $appointment['color'] ?>">
+                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                             <?= $appointment['name'] ?><br>
                             <?= $appointment['department_name'] ?><br>
                             <?= $appointment['booking_time'] ?>
@@ -237,18 +250,18 @@ while ($row = $bookings->fetch_assoc()) {
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
         <form id="editForm">
-            <input type="hidden" name="appointment_id" id="appointment_id" value="">
-            <input type="text" name="edit_name" id="edit_name" required>
-            <input type="text" name="edit_id_number" id="edit_id_number" required>
-            <input type="date" name="edit_date" id="edit_date" required>
-            <input type="time" name="edit_time" id="edit_time" required>
-            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+            <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
+            <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+            <input type="time" name="edit_time" id="edit_time" value="<?= $searched_appointment['booking_time'] ?? '' ?>" required>
+            <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
             <select name="edit_department" id="edit_department" required>
                 <option value="">Department</option>
                 <?php
                 $departments->data_seek(0);
                 while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <select name="edit_room" id="edit_room" required>
@@ -256,7 +269,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php
                 $rooms->data_seek(0);
                 while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <button type="submit" id="save_button">Save Changes</button>
@@ -265,6 +278,40 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
+<div id="addDepartmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
+        <h2>Add Department</h2>
+        <form method="POST">
+            <input type="text" name="department_name" placeholder="Department Name" required>
+            <input type="color" name="color" value="#ff0000" required>
+            <button type="submit" name="add_department">Add Department</button>
+        </form>
+    </div>
+</div>
+
+<div id="addRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddRoomModal">&times;</span>
+        <h2>Add Room</h2>
+        <form method="POST">
+            <input type="text" name="room_name" placeholder="Room Name" required>
+            <button type="submit" name="add_room">Add Room</button>
+        </form>
+    </div>
+</div>
+
 <script src="js/script.js"></script>
+<script>
+    // Open the edit modal if a searched appointment is found
+    <?php if ($searched_appointment): ?>
+        document.getElementById('editModal').style.display = 'block';
+    <?php endif; ?>
+
+    // Close modal functionality
+    document.getElementById('closeEditModal').onclick = function() {
+        document.getElementById('editModal').style.display = 'none';
+    };
+</script>
 </body>
 </html>
