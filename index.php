@@ -181,11 +181,11 @@ while ($row = $bookings->fetch_assoc()) {
         <div class="form-container">
             <form method="POST" class="form">
                 <div class="form-grid">
-                    <input type="text" name="name" placeholder="Name" required>
-                    <input type="text" name="id_number" placeholder="ID Number" required>
+                    <input type="text" name="name" placeholder="Gruop Name" required>
+                    <input type="text" name="id_number" placeholder="Code Number" required>
                     <input type="date" name="date" required>
                     <input type="time" name="time" required>
-                    <textarea name="reason" placeholder="Reason" required></textarea>
+                    <textarea name="reason" placeholder="Purpose" required></textarea>
                     <select name="department" required>
                         <option value="">Department</option>
                         <?php while ($department = $departments->fetch_assoc()): ?>
