@@ -194,6 +194,10 @@ while ($row = $bookings->fetch_assoc()) {
             float: right;
             cursor: pointer;
         }
+
+        .day {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -279,12 +283,12 @@ while ($row = $bookings->fetch_assoc()) {
         <?php endfor; ?>
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-            <div class="day">
-                <div class="day-number" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)"><?= $day ?></div>
+            <div class="day" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)">
+                <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
                         <div class="appointment" 
-                             onclick="editExistingAppointment(<?= htmlspecialchars(json_encode($appointment)) ?>)"
+                             onclick="editExistingAppointment(<?= htmlspecialchars(json_encode($appointment)) ?>, event)"
                              data-id="<?= $appointment['id'] ?>" 
                              style="background-color: <?= $appointment['color'] ?>">
                             <?= $appointment['name'] ?><br>
@@ -423,7 +427,8 @@ while ($row = $bookings->fetch_assoc()) {
         return appointments[day]?.find(apt => apt.booking_time === time);
     }
 
-    function editExistingAppointment(appointment) {
+    function editExistingAppointment(appointment, event) {
+        event.stopPropagation(); // Prevent triggering the parent div's onclick event
         document.getElementById('timeSlotsModal').style.display = 'none';
         document.getElementById('editModal').style.display = 'block';
         document.getElementById('appointment_id').value = appointment.id;
