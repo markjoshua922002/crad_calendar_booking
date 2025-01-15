@@ -4,13 +4,19 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
-?>
 
-<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
+}
+
+// Fetch bookings
+$bookings = [];
+$result = $conn->query("SELECT * FROM bookings");
+while ($row = $result->fetch_assoc()) {
+    $date = date('j', strtotime($row['booking_date']));
+    $bookings[$date][] = $row;
 }
 
 // Handle form submissions
