@@ -165,6 +165,35 @@ while ($row = $bookings->fetch_assoc()) {
         .search-container button:hover {
             background-color: #0073e6;
         }
+        .time-slots-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .time-slot.occupied {
+            background-color: #ffebee;
+            cursor: pointer;
+        }
+
+        .modal-close {
+            float: right;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -251,10 +280,13 @@ while ($row = $bookings->fetch_assoc()) {
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
             <div class="day">
-                <div class="day-number"><?= $day ?></div>
+                <div class="day-number" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
+                        <div class="appointment" 
+                             onclick="editExistingAppointment(<?= htmlspecialchars(json_encode($appointment)) ?>)"
+                             data-id="<?= $appointment['id'] ?>" 
+                             style="background-color: <?= $appointment['color'] ?>">
                             <?= $appointment['name'] ?><br>
                             <?= $appointment['department_name'] ?><br>
                             <?= $appointment['booking_time'] ?>
@@ -322,6 +354,12 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
+<div id="timeSlotsModal" class="time-slots-modal">
+    <span class="modal-close" onclick="closeTimeSlotsModal()">×</span>
+    <h3>Available Time Slots</h3>
+    <div id="timeSlotsList"></div>
+</div>
+
 <script src="js/script.js"></script>
 <script>
     // Open the edit modal if a searched appointment is found
@@ -343,6 +381,71 @@ while ($row = $bookings->fetch_assoc()) {
             sidebar.classList.add('open');
         }
     };
+
+    function showTimeSlots(day, month, year) {
+        const modal = document.getElementById('timeSlotsModal');
+        const timeSlotsList = document.getElementById('timeSlotsList');
+        let html = '';
+        
+        // Generate time slots from 6 AM to 7 PM
+        for (let hour = 6; hour < 19; hour++) {
+            const timeString = `${hour.toString().padStart(2, '0')}:00`;
+            const dateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            
+            // Check if slot is occupied
+            const isOccupied = checkIfTimeSlotOccupied(day, timeString);
+            
+            html += `
+                <div class="time-slot ${isOccupied ? 'occupied' : ''}" 
+                     onclick="${isOccupied ? 'editExistingAppointment(' + JSON.stringify(findAppointment(day, timeString)) + ')' 
+                                         : ''}">
+                    ${hour > 12 ? (hour - 12) + ':00 PM' : hour + ':00 AM'}
+                    ${isOccupied ? '(Booked)' : '(Available)'}
+                </div>
+            `;
+        }
+        
+        timeSlotsList.innerHTML = html;
+        modal.style.display = 'block';
+    }
+
+    function closeTimeSlotsModal() {
+        document.getElementById('timeSlotsModal').style.display = 'none';
+    }
+
+    function checkIfTimeSlotOccupied(day, time) {
+        const appointments = <?= json_encode($appointments) ?>;
+        return appointments[day]?.some(apt => apt.booking_time === time) || false;
+    }
+
+    function findAppointment(day, time) {
+        const appointments = <?= json_encode($appointments) ?>;
+        return appointments[day]?.find(apt => apt.booking_time === time);
+    }
+
+    function editExistingAppointment(appointment) {
+        document.getElementById('timeSlotsModal').style.display = 'none';
+        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('appointment_id').value = appointment.id;
+        document.getElementById('edit_name').value = appointment.name;
+        document.getElementById('edit_id_number').value = appointment.id_number;
+        document.getElementById('edit_date').value = appointment.booking_date;
+        document.getElementById('edit_time').value = appointment.booking_time;
+        document.getElementById('edit_reason').value = appointment.reason;
+        document.getElementById('edit_department').value = appointment.department_id;
+    }
+
+    // Close modal when clicking X
+    document.getElementById('closeEditModal').onclick = function() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('editModal')) {
+            document.getElementById('editModal').style.display = 'none';
+        }
+    }
 </script>
 </body>
 </html>
