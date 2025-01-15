@@ -100,6 +100,13 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
         .sidebar {
             position: fixed;
             left: -150px; /* Hide sidebar by default */
@@ -165,6 +172,56 @@ while ($row = $bookings->fetch_assoc()) {
         .search-container button:hover {
             background-color: #0073e6;
         }
+        .container {
+            margin-left: 170px; /* Adjust margin to accommodate sidebar */
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+        }
+        .form-right {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .calendar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .day {
+            width: calc(100% / 7);
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -180,7 +237,7 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="faculty.php">FACULTY</a>
 </div>
 
-<div class="container" style="margin-left: 20px;"> <!-- Adjust margin to accommodate sidebar -->
+<div class="container">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
