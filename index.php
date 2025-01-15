@@ -102,7 +102,7 @@ while ($row = $bookings->fetch_assoc()) {
     <style>
         .sidebar {
             position: fixed;
-            left: 0;
+            left: -150px; /* Hide sidebar by default */
             top: 0;
             height: 100%;
             width: 150px;
@@ -111,6 +111,10 @@ while ($row = $bookings->fetch_assoc()) {
             flex-direction: column;
             align-items: center;
             padding-top: 20px;
+            transition: left 0.3s; /* Smooth transition */
+        }
+        .sidebar.open {
+            left: 0; /* Show sidebar when open */
         }
         .sidebar a {
             color: white;
@@ -123,6 +127,21 @@ while ($row = $bookings->fetch_assoc()) {
             margin-bottom: 10px;
         }
         .sidebar a:hover {
+            background-color: #003f7a;
+        }
+        .menu-button {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 1000; /* Ensure button is on top */
+        }
+        .menu-button:hover {
             background-color: #003f7a;
         }
         .search-container {
@@ -150,7 +169,9 @@ while ($row = $bookings->fetch_assoc()) {
 </head>
 <body>
 
-<div class="sidebar">
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
+<div class="sidebar" id="sidebar">
     <a href="home.php">HOME</a>
     <a href="index.php">BOOKING</a>
     <a href="hr.php">HR</a>
@@ -159,7 +180,7 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="faculty.php">FACULTY</a>
 </div>
 
-<div class="container" style="margin-left: 170px;">
+<div class="container" style="margin-left: 20px;"> <!-- Adjust margin to accommodate sidebar -->
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
         <h1>Booking Calendar System</h1>
@@ -311,6 +332,16 @@ while ($row = $bookings->fetch_assoc()) {
     // Close modal functionality
     document.getElementById('closeEditModal').onclick = function() {
         document.getElementById('editModal').style.display = 'none';
+    };
+
+    // Toggle sidebar functionality
+    document.getElementById('menuButton').onclick = function() {
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+        } else {
+            sidebar.classList.add('open');
+        }
     };
 </script>
 </body>
