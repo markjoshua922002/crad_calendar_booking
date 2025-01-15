@@ -179,11 +179,17 @@ while ($row = $bookings->fetch_assoc()) {
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative; /* Add relative positioning */
         }
         header {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
         .form-actions {
             display: flex;
