@@ -106,7 +106,6 @@ while ($row = $bookings->fetch_assoc()) {
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
         .sidebar {
             position: fixed;
@@ -174,7 +173,9 @@ while ($row = $bookings->fetch_assoc()) {
             background-color: #0073e6;
         }
         .container {
-            text-align: center; /* Center container content */
+            margin-left: 170px; /* Adjust margin to accommodate sidebar */
+            width: 100%;
+            max-width: 1200px;
         }
         header {
             display: flex;
