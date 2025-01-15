@@ -182,6 +182,69 @@ while ($row = $bookings->fetch_assoc()) {
 
 <div class="container" style="margin-left: 20px;"> <!-- Adjust margin to accommodate sidebar -->
     <header>
+        <img src="assets/bcplogo.png" alt="Logo" class="logo">
+        <h1>Booking Calendar System</h1>
+        <a href="logout.php" class="logout-button">Logout</a>
+    </header>
+
+    <div class="form-actions">
+        <div class="search-container">
+    <form method="POST">
+        <input type="text" name="search_name" placeholder="Search by Name" required>
+        <button type="submit" name="search_booking">Search</button>
+    </form>
+    <form method="POST" action="download_appointments.php">
+        <button type="submit" name="download_appointments">Download All Appointments</button>
+    </form>
+</div>
+
+
+        <div class="form-container">
+            <form method="POST" class="form">
+                <div class="form-grid">
+                    <input type="text" name="name" placeholder="Gruop Name" required>
+                    <input type="text" name="id_number" placeholder="Code Number" required>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                    <textarea name="reason" placeholder="Purpose" required></textarea>
+                    <select name="department" required>
+                        <option value="">Department</option>
+                        <?php while ($department = $departments->fetch_assoc()): ?>
+                            <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                    <select name="room" required>
+                        <option value="">Room Number</option>
+                        <?php while ($room = $rooms->fetch_assoc()): ?>
+                            <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <button type="submit" name="add_booking" class="book-button">Book</button>
+            </form>
+        </div>
+
+        <div class="form-right">
+            <button type="button" class="add-action" id="add_department_button">Add Department</button>
+            <button type="button" class="add-action" id="add_room_button">Add Room</button>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+        <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+        <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+    </div>
+
+    <div class="calendar">
+        <div>Sunday</div>
+        <div>Monday</div>
+        <div>Tuesday</div>
+        <div>Wednesday</div>
+        <div>Thursday</div>
+        <div>Friday</div>
+        <div>Saturday</div>
+
         <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
             <div class="day"></div>
         <?php endfor; ?>
