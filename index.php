@@ -306,7 +306,7 @@ while ($row = $bookings->fetch_assoc()) {
             $isFull = true;
             for ($hour = 6; $hour < 19; $hour++) {
                 $timeString = sprintf('%02d:00', $hour);
-                if (!isset($bookings[$day]) || !in_array($timeString, array_column($bookings[$day], 'booking_time'))) {
+                if (!isset($appointments[$day]) || !in_array($timeString, array_column($appointments[$day], 'booking_time'))) {
                     $isFull = false;
                     break;
                 }
