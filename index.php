@@ -204,6 +204,19 @@ while ($row = $bookings->fetch_assoc()) {
         .day {
             cursor: pointer;
         }
+
+        .time-slot.available {
+            background-color: #e8f5e9;
+            cursor: pointer;
+        }
+
+        .day.available {
+            background-color: #e8f5e9;
+        }
+
+        .day.full {
+            background-color: #ffebee;
+        }
     </style>
 </head>
 <body>
@@ -289,7 +302,17 @@ while ($row = $bookings->fetch_assoc()) {
         <?php endfor; ?>
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-            <div class="day" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)">
+            <?php
+            $isFull = true;
+            for ($hour = 6; $hour < 19; $hour++) {
+                $timeString = sprintf('%02d:00', $hour);
+                if (!isset($bookings[$day]) || !in_array($timeString, array_column($bookings[$day], 'booking_time'))) {
+                    $isFull = false;
+                    break;
+                }
+            }
+            ?>
+            <div class="day <?= $isFull ? 'full' : 'available' ?>" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)">
                 <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
@@ -403,14 +426,15 @@ while ($row = $bookings->fetch_assoc()) {
             const dateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
             
             // Check if slot is occupied
-            const isOccupied = checkIfTimeSlotOccupied(day, timeString);
+            const appointment = findAppointment(day, timeString);
+            const isOccupied = appointment !== undefined;
             
             html += `
-                <div class="time-slot ${isOccupied ? 'occupied' : ''}" 
-                     onclick="${isOccupied ? 'editExistingAppointment(' + JSON.stringify(findAppointment(day, timeString)) + ')' 
+                <div class="time-slot ${isOccupied ? 'occupied' : 'available'}" 
+                     onclick="${isOccupied ? 'editExistingAppointment(' + JSON.stringify(appointment) + ')' 
                                          : ''}">
                     ${hour > 12 ? (hour - 12) + ':00 PM' : hour + ':00 AM'}
-                    ${isOccupied ? '(Booked)' : '(Available)'}
+                    ${isOccupied ? `(${appointment.name}, ${appointment.department_name}, ${appointment.booking_time})` : '(Available)'}
                 </div>
             `;
         }
@@ -423,18 +447,12 @@ while ($row = $bookings->fetch_assoc()) {
         document.getElementById('timeSlotsModal').style.display = 'none';
     }
 
-    function checkIfTimeSlotOccupied(day, time) {
-        const appointments = <?= json_encode($appointments) ?>;
-        return appointments[day]?.some(apt => apt.booking_time === time) || false;
-    }
-
     function findAppointment(day, time) {
-        const appointments = <?= json_encode($appointments) ?>;
-        return appointments[day]?.find(apt => apt.booking_time === time);
+        const bookings = <?= json_encode($bookings) ?>;
+        return bookings[day]?.find(booking => booking.booking_time === time);
     }
 
-    function editExistingAppointment(appointment, event) {
-        event.stopPropagation(); // Prevent triggering the parent div's onclick event
+    function editExistingAppointment(appointment) {
         document.getElementById('timeSlotsModal').style.display = 'none';
         document.getElementById('editModal').style.display = 'block';
         document.getElementById('appointment_id').value = appointment.id;
