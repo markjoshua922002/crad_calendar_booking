@@ -146,7 +146,7 @@ while ($row = $bookings->fetch_assoc()) {
         }
         .search-container {
             margin-bottom: 20px;
-            text-align: center; /* Center search container */
+            text-align: left; /* Center search container */
         }
         .search-container input {
             padding: 10px;
