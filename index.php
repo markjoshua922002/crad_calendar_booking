@@ -146,7 +146,7 @@ while ($row = $bookings->fetch_assoc()) {
         }
         .search-container {
             margin-bottom: 20px;
-            text-align: left; /* Center search container */
+            text-align: center; /* Center search container */
         }
         .search-container input {
             padding: 10px;
@@ -282,7 +282,15 @@ while ($row = $bookings->fetch_assoc()) {
 
         .search-container {
             margin-bottom: 20px;
-            text-align: center; /* Center search container */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-container .left,
+        .search-container .right {
+            display: flex;
+            align-items: center;
         }
 
         .search-container input {
@@ -335,16 +343,23 @@ while ($row = $bookings->fetch_assoc()) {
 
     <div class="form-actions">
         <div class="search-container">
-    <form method="POST">
-        <input type="text" name="search_name" placeholder="Search by Name" required>
-        <button type="submit" name="search_booking">Search</button>
-    </form>
-    <form method="POST" action="download_appointments.php">
-        <button type="submit" name="download_appointments">Download All Appointments</button>
-    </form>
-</div>
+            <div class="left">
+                <form method="POST">
+                    <input type="text" name="search_name" placeholder="Search by Name" required>
+                    <button type="submit" name="search_booking">Search</button>
+                </form>
+                <form method="POST" action="download_appointments.php">
+                    <button type="submit" name="download_appointments">Download All Appointments</button>
+                </form>
+            </div>
+            <div class="right">
+                <button type="button" onclick="openAddRoomModal()">Add Room</button>
+                <button type="button" onclick="openAddDepartmentModal()">Add Department</button>
+            </div>
+        </div>
+    </div>
 
-
+    <div class="form-actions">
         <div class="form-container">
             <form method="POST" class="form">
                 <div class="form-grid">
@@ -489,6 +504,14 @@ while ($row = $bookings->fetch_assoc()) {
             sidebar.classList.add('open');
         }
     };
+
+    function openAddRoomModal() {
+        document.getElementById('addRoomModal').style.display = 'block';
+    }
+
+    function openAddDepartmentModal() {
+        document.getElementById('addDepartmentModal').style.display = 'block';
+    }
 </script>
 </body>
 </html>
