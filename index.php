@@ -284,13 +284,18 @@ while ($row = $bookings->fetch_assoc()) {
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .search-container .left {
+            display: flex;
             align-items: center;
         }
 
-        .search-container .left,
         .search-container .right {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
         .search-container input {
@@ -308,6 +313,7 @@ while ($row = $bookings->fetch_assoc()) {
             border-radius: 5px;
             cursor: pointer;
             margin-left: 5px;
+            margin-bottom: 5px;
         }
 
         .search-container button:hover {
@@ -348,11 +354,11 @@ while ($row = $bookings->fetch_assoc()) {
                     <input type="text" name="search_name" placeholder="Search by Name" required>
                     <button type="submit" name="search_booking">Search</button>
                 </form>
+            </div>
+            <div class="right">
                 <form method="POST" action="download_appointments.php">
                     <button type="submit" name="download_appointments">Download All Appointments</button>
                 </form>
-            </div>
-            <div class="right">
                 <button type="button" onclick="openAddRoomModal()">Add Room</button>
                 <button type="button" onclick="openAddDepartmentModal()">Add Department</button>
             </div>
