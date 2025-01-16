@@ -4,19 +4,13 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+?>
 
+<?php
 // Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
-}
-
-// Fetch bookings
-$bookings = [];
-$result = $conn->query("SELECT * FROM bookings");
-while ($row = $result->fetch_assoc()) {
-    $date = date('j', strtotime($row['booking_date']));
-    $bookings[$date][] = $row;
 }
 
 // Handle form submissions
@@ -103,7 +97,7 @@ while ($row = $bookings->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Scheduling System</title>
+    <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         .sidebar {
@@ -152,6 +146,7 @@ while ($row = $bookings->fetch_assoc()) {
         }
         .search-container {
             margin-bottom: 20px;
+            text-align: center; /* Center search container */
         }
         .search-container input {
             padding: 10px;
@@ -170,6 +165,52 @@ while ($row = $bookings->fetch_assoc()) {
         }
         .search-container button:hover {
             background-color: #0073e6;
+        }
+        .container {
+            margin-left: 20px; /* Adjust margin to accommodate sidebar */
+            text-align: center; /* Center container content */
+        }
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+        }
+        .form-right {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .calendar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .day {
+            width: calc(100% / 7);
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .time-slots-modal {
             display: none;
@@ -196,6 +237,11 @@ while ($row = $bookings->fetch_assoc()) {
             cursor: pointer;
         }
 
+        .time-slot.available {
+            background-color: #e8f5e9;
+            cursor: pointer;
+        }
+
         .modal-close {
             float: right;
             cursor: pointer;
@@ -203,11 +249,13 @@ while ($row = $bookings->fetch_assoc()) {
 
         .day {
             cursor: pointer;
-        }
-
-        .time-slot.available {
-            background-color: #e8f5e9;
-            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            display: inline-block;
+            width: 14%;
+            box-sizing: border-box;
+            text-align: center;
         }
 
         .day.available {
@@ -216,6 +264,52 @@ while ($row = $bookings->fetch_assoc()) {
 
         .day.full {
             background-color: #ffebee;
+        }
+
+        .menu-button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 1000; /* Ensure button is on top */
+        }
+
+        .menu-button:hover {
+            background-color: #003f7a;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center; /* Center search container */
+        }
+
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+
+        .search-container button {
+            padding: 10px;
+            background-color: #00509e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .search-container button:hover {
+            background-color: #0073e6;
+        }
+
+        .container {
+            margin: 0 auto; /* Center container content */
+            text-align: center; /* Center container content */
+            max-width: 1200px; /* Set a max-width to prevent it from stretching too much */
         }
     </style>
 </head>
@@ -232,11 +326,11 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="faculty.php">FACULTY</a>
 </div>
 
-<div class="container" style="margin-left: 20px;"> <!-- Adjust margin to accommodate sidebar -->
+<div class="container">
     <header>
         <img src="assets/bcplogo.png" alt="Logo" class="logo">
-        <h1>Smart Scheduling System</h1>
-        <a href="logout.php" class="logout-button">Logout</a>
+        <h1>Booking Calendar System</h1>
+        <a href="logout.php" class="logout-button" style="position: absolute; top: 10px; right: 10px;">Logout</a>
     </header>
 
     <div class="form-actions">
@@ -302,24 +396,11 @@ while ($row = $bookings->fetch_assoc()) {
         <?php endfor; ?>
 
         <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-            <?php
-            $isFull = true;
-            for ($hour = 6; $hour < 19; $hour++) {
-                $timeString = sprintf('%02d:00', $hour);
-                if (!isset($appointments[$day]) || !in_array($timeString, array_column($appointments[$day], 'booking_time'))) {
-                    $isFull = false;
-                    break;
-                }
-            }
-            ?>
-            <div class="day <?= $isFull ? 'full' : 'available' ?>" onclick="showTimeSlots(<?= $day ?>, <?= $month ?>, <?= $year ?>)">
+            <div class="day">
                 <div class="day-number"><?= $day ?></div>
                 <?php if (isset($appointments[$day])): ?>
                     <?php foreach ($appointments[$day] as $appointment): ?>
-                        <div class="appointment" 
-                             onclick="editExistingAppointment(<?= htmlspecialchars(json_encode($appointment)) ?>, event)"
-                             data-id="<?= $appointment['id'] ?>" 
-                             style="background-color: <?= $appointment['color'] ?>">
+                        <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                             <?= $appointment['name'] ?><br>
                             <?= $appointment['department_name'] ?><br>
                             <?= $appointment['booking_time'] ?>
@@ -387,12 +468,6 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<div id="timeSlotsModal" class="time-slots-modal">
-    <span class="modal-close" onclick="closeTimeSlotsModal()">×</span>
-    <h3>Available Time Slots</h3>
-    <div id="timeSlotsList"></div>
-</div>
-
 <script src="js/script.js"></script>
 <script>
     // Open the edit modal if a searched appointment is found
@@ -414,67 +489,6 @@ while ($row = $bookings->fetch_assoc()) {
             sidebar.classList.add('open');
         }
     };
-
-    function showTimeSlots(day, month, year) {
-        const modal = document.getElementById('timeSlotsModal');
-        const timeSlotsList = document.getElementById('timeSlotsList');
-        let html = '';
-        
-        // Generate time slots from 6 AM to 7 PM
-        for (let hour = 6; hour < 19; hour++) {
-            const timeString = `${hour.toString().padStart(2, '0')}:00`;
-            const dateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-            
-            // Check if slot is occupied
-            const appointment = findAppointment(day, timeString);
-            const isOccupied = appointment !== undefined;
-            
-            html += `
-                <div class="time-slot ${isOccupied ? 'occupied' : 'available'}" 
-                     onclick="${isOccupied ? 'editExistingAppointment(' + JSON.stringify(appointment) + ')' 
-                                         : ''}">
-                    ${hour > 12 ? (hour - 12) + ':00 PM' : hour + ':00 AM'}
-                    ${isOccupied ? `(${appointment.name}, ${appointment.department_name}, ${appointment.booking_time})` : '(Available)'}
-                </div>
-            `;
-        }
-        
-        timeSlotsList.innerHTML = html;
-        modal.style.display = 'block';
-    }
-
-    function closeTimeSlotsModal() {
-        document.getElementById('timeSlotsModal').style.display = 'none';
-    }
-
-    function findAppointment(day, time) {
-        const bookings = <?= json_encode($bookings) ?>;
-        return bookings[day]?.find(booking => booking.booking_time === time);
-    }
-
-    function editExistingAppointment(appointment) {
-        document.getElementById('timeSlotsModal').style.display = 'none';
-        document.getElementById('editModal').style.display = 'block';
-        document.getElementById('appointment_id').value = appointment.id;
-        document.getElementById('edit_name').value = appointment.name;
-        document.getElementById('edit_id_number').value = appointment.id_number;
-        document.getElementById('edit_date').value = appointment.booking_date;
-        document.getElementById('edit_time').value = appointment.booking_time;
-        document.getElementById('edit_reason').value = appointment.reason;
-        document.getElementById('edit_department').value = appointment.department_id;
-    }
-
-    // Close modal when clicking X
-    document.getElementById('closeEditModal').onclick = function() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('editModal')) {
-            document.getElementById('editModal').style.display = 'none';
-        }
-    }
 </script>
 </body>
 </html>
