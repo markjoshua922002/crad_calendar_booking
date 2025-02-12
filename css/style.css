@@ -25,6 +25,12 @@ body {
     transition: left 0.3s; /* Smooth transition */
     z-index: 1000; /* Ensure sidebar is on top */
 }
+
+/* z-index values:
+   1000 - Sidebar
+   500  - Container
+   100  - Menu button
+*/
 .sidebar.open {
     left: 0; /* Show sidebar when open */
 }
@@ -37,6 +43,7 @@ body {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 10px;
+    transition: background-color 0.3s; /* Smooth transition */
 }
 .sidebar a:hover {
     background-color: #003f7a;
@@ -55,10 +62,13 @@ body {
     font-size: 20px;
     z-index: 1001; /* Ensure button is on top */
 }
+.menu-button {
+    transition: background-color 0.3s; /* Smooth transition */
+}
 .menu-button:hover {
     background-color: #003f7a;
 }
-
+    z-index: 500; /* Lower than sidebar but higher than other elements */
 /* Container styles */
 .container {
     position: relative;
@@ -129,6 +139,10 @@ button,
     text-decoration: none;
 }
 
+button,
+.add-action {
+    transition: background-color 0.3s; /* Smooth transition */
+}
 button:hover,
 .add-action:hover {
     background-color: #0056b3;
@@ -168,6 +182,9 @@ button:hover,
     text-decoration: none;
 }
 
+.navigation a {
+    transition: background-color 0.3s; /* Smooth transition */
+}
 .navigation a:hover {
     background-color: #0056b3;
 }
@@ -175,18 +192,17 @@ button:hover,
 /* Updated month-year styles */
 .month-year {
     font-size: 24px;
-    font-weight: bold;
-    margin: 0 20px;
-    color: #333;
-}
-
-/* Calendar styles */
 .calendar {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
     background: #f8f8f8;
     padding: 20px;
     border-radius: 10px;
