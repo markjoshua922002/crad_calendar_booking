@@ -17,6 +17,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Additional Sidebar Toggle with 'active' class
+    menuButton.addEventListener("click", function () {
+        sidebar.classList.toggle("active");
+    });
+
     // Modal Handling
     const modals = {
         edit: {
