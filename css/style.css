@@ -5,15 +5,14 @@ body {
     background-color: #e6f7ff;
     background-image: url('../assets/bcpbg1.jpg');
     background-size: cover;
- /* Make the background cover the entire body */
-    background-position: center; /* Center the background image */
-    background-repeat: no-repeat; /* Prevent the background from repeating */
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Sidebar styles */
 .sidebar {
     position: fixed;
-    left: -150px; /* Hide sidebar by default */
+    left: -150px;
     top: 0;
     height: 100%;
     width: 150px;
@@ -22,10 +21,10 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
-    transition: left 0.3s; /* Smooth transition */
+    transition: left 0.3s;
 }
 .sidebar.open {
-    left: 0; /* Show sidebar when open */
+    left: 0;
 }
 .sidebar a {
     color: white;
@@ -52,7 +51,7 @@ body {
     padding: 10px;
     cursor: pointer;
     font-size: 20px;
-    z-index: 1000; /* Ensure button is on top */
+    z-index: 1000;
 }
 .menu-button:hover {
     background-color: #003f7a;
@@ -61,7 +60,7 @@ body {
 /* Search container styles */
 .search-container {
     margin-bottom: 20px;
-    text-align: center; /* Center search container */
+    text-align: center;
 }
 .search-container input {
     padding: 10px;
@@ -84,10 +83,10 @@ body {
 
 /* Container styles */
 .container {
-    margin-left: 20px; /* Adjust margin to accommodate sidebar */
-    text-align: center; /* Center container content */
-    max-width: 1200px; /* Increase max width */
-    margin: 0 auto; /* Center the container */
+    margin-left: 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
     background: white;
     border-radius: 10px;
@@ -97,22 +96,22 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items to the left */
+    justify-content: flex-start;
     margin-bottom: 20px;
 }
 
 .logo {
-    width: 100px; /* Adjust logo size */
-    margin-right: 20px; /* Space between logo and title */
+    width: 100px;
+    margin-right: 20px;
 }
 
 .form-container {
     flex: 1;
     margin-right: 20px;
-    background: #f8f8f8; /* Background for floating effect */
+    background: #f8f8f8;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for form */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
 }
@@ -146,23 +145,23 @@ header {
 button,
 .add-action {
     padding: 10px 15px;
-    background-color: #007BFF; /* Button color */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     text-align: center;
-    text-decoration: none; /* Remove underline */
+    text-decoration: none;
 }
 
 button:hover,
 .add-action:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3;
 }
 
 /* Book button styling */
 .book-button {
-    grid-column: span 3; /* Book button takes full width */
+    grid-column: span 3;
     padding: 10px;
     background-color: #007BFF;
     color: white;
@@ -185,39 +184,39 @@ button:hover,
 
 /* Navigation button styles */
 .navigation a {
-    padding: 10px 15px; /* Make it similar to button style */
-    background-color: #007BFF; /* Button color */
-    color: white; /* Text color */
-    border-radius: 5px; /* Rounded corners */
-    margin: 0 10px; /* Space between buttons */
-    display: inline-block; /* Make it behave like a button */
-    text-decoration: none; /* Remove underline */
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    margin: 0 10px;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .navigation a:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3;
 }
 
 /* Updated month-year styles */
 .month-year {
-    font-size: 24px; /* Increased font size */
+    font-size: 24px;
     font-weight: bold;
-    margin: 0 20px; /* Add margin for spacing */
-    color: #333; /* Darker color for better contrast */
+    margin: 0 20px;
+    color: #333;
 }
 
-/* Add these styles to ensure proper layout and design */
+/* Calendar styles */
 .calendar {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    background: #f8f8f8; /* Floating effect for calendar */
-    padding: 20px; /* Padding for inner space */
+    background: #f8f8f8;
+    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for calendar */
-    justify-content: start; /* Align to the left */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    justify-content: start;
 }
 
 .day {
@@ -259,10 +258,10 @@ button:hover,
 .weekday-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background-color: #fff; /* Ensure background is white */
-    padding: 10px 0; /* Padding for the header */
-    margin-bottom: 10px; /* Space between header and days */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
+    background-color: #fff;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .weekday-header div {
@@ -288,58 +287,58 @@ button:hover,
 .modal-content {
     background-color: #fefefe;
     margin: 5% auto;
-    padding: 30px; /* Increased padding for a more spacious layout */
+    padding: 30px;
     border: 1px solid #888;
-    width: 90%; /* Wider modal */
-    max-width: 600px; /* Increased max-width for better visibility */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .modal-content h2 {
-    margin: 0 0 20px; /* Spacing below the title */
-    font-size: 24px; /* Larger font size for the title */
-    text-align: center; /* Centered title */
-    color: #333; /* Darker title color */
+    margin: 0 0 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
 }
 
 .modal-content label {
-    font-weight: bold; /* Make labels bold for emphasis */
-    margin-bottom: 5px; /* Spacing below labels */
-    display: block; /* Ensure labels take full width */
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
 }
 
 .modal-content input,
 .modal-content textarea,
 .modal-content select {
-    width: 100%; /* Full width inputs */
-    padding: 10px; /* Padding for inputs */
-    margin-bottom: 15px; /* Spacing below inputs */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 14px; /* Font size for inputs */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
 }
 
 .modal-content .modal-footer {
-    display: flex; /* Flexbox for footer buttons */
-    justify-content: space-between; /* Space between buttons */
-    margin-top: 20px; /* Spacing above footer */
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
 .modal-content .modal-footer button {
-    padding: 10px 20px; /* Padding for buttons */
-    background-color: #007BFF; /* Button color */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .modal-content .modal-footer button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3;
 }
 
 .close {
@@ -358,19 +357,19 @@ button:hover,
 
 /* Logout button styling */
 .logout-button {
-    padding: 10px 15px; /* Same padding as other buttons */
-    background-color: #FF4C4C; /* Red color for logout button */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    position: absolute; /* Position it at the top right */
-    right: 20px; /* Space from the right */
-    top: 20px; /* Space from the top */
+    padding: 10px 15px;
+    background-color: #FF4C4C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
 
 .logout-button:hover {
-    background-color: #cc0000; /* Darker red on hover */
+    background-color: #cc0000;
 }
 
 /* Time slots modal styles */
