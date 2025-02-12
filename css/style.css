@@ -10,17 +10,6 @@ body {
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-/* Container styles */
-.container {
-    position: relative;
-    margin-left: 20px;
-    transition: margin-left 0.3s ease-in-out;
-    z-index: 1; /* Lower than sidebar */
-}
-
-.sidebar.open ~ .container {
-    margin-left: 170px; /* Push content when sidebar opens */
-}
 
 header {
     display: flex;
