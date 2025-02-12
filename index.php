@@ -97,6 +97,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/script.js"></script>
 </head>
 <body>
     <button class="menu-button" id="menuButton">&#9776;</button>
