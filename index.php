@@ -98,6 +98,52 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     <script defer src="js/script.js"></script>
+    <style>
+        .sidebar {
+            position: fixed;
+            left: -150px; /* Hide sidebar by default */
+            top: 0;
+            height: 100%;
+            width: 150px;
+            background-color: #0056b3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            transition: left 0.3s; /* Smooth transition */
+        }
+        .sidebar.open {
+            left: 0; /* Show sidebar when open */
+        }
+        .sidebar a {
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #003f7a;
+        }
+        .menu-button {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 1000; /* Ensure button is on top */
+        }
+        .menu-button:hover {
+            background-color: #003f7a;
+        }
+        </style>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
