@@ -22,9 +22,9 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
-    transition: left 0.3s; /* Smooth transition */
-    z-index: 999; /* Add this line */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Optional: better visibility */
+    transition: left 0.3s ease-in-out; /* Smooth transition */
+    z-index: 998; /* Lower than menu button but higher than content */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Optional: better visibility */
 }
 .sidebar.open {
     left: 0; /* Show sidebar when open */
@@ -54,10 +54,15 @@ body {
     padding: 10px;
     cursor: pointer;
     font-size: 20px;
-    z-index: 1000; /* Ensure button is on top */
+    z-index: 999; /* Ensure button is on top */
+    transition: left 0.3s ease-in-out;
 }
 .menu-button:hover {
     background-color: #003f7a;
+}
+
+.sidebar.open + .menu-button {
+    left: 160px; /* Move menu button with sidebar */
 }
 
 /* Search container styles */
@@ -86,14 +91,18 @@ body {
 
 /* Container styles */
 .container {
-    margin-left: 170px; /* 150px sidebar width + 20px gap */
-    transition: margin-left 0.3s; /* Match sidebar animation */
+    margin-left: 20px; /* 150px sidebar width + 20px gap */
+    transition: margin-left 0.3s ease-in-out; /* Match sidebar animation */
     text-align: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     background: white;
     border-radius: 10px;
+}
+
+.sidebar.open ~ .container {
+    margin-left: 170px; /* Push content when sidebar opens */
 }
 
 header {
