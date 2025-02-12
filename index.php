@@ -365,6 +365,38 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
+    <div class="form-actions">
+        <div class="form-container">
+            <form method="POST" class="form">
+                <div class="form-grid">
+                    <input type="text" name="name" placeholder="Gruop Name" required>
+                    <input type="text" name="id_number" placeholder="Code Number" required>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                    <textarea name="reason" placeholder="Purpose" required></textarea>
+                    <select name="department" required>
+                        <option value="">Department</option>
+                        <?php while ($department = $departments->fetch_assoc()): ?>
+                            <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                    <select name="room" required>
+                        <option value="">Room Number</option>
+                        <?php while ($room = $rooms->fetch_assoc()): ?>
+                            <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <button type="submit" name="add_booking" class="book-button">Book</button>
+            </form>
+        </div>
+
+        <div class="form-right">
+            <button type="button" class="add-action" id="add_department_button">Add Department</button>
+            <button type="button" class="add-action" id="add_room_button">Add Room</button>
+        </div>
+    </div>
+
     <div class="navigation">
         <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
         <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
@@ -406,22 +438,26 @@ while ($row = $bookings->fetch_assoc()) {
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
         <form id="editForm">
-            <input type="hidden" name="appointment_id" id="appointment_id">
-            <input type="text" name="edit_name" id="edit_name" required>
-            <input type="text" name="edit_id_number" id="edit_id_number" required>
-            <input type="date" name="edit_date" id="edit_date" required>
-            <input type="time" name="edit_time" id="edit_time" required>
-            <textarea name="edit_reason" id="edit_reason" required></textarea>
+            <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+            <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+            <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
+            <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+            <input type="time" name="edit_time" id="edit_time" value="<?= $searched_appointment['booking_time'] ?? '' ?>" required>
+            <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
             <select name="edit_department" id="edit_department" required>
                 <option value="">Department</option>
-                <?php while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                <?php
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <select name="edit_room" id="edit_room" required>
                 <option value="">Room Number</option>
-                <?php while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                <?php
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                 <?php endwhile; ?>
             </select>
             <button type="submit" id="save_button">Save Changes</button>
