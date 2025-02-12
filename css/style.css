@@ -126,6 +126,7 @@ button:hover,
     color: #333; /* Darker color for better contrast */
 }
 
+/* Add these styles to ensure proper layout and design */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -157,6 +158,7 @@ button:hover,
     padding: 5px;
     margin-top: 5px;
     border-radius: 3px;
+    cursor: pointer;
 }
 
 /* Weekday Header Styles with Shadow */
