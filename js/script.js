@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", function() {
         sidebar.classList.toggle("active");
     });
 
+    // Toggle sidebar functionality
+    document.getElementById('menuButton').onclick = function() {
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+        } else {
+            sidebar.classList.add('open');
+        }
+    };
+
     // Modal Handling
     const modals = {
         edit: {

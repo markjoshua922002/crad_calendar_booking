@@ -100,16 +100,16 @@ while ($row = $bookings->fetch_assoc()) {
     <script defer src="js/script.js"></script>
 </head>
 <body>
-    <button class="menu-button" id="menuButton">&#9776;</button>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
-    <div class="sidebar" id="sidebar">
-        <a href="home.php">HOME</a>
-        <a href="index.php">BOOKING</a>
-        <a href="hr.php">HR</a>
-        <a href="its.php">ITS</a>
-        <a href="osas.php">OSAS</a>
-        <a href="faculty.php">FACULTY</a>
-    </div>
+<div class="sidebar" id="sidebar">
+    <a href="home.php">HOME</a>
+    <a href="index.php">BOOKING</a>
+    <a href="hr.php">HR</a>
+    <a href="its.php">ITS</a>
+    <a href="osas.php">OSAS</a>
+    <a href="faculty.php">FACULTY</a>
+</div>
 
     <div class="container">
         <header>
