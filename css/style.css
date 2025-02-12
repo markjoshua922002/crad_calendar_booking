@@ -12,7 +12,7 @@ body {
 /* Sidebar styles */
 .sidebar {
     position: fixed;
-    left: -150px;
+    left: -150px; /* Hide sidebar by default */
     top: 0;
     height: 100%;
     width: 150px;
@@ -21,10 +21,10 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
-    transition: left 0.3s;
+    transition: left 0.3s; /* Smooth transition */
 }
 .sidebar.open {
-    left: 0;
+    left: 0; /* Show sidebar when open */
 }
 .sidebar a {
     color: white;
@@ -51,7 +51,7 @@ body {
     padding: 10px;
     cursor: pointer;
     font-size: 20px;
-    z-index: 1000;
+    z-index: 1000; /* Ensure button is on top */
 }
 .menu-button:hover {
     background-color: #003f7a;
