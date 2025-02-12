@@ -1,27 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Sidebar Toggle
-    const menuButton = document.getElementById('menuButton');
-    const sidebar = document.getElementById('sidebar');
-    const container = document.querySelector('.container');
-    
-    if (menuButton && sidebar) {
-        menuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            
-            // Dynamically adjust container margin
-            if (sidebar.classList.contains('open')) {
-                container.style.marginLeft = '170px';
-            } else {
-                container.style.marginLeft = '20px';
-            }
-        });
-    }
-
-    // Additional Sidebar Toggle with 'active' class
-    menuButton.addEventListener("click", function () {
-        sidebar.classList.toggle("active");
-    });
-
     // Toggle sidebar functionality
     document.getElementById('menuButton').onclick = function() {
         var sidebar = document.getElementById('sidebar');
