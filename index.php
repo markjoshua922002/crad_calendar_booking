@@ -111,6 +111,8 @@ while ($row = $bookings->fetch_assoc()) {
             align-items: center;
             padding-top: 20px;
             transition: left 0.3s; /* Smooth transition */
+            z-index: 999; /* Add this */
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Optional improvement */
         }
         .sidebar.open {
             left: 0; /* Show sidebar when open */
@@ -139,9 +141,14 @@ while ($row = $bookings->fetch_assoc()) {
             cursor: pointer;
             font-size: 20px;
             z-index: 1000; /* Ensure button is on top */
+            transition: left 0.3s;
         }
         .menu-button:hover {
             background-color: #003f7a;
+        }
+        .container {
+            margin-left: 20px !important; /* Force fixed margin */
+            transition: none !important; /* Disable container animation */
         }
         </style>
 </head>
