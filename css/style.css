@@ -10,7 +10,82 @@ body {
     background-repeat: no-repeat; /* Prevent the background from repeating */
 }
 
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    left: -150px; /* Hide sidebar by default */
+    top: 0;
+    height: 100%;
+    width: 150px;
+    background-color: #0056b3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    transition: left 0.3s; /* Smooth transition */
+}
+.sidebar.open {
+    left: 0; /* Show sidebar when open */
+}
+.sidebar a {
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.sidebar a:hover {
+    background-color: #003f7a;
+}
+
+/* Menu button styles */
+.menu-button {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1000; /* Ensure button is on top */
+}
+.menu-button:hover {
+    background-color: #003f7a;
+}
+
+/* Search container styles */
+.search-container {
+    margin-bottom: 20px;
+    text-align: center; /* Center search container */
+}
+.search-container input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 22px);
+}
+.search-container button {
+    padding: 10px;
+    background-color: #00509e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.search-container button:hover {
+    background-color: #0073e6;
+}
+
+/* Container styles */
 .container {
+    margin-left: 20px; /* Adjust margin to accommodate sidebar */
+    text-align: center; /* Center container content */
     max-width: 1200px; /* Increase max width */
     margin: 0 auto; /* Center the container */
     padding: 20px;
@@ -20,6 +95,7 @@ body {
 
 header {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: flex-start; /* Align items to the left */
     margin-bottom: 20px;
@@ -37,10 +113,14 @@ header {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for form */
+    display: flex;
+    justify-content: center;
 }
 
 .form-actions {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
@@ -97,8 +177,8 @@ button:hover,
 
 .navigation {
     display: flex;
-    align-items: center;
     justify-content: center;
+    margin-top: 20px;
     margin-bottom: 20px;
     width: 100%;
 }
@@ -128,9 +208,10 @@ button:hover,
 
 /* Add these styles to ensure proper layout and design */
 .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
     margin-bottom: 20px;
     background: #f8f8f8; /* Floating effect for calendar */
     padding: 20px; /* Padding for inner space */
@@ -142,9 +223,22 @@ button:hover,
 .day {
     background-color: #fff;
     border: 1px solid #ccc;
-    padding: 20px; /* Increase padding for larger area */
-    border-radius: 5px;
-    position: relative;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 4px;
+    display: inline-block;
+    width: 14%;
+    box-sizing: border-box;
+    text-align: center;
+    cursor: pointer;
+}
+
+.day.available {
+    background-color: #e8f5e9;
+}
+
+.day.full {
+    background-color: #ffebee;
 }
 
 .day-number {
@@ -200,6 +294,9 @@ button:hover,
     max-width: 600px; /* Increased max-width for better visibility */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .modal-content h2 {
@@ -274,4 +371,74 @@ button:hover,
 
 .logout-button:hover {
     background-color: #cc0000; /* Darker red on hover */
+}
+
+/* Time slots modal styles */
+.time-slots-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+.time-slot {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px 0;
+    cursor: pointer;
+}
+.time-slot.occupied {
+    background-color: #ffebee;
+    cursor: pointer;
+}
+.time-slot.available {
+    background-color: #e8f5e9;
+    cursor: pointer;
+}
+
+/* Modal close styles */
+.modal-close {
+    float: right;
+    cursor: pointer;
+}
+
+/* Search container styles */
+.search-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.search-container .left {
+    display: flex;
+    align-items: center;
+}
+.search-container .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.search-container input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 22px);
+}
+.search-container button {
+    padding: 10px;
+    background-color: #00509e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+.search-container button:hover {
+    background-color: #0073e6;
 }
