@@ -130,8 +130,6 @@ while ($row = $bookings->fetch_assoc()) {
                     <form method="POST" action="download_appointments.php">
                         <button type="submit" name="download_appointments">Download All Appointments</button>
                     </form>
-                    <button type="button" data-modal="room">Add Room</button>
-                    <button type="button" data-modal="department">Add Department</button>
                 </div>
             </div>
         </div>
@@ -163,8 +161,8 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
 
             <div class="form-right">
-                <button type="button" class="add-action" id="add_department_button">Add Department</button>
-                <button type="button" class="add-action" id="add_room_button">Add Room</button>
+            <button type="button" data-modal="room">Add Room</button>
+            <button type="button" data-modal="department">Add Department</button>
             </div>
         </div>
 
