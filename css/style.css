@@ -7,6 +7,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 /* Sidebar styles */
@@ -22,6 +23,8 @@ body {
     align-items: center;
     padding-top: 20px;
     transition: left 0.3s; /* Smooth transition */
+    z-index: 999; /* Add this line */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Optional: better visibility */
 }
 .sidebar.open {
     left: 0; /* Show sidebar when open */
@@ -83,7 +86,8 @@ body {
 
 /* Container styles */
 .container {
-    margin-left: 20px;
+    margin-left: 170px; /* 150px sidebar width + 20px gap */
+    transition: margin-left 0.3s; /* Match sidebar animation */
     text-align: center;
     max-width: 1200px;
     margin: 0 auto;
