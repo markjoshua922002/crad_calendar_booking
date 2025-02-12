@@ -21,16 +21,16 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
+    padding-top: 60px; /* Increased padding for menu button */
     transition: left 0.3s ease-in-out; /* Smooth transition */
-    z-index: 998; /* Lower than menu button but higher than content */
+    z-index: 1000; /* Higher than container */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Optional: better visibility */
 }
 .sidebar.open {
     left: 0; /* Show sidebar when open */
 }
 .sidebar a {
-    color: white;
+    color: white !important; /* Force white text */
     padding: 15px;
     text-align: center;
     text-decoration: none;
@@ -38,9 +38,10 @@ body {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 10px;
+    transition: background-color 0.2s;
 }
 .sidebar a:hover {
-    background-color: #003f7a;
+    background-color: #004080;
 }
 
 /* Menu button styles */
@@ -54,7 +55,7 @@ body {
     padding: 10px;
     cursor: pointer;
     font-size: 20px;
-    z-index: 999; /* Ensure button is on top */
+    z-index: 1001; /* Highest priority */
     transition: left 0.3s ease-in-out;
 }
 .menu-button:hover {
@@ -91,6 +92,7 @@ body {
 
 /* Container styles */
 .container {
+    position: relative;
     margin-left: 20px; /* 150px sidebar width + 20px gap */
     transition: margin-left 0.3s ease-in-out; /* Match sidebar animation */
     text-align: center;
@@ -99,6 +101,7 @@ body {
     padding: 20px;
     background: white;
     border-radius: 10px;
+    z-index: 1; /* Lower than sidebar */
 }
 
 .sidebar.open ~ .container {
@@ -306,151 +309,5 @@ button:hover,
     max-width: 600px;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.modal-content h2 {
-    margin: 0 0 20px;
-    font-size: 24px;
-    text-align: center;
-    color: #333;
-}
-
-.modal-content label {
-    font-weight: bold;
-    margin-bottom: 5px;
     display: block;
-}
-
-.modal-content input,
-.modal-content textarea,
-.modal-content select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.modal-content .modal-footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.modal-content .modal-footer button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.modal-content .modal-footer button:hover {
-    background-color: #0056b3;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Logout button styling */
-.logout-button {
-    padding: 10px 15px;
-    background-color: #FF4C4C;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-
-.logout-button:hover {
-    background-color: #cc0000;
-}
-
-/* Time slots modal styles */
-.time-slots-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-.time-slot {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin: 5px 0;
-    cursor: pointer;
-}
-.time-slot.occupied {
-    background-color: #ffebee;
-    cursor: pointer;
-}
-.time-slot.available {
-    background-color: #e8f5e9;
-    cursor: pointer;
-}
-
-/* Modal close styles */
-.modal-close {
-    float: right;
-    cursor: pointer;
-}
-
-/* Search container styles */
-.search-container {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-.search-container .left {
-    display: flex;
-    align-items: center;
-}
-.search-container .right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-.search-container input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: calc(100% - 22px);
-}
-.search-container button {
-    padding: 10px;
-    background-color: #00509e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 5px;
-    margin-bottom: 5px;
-}
-.search-container button:hover {
-    background-color: #0073e6;
 }
