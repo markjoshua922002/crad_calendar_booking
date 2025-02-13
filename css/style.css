@@ -7,9 +7,90 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    left: -150px; /* Hide sidebar by default */
+    top: 0;
+    height: 100%;
+    width: 150px;
+    background-color: #0056b3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    transition: left 0.3s; /* Smooth transition */
+}
+.sidebar.open {
+    left: 0; /* Show sidebar when open */
+}
+.sidebar a {
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.sidebar a:hover {
+    background-color: #003f7a;
+}
+
+/* Menu button styles */
+.menu-button {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1000; /* Ensure button is on top */
+}
+.menu-button:hover {
+    background-color: #003f7a;
+}
+
+/* Search container styles */
+.search-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.search-container input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 22px);
+}
+.search-container button {
+    padding: 10px;
+    background-color: #00509e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.search-container button:hover {
+    background-color: #0073e6;
+}
+
+/* Container styles */
+.container {
+    margin-left: 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
 
 header {
     display: flex;
@@ -73,10 +154,6 @@ button,
     text-decoration: none;
 }
 
-button,
-.add-action {
-    transition: background-color 0.3s; /* Smooth transition */
-}
 button:hover,
 .add-action:hover {
     background-color: #0056b3;
@@ -116,9 +193,6 @@ button:hover,
     text-decoration: none;
 }
 
-.navigation a {
-    transition: background-color 0.3s; /* Smooth transition */
-}
 .navigation a:hover {
     background-color: #0056b3;
 }
@@ -126,17 +200,18 @@ button:hover,
 /* Updated month-year styles */
 .month-year {
     font-size: 24px;
+    font-weight: bold;
+    margin: 0 20px;
+    color: #333;
+}
+
+/* Calendar styles */
 .calendar {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    background: #f8f8f8;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
     background: #f8f8f8;
     padding: 20px;
     border-radius: 10px;
