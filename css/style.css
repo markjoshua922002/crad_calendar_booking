@@ -10,6 +10,7 @@ body {
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
+
 header {
     display: flex;
     flex-direction: column;
@@ -25,7 +26,7 @@ header {
 
 .form-container {
     flex: 1;
-    margin-right: 0px;
+    margin-right: 20px;
     background: #f8f8f8;
     padding: 20px;
     border-radius: 10px;
