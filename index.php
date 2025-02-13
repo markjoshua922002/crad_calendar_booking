@@ -150,6 +150,21 @@ while ($row = $bookings->fetch_assoc()) {
             margin-left: 20px !important; /* Force fixed margin */
             transition: none !important; /* Disable container animation */
         }
+        
+        .weekday-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #fff; /* Ensure background is white */
+            padding: 10px 0; /* Padding for the header */
+            margin-bottom: 10px; /* Space between header and days */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
+        }
+
+    
+
+            
+    
+        
         </style>
     <link rel="stylesheet" href="css/style.css">
 </head>
