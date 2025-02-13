@@ -150,15 +150,68 @@ while ($row = $bookings->fetch_assoc()) {
             margin-left: 20px !important; /* Force fixed margin */
             transition: none !important; /* Disable container animation */
         }
-        
-        .weekday-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background-color: #fff; /* Ensure background is white */
-            padding: 10px 0; /* Padding for the header */
-            margin-bottom: 10px; /* Space between header and days */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
-        }
+
+        .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    background: #f8f8f8; /* Floating effect for calendar */
+    padding: 20px; /* Padding for inner space */
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for calendar */
+    justify-content: start; /* Align to the left */
+    grid-auto-rows: minmax(100px, auto); /* Ensure rows have a minimum height */
+}
+
+.day {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px; /* Increase padding for larger area */
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    grid-column: span 1; /* Ensure each day spans one column */
+}
+
+.day:hover {
+    background-color: #e6f7ff;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.appointment {
+    background-color: #007BFF;
+    color: white;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Weekday Header Styles with Shadow */
+.weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #fff; /* Ensure background is white */
+    padding: 10px 0; /* Padding for the header */
+    margin-bottom: 10px; /* Space between header and days */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
+}
+
+.weekday-header div {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
 
     
 
