@@ -151,6 +151,7 @@ while ($row = $bookings->fetch_assoc()) {
             transition: none !important; /* Disable container animation */
         }
         </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
