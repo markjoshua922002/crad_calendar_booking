@@ -137,6 +137,7 @@ button:hover,
     border-radius: 10px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for calendar */
     justify-content: start; /* Align to the left */
+    grid-auto-rows: minmax(100px, auto); /* Ensure rows have a minimum height */
 }
 
 .day {
@@ -151,6 +152,7 @@ button:hover,
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s;
+    grid-column: span 1; /* Ensure each day spans one column */
 }
 
 .day:hover {
