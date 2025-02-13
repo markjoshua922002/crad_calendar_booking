@@ -5,9 +5,9 @@ body {
     background-color: #e6f7ff;
     background-image: url('../assets/bcpbg1.jpg');
     background-size: cover;
- /* Make the background cover the entire body */
     background-position: center; /* Center the background image */
     background-repeat: no-repeat; /* Prevent the background from repeating */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .container {
@@ -145,6 +145,16 @@ button:hover,
     padding: 20px; /* Increase padding for larger area */
     border-radius: 5px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.day:hover {
+    background-color: #e6f7ff;
 }
 
 .day-number {
@@ -174,6 +184,7 @@ button:hover,
 .weekday-header div {
     text-align: center;
     font-weight: bold;
+    color: #333;
 }
 
 /* Modal styles */
