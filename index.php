@@ -165,6 +165,12 @@ while ($row = $bookings->fetch_assoc()) {
             <button type="button" data-modal="room">Add Room</button>
             <button type="button" data-modal="department">Add Department</button>
             </div>
+            <div class="right">
+                    <form method="POST" action="download_appointments.php">
+                        <button type="submit" name="download_appointments">Download All Appointments</button>
+                    </form>
+                </div>
+
         </div>
 
         <div class="navigation">
