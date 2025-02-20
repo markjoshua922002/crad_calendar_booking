@@ -264,30 +264,5 @@ while ($row = $bookings->fetch_assoc()) {
             </form>
         </div>
     </div>
-
-    <script src="js/script.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#time_range').timepicker({
-                timeFormat: 'h:i A',
-                interval: 30,
-                minTime: '12:00am',
-                maxTime: '11:30pm',
-                dynamic: false,
-                dropdown: true,
-                scrollbar: true
-            });
-
-            $('#edit_time_range').timepicker({
-                timeFormat: 'h:i A',
-                interval: 30,
-                minTime: '12:00am',
-                maxTime: '11:30pm',
-                dynamic: false,
-                dropdown: true,
-                scrollbar: true
-            });
-        });
-    </script>
 </body>
 </html>

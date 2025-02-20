@@ -124,4 +124,25 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+
+    // Timepicker Initialization
+    $('#time_range').timepicker({
+        timeFormat: 'h:i A',
+        interval: 30,
+        minTime: '12:00am',
+        maxTime: '11:30pm',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+
+    $('#edit_time_range').timepicker({
+        timeFormat: 'h:i A',
+        interval: 30,
+        minTime: '12:00am',
+        maxTime: '11:30pm',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
 });
