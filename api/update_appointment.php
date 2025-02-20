@@ -17,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['edit_name'];
     $id_number = $_POST['edit_id_number'];
     $date = $_POST['edit_date'];
-    $time_range = $_POST['edit_time_range'];
-    list($time_from, $time_to) = explode(' - ', $time_range);
+    $time_from = $_POST['edit_time_from'];
+    $time_to = $_POST['edit_time_to'];
     $reason = $_POST['edit_reason'];
     $department_id = $_POST['edit_department'];
     $room_id = $_POST['edit_room'];

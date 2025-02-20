@@ -100,9 +100,9 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
-    <script defer src="js/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
+    <script defer src="js/script.js"></script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -199,7 +199,7 @@ while ($row = $bookings->fetch_assoc()) {
                             <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                                 <?= $appointment['name'] ?><br>
                                 <?= $appointment['department_name'] ?><br>
-                                <?= date('h:i A', strtotime($appointment['booking_time_from'])) ?> - <?= date('h:i A', strtotime($appointment['booking_time_to'])) ?>
+                                <?= date('g:i A', strtotime($appointment['booking_time_from'])) ?> - <?= date('g:i A', strtotime($appointment['booking_time_to'])) ?>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -218,7 +218,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
                 <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
                 <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('h:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('h:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
+                <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
                 <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
                 <select name="edit_department" id="edit_department" required>
                     <option value="">Department</option>
@@ -265,34 +265,27 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
+    <script src="js/script.js"></script>
     <script>
         $(document).ready(function() {
             $('#time_range').timepicker({
                 timeFormat: 'h:i A',
                 interval: 30,
-                minTime: '6:00am',
-                maxTime: '11:00pm',
-                defaultTime: '6:00am',
-                startTime: '6:00am',
+                minTime: '12:00am',
+                maxTime: '11:30pm',
                 dynamic: false,
                 dropdown: true,
-                scrollbar: true,
-                zindex: 9999,
-                range: true
+                scrollbar: true
             });
 
             $('#edit_time_range').timepicker({
                 timeFormat: 'h:i A',
                 interval: 30,
-                minTime: '6:00am',
-                maxTime: '11:00pm',
-                defaultTime: '6:00am',
-                startTime: '6:00am',
+                minTime: '12:00am',
+                maxTime: '11:30pm',
                 dynamic: false,
                 dropdown: true,
-                scrollbar: true,
-                zindex: 9999,
-                range: true
+                scrollbar: true
             });
         });
     </script>
