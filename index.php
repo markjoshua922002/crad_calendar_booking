@@ -18,11 +18,12 @@ if (isset($_POST['add_booking'])) {
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = $_POST['date'];
-    $time = $_POST['time'];
+    $time_from = $_POST['time_from'];
+    $time_to = $_POST['time_to'];
     $reason = $_POST['reason'];
 
-    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, department_id, room_id, booking_date, booking_time, reason) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssiisss", $name, $id_number, $department, $room, $date, $time, $reason);
+    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssiissss", $name, $id_number, $department, $room, $date, $time_from, $time_to, $reason);
     $stmt->execute();
     $stmt->close();
 
@@ -137,7 +138,8 @@ while ($row = $bookings->fetch_assoc()) {
                         <input type="text" name="name" placeholder="Group Name" required>
                         <input type="text" name="id_number" placeholder="Code Number" required>
                         <input type="date" name="date" required>
-                        <input type="time" name="time" required>
+                        <input type="time" name="time_from" placeholder="From" required>
+                        <input type="time" name="time_to" placeholder="To" required>
                         <textarea name="reason" placeholder="Purpose" required></textarea>
                         <select name="department" required>
                             <option value="">Department</option>
@@ -195,7 +197,7 @@ while ($row = $bookings->fetch_assoc()) {
                             <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                                 <?= $appointment['name'] ?><br>
                                 <?= $appointment['department_name'] ?><br>
-                                <?= $appointment['booking_time'] ?>
+                                <?= $appointment['booking_time_from'] ?> - <?= $appointment['booking_time_to'] ?>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -214,7 +216,8 @@ while ($row = $bookings->fetch_assoc()) {
                 <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
                 <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
                 <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="time" name="edit_time" id="edit_time" value="<?= $searched_appointment['booking_time'] ?? '' ?>" required>
+                <input type="time" name="edit_time_from" id="edit_time_from" value="<?= $searched_appointment['booking_time_from'] ?? '' ?>" required>
+                <input type="time" name="edit_time_to" id="edit_time_to" value="<?= $searched_appointment['booking_time_to'] ?? '' ?>" required>
                 <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
                 <select name="edit_department" id="edit_department" required>
                     <option value="">Department</option>
