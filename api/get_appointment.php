@@ -28,10 +28,12 @@ $response = [
     'department_id' => $appointment['department_id'],
     'room_id' => $appointment['room_id'],
     'booking_date' => $appointment['booking_date'],
-    'booking_time' => $appointment['booking_time'],
+    'booking_time_from' => date('h:i A', strtotime($appointment['booking_time_from'])),
+    'booking_time_to' => date('h:i A', strtotime($appointment['booking_time_to'])),
     'reason' => $appointment['reason'],
     'departments' => $departments->fetch_all(MYSQLI_ASSOC),
     'rooms' => $rooms->fetch_all(MYSQLI_ASSOC)
 ];
 
 echo json_encode($response);
+?>

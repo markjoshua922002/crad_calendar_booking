@@ -17,14 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['edit_name'];
     $id_number = $_POST['edit_id_number'];
     $date = $_POST['edit_date'];
-    $time = $_POST['edit_time'];
+    $time_range = $_POST['edit_time_range'];
+    list($time_from, $time_to) = explode(' - ', $time_range);
     $reason = $_POST['edit_reason'];
     $department_id = $_POST['edit_department'];
     $room_id = $_POST['edit_room'];
 
     // Prepare the SQL statement
-    $stmt = $conn->prepare("UPDATE bookings SET name=?, id_number=?, booking_date=?, booking_time=?, reason=?, department_id=?, room_id=? WHERE id=?");
-    $stmt->bind_param("sssssiii", $name, $id_number, $date, $time, $reason, $department_id, $room_id, $appointment_id);
+    $stmt = $conn->prepare("UPDATE bookings SET name=?, id_number=?, booking_date=?, booking_time_from=?, booking_time_to=?, reason=?, department_id=?, room_id=? WHERE id=?");
+    $stmt->bind_param("sssssiii", $name, $id_number, $date, $time_from, $time_to, $reason, $department_id, $room_id, $appointment_id);
     
     // Execute the statement
     if ($stmt->execute()) {
