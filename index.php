@@ -225,13 +225,15 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
 
         <div class="calendar">
-            <div>Sunday</div>
-            <div>Monday</div>
-            <div>Tuesday</div>
-            <div>Wednesday</div>
-            <div>Thursday</div>
-            <div>Friday</div>
-            <div>Saturday</div>
+            <div class="weekday-header">
+                <div>Sunday</div>
+                <div>Monday</div>
+                <div>Tuesday</div>
+                <div>Wednesday</div>
+                <div>Thursday</div>
+                <div>Friday</div>
+                <div>Saturday</div>
+            </div>
 
             <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
                 <div class="day"></div>

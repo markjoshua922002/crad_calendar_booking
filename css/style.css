@@ -179,7 +179,7 @@ button:hover,
     grid-template-columns: repeat(7, 1fr);
     background-color: #0056b3; /* Dark blue background */
     color: white; /* White text color */
-    padding: 10px 0; /* Padding for the header */
+    padding: 5px 0; /* Padding for the header */
     margin-bottom: 10px; /* Space between header and days */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
     border-radius: 5px; /* Rounded corners */
@@ -188,9 +188,10 @@ button:hover,
 .weekday-header div {
     text-align: center;
     font-weight: bold;
-    font-size: 16px; /* Increase font size */
-    padding: 10px 0; /* Padding for each day */
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 0; /* Adjust padding for smaller box height */
     border-right: 1px solid #fff; /* White border between days */
+    text-transform: uppercase; /* Make text all caps */
 }
 
 .weekday-header div:last-child {
