@@ -147,7 +147,6 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $i ?>"><?= $i ?></option>
                             <?php endfor; ?>
                         </select>
-                        <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                         <select name="set" required>
                             <option value="">Set</option>
                             <?php foreach (range('A', 'F') as $set): ?>
@@ -169,6 +168,7 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                             <?php endwhile; ?>
                         </select>
+                        <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     </div>
                     <button type="submit" name="add_booking" class="book-button">Book</button>
                 </form>
@@ -236,7 +236,6 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <select name="edit_set" id="edit_set" required>
                     <option value="">Set</option>
                     <?php foreach (range('A', 'F') as $set): ?>
@@ -262,6 +261,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
+                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
             </form>
