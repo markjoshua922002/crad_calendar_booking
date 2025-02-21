@@ -136,9 +136,6 @@ button:hover,
     margin-bottom: 10px; /* Space between header and days */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
     border-radius: 5px; /* Rounded corners */
-    position: sticky; /* Make the header fixed */
-    top: 0; /* Position it at the top */
-    z-index: 1; /* Ensure it stays above other elements */
 }
 
 .weekday-header div {
