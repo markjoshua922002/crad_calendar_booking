@@ -76,6 +76,20 @@ if (isset($_POST['add_department'])) {
     exit();
 }
 
+// Handle room addition
+if (isset($_POST['add_room'])) {
+    $room_name = $_POST['room_name'];
+    $stmt = $conn->prepare("INSERT INTO rooms (name) VALUES (?)");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("s", $room_name);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: index.php');
+    exit();
+}
+
 // Search for appointments
 $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
@@ -202,6 +216,12 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                             <?php endwhile; ?>
                         </select>
+                        <select name="room" required>
+                            <option value="">Room Number</option>
+                            <?php while ($room = $rooms->fetch_assoc()): ?>
+                                <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     <div class="form-actions-right">
@@ -212,6 +232,7 @@ while ($row = $bookings->fetch_assoc()) {
 
             <div class="form-right">
                 <button type="button" data-modal="department">Add Department</button>
+                <button type="button" data-modal="room">Add Room</button>
                 <form method="POST" action="download_appointments.php">
                     <button type="submit" name="download_appointments">Download All Appointments</button>
                 </form>
@@ -247,6 +268,7 @@ while ($row = $bookings->fetch_assoc()) {
                             <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
                                 <?= $appointment['name'] ?><br>
                                 <?= $appointment['department_name'] ?><br>
+                                <?= $appointment['room_name'] ?><br>
                                 <?= date('g:i A', strtotime($appointment['booking_time_from'])) ?> - <?= date('g:i A', strtotime($appointment['booking_time_to'])) ?>
                             </div>
                         <?php endforeach; ?>
