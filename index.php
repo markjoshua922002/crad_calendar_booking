@@ -25,6 +25,11 @@ if (isset($_POST['add_booking'])) {
     $time_to = date('H:i:s', strtotime($_POST['time_to']));
     $reason = $_POST['reason'];
 
+    // Debugging statements
+    echo "Date: $date<br>";
+    echo "Time From: $time_from<br>";
+    echo "Time To: $time_to<br>";
+
     // Check for double booking
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
     if (!$stmt) {
