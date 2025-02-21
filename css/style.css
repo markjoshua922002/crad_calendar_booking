@@ -192,6 +192,10 @@ button:hover,
     padding: 5px 0; /* Adjust padding for smaller box height */
     border-right: 1px solid #fff; /* White border between days */
     text-transform: uppercase; /* Make text all caps */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px; /* Adjust height to align with text */
 }
 
 .weekday-header div:last-child {
