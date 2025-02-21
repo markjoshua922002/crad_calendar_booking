@@ -71,20 +71,6 @@ if (isset($_POST['add_department'])) {
     exit();
 }
 
-// Handle room addition
-if (isset($_POST['add_room'])) {
-    $room_name = $_POST['room_name'];
-    $stmt = $conn->prepare("INSERT INTO rooms (name) VALUES (?)");
-    if (!$stmt) {
-        die('Prepare failed: ' . $conn->error);
-    }
-    $stmt->bind_param("s", $room_name);
-    $stmt->execute();
-    $stmt->close();
-    header('Location: index.php');
-    exit();
-}
-
 // Search for appointments
 $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
@@ -220,7 +206,6 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
 
             <div class="form-right">
-                <button type="button" data-modal="room">Add Room</button>
                 <button type="button" data-modal="department">Add Department</button>
                 <form method="POST" action="download_appointments.php">
                     <button type="submit" name="download_appointments">Download All Appointments</button>
