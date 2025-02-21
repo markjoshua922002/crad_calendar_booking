@@ -20,8 +20,8 @@ if (isset($_POST['add_booking'])) {
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = $_POST['date'];
-    $time_range = $_POST['time_range'];
-    list($time_from, $time_to) = explode(' - ', $time_range);
+    $time_from = $_POST['time_from'];
+    $time_to = $_POST['time_to'];
     $reason = $_POST['reason'];
 
     $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, set, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -107,7 +107,7 @@ while ($row = $bookings->fetch_assoc()) {
     <script defer src="js/script.js"></script>
     <script>
         $(document).ready(function(){
-            $('#time_range').timepicker({
+            $('#time_from, #time_to').timepicker({
                 timeFormat: 'h:i A',
                 interval: 30,
                 minTime: '6:00am',
@@ -167,7 +167,8 @@ while ($row = $bookings->fetch_assoc()) {
                             <?php endforeach; ?>
                         </select>
                         <input type="date" name="date" required>
-                        <input type="text" name="time_range" id="time_range" placeholder="From - To" required>
+                        <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
+                        <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
                         <textarea name="reason" placeholder="Agenda" required></textarea>
                         <select name="department" required>
                             <option value="">Department</option>
@@ -255,7 +256,8 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php endforeach; ?>
                 </select>
                 <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
+                <input type="text" name="edit_time_from" id="edit_time_from" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) : '' ?>" required>
+                <input type="text" name="edit_time_to" id="edit_time_to" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
                 <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
                 <select name="edit_department" id="edit_department" required>
                     <option value="">Department</option>
