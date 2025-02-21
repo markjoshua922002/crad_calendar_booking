@@ -27,16 +27,16 @@ if (isset($_POST['add_booking'])) {
     $reason = $_POST['reason'];
 
     // Check for double booking
-    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?)) AND `set` = ? AND id_number = ? AND department_id = ?");
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
-    $stmt->bind_param("sissssssi", $date, $room, $time_to, $time_from, $time_from, $time_to, $set, $id_number, $department);
+    $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $warning = "Double booking detected for the specified time, date, set, group number, department, and room.";
+        $warning = "Double booking detected for the specified time, date, and room.";
     } else {
         $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
