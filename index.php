@@ -28,7 +28,7 @@ if (isset($_POST['add_booking'])) {
 
     // Check for double booking
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND ((booking_time_from <= ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to >= ?)) AND set = ? AND id_number = ? AND department_id = ?");
-    $stmt->bind_param("sssssssi", $date, $time_to, $time_from, $time_from, $time_to, $set, $id_number, $department);
+    $stmt->bind_param("sssssssi", $date, $booking_time_to, $booking_time_from, $booking_time_from, $booking_time_to, $set, $id_number, $department);
     $stmt->execute();
     $result = $stmt->get_result();
 
