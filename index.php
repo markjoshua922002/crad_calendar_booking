@@ -147,7 +147,7 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $i ?>"><?= $i ?></option>
                             <?php endfor; ?>
                         </select>
-                        <input type="text" name="group_members" placeholder="Group Members" required>
+                        <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                         <select name="set" required>
                             <option value="">Set</option>
                             <?php foreach (range('A', 'F') as $set): ?>
@@ -236,7 +236,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-                <input type="text" name="edit_group_members" id="edit_group_members" value="<?= $searched_appointment['group_members'] ?? '' ?>" required>
+                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <select name="edit_set" id="edit_set" required>
                     <option value="">Set</option>
                     <?php foreach (range('A', 'F') as $set): ?>
