@@ -20,7 +20,7 @@ if (isset($_POST['add_booking'])) {
     $group_members = $_POST['group_members'];
     $set = $_POST['set'];
     $department = $_POST['department'];
-    $date = $_POST['date'];
+    $date = date('Y-m-d', strtotime($_POST['date'])); // Ensure date is in 'YYYY-MM-DD' format
     $time_from = date('H:i:s', strtotime($_POST['time_from']));
     $time_to = date('H:i:s', strtotime($_POST['time_to']));
     $reason = $_POST['reason'];
