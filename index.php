@@ -20,6 +20,7 @@ if (isset($_POST['add_booking'])) {
     $group_members = $_POST['group_members'];
     $set = $_POST['set'];
     $department = $_POST['department'];
+    $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date'])); // Ensure date is in 'YYYY-MM-DD' format
     $time_from = date('H:i:s', strtotime($_POST['time_from']));
     $time_to = date('H:i:s', strtotime($_POST['time_to']));
@@ -31,22 +32,22 @@ if (isset($_POST['add_booking'])) {
     echo "Time To: $time_to<br>";
 
     // Check for double booking
-    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
-    $stmt->bind_param("sssss", $date, $time_to, $time_from, $time_from, $time_to);
+    $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $warning = "Double booking detected for the specified time and date.";
+        $warning = "Double booking detected for the specified time, date, and room.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, `set`, department_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Prepare failed: ' . $conn->error);
         }
-        $stmt->bind_param("ssssissss", $name, $id_number, $group_members, $set, $department, $date, $time_from, $time_to, $reason);
+        $stmt->bind_param("ssssisssss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
         if ($stmt->execute()) {
             echo "Booking successfully added.";
         } else {
