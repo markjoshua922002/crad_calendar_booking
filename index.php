@@ -155,7 +155,7 @@ while ($row = $bookings->fetch_assoc()) {
                         </select>
                         <input type="date" name="date" required>
                         <input type="text" name="time_range" id="time_range" placeholder="From - To" required>
-                        <textarea name="reason" placeholder="Purpose" required></textarea>
+                        <textarea name="reason" placeholder="Agenda" required></textarea>
                         <select name="department" required>
                             <option value="">Department</option>
                             <?php while ($department = $departments->fetch_assoc()): ?>
@@ -175,15 +175,12 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
 
             <div class="form-right">
-            <button type="button" data-modal="room">Add Room</button>
-            <button type="button" data-modal="department">Add Department</button>
+                <button type="button" data-modal="room">Add Room</button>
+                <button type="button" data-modal="department">Add Department</button>
+                <form method="POST" action="download_appointments.php">
+                    <button type="submit" name="download_appointments">Download All Appointments</button>
+                </form>
             </div>
-            <div class="right">
-                    <form method="POST" action="download_appointments.php">
-                        <button type="submit" name="download_appointments">Download All Appointments</button>
-                    </form>
-                </div>
-
         </div>
 
         <div class="navigation">
