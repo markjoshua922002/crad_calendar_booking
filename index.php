@@ -15,6 +15,8 @@ if ($conn->connect_error) {
 if (isset($_POST['add_booking'])) {
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
+    $group_members = $_POST['group_members'];
+    $set = $_POST['set'];
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = $_POST['date'];
@@ -22,8 +24,8 @@ if (isset($_POST['add_booking'])) {
     list($time_from, $time_to) = explode(' - ', $time_range);
     $reason = $_POST['reason'];
 
-    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssiissss", $name, $id_number, $department, $room, $date, $time_from, $time_to, $reason);
+    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, set, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssissss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
     $stmt->execute();
     $stmt->close();
 
@@ -138,12 +140,19 @@ while ($row = $bookings->fetch_assoc()) {
             <div class="form-container">
                 <form method="POST" class="form">
                     <div class="form-grid">
-                        <input type="text" name="name" placeholder="Group Name" required>
+                        <input type="text" name="name" placeholder="Research Adviser's Name" required>
                         <select name="id_number" required>
                             <option value="">Group Number</option>
                             <?php for ($i = 1; $i <= 200; $i++): ?>
                                 <option value="<?= $i ?>"><?= $i ?></option>
                             <?php endfor; ?>
+                        </select>
+                        <input type="text" name="group_members" placeholder="Group Members" required>
+                        <select name="set" required>
+                            <option value="">Set</option>
+                            <?php foreach (range('A', 'F') as $set): ?>
+                                <option value="<?= $set ?>"><?= $set ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <input type="date" name="date" required>
                         <input type="text" name="time_range" id="time_range" placeholder="From - To" required>
@@ -226,6 +235,13 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php for ($i = 1; $i <= 200; $i++): ?>
                         <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
                     <?php endfor; ?>
+                </select>
+                <input type="text" name="edit_group_members" id="edit_group_members" value="<?= $searched_appointment['group_members'] ?? '' ?>" required>
+                <select name="edit_set" id="edit_set" required>
+                    <option value="">Set</option>
+                    <?php foreach (range('A', 'F') as $set): ?>
+                        <option value="<?= $set ?>" <?= (isset($searched_appointment) && $searched_appointment['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
+                    <?php endforeach; ?>
                 </select>
                 <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
                 <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
