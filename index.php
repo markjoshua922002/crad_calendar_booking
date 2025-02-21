@@ -224,17 +224,17 @@ while ($row = $bookings->fetch_assoc()) {
             <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
         </div>
 
-        <div class="calendar">
-            <div class="weekday-header">
-                <div>Sunday</div>
-                <div>Monday</div>
-                <div>Tuesday</div>
-                <div>Wednesday</div>
-                <div>Thursday</div>
-                <div>Friday</div>
-                <div>Saturday</div>
-            </div>
+        <div class="weekday-header">
+            <div>SUNDAY</div>
+            <div>MONDAY</div>
+            <div>TUESDAY</div>
+            <div>WEDNESDAY</div>
+            <div>THURSDAY</div>
+            <div>FRIDAY</div>
+            <div>SATURDAY</div>
+        </div>
 
+        <div class="calendar">
             <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
                 <div class="day"></div>
             <?php endfor; ?>
