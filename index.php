@@ -22,8 +22,8 @@ if (isset($_POST['add_booking'])) {
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = $_POST['date'];
-    $time_from = $_POST['time_from'];
-    $time_to = $_POST['time_to'];
+    $time_from = date('H:i:s', strtotime($_POST['time_from']));
+    $time_to = date('H:i:s', strtotime($_POST['time_to']));
     $reason = $_POST['reason'];
 
     // Check for double booking
