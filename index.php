@@ -105,6 +105,19 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#time_range').timepicker({
+                timeFormat: 'h:i A',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '11:00pm',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
+        });
+    </script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -171,7 +184,7 @@ while ($row = $bookings->fetch_assoc()) {
                     </div>
                     <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     <div class="form-actions-right">
-                        <button type="submit" name="add_booking" class="book-button">Book</button>
+                        <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
                     </div>
                 </form>
             </div>
