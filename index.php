@@ -24,13 +24,24 @@ if (isset($_POST['add_booking'])) {
     $time_to = $_POST['time_to'];
     $reason = $_POST['reason'];
 
-    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, set, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssissss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
+    // Check for double booking
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND ((booking_time_from <= ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to >= ?)) AND set = ? AND id_number = ? AND department_id = ?");
+    $stmt->bind_param("sssssssi", $date, $time_to, $time_from, $time_from, $time_to, $set, $id_number, $department);
     $stmt->execute();
-    $stmt->close();
+    $result = $stmt->get_result();
 
-    header('Location: index.php');
-    exit();
+    if ($result->num_rows > 0) {
+        $warning = "Double booking detected for the specified time, date, set, group number, and department.";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, set, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssissss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
+        $stmt->execute();
+        $stmt->close();
+
+        header('Location: index.php');
+        exit();
+    }
+    $stmt->close();
 }
 
 // Handle department addition
@@ -151,6 +162,9 @@ while ($row = $bookings->fetch_assoc()) {
 
         <div class="form-actions">
             <div class="form-container">
+                <?php if (isset($warning)): ?>
+                    <div class="warning"><?= $warning ?></div>
+                <?php endif; ?>
                 <form method="POST" class="form">
                     <div class="form-grid">
                         <input type="text" name="name" placeholder="Research Adviser's Name" required>
