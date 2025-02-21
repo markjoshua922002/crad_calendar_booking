@@ -43,7 +43,11 @@ if (isset($_POST['add_booking'])) {
             die('Prepare failed: ' . $conn->error);
         }
         $stmt->bind_param("sssssissss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            echo "Booking successfully added.";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
         $stmt->close();
 
         header('Location: index.php');
