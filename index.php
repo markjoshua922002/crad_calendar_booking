@@ -194,6 +194,12 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php endif; ?>
                 <form method="POST" class="form">
                     <div class="form-grid">
+                        <select name="department" required>
+                            <option value="">Department</option>
+                            <?php while ($department = $departments->fetch_assoc()): ?>
+                                <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                            <?php endwhile; ?>
+                        </select>
                         <input type="text" name="name" placeholder="Research Adviser's Name" required>
                         <select name="id_number" required>
                             <option value="">Group Number</option>
@@ -211,12 +217,6 @@ while ($row = $bookings->fetch_assoc()) {
                         <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
                         <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
                         <textarea name="reason" placeholder="Agenda" required></textarea>
-                        <select name="department" required>
-                            <option value="">Department</option>
-                            <?php while ($department = $departments->fetch_assoc()): ?>
-                                <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
                         <select name="room" required>
                             <option value="">Room Number</option>
                             <?php while ($room = $rooms->fetch_assoc()): ?>
