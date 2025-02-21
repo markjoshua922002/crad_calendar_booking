@@ -209,38 +209,6 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 
     <!-- Modals -->
-    <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
-        <div class="modal-content">
-            <span class="close" id="closeEditModal">&times;</span>
-            <h2>Edit Appointment</h2>
-            <form id="editForm">
-                <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
-                <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
-                <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
-                <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
-                <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
-                <select name="edit_department" id="edit_department" required>
-                    <option value="">Department</option>
-                    <?php
-                    $departments->data_seek(0);
-                    while ($department = $departments->fetch_assoc()): ?>
-                        <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
-                    <?php endwhile; ?>
-                </select>
-                <select name="edit_room" id="edit_room" required>
-                    <option value="">Room Number</option>
-                    <?php
-                    $rooms->data_seek(0);
-                    while ($room = $rooms->fetch_assoc()): ?>
-                        <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
-                    <?php endwhile; ?>
-                </select>
-                <button type="submit" id="save_button">Save Changes</button>
-                <button type="button" id="delete_button">Delete Appointment</button>
-            </form>
-        </div>
-    </div>
 
     <div id="addDepartmentModal" class="modal">
         <div class="modal-content">
