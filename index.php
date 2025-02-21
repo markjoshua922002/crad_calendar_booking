@@ -170,7 +170,9 @@ while ($row = $bookings->fetch_assoc()) {
                         </select>
                     </div>
                     <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
-                    <button type="submit" name="add_booking" class="book-button">Book</button>
+                    <div class="form-actions-right">
+                        <button type="submit" name="add_booking" class="book-button">Book</button>
+                    </div>
                 </form>
             </div>
 
