@@ -50,8 +50,9 @@ if (isset($_POST['add_booking'])) {
         }
         $stmt->close();
 
-        header('Location: index.php');
-        exit();
+        // Comment out the header redirect for debugging purposes
+        // header('Location: index.php');
+        // exit();
     }
     $stmt->close();
 }
