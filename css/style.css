@@ -126,7 +126,39 @@ button:hover,
     color: #333; /* Darker color for better contrast */
 }
 
-/* Add these styles to ensure proper layout and design */
+/* Weekday Header Styles with Shadow */
+.weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #0056b3; /* Dark blue background */
+    color: white; /* White text color */
+    padding: 5px 0; /* Padding for the header */
+    margin-bottom: 10px; /* Space between header and days */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
+    border-radius: 5px; /* Rounded corners */
+    position: sticky; /* Make the header fixed */
+    top: 0; /* Position it at the top */
+    z-index: 1; /* Ensure it stays above other elements */
+}
+
+.weekday-header div {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 0; /* Adjust padding for smaller box height */
+    border-right: 1px solid #fff; /* White border between days */
+    text-transform: uppercase; /* Make text all caps */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px; /* Adjust height to align with text */
+}
+
+.weekday-header div:last-child {
+    border-right: none; /* Remove border for the last day */
+}
+
+/* Calendar Styles */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -171,38 +203,6 @@ button:hover,
     margin-top: 5px;
     border-radius: 3px;
     cursor: pointer;
-}
-
-/* Weekday Header Styles with Shadow */
-.weekday-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #0056b3; /* Dark blue background */
-    color: white; /* White text color */
-    padding: 5px 0; /* Padding for the header */
-    margin-bottom: 10px; /* Space between header and days */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow above the weekdays */
-    border-radius: 5px; /* Rounded corners */
-    position: sticky; /* Make the header fixed */
-    top: 0; /* Position it at the top */
-    z-index: 1; /* Ensure it stays above other elements */
-}
-
-.weekday-header div {
-    text-align: center;
-    font-weight: bold;
-    font-size: 14px; /* Adjust font size */
-    padding: 5px 0; /* Adjust padding for smaller box height */
-    border-right: 1px solid #fff; /* White border between days */
-    text-transform: uppercase; /* Make text all caps */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px; /* Adjust height to align with text */
-}
-
-.weekday-header div:last-child {
-    border-right: none; /* Remove border for the last day */
 }
 
 /* Search container styles */
