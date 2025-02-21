@@ -139,7 +139,12 @@ while ($row = $bookings->fetch_assoc()) {
                 <form method="POST" class="form">
                     <div class="form-grid">
                         <input type="text" name="name" placeholder="Group Name" required>
-                        <input type="text" name="id_number" placeholder="Code Number" required>
+                        <select name="id_number" required>
+                            <option value="">Group Number</option>
+                            <?php for ($i = 1; $i <= 200; $i++): ?>
+                                <option value="<?= $i ?>"><?= $i ?></option>
+                            <?php endfor; ?>
+                        </select>
                         <input type="date" name="date" required>
                         <input type="text" name="time_range" id="time_range" placeholder="From - To" required>
                         <textarea name="reason" placeholder="Purpose" required></textarea>
@@ -216,7 +221,12 @@ while ($row = $bookings->fetch_assoc()) {
             <form id="editForm">
                 <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
                 <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
-                <input type="text" name="edit_id_number" id="edit_id_number" value="<?= $searched_appointment['id_number'] ?? '' ?>" required>
+                <select name="edit_id_number" id="edit_id_number" required>
+                    <option value="">Group Number</option>
+                    <?php for ($i = 1; $i <= 200; $i++): ?>
+                        <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
                 <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
                 <input type="text" name="edit_time_range" id="edit_time_range" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) . ' - ' . date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
                 <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
