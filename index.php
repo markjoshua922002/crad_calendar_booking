@@ -28,7 +28,10 @@ if (isset($_POST['add_booking'])) {
 
     // Check for double booking
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND ((booking_time_from <= ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to >= ?)) AND set = ? AND id_number = ? AND department_id = ?");
-    $stmt->bind_param("sssssssi", $date, $booking_time_to, $booking_time_from, $booking_time_from, $booking_time_to, $set, $id_number, $department);
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("sssssssi", $date, $time_to, $time_from, $time_from, $time_to, $set, $id_number, $department);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -36,6 +39,9 @@ if (isset($_POST['add_booking'])) {
         $warning = "Double booking detected for the specified time, date, set, group number, and department.";
     } else {
         $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, set, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            die('Prepare failed: ' . $conn->error);
+        }
         $stmt->bind_param("sssssissss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
         $stmt->execute();
         $stmt->close();
@@ -51,6 +57,9 @@ if (isset($_POST['add_department'])) {
     $department_name = $_POST['department_name'];
     $color = $_POST['color']; 
     $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
     $stmt->bind_param("ss", $department_name, $color);
     $stmt->execute();
     $stmt->close();
@@ -62,6 +71,9 @@ if (isset($_POST['add_department'])) {
 if (isset($_POST['add_room'])) {
     $room_name = $_POST['room_name'];
     $stmt = $conn->prepare("INSERT INTO rooms (name) VALUES (?)");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
     $stmt->bind_param("s", $room_name);
     $stmt->execute();
     $stmt->close();
@@ -74,6 +86,9 @@ $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
     $search_name = $_POST['search_name'];
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE name LIKE ?");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
     $search_param = "%$search_name%";
     $stmt->bind_param("s", $search_param);
     $stmt->execute();
