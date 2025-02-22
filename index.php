@@ -312,8 +312,8 @@ while ($row = $bookings->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     <input type="text" name="representative_name" placeholder="Representative Name" required>
+                    <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     <div class="form-actions-right">
                         <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
                     </div>
@@ -415,8 +415,8 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
-                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
+                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
             </form>
