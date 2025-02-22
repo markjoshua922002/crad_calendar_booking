@@ -265,13 +265,10 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
     <a href="faculty.php">FACULTY</a>
+    <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
     <div class="container">
-        <header>
-            <a href="logout.php" class="logout-button">Logout</a>
-        </header>
-
         <div class="form-actions">
             <div class="search-container">
                 <div class="left">
