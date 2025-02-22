@@ -197,15 +197,15 @@ while ($row = $bookings->fetch_assoc()) {
                 var appointmentId = $('#appointment_id').val();
                 if (confirm('Are you sure you want to delete this appointment?')) {
                     $.ajax({
-                        url: 'delete_appointment.php',
+                        url: 'api/delete_appointment.php',
                         type: 'POST',
                         data: { id: appointmentId },
                         success: function(response) {
-                            alert('Appointment deleted successfully.');
+                            alert(response);
                             location.reload();
                         },
-                        error: function() {
-                            alert('Error deleting appointment.');
+                        error: function(xhr, status, error) {
+                            alert('Error deleting appointment: ' + xhr.responseText);
                         }
                     });
                 }

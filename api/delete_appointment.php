@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $conn->prepare("DELETE FROM bookings WHERE id = ?");
     if (!$stmt) {
-        die('Prepare failed: ' . $conn->error);
+        echo 'Prepare failed: ' . $conn->error;
+        exit();
     }
     $stmt->bind_param("i", $appointmentId);
     if ($stmt->execute()) {
