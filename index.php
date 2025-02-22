@@ -269,9 +269,9 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
     <div class="container">
-        <div class="form-actions" style="text-align: right;">
-            <div class="search-container">
-                <form method="POST">
+        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+            <div class="search-container" style="display: inline-block;">
+                <form method="POST" style="display: flex; gap: 5px;">
                     <input type="text" name="search_name" placeholder="Search by Name" required>
                     <button type="submit" name="search_booking">Search</button>
                     <button type="button" id="openBookingModal">Book</button>
@@ -279,7 +279,7 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
         </div>
 
-        <div class="navigation">
+        <div class="navigation" style="margin-bottom: 10px;">
             <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
             <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
             <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
