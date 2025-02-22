@@ -265,7 +265,8 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
     <a href="faculty.php">FACULTY</a>
-    <a href="logout.php" class="logout-button" style="margin-top: auto;">Logout</a>
+    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
     <div class="container">
