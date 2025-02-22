@@ -259,8 +259,6 @@ while ($row = $bookings->fetch_assoc()) {
 
     <div class="container">
         <header>
-            <img src="assets/bcplogo.png" alt="Logo" class="logo">
-            <h1>Smart Scheduling System</h1>
             <a href="logout.php" class="logout-button">Logout</a>
         </header>
 
