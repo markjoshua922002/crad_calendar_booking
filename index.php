@@ -387,7 +387,9 @@ while ($row = $bookings->fetch_assoc()) {
                 <div class="form-grid">
                     <select name="department" required>
                         <option value="">Department</option>
-                        <?php while ($department = $departments->fetch_assoc()): ?>
+                        <?php
+                        $departments->data_seek(0);
+                        while ($department = $departments->fetch_assoc()): ?>
                             <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                         <?php endwhile; ?>
                     </select>
@@ -410,7 +412,9 @@ while ($row = $bookings->fetch_assoc()) {
                     <textarea name="reason" placeholder="Agenda" required></textarea>
                     <select name="room" required>
                         <option value="">Room Number</option>
-                        <?php while ($room = $rooms->fetch_assoc()): ?>
+                        <?php
+                        $rooms->data_seek(0);
+                        while ($room = $rooms->fetch_assoc()): ?>
                             <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                         <?php endwhile; ?>
                     </select>
