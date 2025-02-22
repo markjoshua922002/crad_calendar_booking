@@ -192,6 +192,25 @@ while ($row = $bookings->fetch_assoc()) {
                 $('#editModal').show();
             });
 
+            // Handle delete button click event
+            $('#delete_button').on('click', function() {
+                var appointmentId = $('#appointment_id').val();
+                if (confirm('Are you sure you want to delete this appointment?')) {
+                    $.ajax({
+                        url: 'delete_appointment.php',
+                        type: 'POST',
+                        data: { id: appointmentId },
+                        success: function(response) {
+                            alert('Appointment deleted successfully.');
+                            location.reload();
+                        },
+                        error: function() {
+                            alert('Error deleting appointment.');
+                        }
+                    });
+                }
+            });
+
             // Close modals
             $('.close').on('click', function() {
                 $(this).closest('.modal').hide();
