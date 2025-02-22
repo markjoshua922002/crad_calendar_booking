@@ -139,6 +139,7 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Booking Calendar System</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -166,7 +167,7 @@ while ($row = $bookings->fetch_assoc()) {
                 dayAppointments.forEach(function(appointment) {
                     var appointmentItem = $('<div class="appointment-item"></div>');
                     appointmentItem.css('background-color', appointment.color);
-                    appointmentItem.html('<strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to);
+                    appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
                     appointmentItem.data('appointment', appointment);
                     appointmentList.append(appointmentItem);
                 });
