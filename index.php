@@ -323,6 +323,7 @@ while ($row = $bookings->fetch_assoc()) {
             <div class="form-right">
                 <button type="button" data-modal="department">Add Department</button>
                 <button type="button" data-modal="room">Add Room</button>
+                <div style="margin-bottom: 10px;"></div> <!-- Add space between buttons and download button -->
                 <form method="POST" action="download_appointments.php">
                     <button type="submit" name="download_appointments">Download All Appointments</button>
                 </form>
