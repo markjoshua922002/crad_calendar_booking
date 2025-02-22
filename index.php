@@ -213,9 +213,9 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $set ?>"><?= $set ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="date" name="date" required>
                         <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
                         <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
+                        <input type="date" name="date" required>
                         <textarea name="reason" placeholder="Agenda" required></textarea>
                         <select name="room" required>
                             <option value="">Room Number</option>
