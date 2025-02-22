@@ -230,7 +230,13 @@ while ($row = $bookings->fetch_assoc()) {
 
             // Close modals
             $(document).on('click', '.close', function() {
-                $(this).closest('.modal').hide();
+                var modalId = $(this).closest('.modal').attr('id');
+                if (modalId === 'editModal') {
+                    $('#editModal').hide();
+                    $('#appointmentModal').show();
+                } else {
+                    $(this).closest('.modal').hide();
+                }
             });
 
             // Show/hide buttons on hover
