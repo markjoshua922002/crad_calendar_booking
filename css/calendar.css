@@ -29,6 +29,12 @@
     margin-bottom: 5px;
 }
 
+.appointment-count {
+    color: gray;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 /* Appointment item styles */
 .appointment-item {
     background-color: #007BFF;
