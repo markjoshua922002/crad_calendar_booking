@@ -304,16 +304,6 @@ while ($row = $bookings->fetch_assoc()) {
             <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
                 <div class="day">
                     <div class="day-number"><?= $day ?></div>
-                    <?php if (isset($appointments[$day])): ?>
-                        <?php foreach ($appointments[$day] as $appointment): ?>
-                            <div class="appointment" data-id="<?= $appointment['id'] ?>" style="background-color: <?= $appointment['color'] ?>">
-                                <?= $appointment['name'] ?><br>
-                                <?= $appointment['department_name'] ?><br>
-                                <?= $appointment['room_name'] ?><br>
-                                <?= date('g:i A', strtotime($appointment['booking_time_from'])) ?> - <?= date('g:i A', strtotime($appointment['booking_time_to'])) ?>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
                 </div>
             <?php endfor; ?>
         </div>
