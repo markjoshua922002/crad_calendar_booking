@@ -180,7 +180,8 @@ while ($row = $bookings->fetch_assoc()) {
                                       '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
                                       '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
                                       '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
-                                      '<strong>Group Members:</strong> ' + appointment.group_members);
+                                      '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
+                                      '<strong>Representative Name:</strong> ' + appointment.representative_name);
                 $('#viewModal').show();
             });
 
