@@ -175,17 +175,19 @@ while ($row = $bookings->fetch_assoc()) {
                 $('#appointmentModal').show();
             });
 
-            // Show appointment details in view container
+            // Show appointment details in view modal
             $(document).on('click', '.view-button', function() {
                 var appointment = $(this).closest('.appointment-item').data('appointment');
-                var viewContainer = $('#viewContainer');
-                viewContainer.html('<strong>Name:</strong> ' + appointment.name + '<br>' +
-                                   '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
-                                   '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
-                                   '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
-                                   '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
-                                   '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
-                                   '<strong>Group Members:</strong> ' + appointment.group_members);
+                var viewModalContent = $('#viewModal .modal-content');
+                viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
+                                      '<h2>Appointment Details</h2>' +
+                                      '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                      '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
+                                      '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                                      '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
+                                      '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
+                                      '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
+                                      '<strong>Group Members:</strong> ' + appointment.group_members);
                 $('#viewModal').show();
             });
 
@@ -227,7 +229,7 @@ while ($row = $bookings->fetch_assoc()) {
             });
 
             // Close modals
-            $('.close').on('click', function() {
+            $(document).on('click', '.close', function() {
                 $(this).closest('.modal').hide();
             });
 
@@ -360,7 +362,14 @@ while ($row = $bookings->fetch_assoc()) {
             <span class="close" id="closeAppointmentModal">&times;</span>
             <h2>Appointments</h2>
             <div id="appointmentList"></div>
-            <div id="viewContainer" class="view-container"></div>
+        </div>
+    </div>
+
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeViewModal">&times;</span>
+            <h2>Appointment Details</h2>
+            <div id="viewContainer"></div>
         </div>
     </div>
 
