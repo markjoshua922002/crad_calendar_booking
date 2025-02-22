@@ -269,8 +269,8 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
     <div class="container">
-        <div class="form-actions">
-            <div class="search-container" style="text-align: right;">
+        <div class="form-actions" style="text-align: right;">
+            <div class="search-container">
                 <form method="POST">
                     <input type="text" name="search_name" placeholder="Search by Name" required>
                     <button type="submit" name="search_booking">Search</button>
