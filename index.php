@@ -284,61 +284,6 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
         </div>
 
-        <div class="form-actions">
-            <div class="form-container">
-                <?php if (isset($warning)): ?>
-                    <div class="warning"><?= $warning ?></div>
-                <?php endif; ?>
-                <form method="POST" class="form">
-                    <div class="form-grid">
-                        <select name="department" required>
-                            <option value="">Department</option>
-                            <?php while ($department = $departments->fetch_assoc()): ?>
-                                <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                        <input type="text" name="name" placeholder="Research Adviser Name" required>
-                        <select name="id_number" required>
-                            <option value="">Group Number</option>
-                            <?php for ($i = 1; $i <= 200; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                        <select name="set" required>
-                            <option value="">Set</option>
-                            <?php foreach (range('A', 'F') as $set): ?>
-                                <option value="<?= $set ?>"><?= $set ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
-                        <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
-                        <input type="date" name="date" required>
-                        <textarea name="reason" placeholder="Agenda" required></textarea>
-                        <select name="room" required>
-                            <option value="">Room Number</option>
-                            <?php while ($room = $rooms->fetch_assoc()): ?>
-                                <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                        <input type="text" name="representative_name" placeholder="Representative Name" required>
-                    </div>
-                    <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
-                    <div class="form-actions-right">
-                        <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="form-right">
-                <button type="button" data-modal="department">Add Department</button>
-                <button type="button" data-modal="room">Add Room</button>
-                <div style="margin-bottom: 10px;"></div> <!-- Add space between buttons and download button -->
-                <form method="POST" action="download_appointments.php">
-                    <button type="submit" name="download_appointments">Download All Appointments</button>
-                </form>
-            </div>
-        </div>
-
         <div class="navigation">
             <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
             <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
