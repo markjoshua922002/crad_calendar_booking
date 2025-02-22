@@ -155,6 +155,45 @@ while ($row = $bookings->fetch_assoc()) {
                 dropdown: true,
                 scrollbar: true
             });
+
+            // Show appointments for a specific day
+            $('.day').on('click', function() {
+                var day = $(this).find('.day-number').text();
+                var appointments = <?= json_encode($appointments) ?>;
+                var dayAppointments = appointments[day] || [];
+                var appointmentList = $('#appointmentList');
+                appointmentList.empty();
+                dayAppointments.forEach(function(appointment) {
+                    var appointmentItem = $('<div class="appointment-item"></div>');
+                    appointmentItem.text(appointment.name + ' - ' + appointment.department_name + ' - ' + appointment.room_name + ' - ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to);
+                    appointmentItem.data('appointment', appointment);
+                    appointmentList.append(appointmentItem);
+                });
+                $('#appointmentModal').show();
+            });
+
+            // Show appointment details in edit modal
+            $(document).on('click', '.appointment-item', function() {
+                var appointment = $(this).data('appointment');
+                $('#appointment_id').val(appointment.id);
+                $('#edit_name').val(appointment.name);
+                $('#edit_id_number').val(appointment.id_number);
+                $('#edit_set').val(appointment.set);
+                $('#edit_date').val(appointment.booking_date);
+                $('#edit_time_from').val(appointment.booking_time_from);
+                $('#edit_time_to').val(appointment.booking_time_to);
+                $('#edit_reason').val(appointment.reason);
+                $('#edit_department').val(appointment.department_id);
+                $('#edit_room').val(appointment.room_id);
+                $('#edit_group_members').val(appointment.group_members);
+                $('#appointmentModal').hide();
+                $('#editModal').show();
+            });
+
+            // Close modals
+            $('.close').on('click', function() {
+                $(this).closest('.modal').hide();
+            });
         });
     </script>
 </head>
@@ -281,6 +320,14 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 
     <!-- Modals -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAppointmentModal">&times;</span>
+            <h2>Appointments</h2>
+            <div id="appointmentList"></div>
+        </div>
+    </div>
+
     <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
