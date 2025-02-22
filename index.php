@@ -138,6 +138,60 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
+    <style>
+        #sidebar {
+            height: 100vh; /* Full height */
+            width: 250px; /* Fixed width */
+            position: fixed; /* Fixed position */
+            top: 0;
+            left: 0;
+            background-color: rgb(0, 44, 131); /* Light background */
+            transition: transform 0.3s ease; /* Smooth slide effect */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        #page-content {
+            margin-left: 250px; /* Space for sidebar */
+        }
+
+        #page-content.collapsed {
+            margin-left: 0; /* No margin when sidebar is hidden */
+        }
+        .btn-menu {
+            background-color: rgb(204, 204, 204); /* Light background */
+            border-radius: 0%;
+        }
+        .btn-menu:hover {
+            background-color: rgb(204, 204, 204); /* Light background */
+        }
+        .nav-link {
+            color: white;
+        }
+        .nav-link:hover {
+            background-color: rgba(32, 32, 32, 0.36);
+            color: rgb(255, 255, 255); /* Change text color on hover */
+            font-weight: 600;
+            /* box-shadow: 1px 2px 2px black; */
+        }
+        /* WebKit scrollbar styling */
+        #sidebar::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background-color: rgb(255, 255, 255); /* Color of the scrollbar thumb */
+            border-radius: 10px; /* Rounded corners */
+        }
+
+        #sidebar::-webkit-scrollbar-thumb:hover {
+            background-color: #2D336B; /* Darker thumb on hover */
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #7886C7; /* Background of the scrollbar track */
+            border-radius: 10px; /* Rounded corners */
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
