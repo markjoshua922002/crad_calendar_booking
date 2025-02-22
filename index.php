@@ -272,9 +272,9 @@ while ($row = $bookings->fetch_assoc()) {
         <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
             <div class="search-container" style="display: inline-block;">
                 <form method="POST" style="display: flex; gap: 5px;">
-                    <input type="text" name="search_name" placeholder="Search by Name" required>
-                    <button type="submit" name="search_booking">Search</button>
-                    <button type="button" id="openBookingModal">Book</button>
+                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
                 </form>
             </div>
         </div>
