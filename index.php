@@ -186,7 +186,7 @@ while ($row = $bookings->fetch_assoc()) {
                                    '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
                                    '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
                                    '<strong>Group Members:</strong> ' + appointment.group_members);
-                viewContainer.show();
+                $('#viewModal').show();
             });
 
             // Show appointment details in edit modal
@@ -360,10 +360,9 @@ while ($row = $bookings->fetch_assoc()) {
             <span class="close" id="closeAppointmentModal">&times;</span>
             <h2>Appointments</h2>
             <div id="appointmentList"></div>
+            <div id="viewContainer" class="view-container"></div>
         </div>
     </div>
-
-    <div id="viewContainer" class="view-container"></div>
 
     <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
         <div class="modal-content">

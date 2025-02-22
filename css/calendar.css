@@ -96,10 +96,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
     display: none;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 300px;
+    position: relative;
+    width: 100%;
 }
 
 /* Weekday Header Styles */
