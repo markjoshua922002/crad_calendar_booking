@@ -18,18 +18,14 @@ if (isset($_POST['add_booking'])) {
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
+    $representative_name = $_POST['representative_name'];
     $set = $_POST['set'];
     $department = $_POST['department'];
     $room = $_POST['room'];
-    $date = date('Y-m-d', strtotime($_POST['date'])); // Ensure date is in 'YYYY-MM-DD' format
+    $date = date('Y-m-d', strtotime($_POST['date']));
     $time_from = date('H:i:s', strtotime($_POST['time_from']));
     $time_to = date('H:i:s', strtotime($_POST['time_to']));
     $reason = $_POST['reason'];
-
-    // Debugging statements
-    echo "Date: $date<br>";
-    echo "Time From: $time_from<br>";
-    echo "Time To: $time_to<br>";
 
     // Check for double booking
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
@@ -43,21 +39,17 @@ if (isset($_POST['add_booking'])) {
     if ($result->num_rows > 0) {
         $warning = "Double booking detected for the specified time, date, and room.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Prepare failed: ' . $conn->error);
         }
-        $stmt->bind_param("ssssisssss", $name, $id_number, $group_members, $set, $department, $room, $date, $time_from, $time_to, $reason);
+        $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
         if ($stmt->execute()) {
             echo "Booking successfully added.";
         } else {
             echo "Error: " . $stmt->error;
         }
         $stmt->close();
-
-        // Comment out the header redirect for debugging purposes
-        // header('Location: index.php');
-        // exit();
     }
     $stmt->close();
 }
@@ -95,7 +87,7 @@ if (isset($_POST['add_room'])) {
 $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
     $search_name = $_POST['search_name'];
-    $stmt = $conn->prepare("SELECT * FROM bookings WHERE name LIKE ?");
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE representative_name LIKE ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
@@ -206,6 +198,7 @@ while ($row = $bookings->fetch_assoc()) {
                 $('#edit_department').val(appointment.department_id);
                 $('#edit_room').val(appointment.room_id);
                 $('#edit_group_members').val(appointment.group_members);
+                $('#edit_representative_name').val(appointment.representative_name);
                 $('#appointmentModal').hide();
                 $('#editModal').show();
             });
@@ -319,6 +312,7 @@ while ($row = $bookings->fetch_assoc()) {
                         </select>
                     </div>
                     <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
+                    <input type="text" name="representative_name" placeholder="Representative Name" required>
                     <div class="form-actions-right">
                         <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
                     </div>
@@ -421,6 +415,7 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php endwhile; ?>
                 </select>
                 <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
+                <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
             </form>
