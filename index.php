@@ -357,7 +357,7 @@ while ($row = $bookings->fetch_assoc()) {
             <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
                 <div class="day">
                     <div class="day-number"><?= $day ?></div>
-                    <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) . ' appointments' : 'No appointments' ?></div>
+                    <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
                 </div>
             <?php endfor; ?>
         </div>
