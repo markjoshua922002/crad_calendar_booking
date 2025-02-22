@@ -311,8 +311,8 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                             <?php endwhile; ?>
                         </select>
+                        <input type="text" name="representative_name" placeholder="Representative Name" required>
                     </div>
-                    <input type="text" name="representative_name" placeholder="Representative Name" required>
                     <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
                     <div class="form-actions-right">
                         <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
