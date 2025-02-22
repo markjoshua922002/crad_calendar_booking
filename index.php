@@ -174,7 +174,7 @@ while ($row = $bookings->fetch_assoc()) {
                 var viewModalContent = $('#viewModal .modal-content');
                 viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
                                       '<h2>Appointment Details</h2>' +
-                                      '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                      '<strong>Research Adviser Name:</strong> ' + appointment.name + '<br>' +
                                       '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
                                       '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
                                       '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
@@ -288,7 +288,7 @@ while ($row = $bookings->fetch_assoc()) {
                                 <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                             <?php endwhile; ?>
                         </select>
-                        <input type="text" name="name" placeholder="Research Adviser's Name" required>
+                        <input type="text" name="name" placeholder="Research Adviser Name" required>
                         <select name="id_number" required>
                             <option value="">Group Number</option>
                             <?php for ($i = 1; $i <= 200; $i++): ?>
