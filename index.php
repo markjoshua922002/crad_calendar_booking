@@ -169,14 +169,29 @@ while ($row = $bookings->fetch_assoc()) {
                     appointmentItem.css('background-color', appointment.color);
                     appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
                     appointmentItem.data('appointment', appointment);
+                    appointmentItem.append('<div class="appointment-buttons"><button class="view-button">View</button><button class="edit-button">Edit</button></div>');
                     appointmentList.append(appointmentItem);
                 });
                 $('#appointmentModal').show();
             });
 
+            // Show appointment details in view container
+            $(document).on('click', '.view-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
+                var viewContainer = $('#viewContainer');
+                viewContainer.html('<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                   '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
+                                   '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                                   '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
+                                   '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
+                                   '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
+                                   '<strong>Group Members:</strong> ' + appointment.group_members);
+                viewContainer.show();
+            });
+
             // Show appointment details in edit modal
-            $(document).on('click', '.appointment-item', function() {
-                var appointment = $(this).data('appointment');
+            $(document).on('click', '.edit-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
                 $('#appointment_id').val(appointment.id);
                 $('#edit_name').val(appointment.name);
                 $('#edit_id_number').val(appointment.id_number);
@@ -214,6 +229,15 @@ while ($row = $bookings->fetch_assoc()) {
             // Close modals
             $('.close').on('click', function() {
                 $(this).closest('.modal').hide();
+            });
+
+            // Show/hide buttons on hover
+            $(document).on('mouseenter', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').show();
+            });
+
+            $(document).on('mouseleave', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').hide();
             });
         });
     </script>
@@ -338,6 +362,8 @@ while ($row = $bookings->fetch_assoc()) {
             <div id="appointmentList"></div>
         </div>
     </div>
+
+    <div id="viewContainer" class="view-container"></div>
 
     <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
         <div class="modal-content">
