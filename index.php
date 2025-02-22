@@ -138,39 +138,136 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#time_from, #time_to').timepicker({
+                timeFormat: 'h:i A',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '11:00pm',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
+
+            // Show appointments for a specific day
+            $('.day').on('click', function() {
+                var day = $(this).find('.day-number').text();
+                var appointments = <?= json_encode($appointments) ?>;
+                var dayAppointments = appointments[day] || [];
+                var appointmentList = $('#appointmentList');
+                appointmentList.empty();
+                dayAppointments.forEach(function(appointment) {
+                    var appointmentItem = $('<div class="appointment-item"></div>');
+                    appointmentItem.css('background-color', appointment.color);
+                    appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
+                    appointmentItem.data('appointment', appointment);
+                    appointmentItem.append('<div class="appointment-buttons"><button class="view-button">View</button><button class="edit-button">Edit</button></div>');
+                    appointmentList.append(appointmentItem);
+                });
+                $('#appointmentModal').show();
+            });
+
+            // Show appointment details in view modal
+            $(document).on('click', '.view-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
+                var viewModalContent = $('#viewModal .modal-content');
+                viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
+                                      '<h2>Appointment Details</h2>' +
+                                      '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                      '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
+                                      '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                                      '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
+                                      '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
+                                      '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
+                                      '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
+                                      '<strong>Representative Name:</strong> ' + appointment.representative_name);
+                $('#viewModal').show();
+            });
+
+            // Show appointment details in edit modal
+            $(document).on('click', '.edit-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
+                $('#appointment_id').val(appointment.id);
+                $('#edit_name').val(appointment.name);
+                $('#edit_id_number').val(appointment.id_number);
+                $('#edit_set').val(appointment.set);
+                $('#edit_date').val(appointment.booking_date);
+                $('#edit_time_from').val(appointment.booking_time_from);
+                $('#edit_time_to').val(appointment.booking_time_to);
+                $('#edit_reason').val(appointment.reason);
+                $('#edit_department').val(appointment.department_id);
+                $('#edit_room').val(appointment.room_id);
+                $('#edit_group_members').val(appointment.group_members);
+                $('#edit_representative_name').val(appointment.representative_name);
+                $('#appointmentModal').hide();
+                $('#editModal').show();
+            });
+
+            // Handle delete button click event
+            $('#delete_button').on('click', function() {
+                var appointmentId = $('#appointment_id').val();
+                if (confirm('Are you sure you want to delete this appointment?')) {
+                    $.ajax({
+                        url: 'api/delete_appointment.php',
+                        type: 'POST',
+                        data: { id: appointmentId },
+                        success: function(response) {
+                            alert(response);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error deleting appointment: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Open and close modals
+            $('#openBookingModal').on('click', function() {
+                $('#bookingModal').show();
+            });
+
+            $('#closeBookingModal').on('click', function() {
+                $('#bookingModal').hide();
+            });
+
+            $('#closeAddDepartmentModal').on('click', function() {
+                $('#addDepartmentModal').hide();
+            });
+
+            $('#closeAddRoomModal').on('click', function() {
+                $('#addRoomModal').hide();
+            });
+
+            $(document).on('click', '.close', function() {
+                $(this).closest('.modal').hide();
+            });
+
+            // Show/hide buttons on hover
+            $(document).on('mouseenter', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').show();
+            });
+
+            $(document).on('mouseleave', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').hide();
+            });
+        });
+    </script>
 </head>
 <body>
-    <div id="sidebar" class="text-right shadow">
-        <div class="p-3">
-            <ul class="nav flex-column">
-                <li class="nav-item mb-1 dropdown">
-                    <div class="collapse rounded" id="submoduleDropdown">
-                        <ul class="nav flex-column ps-3">
-                            <li class="nav-item mb-1">
-                                <a class="nav-link rounded" href="registrar.php"><i class="fas fa-archive"></i> Registrar Page</a>
-                            </li>
-                            <li class="nav-item mb-1">
-                                <a class="nav-link rounded" href="hr.php"><i class="fas fa-users"></i> Human Resource</a>
-                            </li>
-                            <li class="nav-item mb-1">
-                                <a class="nav-link rounded" href="registrar.php"><i class="fas fa-archive"></i> MIS Page</a>
-                            </li>
-                            <li class="nav-item mb-1">
-                                <a class="nav-link rounded" href="its.php"><i class="fas fa-desktop"></i> IT System</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item mb-1">
-                    <a class="nav-link rounded" href="my_profile.php"><i class="fas fa-user-circle"></i> My Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link rounded text-danger" href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div id="page-content">
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
+<div class="sidebar" id="sidebar">
+    <a href="home.php">HOME</a>
+    <a href="index.php">BOOKING</a>
+    <a href="hr.php">HR</a>
+    <a href="its.php">ITS</a>
+    <a href="osas.php">OSAS</a>
+    <a href="faculty.php">FACULTY</a>
+</div>
+
+    <div class="container">
         <header>
             <a href="logout.php" class="logout-button">Logout</a>
         </header>
