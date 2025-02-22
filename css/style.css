@@ -109,6 +109,21 @@ button:hover,
     cursor: pointer;
 }
 
+/* Appointment item styles */
+.appointment-item {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.appointment-item:hover {
+    background-color: #0056b3;
+}
+
 /* Weekday Header Styles */
 .weekday-header {
     display: grid;

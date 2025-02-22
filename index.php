@@ -165,7 +165,8 @@ while ($row = $bookings->fetch_assoc()) {
                 appointmentList.empty();
                 dayAppointments.forEach(function(appointment) {
                     var appointmentItem = $('<div class="appointment-item"></div>');
-                    appointmentItem.text(appointment.name + ' - ' + appointment.department_name + ' - ' + appointment.room_name + ' - ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to);
+                    appointmentItem.css('background-color', appointment.color);
+                    appointmentItem.html('<strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to);
                     appointmentItem.data('appointment', appointment);
                     appointmentList.append(appointmentItem);
                 });
