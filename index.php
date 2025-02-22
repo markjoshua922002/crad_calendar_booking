@@ -128,7 +128,7 @@ while ($row = $bookings->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Calendar System</title>
+    <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/calendar.css">
@@ -260,7 +260,7 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="container">
         <header>
             <img src="assets/bcplogo.png" alt="Logo" class="logo">
-            <h1>Booking Calendar System</h1>
+            <h1>Smart Scheduling System</h1>
             <a href="logout.php" class="logout-button">Logout</a>
         </header>
 
