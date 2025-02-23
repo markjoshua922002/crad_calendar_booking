@@ -133,13 +133,10 @@
 
 /* Weekday Header Styles */
 .weekday-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #0056b3;
-    color: white;
-    padding: 5px 0;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
 }
 
 .weekday-header div {
@@ -154,5 +151,59 @@
 }
 
 .weekday-header div:last-child {
+    border-right: none;
+}
+
+.calendar-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #003f7a;
+}
+
+.month-label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.days-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.day {
+    width: calc(100% / 7);
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.day:nth-child(7n) {
     border-right: none;
 }
