@@ -133,14 +133,13 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="css/day.css">
-    <link rel="stylesheet" href="css/reminder.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function(){
             $('#time_from, #time_to').timepicker({
                 timeFormat: 'h:i A',
                 interval: 30,
@@ -253,36 +252,6 @@ while ($row = $bookings->fetch_assoc()) {
             $(document).on('mouseleave', '.appointment-item', function() {
                 $(this).find('.appointment-buttons').hide();
             });
-
-            // Open edit modal if data-show-modal is true
-            if ($('#editModal').data('show-modal') === 'true') {
-                $('#editModal').show();
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Sidebar toggle
-            const menuButton = document.getElementById('menuButton');
-            const sidebar = document.getElementById('sidebar');
-            
-            if (menuButton && sidebar) {
-                menuButton.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                });
-            }
-
-            // Edit modal show logic
-            const editModal = document.getElementById('editModal');
-            if (editModal && editModal.hasAttribute('data-show-modal')) {
-                editModal.style.display = 'block';
-            }
-
-            // Close all modals when clicking close buttons
-            document.querySelectorAll('.close').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    btn.closest('.modal').style.display = 'none';
-                });
-            });
         });
     </script>
 </head>
@@ -296,72 +265,54 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
     <a href="faculty.php">FACULTY</a>
-    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
-    <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
-<div class="container">
-    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-        <div class="search-container" style="display: inline-block;">
-            <form method="POST" style="display: flex; gap: 5px;">
-                <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-            </form>
+    <div class="container">
+        <header>
+            <a href="logout.php" class="logout-button">Logout</a>
+        </header>
+
+        <div class="form-actions">
+            <div class="search-container">
+                <div class="left">
+                    <form method="POST">
+                        <input type="text" name="search_name" placeholder="Search by Name" required>
+                        <button type="submit" name="search_booking">Search</button>
+                        <button type="button" id="openBookingModal">Book</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+            <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+            <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+        </div>
+
+        <div class="weekday-header">
+            <div>SUNDAY</div>
+            <div>MONDAY</div>
+            <div>TUESDAY</div>
+            <div>WEDNESDAY</div>
+            <div>THURSDAY</div>
+            <div>FRIDAY</div>
+            <div>SATURDAY</div>
+        </div>
+
+        <div class="calendar">
+            <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
+                <div class="day"></div>
+            <?php endfor; ?>
+
+            <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
+                <div class="day">
+                    <div class="day-number"><?= $day ?></div>
+                    <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
+                </div>
+            <?php endfor; ?>
         </div>
     </div>
-
-    <div class="main-content">
-        <div class="calendar-container">
-            <div class="navigation" style="margin-bottom: 10px;">
-                <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
-                <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-                <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
-            </div>
-
-            <div class="weekday-header">
-                <div>SUNDAY</div>
-                <div>MONDAY</div>
-                <div>TUESDAY</div>
-                <div>WEDNESDAY</div>
-                <div>THURSDAY</div>
-                <div>FRIDAY</div>
-                <div>SATURDAY</div>
-            </div>
-
-            <div class="calendar">
-                <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-                    <div class="day"></div>
-                <?php endfor; ?>
-
-                <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                    <div class="day">
-                        <div class="day-number"><?= $day ?></div>
-                        <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
-                    </div>
-                <?php endfor; ?>
-            </div>
-        </div>
-
-        <div class="reminder-container">
-            <h2>Upcoming Appointments</h2>
-            <ul id="reminderList">
-                <?php
-                $currentDateTime = new DateTime();
-                foreach ($appointments as $day => $dayAppointments) {
-                    foreach ($dayAppointments as $appointment) {
-                        $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
-                        $interval = $currentDateTime->diff($appointmentDateTime);
-                        if ($interval->h <= 3 && $interval->invert == 0) {
-                            echo '<li>' . $appointment['name'] . ' - ' . $appointment['booking_time_from'] . '</li>';
-                        }
-                    }
-                }
-                ?>
-            </ul>
-        </div>
-    </div>
-</div>
 
     <!-- Modals -->
     <div id="appointmentModal" class="modal">
@@ -380,7 +331,7 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
-    <div id="editModal" class="modal" <?= isset($searched_appointment) ? 'data-show-modal="true"' : '' ?>>
+    <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Appointment</h2>
@@ -436,9 +387,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <div class="form-grid">
                     <select name="department" required>
                         <option value="">Department</option>
-                        <?php
-                        $departments->data_seek(0);
-                        while ($department = $departments->fetch_assoc()): ?>
+                        <?php while ($department = $departments->fetch_assoc()): ?>
                             <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                         <?php endwhile; ?>
                     </select>
@@ -461,9 +410,7 @@ while ($row = $bookings->fetch_assoc()) {
                     <textarea name="reason" placeholder="Agenda" required></textarea>
                     <select name="room" required>
                         <option value="">Room Number</option>
-                        <?php
-                        $rooms->data_seek(0);
-                        while ($room = $rooms->fetch_assoc()): ?>
+                        <?php while ($room = $rooms->fetch_assoc()): ?>
                             <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                         <?php endwhile; ?>
                     </select>

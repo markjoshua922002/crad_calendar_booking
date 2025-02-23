@@ -7,33 +7,16 @@ body {
 }
 
 .container {
-    margin-left: 170px; /* Adjusted margin to accommodate sidebar */
-    transition: margin-left 0.3s; /* Smooth transition */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 header {
-    background-color: #0056b3;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-}
-
-.menu-button {
-    position: fixed;
-    left: 10px;
-    top: 10px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 1000; /* Ensure button is on top */
-    transition: left 0.3s;
-}
-
-.menu-button:hover {
-    background-color: #003f7a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
 }
 
 .logo {
@@ -86,6 +69,92 @@ button:hover,
     background-color: #0056b3;
 }
 
+/* Calendar styles */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.day {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.day:hover {
+    background-color: #e6f7ff;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.appointment {
+    background-color: #007BFF;
+    color: white;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Appointment item styles */
+.appointment-item {
+    background-color: #007BFF;
+    color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+}
+
+.appointment-item:hover {
+    background-color: #0056b3;
+}
+
+/* Weekday Header Styles */
+.weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #0056b3;
+    color: white;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.weekday-header div {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 5px 0;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.weekday-header div:last-child {
+    border-right: none;
+}
 
 /* Search container styles */
 .search-container {
@@ -117,4 +186,29 @@ button:hover,
 
 .logout-button:hover {
     background-color: #cc0000;
+}
+
+/* Modal styles */
+.modal-content .modal-footer button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-content .modal-footer button:hover {
+    background-color: #0056b3;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
