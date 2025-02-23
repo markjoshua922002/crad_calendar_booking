@@ -1,6 +1,6 @@
 .sidebar {
     position: fixed;
-    left: -150px; /* Hide sidebar by default */
+    left: 0;
     top: 0;
     height: 100%;
     width: 150px;
@@ -12,9 +12,6 @@
     transition: left 0.3s; /* Smooth transition */
     z-index: 999; /* Add this */
     box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Optional improvement */
-}
-.sidebar.open {
-    left: 0; /* Show sidebar when open */
 }
 .sidebar a {
     color: white;
@@ -46,6 +43,6 @@
     background-color: #003f7a;
 }
 .container {
-    margin-left: 20px !important; /* Force fixed margin */
-    transition: none !important; /* Disable container animation */
+    margin-left: 170px; /* Adjusted margin to accommodate sidebar */
+    transition: margin-left 0.3s; /* Smooth transition */
 }
