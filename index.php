@@ -84,7 +84,7 @@ if (isset($_POST['add_room'])) {
 }
 
 // Search for appointments
-$searched_appointments = [];
+$searched_appointment = null;
 if (isset($_POST['search_booking'])) {
     $search_name = $_POST['search_name'];
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE representative_name LIKE ?");
@@ -94,10 +94,7 @@ if (isset($_POST['search_booking'])) {
     $search_param = "%$search_name%";
     $stmt->bind_param("s", $search_param);
     $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $searched_appointments[] = $row;
-    }
+    $searched_appointment = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 }
 
@@ -142,6 +139,122 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#time_from, #time_to').timepicker({
+                timeFormat: 'h:i A',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '11:00pm',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
+
+            // Show appointments for a specific day
+            $('.day').on('click', function() {
+                var day = $(this).find('.day-number').text();
+                var appointments = <?= json_encode($appointments) ?>;
+                var dayAppointments = appointments[day] || [];
+                var appointmentList = $('#appointmentList');
+                appointmentList.empty();
+                dayAppointments.forEach(function(appointment) {
+                    var appointmentItem = $('<div class="appointment-item"></div>');
+                    appointmentItem.css('background-color', appointment.color);
+                    appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
+                    appointmentItem.data('appointment', appointment);
+                    appointmentItem.append('<div class="appointment-buttons"><button class="view-button">View</button><button class="edit-button">Edit</button></div>');
+                    appointmentList.append(appointmentItem);
+                });
+                $('#appointmentModal').show();
+            });
+
+            // Show appointment details in view modal
+            $(document).on('click', '.view-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
+                var viewModalContent = $('#viewModal .modal-content');
+                viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
+                                      '<h2>Appointment Details</h2>' +
+                                      '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                      '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
+                                      '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                                      '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
+                                      '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
+                                      '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
+                                      '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
+                                      '<strong>Representative Name:</strong> ' + appointment.representative_name);
+                $('#viewModal').show();
+            });
+
+            // Show appointment details in edit modal
+            $(document).on('click', '.edit-button', function() {
+                var appointment = $(this).closest('.appointment-item').data('appointment');
+                $('#appointment_id').val(appointment.id);
+                $('#edit_name').val(appointment.name);
+                $('#edit_id_number').val(appointment.id_number);
+                $('#edit_set').val(appointment.set);
+                $('#edit_date').val(appointment.booking_date);
+                $('#edit_time_from').val(appointment.booking_time_from);
+                $('#edit_time_to').val(appointment.booking_time_to);
+                $('#edit_reason').val(appointment.reason);
+                $('#edit_department').val(appointment.department_id);
+                $('#edit_room').val(appointment.room_id);
+                $('#edit_group_members').val(appointment.group_members);
+                $('#edit_representative_name').val(appointment.representative_name);
+                $('#appointmentModal').hide();
+                $('#editModal').show();
+            });
+
+            // Handle delete button click event
+            $('#delete_button').on('click', function() {
+                var appointmentId = $('#appointment_id').val();
+                if (confirm('Are you sure you want to delete this appointment?')) {
+                    $.ajax({
+                        url: 'api/delete_appointment.php',
+                        type: 'POST',
+                        data: { id: appointmentId },
+                        success: function(response) {
+                            alert(response);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error deleting appointment: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Open and close modals
+            $('#openBookingModal').on('click', function() {
+                $('#bookingModal').show();
+            });
+
+            $('#closeBookingModal').on('click', function() {
+                $('#bookingModal').hide();
+            });
+
+            $('#closeAddDepartmentModal').on('click', function() {
+                $('#addDepartmentModal').hide();
+            });
+
+            $('#closeAddRoomModal').on('click', function() {
+                $('#addRoomModal').hide();
+            });
+
+            $(document).on('click', '.close', function() {
+                $(this).closest('.modal').hide();
+            });
+
+            // Show/hide buttons on hover
+            $(document).on('mouseenter', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').show();
+            });
+
+            $(document).on('mouseleave', '.appointment-item', function() {
+                $(this).find('.appointment-buttons').hide();
+            });
+        });
+    </script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -237,35 +350,35 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
-    <div id="editModal" class="modal" data-show-modal="<?= !empty($searched_appointments) ? 'true' : 'false' ?>">
+    <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Appointment</h2>
             <form id="editForm">
-                <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointments[0]['id'] ?? '' ?>">
-                <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointments[0]['name'] ?? '' ?>" required>
+                <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+                <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
                 <select name="edit_id_number" id="edit_id_number" required>
                     <option value="">Group Number</option>
                     <?php for ($i = 1; $i <= 200; $i++): ?>
-                        <option value="<?= $i ?>" <?= (!empty($searched_appointments) && $searched_appointments[0]['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                        <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
                 <select name="edit_set" id="edit_set" required>
                     <option value="">Set</option>
                     <?php foreach (range('A', 'F') as $set): ?>
-                        <option value="<?= $set ?>" <?= (!empty($searched_appointments) && $searched_appointments[0]['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
+                        <option value="<?= $set ?>" <?= (isset($searched_appointment) && $searched_appointment['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointments[0]['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_from" id="edit_time_from" value="<?= !empty($searched_appointments) ? date('g:i A', strtotime($searched_appointments[0]['booking_time_from'])) : '' ?>" required>
-                <input type="text" name="edit_time_to" id="edit_time_to" value="<?= !empty($searched_appointments) ? date('g:i A', strtotime($searched_appointments[0]['booking_time_to'])) : '' ?>" required>
-                <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointments[0]['reason'] ?? '' ?></textarea>
+                <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+                <input type="text" name="edit_time_from" id="edit_time_from" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) : '' ?>" required>
+                <input type="text" name="edit_time_to" id="edit_time_to" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
+                <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
                 <select name="edit_department" id="edit_department" required>
                     <option value="">Department</option>
                     <?php
                     $departments->data_seek(0);
                     while ($department = $departments->fetch_assoc()): ?>
-                        <option value="<?= $department['id'] ?>" <?= (!empty($searched_appointments) && $searched_appointments[0]['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
+                        <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
                 <select name="edit_room" id="edit_room" required>
@@ -273,11 +386,11 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php
                     $rooms->data_seek(0);
                     while ($room = $rooms->fetch_assoc()): ?>
-                        <option value="<?= $room['id'] ?>" <?= (!empty($searched_appointments) && $searched_appointments[0]['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
+                        <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
-                <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointments[0]['representative_name'] ?? '' ?>" required>
-                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointments[0]['group_members'] ?? '' ?></textarea>
+                <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
+                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
             </form>
