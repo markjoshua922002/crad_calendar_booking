@@ -253,8 +253,23 @@ while ($row = $bookings->fetch_assoc()) {
             $(document).on('mouseleave', '.appointment-item', function() {
                 $(this).find('.appointment-buttons').hide();
             });
+            
+
+            
         });
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.getElementById('sidebar');
+        const container = document.querySelector('.container');
+
+        menuButton.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            container.classList.toggle('shifted');
+        });
+    });
+</script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
