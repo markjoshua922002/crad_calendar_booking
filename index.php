@@ -129,11 +129,11 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/sidebar.css">
-    <link rel="stylesheet" href="css/calendar.css">
-    <link rel="stylesheet" href="css/day.css">
-    <link rel="stylesheet" href="css/reminder.css">
+    <link rel="stylesheet" href="mycss/style.css">
+    <link rel="stylesheet" href="mycss/sidebar.css">
+    <link rel="stylesheet" href="mycss/calendar.css">
+    <link rel="stylesheet" href="mycss/day.css">
+    <link rel="stylesheet" href="mycss/reminder.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
