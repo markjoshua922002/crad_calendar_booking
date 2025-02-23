@@ -133,7 +133,6 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="css/day.css">
-    <link rel="stylesheet" href="css/reminder.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -266,72 +265,54 @@ while ($row = $bookings->fetch_assoc()) {
     <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
     <a href="faculty.php">FACULTY</a>
-    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
-    <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
-<div class="container">
-    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-        <div class="search-container" style="display: inline-block;">
-            <form method="POST" style="display: flex; gap: 5px;">
-                <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-            </form>
+    <div class="container">
+        <header>
+            <a href="logout.php" class="logout-button">Logout</a>
+        </header>
+
+        <div class="form-actions">
+            <div class="search-container">
+                <div class="left">
+                    <form method="POST">
+                        <input type="text" name="search_name" placeholder="Search by Name" required>
+                        <button type="submit" name="search_booking">Search</button>
+                        <button type="button" id="openBookingModal">Book</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+            <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+            <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+        </div>
+
+        <div class="weekday-header">
+            <div>SUNDAY</div>
+            <div>MONDAY</div>
+            <div>TUESDAY</div>
+            <div>WEDNESDAY</div>
+            <div>THURSDAY</div>
+            <div>FRIDAY</div>
+            <div>SATURDAY</div>
+        </div>
+
+        <div class="calendar">
+            <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
+                <div class="day"></div>
+            <?php endfor; ?>
+
+            <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
+                <div class="day">
+                    <div class="day-number"><?= $day ?></div>
+                    <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
+                </div>
+            <?php endfor; ?>
         </div>
     </div>
-
-    <div class="main-content">
-        <div class="calendar-container">
-            <div class="navigation" style="margin-bottom: 10px;">
-                <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
-                <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-                <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
-            </div>
-
-            <div class="weekday-header">
-                <div>SUNDAY</div>
-                <div>MONDAY</div>
-                <div>TUESDAY</div>
-                <div>WEDNESDAY</div>
-                <div>THURSDAY</div>
-                <div>FRIDAY</div>
-                <div>SATURDAY</div>
-            </div>
-
-            <div class="calendar">
-                <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-                    <div class="day"></div>
-                <?php endfor; ?>
-
-                <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                    <div class="day">
-                        <div class="day-number"><?= $day ?></div>
-                        <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
-                    </div>
-                <?php endfor; ?>
-            </div>
-        </div>
-
-        <div class="reminder-container">
-            <h2>Upcoming Appointments</h2>
-            <ul id="reminderList">
-                <?php
-                $currentDateTime = new DateTime();
-                foreach ($appointments as $day => $dayAppointments) {
-                    foreach ($dayAppointments as $appointment) {
-                        $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
-                        $interval = $currentDateTime->diff($appointmentDateTime);
-                        if ($interval->h <= 3 && $interval->invert == 0) {
-                            echo '<li>' . $appointment['name'] . ' - ' . $appointment['booking_time_from'] . '</li>';
-                        }
-                    }
-                }
-                ?>
-            </ul>
-        </div>
-    </div>
-</div>
 
     <!-- Modals -->
     <div id="appointmentModal" class="modal">
