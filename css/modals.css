@@ -39,7 +39,7 @@
 
 /* Modal styles */
 .modal {
-    display: none; /* Hide modals by default */
+    display: none !important; /* Hide modals by default */
     position: fixed;
     z-index: 1000;
     left: 0;

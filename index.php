@@ -261,35 +261,27 @@ while ($row = $bookings->fetch_assoc()) {
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Toggle sidebar functionality
-
-            // Open edit modal if data-show-modal is true
-            if (document.getElementById('editModal').dataset.showModal === 'true') {
-                document.getElementById('editModal').style.display = 'block';
+            // Sidebar toggle
+            const menuButton = document.getElementById('menuButton');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (menuButton && sidebar) {
+                menuButton.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
             }
 
-            // Close modals
-            document.querySelectorAll('.close').forEach(function(closeButton) {
-                closeButton.addEventListener('click', function() {
-                    this.closest('.modal').style.display = 'none';
+            // Edit modal show logic
+            const editModal = document.getElementById('editModal');
+            if (editModal && editModal.hasAttribute('data-show-modal')) {
+                editModal.style.display = 'block';
+            }
+
+            // Close all modals when clicking close buttons
+            document.querySelectorAll('.close').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.modal').style.display = 'none';
                 });
-            });
-
-            // Open and close other modals
-            document.getElementById('openBookingModal').addEventListener('click', function() {
-                document.getElementById('bookingModal').style.display = 'block';
-            });
-
-            document.getElementById('closeBookingModal').addEventListener('click', function() {
-                document.getElementById('bookingModal').style.display = 'none';
-            });
-
-            document.getElementById('closeAddDepartmentModal').addEventListener('click', function() {
-                document.getElementById('addDepartmentModal').style.display = 'none';
-            });
-
-            document.getElementById('closeAddRoomModal').addEventListener('click', function() {
-                document.getElementById('addRoomModal').style.display = 'none';
             });
         });
     </script>
@@ -388,7 +380,7 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
-    <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
+    <div id="editModal" class="modal" <?= isset($searched_appointment) ? 'data-show-modal="true"' : '' ?>>
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Appointment</h2>
