@@ -271,7 +271,7 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
 <div class="container">
-    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+    <div class="form-actions" style="text-align: right; margin-bottom: 10px; padding-right: 20px;">
         <div class="search-container" style="display: inline-block;">
             <form method="POST" style="display: flex; gap: 5px;">
                 <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
