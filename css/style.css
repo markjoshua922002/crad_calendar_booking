@@ -190,7 +190,7 @@ button:hover,
 
 /* Modal styles */
 .modal {
-    display: none;
+    display: none; /* Hide modals by default */
     position: fixed;
     z-index: 1000;
     left: 0;
