@@ -259,6 +259,39 @@ while ($row = $bookings->fetch_assoc()) {
                 $('#editModal').show();
             }
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Toggle sidebar functionality
+
+            // Open edit modal if data-show-modal is true
+            if (document.getElementById('editModal').dataset.showModal === 'true') {
+                document.getElementById('editModal').style.display = 'block';
+            }
+
+            // Close modals
+            document.querySelectorAll('.close').forEach(function(closeButton) {
+                closeButton.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+
+            // Open and close other modals
+            document.getElementById('openBookingModal').addEventListener('click', function() {
+                document.getElementById('bookingModal').style.display = 'block';
+            });
+
+            document.getElementById('closeBookingModal').addEventListener('click', function() {
+                document.getElementById('bookingModal').style.display = 'none';
+            });
+
+            document.getElementById('closeAddDepartmentModal').addEventListener('click', function() {
+                document.getElementById('addDepartmentModal').style.display = 'none';
+            });
+
+            document.getElementById('closeAddRoomModal').addEventListener('click', function() {
+                document.getElementById('addRoomModal').style.display = 'none';
+            });
+        });
     </script>
 </head>
 <body>

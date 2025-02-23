@@ -7,16 +7,33 @@ body {
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    margin-left: 170px; /* Adjusted margin to accommodate sidebar */
+    transition: margin-left 0.3s; /* Smooth transition */
 }
 
 header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 0;
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.menu-button {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1000; /* Ensure button is on top */
+    transition: left 0.3s;
+}
+
+.menu-button:hover {
+    background-color: #003f7a;
 }
 
 .logo {
@@ -100,39 +117,4 @@ button:hover,
 
 .logout-button:hover {
     background-color: #cc0000;
-}
-
-
-/* Main content styles */
-.main-content {
-    display: flex;
-    gap: 20px; /* Space between calendar and reminder container */
-}
-
-.calendar-container {
-    flex: 2;
-}
-
-.reminder-container {
-    flex: 1;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.reminder-container h2 {
-    margin-top: 0;
-}
-
-.reminder-container ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.reminder-container li {
-    background-color: #f4f4f4;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
 }
