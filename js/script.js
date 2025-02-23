@@ -2,10 +2,14 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed");
 
     // Toggle sidebar functionality
-    document.getElementById('menuButton').onclick = function() {
-        var sidebar = document.getElementById('sidebar');
+    const menuButton = document.getElementById('menuButton');
+    const sidebar = document.getElementById('sidebar');
+    const container = document.querySelector('.container');
+
+    menuButton.addEventListener('click', function() {
         sidebar.classList.toggle('open');
-    };
+        container.classList.toggle('shifted');
+    });
 
     // Modal Handling
     const modals = {
