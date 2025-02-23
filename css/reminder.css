@@ -1,0 +1,33 @@
+/* Main content styles */
+.main-content {
+    display: flex;
+    gap: 20px; /* Space between calendar and reminder container */
+}
+
+.calendar-container {
+    flex: 2;
+}
+
+.reminder-container {
+    flex: 0.8; /* Make the reminder container smaller */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.1), 4px 0 10px rgba(0, 0, 0, 0.1), -4px 0 10px rgba(0, 0, 0, 0.1); /* Shadows on every side */
+}
+
+.reminder-container h2 {
+    margin-top: 0;
+}
+
+.reminder-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.reminder-container li {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
