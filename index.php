@@ -355,30 +355,30 @@ while ($row = $bookings->fetch_assoc()) {
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Appointment</h2>
             <form id="editForm">
-                <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
-                <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+                <input type="hidden" name="appointment_id" id="appointment_id">
+                <input type="text" name="edit_name" id="edit_name" required>
                 <select name="edit_id_number" id="edit_id_number" required>
                     <option value="">Group Number</option>
                     <?php for ($i = 1; $i <= 200; $i++): ?>
-                        <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                        <option value="<?= $i ?>"><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
                 <select name="edit_set" id="edit_set" required>
                     <option value="">Set</option>
                     <?php foreach (range('A', 'F') as $set): ?>
-                        <option value="<?= $set ?>" <?= (isset($searched_appointment) && $searched_appointment['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
+                        <option value="<?= $set ?>"><?= $set ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_from" id="edit_time_from" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) : '' ?>" required>
-                <input type="text" name="edit_time_to" id="edit_time_to" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
-                <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
+                <input type="date" name="edit_date" id="edit_date" required>
+                <input type="text" name="edit_time_from" id="edit_time_from" required>
+                <input type="text" name="edit_time_to" id="edit_time_to" required>
+                <textarea name="edit_reason" id="edit_reason" required></textarea>
                 <select name="edit_department" id="edit_department" required>
                     <option value="">Department</option>
                     <?php
                     $departments->data_seek(0);
                     while ($department = $departments->fetch_assoc()): ?>
-                        <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
                 <select name="edit_room" id="edit_room" required>
@@ -386,11 +386,11 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php
                     $rooms->data_seek(0);
                     while ($room = $rooms->fetch_assoc()): ?>
-                        <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
-                <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
-                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
+                <input type="text" name="edit_representative_name" id="edit_representative_name" required>
+                <textarea name="edit_group_members" id="edit_group_members" rows="4" required></textarea>
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
             </form>
