@@ -50,12 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Auto-show edit modal if search result exists
-    const editModal = document.getElementById('editModal');
-    if (editModal && editModal.dataset.showModal === 'true') {
-        editModal.style.display = 'block';
-    }
-
     // Appointment Click Handling
     document.querySelectorAll('.appointment').forEach(appointment => {
         appointment.addEventListener('click', async (e) => {
