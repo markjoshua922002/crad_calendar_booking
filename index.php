@@ -350,7 +350,7 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     </div>
 
-    <div id="editModal" class="modal" data-show-modal="<?= isset($searched_appointment) ? 'true' : 'false' ?>">
+    <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Appointment</h2>
