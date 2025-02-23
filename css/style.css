@@ -130,31 +130,6 @@ button:hover,
     background-color: #0056b3;
 }
 
-/* Weekday Header Styles */
-.weekday-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #0056b3;
-    color: white;
-    padding: 5px 0;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.weekday-header div {
-    text-align: center;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 5px 0;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.weekday-header div:last-child {
-    border-right: none;
-}
 
 /* Search container styles */
 .search-container {
@@ -188,57 +163,6 @@ button:hover,
     background-color: #cc0000;
 }
 
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 90%;
-    overflow-y: auto;
-}
-
-.modal-content .modal-footer button {
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.modal-content .modal-footer button:hover {
-    background-color: #0056b3;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 
 /* Main content styles */
 .main-content {

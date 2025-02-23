@@ -140,7 +140,7 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <script defer src="js/script.js"></script>
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             $('#time_from, #time_to').timepicker({
                 timeFormat: 'h:i A',
                 interval: 30,
@@ -253,6 +253,11 @@ while ($row = $bookings->fetch_assoc()) {
             $(document).on('mouseleave', '.appointment-item', function() {
                 $(this).find('.appointment-buttons').hide();
             });
+
+            // Open edit modal if data-show-modal is true
+            if ($('#editModal').data('show-modal') === 'true') {
+                $('#editModal').show();
+            }
         });
     </script>
 </head>
