@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM fully loaded and parsed");
+
     // Toggle sidebar functionality
     document.getElementById('menuButton').onclick = function() {
         var sidebar = document.getElementById('sidebar');
@@ -25,8 +27,10 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('[data-modal]').forEach(button => {
         button.addEventListener('click', (e) => {
             const modalType = e.target.dataset.modal;
+            console.log(`Button clicked for modal type: ${modalType}`);
             if (modals[modalType]) {
                 modals[modalType].element.style.display = 'block';
+                console.log(`${modalType} modal displayed`);
             }
         });
     });
@@ -37,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (modal.close) {
             modal.close.addEventListener('click', () => {
                 modal.element.style.display = 'none';
+                console.log(`${modalKey} modal closed`);
             });
         }
     });
@@ -46,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
         Object.keys(modals).forEach(modalKey => {
             if (e.target === modals[modalKey].element) {
                 modals[modalKey].element.style.display = 'none';
+                console.log(`${modalKey} modal closed on outside click`);
             }
         });
     });
@@ -54,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.appointment').forEach(appointment => {
         appointment.addEventListener('click', async (e) => {
             const appointmentId = appointment.dataset.id;
+            console.log(`Appointment clicked with ID: ${appointmentId}`);
             try {
                 const response = await fetch(`api/get_appointment.php?id=${appointmentId}`);
                 const data = await response.json();
@@ -65,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
                 
                 modals.edit.element.style.display = 'block';
+                console.log(`Edit modal displayed for appointment ID: ${appointmentId}`);
             } catch (error) {
                 console.error('Error loading appointment:', error);
             }
