@@ -333,143 +333,143 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-    <!-- Modals -->
-    <div id="appointmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeAppointmentModal">&times;</span>
-            <h2>Appointments</h2>
-            <div id="appointmentList"></div>
-        </div>
+<!-- Modals -->
+<div id="appointmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAppointmentModal">&times;</span>
+        <h2>Appointments</h2>
+        <div id="appointmentList"></div>
     </div>
+</div>
 
-    <div id="viewModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeViewModal">&times;</span>
-            <h2>Appointment Details</h2>
-            <div id="viewContainer"></div>
-        </div>
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeViewModal">&times;</span>
+        <h2>Appointment Details</h2>
+        <div id="viewContainer"></div>
     </div>
+</div>
 
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeEditModal">&times;</span>
-            <h2>Edit Appointment</h2>
-            <form id="editForm">
-                <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
-                <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
-                <select name="edit_id_number" id="edit_id_number" required>
-                    <option value="">Group Number</option>
-                    <?php for ($i = 1; $i <= 200; $i++): ?>
-                        <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
-                    <?php endfor; ?>
-                </select>
-                <select name="edit_set" id="edit_set" required>
-                    <option value="">Set</option>
-                    <?php foreach (range('A', 'F') as $set): ?>
-                        <option value="<?= $set ?>" <?= (isset($searched_appointment) && $searched_appointment['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
-                <input type="text" name="edit_time_from" id="edit_time_from" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) : '' ?>" required>
-                <input type="text" name="edit_time_to" id="edit_time_to" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
-                <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
-                <select name="edit_department" id="edit_department" required>
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm">
+            <input type="hidden" name="appointment_id" id="appointment_id" value="<?= $searched_appointment['id'] ?? '' ?>">
+            <input type="text" name="edit_name" id="edit_name" value="<?= $searched_appointment['name'] ?? '' ?>" required>
+            <select name="edit_id_number" id="edit_id_number" required>
+                <option value="">Group Number</option>
+                <?php for ($i = 1; $i <= 200; $i++): ?>
+                    <option value="<?= $i ?>" <?= (isset($searched_appointment) && $searched_appointment['id_number'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                <?php endfor; ?>
+            </select>
+            <select name="edit_set" id="edit_set" required>
+                <option value="">Set</option>
+                <?php foreach (range('A', 'F') as $set): ?>
+                    <option value="<?= $set ?>" <?= (isset($searched_appointment) && $searched_appointment['set'] == $set) ? 'selected' : '' ?>><?= $set ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="date" name="edit_date" id="edit_date" value="<?= $searched_appointment['booking_date'] ?? '' ?>" required>
+            <input type="text" name="edit_time_from" id="edit_time_from" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_from'])) : '' ?>" required>
+            <input type="text" name="edit_time_to" id="edit_time_to" value="<?= isset($searched_appointment) ? date('g:i A', strtotime($searched_appointment['booking_time_to'])) : '' ?>" required>
+            <textarea name="edit_reason" id="edit_reason" required><?= $searched_appointment['reason'] ?? '' ?></textarea>
+            <select name="edit_department" id="edit_department" required>
+                <option value="">Department</option>
+                <?php
+                $departments->data_seek(0);
+                while ($department = $departments->fetch_assoc()): ?>
+                    <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <select name="edit_room" id="edit_room" required>
+                <option value="">Room Number</option>
+                <?php
+                $rooms->data_seek(0);
+                while ($room = $rooms->fetch_assoc()): ?>
+                    <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
+            <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
+            <button type="submit" id="save_button">Save Changes</button>
+            <button type="button" id="delete_button">Delete Appointment</button>
+        </form>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeBookingModal">&times;</span>
+        <h2>Book Schedule</h2>
+        <form method="POST" class="form">
+            <div class="form-grid">
+                <select name="department" required>
                     <option value="">Department</option>
                     <?php
                     $departments->data_seek(0);
                     while ($department = $departments->fetch_assoc()): ?>
-                        <option value="<?= $department['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['department_id'] == $department['id']) ? 'selected' : '' ?>><?= $department['name'] ?></option>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
-                <select name="edit_room" id="edit_room" required>
+                <input type="text" name="name" placeholder="Research Adviser's Name" required>
+                <select name="id_number" required>
+                    <option value="">Group Number</option>
+                    <?php for ($i = 1; $i <= 200; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="set" required>
+                    <option value="">Set</option>
+                    <?php foreach (range('A', 'F') as $set): ?>
+                        <option value="<?= $set ?>"><?= $set ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
+                <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
+                <input type="date" name="date" required>
+                <textarea name="reason" placeholder="Agenda" required></textarea>
+                <select name="room" required>
                     <option value="">Room Number</option>
                     <?php
                     $rooms->data_seek(0);
                     while ($room = $rooms->fetch_assoc()): ?>
-                        <option value="<?= $room['id'] ?>" <?= (isset($searched_appointment) && $searched_appointment['room_id'] == $room['id']) ? 'selected' : '' ?>><?= $room['name'] ?></option>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
                     <?php endwhile; ?>
                 </select>
-                <input type="text" name="edit_representative_name" id="edit_representative_name" value="<?= $searched_appointment['representative_name'] ?? '' ?>" required>
-                <textarea name="edit_group_members" id="edit_group_members" rows="4" required><?= $searched_appointment['group_members'] ?? '' ?></textarea>
-                <button type="submit" id="save_button">Save Changes</button>
-                <button type="button" id="delete_button">Delete Appointment</button>
-            </form>
-        </div>
+                <input type="text" name="representative_name" placeholder="Representative Name" required>
+            </div>
+            <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
+            <div class="form-actions-right">
+                <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeBookingModal">&times;</span>
-            <h2>Book Schedule</h2>
-            <form method="POST" class="form">
-                <div class="form-grid">
-                    <select name="department" required>
-                        <option value="">Department</option>
-                        <?php
-                        $departments->data_seek(0);
-                        while ($department = $departments->fetch_assoc()): ?>
-                            <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                    <input type="text" name="name" placeholder="Research Adviser's Name" required>
-                    <select name="id_number" required>
-                        <option value="">Group Number</option>
-                        <?php for ($i = 1; $i <= 200; $i++): ?>
-                            <option value="<?= $i ?>"><?= $i ?></option>
-                        <?php endfor; ?>
-                    </select>
-                    <select name="set" required>
-                        <option value="">Set</option>
-                        <?php foreach (range('A', 'F') as $set): ?>
-                            <option value="<?= $set ?>"><?= $set ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
-                    <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
-                    <input type="date" name="date" required>
-                    <textarea name="reason" placeholder="Agenda" required></textarea>
-                    <select name="room" required>
-                        <option value="">Room Number</option>
-                        <?php
-                        $rooms->data_seek(0);
-                        while ($room = $rooms->fetch_assoc()): ?>
-                            <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                    <input type="text" name="representative_name" placeholder="Representative Name" required>
-                </div>
-                <textarea name="group_members" placeholder="Group Members" rows="4" required></textarea>
-                <div class="form-actions-right">
-                    <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
-                </div>
-            </form>
-        </div>
+<!-- Add Department Modal -->
+<div id="addDepartmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
+        <h2>Add Department</h2>
+        <form method="POST" action="api/add_department.php">
+            <input type="text" name="department_name" placeholder="Department Name" required>
+            <input type="color" name="color" value="#ff0000" required>
+            <button type="submit" name="add_department">Add Department</button>
+        </form>
     </div>
+</div>
 
-    <!-- Add Department Modal -->
-    <div id="addDepartmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeAddDepartmentModal">&times;</span>
-            <h2>Add Department</h2>
-            <form method="POST" action="api/add_department.php">
-                <input type="text" name="department_name" placeholder="Department Name" required>
-                <input type="color" name="color" value="#ff0000" required>
-                <button type="submit" name="add_department">Add Department</button>
-            </form>
-        </div>
+<!-- Add Room Modal -->
+<div id="addRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddRoomModal">&times;</span>
+        <h2>Add Room</h2>
+        <form method="POST" action="api/add_room.php">
+            <input type="text" name="room_name" placeholder="Room Name" required>
+            <button type="submit" name="add_room">Add Room</button>
+        </form>
     </div>
-
-    <!-- Add Room Modal -->
-    <div id="addRoomModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeAddRoomModal">&times;</span>
-            <h2>Add Room</h2>
-            <form method="POST" action="api/add_room.php">
-                <input type="text" name="room_name" placeholder="Room Name" required>
-                <button type="submit" name="add_room">Add Room</button>
-            </form>
-        </div>
-    </div>
+</div>
 </body>
 </html>
