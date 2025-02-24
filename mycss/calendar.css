@@ -186,3 +186,13 @@
     margin-top: 5px;
     opacity: 0.9;
 }
+
+/* Container for the search bar */
+.search-container-wrapper {
+    margin-bottom: 20px;
+}
+
+/* Container for the whole calendar */
+.calendar-container-wrapper {
+    margin-top: 20px;
+}
