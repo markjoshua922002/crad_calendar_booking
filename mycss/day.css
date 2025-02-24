@@ -1,4 +1,4 @@
-.day {
+:where(.day) {
     background-color: #fff !important;
     border: 1px solid #ccc !important;
     padding: 20px !important;
@@ -12,11 +12,11 @@
     transition: background-color 0.3s !important;
 }
 
-.day:hover {
+:where(.day:hover) {
     background-color: #e6f7ff !important;
 }
 
-.day-number {
+:where(.day-number) {
     font-weight: bold !important;
     margin-bottom: 5px !important;
 }
