@@ -140,22 +140,6 @@ button:hover,
     margin-right: 10px;
 }
 
-/* Logout button styling */
-.logout-button {
-    padding: 10px 15px;
-    background-color: #FF4C4C;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-
-.logout-button:hover {
-    background-color: #cc0000;
-}
 
 /* Modal styles */
 .modal {
