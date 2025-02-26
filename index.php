@@ -131,7 +131,7 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=3">
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
-    <link rel="stylesheet" href="mycss/calendar.css?v=8">
+    <link rel="stylesheet" href="mycss/calendar.css?v=9">
     <link rel="stylesheet" href="mycss/day.css?v=1">
     <link rel="stylesheet" href="mycss/reminder.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
