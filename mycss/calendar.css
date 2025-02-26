@@ -196,8 +196,12 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Container for the whole calendar */
+/* Center the calendar container */
 .calendar-container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     margin-top: 20px;
     background-color: #fff;
     padding: 20px;
