@@ -139,7 +139,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
     <link rel="stylesheet" href="mycss/calendar.css?v=13">
     <link rel="stylesheet" href="mycss/day.css">
-    <link rel="stylesheet" href="mycss/reminder.css?v=4">
+    <link rel="stylesheet" href="mycss/reminder.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

@@ -4,10 +4,9 @@
     gap: 20px; /* Space between calendar and reminder container */
 }
 
-
 .reminder-container {
-    width: 80%; /* Increase the width to make it bigger */
-    max-width: 1200px; /* Set a maximum width */
+    width: 100%; /* Increase the width to make it bigger */
+    max-width: 1400px; /* Set a maximum width */
     margin: 0 auto; /* Center the container */
     background-color: #fff;
     padding: 20px;
