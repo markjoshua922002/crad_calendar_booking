@@ -8,7 +8,8 @@
 }
 
 .calendar-container {
-    min-width: 1200px; /* Set a maximum width */
+    width: 100%; /* Increase the width to make it bigger */
+    max-width: 1200px; /* Set a maximum width */
     margin: 0 auto;
 }
 
@@ -203,7 +204,7 @@
 
 /* Container for the whole calendar */
 .calendar-container-wrapper {
-    width: 90%; /* Increase the width to make it bigger */
+    width: 900%; /* Increase the width to make it bigger */
     max-width: 1400px; /* Set a maximum width */
     margin: 20px auto; /* Center the container and add some margin */
     background-color: #fff;
