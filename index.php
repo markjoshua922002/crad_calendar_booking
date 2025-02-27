@@ -404,7 +404,7 @@ $(document).ready(function() {
         const date = $(this).data('date');
         console.log('Date clicked:', date); // Log the date clicked
         $.ajax({
-            url: 'api/get_appointments.php',
+            url: 'api/get_appointment.php',
             method: 'POST',
             data: { date: date },
             success: function(response) {
