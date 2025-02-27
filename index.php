@@ -192,7 +192,7 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php endfor; ?>
 
                     <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                        <div class="day">
+                        <div class="day" data-date="<?= $year . '-' . $month . '-' . $day ?>">
                             <div class="day-number"><?= $day ?></div>
                             <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
                         </div>
@@ -396,6 +396,20 @@ $(document).ready(function() {
     document.querySelectorAll('.close').forEach(closeButton => {
         closeButton.addEventListener('click', function() {
             this.closest('.modal').style.display = 'none';
+        });
+    });
+
+    // Show appointments modal on day click
+    $('.day').on('click', function() {
+        const date = $(this).data('date');
+        $.ajax({
+            url: 'api/get_appointments.php',
+            method: 'POST',
+            data: { date: date },
+            success: function(response) {
+                $('#appointmentList').html(response);
+                $('#appointmentModal').show();
+            }
         });
     });
 });
