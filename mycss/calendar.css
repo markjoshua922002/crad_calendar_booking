@@ -8,8 +8,7 @@
 }
 
 .calendar-container {
-    width: 1000%; /* Increase the width to make it bigger */
-    max-width: 1200px; /* Set a maximum width */
+    min-width: 1200px; /* Set a maximum width */
     margin: 0 auto;
 }
 
