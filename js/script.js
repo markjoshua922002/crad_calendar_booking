@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var viewModalContent = $('#viewModal .modal-content');
             viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
                                   '<h2>Appointment Details</h2>' +
-                                  '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                                  '<strong>Name:</strong> ' + appointment.representative_name + '<br>' +
                                   '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
                                   '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
                                   '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
@@ -290,6 +290,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                   '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
                                   '<strong>Representative Name:</strong> ' + appointment.representative_name);
             $('#viewModal').show();
+        });
+
+        // Close the view modal
+        $(document).on('click', '#closeViewModal', function() {
+            $('#viewModal').hide();
         });
     });
 });
