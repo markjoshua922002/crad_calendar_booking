@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - BCP CRAD</title>
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
+    <link rel="stylesheet" href="mycss/style.css?v=3">
 </head>
 <body>
     <!-- Sidebar Navigation -->
