@@ -254,4 +254,14 @@ document.addEventListener("DOMContentLoaded", function() {
             $(this).find('.appointment-buttons').hide();
         });
     });
+
+    // Show booking modal on button click
+    document.getElementById('openBookingModal').addEventListener('click', function() {
+        modals.booking.element.style.display = 'block';
+    });
+
+    // Close booking modal on close button click
+    document.getElementById('closeBookingModal').addEventListener('click', function() {
+        modals.booking.element.style.display = 'none';
+    });
 });
