@@ -172,18 +172,12 @@
 
 /* Day styles */
 .day {
-    background-color: #fff;
     border: 1px solid #ccc;
     padding: 10px;
     min-height: 100px;
-    border-radius: 5px;
-    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
-    cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 .day:hover {
@@ -192,14 +186,11 @@
 
 .day-number {
     font-weight: bold;
-    margin-bottom: 5px;
 }
 
 .appointment-count {
-    color: gray;
     font-size: 0.8em;
-    margin-top: 5px;
-    opacity: 0.9;
+    color: #666;
 }
 
 /* Container for the search bar */
