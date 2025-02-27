@@ -5,12 +5,14 @@
     align-items: center;
     width: 100%;
     margin: 0 auto;
+
 }
 
 .calendar-container {
     width: 80%; /* Increase the width to make it bigger */
     max-width: 1200px; /* Set a maximum width */
     margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .calendar {
@@ -49,7 +51,7 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     border: 1px solid #ccc;
 }
 
