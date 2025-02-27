@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Timepicker Initialization
     $('#time_from, #time_to').timepicker({
         timeFormat: 'h:i A',
-        interval: 30,
+        interval: 1,
         minTime: '6:00am',
         maxTime: '11:00pm',
         dynamic: false,
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     $('#edit_time_from, #edit_time_to').timepicker({
         timeFormat: 'h:i A',
-        interval: 30,
+        interval: 1,
         minTime: '6:00am',
         maxTime: '11:00pm',
         dynamic: false,
@@ -169,8 +169,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Show appointments for a specific day
     $('.day').on('click', function() {
         var day = $(this).find('.day-number').text();
+        console.log(`Day clicked: ${day}`);
         var appointments = JSON.parse(document.getElementById('appointmentsData').textContent);
         var dayAppointments = appointments[day] || [];
+        console.log(`Appointments for day ${day}:`, dayAppointments);
         var appointmentList = $('#appointmentList');
         appointmentList.empty();
         dayAppointments.forEach(function(appointment) {
@@ -182,6 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
             appointmentList.append(appointmentItem);
         });
         $('#appointmentModal').show();
+        console.log('Appointment modal displayed');
     });
 
     // Show appointment details in view modal
@@ -199,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
                               '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
                               '<strong>Representative Name:</strong> ' + appointment.representative_name);
         $('#viewModal').show();
+        console.log('View modal displayed');
     });
 
     // Show appointment details in edit modal
@@ -218,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function() {
         $('#edit_representative_name').val(appointment.representative_name);
         $('#appointmentModal').hide();
         $('#editModal').show();
+        console.log('Edit modal displayed');
     });
 
     // Handle delete button click event
