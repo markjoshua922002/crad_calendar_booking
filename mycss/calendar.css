@@ -204,7 +204,9 @@
 
 /* Container for the whole calendar */
 .calendar-container-wrapper {
-    margin-top: 20px;
+    width: 90%; /* Increase the width to make it bigger */
+    max-width: 1400px; /* Set a maximum width */
+    margin: 20px auto; /* Center the container and add some margin */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
