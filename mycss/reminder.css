@@ -2,7 +2,6 @@
 .main-content {
     display: flex;
     gap: 20px; /* Space between calendar and reminder container */
-    width: 100%; /* Ensure the main content takes full width */
 }
 
 
