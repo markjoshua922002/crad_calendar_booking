@@ -134,18 +134,25 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/calendar.css?v=10">
     <link rel="stylesheet" href="mycss/day.css?v=2">
     <link rel="stylesheet" href="mycss/reminder.css?v=9">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script defer src="js/script.js"></script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
 <div class="sidebar" id="sidebar">
+    <a href="home.php">HOME</a>
     <a href="index.php">CRAD</a>
+    <a href="hr.php">HR</a>
+    <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
+    <a href="faculty.php">FACULTY</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
@@ -248,7 +255,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php endfor; ?>
             </select>
             <select name="edit_set" id="edit_set" required>
-                <option value="">Set</</option>
+                <option value="">Set</option>
                 <?php foreach (range('A', 'F') as $set): ?>
                     <option value="<?= $set ?>"><?= $set ?></option>
                 <?php endforeach; ?>
@@ -309,8 +316,18 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $set ?>"><?= $set ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
-                <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
+                <div class="input-group date" id="time_from" data-target-input="nearest">
+                    <input type="text" name="time_from" class="form-control datetimepicker-input" data-target="#time_from" placeholder="Start Time" required/>
+                    <div class="input-group-append" data-target="#time_from" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="input-group date" id="time_to" data-target-input="nearest">
+                    <input type="text" name="time_to" class="form-control datetimepicker-input" data-target="#time_to" placeholder="End Time" required/>
+                    <div class="input-group-append" data-target="#time_to" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                    </div>
+                </div>
                 <input type="date" name="date" required>
                 <textarea name="reason" placeholder="Agenda" required></textarea>
                 <select name="room" required>
