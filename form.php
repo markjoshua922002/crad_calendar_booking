@@ -44,6 +44,9 @@ if ($conn->connect_error) {
             $submission = $conn->real_escape_string($_POST['submission']);
             $time = $conn->real_escape_string($_POST['time']);
 
+            // Convert time to HH:MM:SS format
+            $time = date("H:i:s", strtotime($time));
+
             $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission, time) VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission', '$time')";
 
             if ($conn->query($sql) === TRUE) {
