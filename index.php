@@ -359,5 +359,46 @@ while ($row = $bookings->fetch_assoc()) {
         </form>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#time_from, #time_to').timepicker({
+        timeFormat: 'h:i A',
+        interval: 1, // 1-minute intervals
+        minTime: '12:00am',
+        maxTime: '11:59pm',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+
+    // Show booking modal on button click
+    document.getElementById('openBookingModal').addEventListener('click', function() {
+        document.getElementById('bookingModal').style.display = 'block';
+    });
+
+    // Close booking modal on close button click
+    document.getElementById('closeBookingModal').addEventListener('click', function() {
+        document.getElementById('bookingModal').style.display = 'none';
+    });
+
+    // Close modals on outside click
+    window.addEventListener('click', function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Close modals on close button click
+    document.querySelectorAll('.close').forEach(closeButton => {
+        closeButton.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+});
+</script>
 </body>
 </html>
