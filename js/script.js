@@ -13,9 +13,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Modal Handling
     const modals = {
+        appointment: {
+            element: document.getElementById('appointmentModal'),
+            close: document.getElementById('closeAppointmentModal')
+        },
+        view: {
+            element: document.getElementById('viewModal'),
+            close: document.getElementById('closeViewModal')
+        },
         edit: {
             element: document.getElementById('editModal'),
             close: document.getElementById('closeEditModal')
+        },
+        booking: {
+            element: document.getElementById('bookingModal'),
+            close: document.getElementById('closeBookingModal')
         },
         department: {
             element: document.getElementById('addDepartmentModal'),
@@ -132,21 +144,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Timepicker Initialization
-    $('#time_range').timepicker({
+    $('#time_from, #time_to').timepicker({
         timeFormat: 'h:i A',
         interval: 30,
-        minTime: '12:00am',
-        maxTime: '11:30pm',
+        minTime: '6:00am',
+        maxTime: '11:00pm',
         dynamic: false,
         dropdown: true,
         scrollbar: true
     });
 
-    $('#edit_time_range').timepicker({
+    $('#edit_time_from, #edit_time_to').timepicker({
         timeFormat: 'h:i A',
         interval: 30,
-        minTime: '12:00am',
-        maxTime: '11:30pm',
+        minTime: '6:00am',
+        maxTime: '11:00pm',
         dynamic: false,
         dropdown: true,
         scrollbar: true
