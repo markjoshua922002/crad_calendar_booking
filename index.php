@@ -192,7 +192,7 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php endfor; ?>
 
                     <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                        <div class="day" data-date="<?= $year . '-' . $month . '-' . $day ?>">
+                        <div class="day">
                             <div class="day-number"><?= $day ?></div>
                             <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
                         </div>
@@ -252,7 +252,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php endfor; ?>
             </select>
             <select name="edit_set" id="edit_set" required>
-                <option value="">Set</option>
+                <option value="">Set</</option>
                 <?php foreach (range('A', 'F') as $set): ?>
                     <option value="<?= $set ?>"><?= $set ?></option>
                 <?php endforeach; ?>
@@ -359,65 +359,5 @@ while ($row = $bookings->fetch_assoc()) {
         </form>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('#time_from, #time_to').timepicker({
-        timeFormat: 'h:i A',
-        interval: 1, // 1-minute intervals
-        minTime: '12:00am',
-        maxTime: '11:59pm',
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true
-    });
-
-    // Show booking modal on button click
-    document.getElementById('openBookingModal').addEventListener('click', function() {
-        document.getElementById('bookingModal').style.display = 'block';
-    });
-
-    // Close booking modal on close button click
-    document.getElementById('closeBookingModal').addEventListener('click', function() {
-        document.getElementById('bookingModal').style.display = 'none';
-    });
-
-    // Close modals on outside click
-    window.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-
-    // Close modals on close button click
-    document.querySelectorAll('.close').forEach(closeButton => {
-        closeButton.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    // Show appointments modal on day click
-    $('.day').on('click', function() {
-        const date = $(this).data('date');
-        console.log('Date clicked:', date); // Log the date clicked
-        $.ajax({
-            url: 'api/get_appointment.php',
-            method: 'POST',
-            data: { date: date },
-            success: function(response) {
-                console.log('Response:', response); // Log the response
-                $('#appointmentList').html(response);
-                $('#appointmentModal').show();
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error); // Log any errors
-            }
-        });
-    });
-});
-</script>
 </body>
 </html>

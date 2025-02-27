@@ -24,18 +24,10 @@ document.addEventListener("DOMContentLoaded", function() {
         room: {
             element: document.getElementById('addRoomModal'),
             close: document.getElementById('closeAddRoomModal')
-        },
-        booking: {
-            element: document.getElementById('bookingModal'),
-            close: document.getElementById('closeBookingModal')
         }
     };
 
-    // Show modals based on button clicks
-    document.getElementById('openBookingModal').addEventListener('click', function() {
-        modals.booking.element.style.display = 'block';
-    });
-
+    // Show modals based on data attributes
     document.querySelectorAll('[data-modal]').forEach(button => {
         button.addEventListener('click', (e) => {
             const modalType = e.target.dataset.modal;
@@ -140,11 +132,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Timepicker Initialization
-    $('#time_from, #time_to').timepicker({
+    $('#time_range').timepicker({
         timeFormat: 'h:i A',
-        interval: 1, // 1-minute intervals
+        interval: 30,
         minTime: '12:00am',
-        maxTime: '11:59pm',
+        maxTime: '11:30pm',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+
+    $('#edit_time_range').timepicker({
+        timeFormat: 'h:i A',
+        interval: 30,
+        minTime: '12:00am',
+        maxTime: '11:30pm',
         dynamic: false,
         dropdown: true,
         scrollbar: true
@@ -263,15 +265,5 @@ document.addEventListener("DOMContentLoaded", function() {
         $(document).on('mouseleave', '.appointment-item', function() {
             $(this).find('.appointment-buttons').hide();
         });
-    });
-
-    // Show booking modal on button click
-    document.getElementById('openBookingModal').addEventListener('click', function() {
-        modals.booking.element.style.display = 'block';
-    });
-
-    // Close booking modal on close button click
-    document.getElementById('closeBookingModal').addEventListener('click', function() {
-        modals.booking.element.style.display = 'none';
     });
 });
