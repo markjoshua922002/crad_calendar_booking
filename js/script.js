@@ -269,8 +269,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Add this JavaScript code to handle the click event and populate the modal
     const days = document.querySelectorAll('.calendar .day');
-    const dayBookingsModal = document.getElementById('dayBookingsModal');
-    const closeDayBookingsModal = document.getElementById('closeDayBookingsModal');
     const selectedDay = document.getElementById('selectedDay');
     const dayBookingsList = document.getElementById('dayBookingsList');
 
@@ -302,17 +300,91 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Show the modal
-            dayBookingsModal.style.display = 'block';
+            (document.getElementById('dayBookingsModal')).style.display = 'block';
         });
     });
 
-    closeDayBookingsModal.addEventListener('click', function() {
-        dayBookingsModal.style.display = 'none';
+    (document.getElementById('closeDayBookingsModal')).addEventListener('click', function() {
+        (document.getElementById('dayBookingsModal')).style.display = 'none';
     });
 
     window.addEventListener('click', function(event) {
-        if (event.target == dayBookingsModal) {
-            dayBookingsModal.style.display = 'none';
+        if (event.target == document.getElementById('dayBookingsModal')) {
+            (document.getElementById('dayBookingsModal')).style.display = 'none';
         }
     });
+
+    // Get the modals
+    var appointmentModal = document.getElementById('appointmentModal');
+    var viewModal = document.getElementById('viewModal');
+    var editModal = document.getElementById('editModal');
+    var bookingModal = document.getElementById('bookingModal');
+    var addDepartmentModal = document.getElementById('addDepartmentModal');
+    var addRoomModal = document.getElementById('addRoomModal');
+    var dayBookingsModal = document.getElementById('dayBookingsModal');
+
+    // Get the buttons that open the modals
+    var openBookingModalButton = document.getElementById('openBookingModal');
+
+    // Get the <span> elements that close the modals
+    var closeAppointmentModal = document.getElementById('closeAppointmentModal');
+    var closeViewModal = document.getElementById('closeViewModal');
+    var closeEditModal = document.getElementById('closeEditModal');
+    var closeBookingModal = document.getElementById('closeBookingModal');
+    var closeAddDepartmentModal = document.getElementById('closeAddDepartmentModal');
+    var closeAddRoomModal = document.getElementById('closeAddRoomModal');
+    var closeDayBookingsModal = document.getElementById('closeDayBookingsModal');
+
+    // When the user clicks the button, open the booking modal
+    openBookingModalButton.onclick = function() {
+        bookingModal.style.display = 'block';
+    }
+
+    // When the user clicks on <span> (x), close the modals
+    closeAppointmentModal.onclick = function() {
+        appointmentModal.style.display = 'none';
+    }
+    closeViewModal.onclick = function() {
+        viewModal.style.display = 'none';
+    }
+    closeEditModal.onclick = function() {
+        editModal.style.display = 'none';
+    }
+    closeBookingModal.onclick = function() {
+        bookingModal.style.display = 'none';
+    }
+    closeAddDepartmentModal.onclick = function() {
+        addDepartmentModal.style.display = 'none';
+    }
+    closeAddRoomModal.onclick = function() {
+        addRoomModal.style.display = 'none';
+    }
+    (document.getElementById('closeDayBookingsModal')).onclick = function() {
+        (document.getElementById('dayBookingsModal')).style.display = 'none';
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == appointmentModal) {
+            appointmentModal.style.display = 'none';
+        }
+        if (event.target == viewModal) {
+            viewModal.style.display = 'none';
+        }
+        if (event.target == editModal) {
+            editModal.style.display = 'none';
+        }
+        if (event.target == bookingModal) {
+            bookingModal.style.display = 'none';
+        }
+        if (event.target == addDepartmentModal) {
+            addDepartmentModal.style.display = 'none';
+        }
+        if (event.target == addRoomModal) {
+            addRoomModal.style.display = 'none';
+        }
+        if (event.target == document.getElementById('dayBookingsModal')) {
+            (document.getElementById('dayBookingsModal')).style.display = 'none';
+        }
+    }
 });
