@@ -51,26 +51,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Close modals
-    Object.keys(modals).forEach(modalKey => {
-        const modal = modals[modalKey];
-        if (modal.close) {
-            modal.close.addEventListener('click', () => {
-                modal.element.style.display = 'none';
-                console.log(`${modalKey} modal closed`);
-            });
-        }
-    });
-
-    // Close modals on outside click
-    window.addEventListener('click', (e) => {
-        Object.keys(modals).forEach(modalKey => {
-            if (e.target === modals[modalKey].element) {
-                modals[modalKey].element.style.display = 'none';
-                console.log(`${modalKey} modal closed on outside click`);
-            }
-        });
-    });
 
     // Appointment Click Handling
     document.querySelectorAll('.appointment').forEach(appointment => {
