@@ -27,31 +27,37 @@ if (isset($_POST['add_booking'])) {
     $time_to = date('H:i:s', strtotime($_POST['time_to']));
     $reason = $_POST['reason'];
 
-    // Check for double booking
-    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-    if (!$stmt) {
-        die('Prepare failed: ' . $conn->error);
-    }
-    $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $warning = "Double booking detected for the specified time, date, and room.";
+    // Check if the booking date is in the past
+    $current_date = date('Y-m-d');
+    if ($date < $current_date) {
+        $warning = "You cannot book a date that has already passed.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        // Check for double booking
+        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
         if (!$stmt) {
             die('Prepare failed: ' . $conn->error);
         }
-        $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
-        if ($stmt->execute()) {
-            echo "Booking successfully added.";
+        $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $warning = "Double booking detected for the specified time, date, and room.";
         } else {
-            echo "Error: " . $stmt->error;
+            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if (!$stmt) {
+                die('Prepare failed: ' . $conn->error);
+            }
+            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            if ($stmt->execute()) {
+                echo "Booking successfully added.";
+            } else {
+                echo "Error: " . $stmt->error;
+            }
+            $stmt->close();
         }
         $stmt->close();
     }
-    $stmt->close();
 }
 
 // Handle department addition
@@ -152,6 +158,11 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
 <div class="container">
+    <?php if (isset($warning)): ?>
+        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
+            <?= $warning ?>
+        </div>
+    <?php endif; ?>
     <div class="search-container-wrapper">
         <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
             <div class="search-container" style="display: inline-block;">
