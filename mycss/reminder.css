@@ -4,14 +4,13 @@
     gap: 20px; /* Space between calendar and reminder container */
 }
 
-
 /* Reminder container styles */
 .reminder-container {
     flex: 1;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for better visibility */
     width: 100%; /* Make the reminder container take full width */
     max-width: 400px; /* Set a maximum width */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
@@ -31,4 +30,5 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to list items */
 }
