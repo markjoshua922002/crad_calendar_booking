@@ -1,3 +1,16 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,14 +37,12 @@
         <h2>Logbook Form</h2>
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            include 'db_connection.php';
-
-            $name = $_POST['name'];
-            $position = $_POST['position'];
-            $purpose = $_POST['purpose'];
-            $inquiry = $_POST['inquiry'];
-            $submission = $_POST['submission'];
-            $time = $_POST['time'];
+            $name = $conn->real_escape_string($_POST['name']);
+            $position = $conn->real_escape_string($_POST['position']);
+            $purpose = $conn->real_escape_string($_POST['purpose']);
+            $inquiry = $conn->real_escape_string($_POST['inquiry']);
+            $submission = $conn->real_escape_string($_POST['submission']);
+            $time = $conn->real_escape_string($_POST['time']);
 
             $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission, time) VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission', '$time')";
 
@@ -40,8 +51,6 @@
             } else {
                 echo "<p style='color: red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
             }
-
-            $conn->close();
         }
         ?>
         <form action="form.php" method="POST">
