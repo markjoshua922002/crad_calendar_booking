@@ -6,11 +6,13 @@
 
 
 .reminder-container {
-    flex: 0.8; /* Make the reminder container smaller */
+    width: 80%; /* Increase the width to make it bigger */
+    max-width: 1200px; /* Set a maximum width */
+    margin: 0 auto; /* Center the container */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.1), 4px 0 10px rgba(0, 0, 0, 0.1), -4px 0 10px rgba(0, 0, 0, 0.1); /* Shadows on every side */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .reminder-container h2 {
