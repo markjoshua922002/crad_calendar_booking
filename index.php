@@ -402,13 +402,18 @@ $(document).ready(function() {
     // Show appointments modal on day click
     $('.day').on('click', function() {
         const date = $(this).data('date');
+        console.log('Date clicked:', date); // Log the date clicked
         $.ajax({
             url: 'api/get_appointments.php',
             method: 'POST',
             data: { date: date },
             success: function(response) {
+                console.log('Response:', response); // Log the response
                 $('#appointmentList').html(response);
                 $('#appointmentModal').show();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error); // Log any errors
             }
         });
     });
