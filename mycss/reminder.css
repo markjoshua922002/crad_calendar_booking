@@ -10,7 +10,9 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(128, 128, 128, 0.5); /* Enhanced shadow for better visibility */
+    box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.6), 
+            0px -8px 16px 4px rgba(0, 0, 0, 0.4);
+ /* Enhanced shadow for better visibility */
     width: 100%; /* Make the reminder container take full width */
     max-width: 400px; /* Set a maximum width */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
