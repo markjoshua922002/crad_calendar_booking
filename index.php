@@ -131,7 +131,7 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=2">
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
-    <link rel="stylesheet" href="mycss/calendar.css?v=5">
+    <link rel="stylesheet" href="mycss/calendar.css?v=6">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
@@ -165,37 +165,38 @@ while ($row = $bookings->fetch_assoc()) {
 
     <div class="calendar-container-wrapper">
         <div class="main-content">
-            <div class="calendar-container">
-                <div class="navigation" style="margin-bottom: 10px;">
-                    <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
-                    <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-                    <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+            <div class="calendar-wrapper"> <!-- Add this wrapper -->
+                <div class="calendar-container">
+                    <div class="navigation" style="margin-bottom: 10px;">
+                        <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+                        <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+                        <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+                    </div>
+
+                    <div class="weekday-header">
+                        <div>SUNDAY</div>
+                        <div>MONDAY</div>
+                        <div>TUESDAY</div>
+                        <div>WEDNESDAY</div>
+                        <div>THURSDAY</div>
+                        <div>FRIDAY</div>
+                        <div>SATURDAY</div>
+                    </div>
+
+                    <div class="calendar">
+                        <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
+                            <div class="day"></div>
+                        <?php endfor; ?>
+
+                        <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
+                            <div class="day">
+                                <div class="day-number"><?= $day ?></div>
+                                <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
+                            </div>
+                        <?php endfor; ?>
+                    </div>
                 </div>
-
-                <div class="weekday-header">
-                    <div>SUNDAY</div>
-                    <div>MONDAY</div>
-                    <div>TUESDAY</div>
-                    <div>WEDNESDAY</div>
-                    <div>THURSDAY</div>
-                    <div>FRIDAY</div>
-                    <div>SATURDAY</div>
-                </div>
-
-                <div class="calendar">
-                    <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-                        <div class="day"></div>
-                    <?php endfor; ?>
-
-                    <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                        <div class="day">
-                            <div class="day-number"><?= $day ?></div>
-                            <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
-                        </div>
-                    <?php endfor; ?>
-                </div>
-            </div>
-
+            </div> <!-- Close the wrapper -->
             <div class="reminder-container">
                 <h2>Upcoming Appointments</h2>
                 <ul id="reminderList">
