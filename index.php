@@ -144,12 +144,8 @@ while ($row = $bookings->fetch_assoc()) {
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
 <div class="sidebar" id="sidebar">
-    <a href="home.php">HOME</a>
     <a href="index.php">CRAD</a>
-    <a href="hr.php">HR</a>
-    <a href="its.php">ITS</a>
     <a href="osas.php">OSAS</a>
-    <a href="faculty.php">FACULTY</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
