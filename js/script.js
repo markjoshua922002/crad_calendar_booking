@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", function() {
         room: {
             element: document.getElementById('addRoomModal'),
             close: document.getElementById('closeAddRoomModal')
+        },
+        appointment: {
+            element: document.getElementById('appointmentModal'),
+            close: document.getElementById('closeAppointmentModal')
         }
     };
 
