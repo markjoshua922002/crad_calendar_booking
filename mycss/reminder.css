@@ -9,7 +9,7 @@
     max-width: 1400px; /* Set a maximum width */
     margin: 0 auto; /* Center the container */
     background-color: #fff;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
@@ -28,4 +28,10 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.reminder-container li:hover {
+    background-color: #e0e0e0;
 }

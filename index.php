@@ -139,7 +139,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
     <link rel="stylesheet" href="mycss/calendar.css?v=16">
     <link rel="stylesheet" href="mycss/day.css">
-    <link rel="stylesheet" href="mycss/reminder.css?v=6">
+    <link rel="stylesheet" href="mycss/reminder.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -214,12 +214,16 @@ while ($row = $bookings->fetch_assoc()) {
                 <ul id="reminderList">
                     <?php
                     $currentDateTime = new DateTime();
+                    $sevenDaysLater = (clone $currentDateTime)->modify('+7 days');
                     foreach ($appointments as $day => $dayAppointments) {
                         foreach ($dayAppointments as $appointment) {
                             $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
-                            $interval = $currentDateTime->diff($appointmentDateTime);
-                            if ($interval->h <= 3 && $interval->invert == 0) {
-                                echo '<li>' . $appointment['name'] . ' - ' . $appointment['booking_time_from'] . '</li>';
+                            if ($appointmentDateTime >= $currentDateTime && $appointmentDateTime <= $sevenDaysLater) {
+                                echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                                echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                                echo $appointment['department_name'] . '<br>';
+                                echo $appointment['booking_date'] . ' ' . $appointment['booking_time_from'] . ' - ' . $appointment['booking_time_to'];
+                                echo '</li>';
                             }
                         }
                     }
