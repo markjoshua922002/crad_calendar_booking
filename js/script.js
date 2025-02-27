@@ -164,118 +164,106 @@ document.addEventListener("DOMContentLoaded", function() {
         scrollbar: true
     });
 
-    $(document).ready(function(){
-        $('#time_from, #time_to').timepicker({
-            timeFormat: 'h:i A',
-            interval: 30,
-            minTime: '6:00am',
-            maxTime: '11:00pm',
-            dynamic: false,
-            dropdown: true,
-            scrollbar: true
+    // Show appointments for a specific day
+    $('.day').on('click', function() {
+        var day = $(this).find('.day-number').text();
+        var appointments = JSON.parse(document.getElementById('appointmentsData').textContent);
+        var dayAppointments = appointments[day] || [];
+        var appointmentList = $('#appointmentList');
+        appointmentList.empty();
+        dayAppointments.forEach(function(appointment) {
+            var appointmentItem = $('<div class="appointment-item"></div>');
+            appointmentItem.css('background-color', appointment.color);
+            appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
+            appointmentItem.data('appointment', appointment);
+            appointmentItem.append('<div class="appointment-buttons"><button class="view-button">View</button><button class="edit-button">Edit</button></div>');
+            appointmentList.append(appointmentItem);
         });
+        $('#appointmentModal').show();
+    });
 
-        // Show appointments for a specific day
-        $('.day').on('click', function() {
-            var day = $(this).find('.day-number').text();
-            var appointments = JSON.parse(document.getElementById('appointmentsData').textContent);
-            var dayAppointments = appointments[day] || [];
-            var appointmentList = $('#appointmentList');
-            appointmentList.empty();
-            dayAppointments.forEach(function(appointment) {
-                var appointmentItem = $('<div class="appointment-item"></div>');
-                appointmentItem.css('background-color', appointment.color);
-                appointmentItem.html('<div class="appointment-container"><strong>' + appointment.name + '</strong><br>' + appointment.department_name + '<br>' + appointment.room_name + '<br>' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '</div>');
-                appointmentItem.data('appointment', appointment);
-                appointmentItem.append('<div class="appointment-buttons"><button class="view-button">View</button><button class="edit-button">Edit</button></div>');
-                appointmentList.append(appointmentItem);
+    // Show appointment details in view modal
+    $(document).on('click', '.view-button', function() {
+        var appointment = $(this).closest('.appointment-item').data('appointment');
+        var viewModalContent = $('#viewModal .modal-content');
+        viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
+                              '<h2>Appointment Details</h2>' +
+                              '<strong>Name:</strong> ' + appointment.name + '<br>' +
+                              '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
+                              '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                              '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
+                              '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
+                              '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
+                              '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
+                              '<strong>Representative Name:</strong> ' + appointment.representative_name);
+        $('#viewModal').show();
+    });
+
+    // Show appointment details in edit modal
+    $(document).on('click', '.edit-button', function() {
+        var appointment = $(this).closest('.appointment-item').data('appointment');
+        $('#appointment_id').val(appointment.id);
+        $('#edit_name').val(appointment.name);
+        $('#edit_id_number').val(appointment.id_number);
+        $('#edit_set').val(appointment.set);
+        $('#edit_date').val(appointment.booking_date);
+        $('#edit_time_from').val(appointment.booking_time_from);
+        $('#edit_time_to').val(appointment.booking_time_to);
+        $('#edit_reason').val(appointment.reason);
+        $('#edit_department').val(appointment.department_id);
+        $('#edit_room').val(appointment.room_id);
+        $('#edit_group_members').val(appointment.group_members);
+        $('#edit_representative_name').val(appointment.representative_name);
+        $('#appointmentModal').hide();
+        $('#editModal').show();
+    });
+
+    // Handle delete button click event
+    $('#delete_button').on('click', function() {
+        var appointmentId = $('#appointment_id').val();
+        if (confirm('Are you sure you want to delete this appointment?')) {
+            $.ajax({
+                url: 'api/delete_appointment.php',
+                type: 'POST',
+                data: { id: appointmentId },
+                success: function(response) {
+                    alert(response);
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('Error deleting appointment: ' + xhr.responseText);
+                }
             });
-            $('#appointmentModal').show();
-        });
+        }
+    });
 
-        // Show appointment details in view modal
-        $(document).on('click', '.view-button', function() {
-            var appointment = $(this).closest('.appointment-item').data('appointment');
-            var viewModalContent = $('#viewModal .modal-content');
-            viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
-                                  '<h2>Appointment Details</h2>' +
-                                  '<strong>Name:</strong> ' + appointment.name + '<br>' +
-                                  '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
-                                  '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
-                                  '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
-                                  '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
-                                  '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
-                                  '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
-                                  '<strong>Representative Name:</strong> ' + appointment.representative_name);
-            $('#viewModal').show();
-        });
+    // Open and close modals
+    $('#openBookingModal').on('click', function() {
+        $('#bookingModal').show();
+    });
 
-        // Show appointment details in edit modal
-        $(document).on('click', '.edit-button', function() {
-            var appointment = $(this).closest('.appointment-item').data('appointment');
-            $('#appointment_id').val(appointment.id);
-            $('#edit_name').val(appointment.name);
-            $('#edit_id_number').val(appointment.id_number);
-            $('#edit_set').val(appointment.set);
-            $('#edit_date').val(appointment.booking_date);
-            $('#edit_time_from').val(appointment.booking_time_from);
-            $('#edit_time_to').val(appointment.booking_time_to);
-            $('#edit_reason').val(appointment.reason);
-            $('#edit_department').val(appointment.department_id);
-            $('#edit_room').val(appointment.room_id);
-            $('#edit_group_members').val(appointment.group_members);
-            $('#edit_representative_name').val(appointment.representative_name);
-            $('#appointmentModal').hide();
-            $('#editModal').show();
-        });
+    $('#closeBookingModal').on('click', function() {
+        $('#bookingModal').hide();
+    });
 
-        // Handle delete button click event
-        $('#delete_button').on('click', function() {
-            var appointmentId = $('#appointment_id').val();
-            if (confirm('Are you sure you want to delete this appointment?')) {
-                $.ajax({
-                    url: 'api/delete_appointment.php',
-                    type: 'POST',
-                    data: { id: appointmentId },
-                    success: function(response) {
-                        alert(response);
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error deleting appointment: ' + xhr.responseText);
-                    }
-                });
-            }
-        });
+    $('#closeAddDepartmentModal').on('click', function() {
+        $('#addDepartmentModal').hide();
+    });
 
-        // Open and close modals
-        $('#openBookingModal').on('click', function() {
-            $('#bookingModal').show();
-        });
+    $('#closeAddRoomModal').on('click', function() {
+        $('#addRoomModal').hide();
+    });
 
-        $('#closeBookingModal').on('click', function() {
-            $('#bookingModal').hide();
-        });
+    $(document).on('click', '.close', function() {
+        $(this).closest('.modal').hide();
+    });
 
-        $('#closeAddDepartmentModal').on('click', function() {
-            $('#addDepartmentModal').hide();
-        });
+    // Show/hide buttons on hover
+    $(document).on('mouseenter', '.appointment-item', function() {
+        $(this).find('.appointment-buttons').show();
+    });
 
-        $('#closeAddRoomModal').on('click', function() {
-            $('#addRoomModal').hide();
-        });
-
-        $(document).on('click', '.close', function() {
-            $(this).closest('.modal').hide();
-        });
-
-        // Show/hide buttons on hover
-        $(document).on('mouseenter', '.appointment-item', function() {
-            $(this).find('.appointment-buttons').show();
-        });
-
-        $(document).on('mouseleave', '.appointment-item', function() {
-            $(this).find('.appointment-buttons').hide();
-        });
+    $(document).on('mouseleave', '.appointment-item', function() {
+        $(this).find('.appointment-buttons').hide();
     });
 });
