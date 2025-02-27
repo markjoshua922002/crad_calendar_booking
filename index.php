@@ -359,5 +359,10 @@ while ($row = $bookings->fetch_assoc()) {
         </form>
     </div>
 </div>
+
+<!-- Add this element to hold the appointments data -->
+<script id="appointmentsData" type="application/json">
+    <?= json_encode($appointments) ?>
+</script>
 </body>
 </html>

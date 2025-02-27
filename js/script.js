@@ -170,7 +170,12 @@ document.addEventListener("DOMContentLoaded", function() {
         // Show appointments for a specific day
         $('.day').on('click', function() {
             var day = $(this).find('.day-number').text();
-            var appointments = JSON.parse(document.getElementById('appointmentsData').textContent);
+            var appointmentsDataElement = document.getElementById('appointmentsData');
+            if (!appointmentsDataElement) {
+                console.error('appointmentsData element not found');
+                return;
+            }
+            var appointments = JSON.parse(appointmentsDataElement.textContent);
             var dayAppointments = appointments[day] || [];
             var appointmentList = $('#appointmentList');
             appointmentList.empty();
@@ -270,30 +275,4 @@ document.addEventListener("DOMContentLoaded", function() {
             $(this).find('.appointment-buttons').hide();
         });
     });
-
-    // Get the modal
-    var appointmentModal = document.getElementById('appointmentModal');
-
-    // Get the button that opens the modal
-    var openBookingModalBtn = document.getElementById('openBookingModal');
-
-    // Get the <span> element that closes the modal
-    var closeAppointmentModalBtn = document.getElementById('closeAppointmentModal');
-
-    // When the user clicks the button, open the modal 
-    openBookingModalBtn.onclick = function() {
-        appointmentModal.style.display = 'block';
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    closeAppointmentModalBtn.onclick = function() {
-        appointmentModal.style.display = 'none';
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == appointmentModal) {
-            appointmentModal.style.display = 'none';
-        }
-    }
 });
