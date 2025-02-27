@@ -2,6 +2,7 @@
 .main-content {
     display: flex;
     gap: 20px; /* Space between calendar and reminder container */
+    width: 100%; /* Ensure the main content takes full width */
 }
 
 
@@ -13,7 +14,8 @@
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 100%; /* Make the reminder container take full width */
-    max-width: 1200px; /* Set a maximum width */
+    max-width: 400px; /* Set a maximum width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .reminder-container h2 {
