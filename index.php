@@ -355,5 +355,14 @@ while ($row = $bookings->fetch_assoc()) {
             </form>
         </div>
     </div>
+
+    <!-- Add this new modal in the HTML -->
+    <div id="dayBookingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeDayBookingsModal">&times;</span>
+            <h2>Bookings for <span id="selectedDay"></span></h2>
+            <div id="dayBookingsList"></div>
+        </div>
+    </div>
 </body>
 </html>

@@ -266,4 +266,53 @@ document.addEventListener("DOMContentLoaded", function() {
             $(this).find('.appointment-buttons').hide();
         });
     });
+
+    // Add this JavaScript code to handle the click event and populate the modal
+    const days = document.querySelectorAll('.calendar .day');
+    const dayBookingsModal = document.getElementById('dayBookingsModal');
+    const closeDayBookingsModal = document.getElementById('closeDayBookingsModal');
+    const selectedDay = document.getElementById('selectedDay');
+    const dayBookingsList = document.getElementById('dayBookingsList');
+
+    days.forEach(day => {
+        day.addEventListener('click', function() {
+            const dayNumber = this.querySelector('.day-number').textContent;
+            selectedDay.textContent = dayNumber;
+
+            // Fetch bookings for the selected day
+            const bookings = JSON.parse(document.getElementById('appointmentsData').textContent);
+            const dayBookings = bookings[dayNumber] || [];
+
+            // Populate the modal with the bookings
+            dayBookingsList.innerHTML = '';
+            if (dayBookings.length > 0) {
+                dayBookings.forEach(booking => {
+                    const bookingItem = document.createElement('div');
+                    bookingItem.innerHTML = `
+                        <p><strong>Name:</strong> ${booking.name}</p>
+                        <p><strong>Time:</strong> ${booking.booking_time_from} - ${booking.booking_time_to}</p>
+                        <p><strong>Room:</strong> ${booking.room_name}</p>
+                        <p><strong>Reason:</strong> ${booking.reason}</p>
+                        <hr>
+                    `;
+                    dayBookingsList.appendChild(bookingItem);
+                });
+            } else {
+                dayBookingsList.innerHTML = '<p>No bookings for this day.</p>';
+            }
+
+            // Show the modal
+            dayBookingsModal.style.display = 'block';
+        });
+    });
+
+    closeDayBookingsModal.addEventListener('click', function() {
+        dayBookingsModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target == dayBookingsModal) {
+            dayBookingsModal.style.display = 'none';
+        }
+    });
 });
