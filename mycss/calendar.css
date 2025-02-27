@@ -108,9 +108,10 @@
     grid-template-columns: repeat(7, 1fr);
     background-color: #0056b3;
     color: white;
-    padding: 5px 0;
+    padding: 10px 0; /* Increase padding for better visibility */
     margin-bottom: 10px;
     border-radius: 5px;
+    width: 100%; /* Make the header take full width */
 }
 
 .weekday-header div {
