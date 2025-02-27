@@ -265,7 +265,7 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php endfor; ?>
             </select>
             <select name="edit_set" id="edit_set" required>
-                <option value="">Set</</option>
+                <option value="">Set</option>
                 <?php foreach (range('A', 'F') as $set): ?>
                     <option value="<?= $set ?>"><?= $set ?></option>
                 <?php endforeach; ?>
@@ -377,5 +377,6 @@ while ($row = $bookings->fetch_assoc()) {
 <script id="appointmentsData" type="application/json">
     <?= json_encode($appointments) ?>
 </script>
+<script defer src="js/script.js"></script>
 </body>
 </html>
