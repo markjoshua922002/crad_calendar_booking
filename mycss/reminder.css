@@ -4,9 +4,6 @@
     gap: 20px; /* Space between calendar and reminder container */
 }
 
-.calendar-container {
-    flex: 2;
-}
 
 .reminder-container {
     flex: 0.8; /* Make the reminder container smaller */
