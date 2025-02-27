@@ -278,4 +278,52 @@ document.addEventListener("DOMContentLoaded", function() {
     $(document).on('mouseleave', '.appointment-item', function() {
         $(this).find('.appointment-buttons').hide();
     });
+
+    const days = document.querySelectorAll('.day');
+    const appointmentModal = document.getElementById('appointmentModal');
+    const appointmentList = document.getElementById('appointmentList');
+    const closeAppointmentModal = document.getElementById('closeAppointmentModal');
+
+    days.forEach(day => {
+        day.addEventListener('click', function() {
+            const dayNumber = this.querySelector('.day-number').innerText;
+            const appointments = JSON.parse(document.getElementById('appointmentsData').textContent);
+            const selectedAppointments = appointments[dayNumber] || [];
+
+            appointmentList.innerHTML = '';
+            selectedAppointments.forEach(appointment => {
+                const appointmentBox = document.createElement('div');
+                appointmentBox.classList.add('appointment-box');
+                appointmentBox.style.borderColor = appointment.color;
+
+                appointmentBox.innerHTML = `
+                    <p><strong>${appointment.name}</strong></p>
+                    <p>${appointment.booking_time_from} - ${appointment.booking_time_to}</p>
+                    <p>${appointment.room_name}</p>
+                    <button class="view-button" data-id="${appointment.id}">View</button>
+                    <button class="edit-button" data-id="${appointment.id}">Edit</button>
+                `;
+
+                appointmentList.appendChild(appointmentBox);
+            });
+
+            appointmentModal.style.display = 'block';
+        });
+    });
+
+    closeAppointmentModal.addEventListener('click', function() {
+        appointmentModal.style.display = 'none';
+    });
+
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('view-button')) {
+            const appointmentId = event.target.getAttribute('data-id');
+            // Populate and show the view modal
+            // ...
+        } else if (event.target.classList.contains('edit-button')) {
+            const appointmentId = event.target.getAttribute('data-id');
+            // Populate and show the edit modal
+            // ...
+        }
+    });
 });
