@@ -297,26 +297,4 @@ document.addEventListener("DOMContentLoaded", function() {
             $('#viewModal').hide();
         });
     });
-
-    // Show appointment details in view modal
-    $(document).on('click', '.appointment-item', function() {
-        var appointment = $(this).data('appointment');
-        var viewModalContent = $('#viewModal .modal-content');
-        viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
-                              '<h2>Appointment Details</h2>' +
-                              '<strong>Name:</strong> ' + appointment.representative_name + '<br>' +
-                              '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
-                              '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
-                              '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
-                              '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
-                              '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
-                              '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
-                              '<strong>Representative Name:</strong> ' + appointment.representative_name);
-        $('#viewModal').show();
-    });
-
-    // Close the view modal
-    $(document).on('click', '#closeViewModal', function() {
-        $('#viewModal').hide();
-    });
 });
