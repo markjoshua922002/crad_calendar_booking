@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", function() {
         appointment: {
             element: document.getElementById('appointmentModal'),
             close: document.getElementById('closeAppointmentModal')
+        },
+        view: {
+            element: document.getElementById('viewModal'),
+            close: document.getElementById('closeViewModal')
         }
     };
 
