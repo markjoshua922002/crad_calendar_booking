@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed");
 
+    // Debug element existence
+    console.log("Menu button exists:", !!document.getElementById('menuButton'));
+    console.log("Sidebar exists:", !!document.getElementById('sidebar'));
+    console.log("Container exists:", !!document.querySelector('.container'));
+
     // Simplified sidebar toggle function
     const menuButton = document.getElementById('menuButton');
     if (menuButton) {

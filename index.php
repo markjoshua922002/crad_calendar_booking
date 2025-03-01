@@ -148,7 +148,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=8">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=3">
     <link rel="stylesheet" href="mycss/calendar.css?v=21">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=11">
@@ -156,11 +156,10 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
-    <script defer src="js/script.js?v=6"></script>
+    <script defer src="js/script.js?v=7"></script>
 </head>
 <body>
-<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
-
+<button class="menu-button" id="menuButton">&#9776;</button>
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
     <a href="osas.php">OSAS</a>
@@ -168,7 +167,6 @@ while ($row = $bookings->fetch_assoc()) {
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
-
 <div class="container">
     <?php if (isset($warning)): ?>
         <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
