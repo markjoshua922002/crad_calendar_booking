@@ -5,10 +5,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const menuButton = document.getElementById('menuButton');
     const sidebar = document.getElementById('sidebar');
     const container = document.querySelector('.container');
+    const pageContent = document.getElementById('page-content');
 
     menuButton.addEventListener('click', function() {
         sidebar.classList.toggle('open');
         container.classList.toggle('shifted');
+        sidebar.classList.toggle('collapsed');
+        pageContent.classList.toggle('collapsed');
     });
 
     // Modal Handling

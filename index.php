@@ -148,7 +148,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=8">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=1">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
     <link rel="stylesheet" href="mycss/calendar.css?v=21">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=11">
@@ -161,12 +161,81 @@ while ($row = $bookings->fetch_assoc()) {
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
-<div class="sidebar" id="sidebar">
-    <a href="index.php">CRAD</a>
-    <a href="osas.php">OSAS</a>
-    <a href="form.php">LOGBOOK</a>
-    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
-    <a href="logout.php" class="logout-button">Logout</a>
+<!-- Sidebar -->
+<div id="sidebar" class="text-right shadow">
+    <div class="p-3">
+        <div class="d-flex justify-content-center">
+            <img src="./css/bcp_logo.png" alt="Logo" class="logo">
+        </div>
+        <h4 class="mb-4 text-white text-center">Dashboard</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item mb-1">
+                <a class="nav-link active rounded" href="dashboard_admin.php">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </li>
+            <li class="nav-item mb-1 dropdown">
+                <a class="nav-link dropdown-toggle rounded" id="navbarDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#graduateDropdown" aria-expanded="false" aria-controls="graduateDropdown">
+                    <i class="fas fa-sliders"></i> Graduates
+                </a>
+                <div class="collapse rounded" id="graduateDropdown">
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="schedule.php"><i class="fas fa-calendar"></i> Set Schedule</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="student_list.php"><i class="fas fa-user-graduate"></i> Student List</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="picture.php"><i class="fas fa-image"></i> Grad Photos</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1 dropdown">
+                <a class="nav-link dropdown-toggle rounded" id="navbarDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#manageDropdown" aria-expanded="false" aria-controls="manageDropdown">
+                    <i class="fas fa-book"></i> Management
+                </a>
+                <div class="collapse rounded" id="manageDropdown">
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="logbook.php"><i class="fas fa-book"></i> Manage Logs</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="users.php"><i class="fas fa-book"></i> Manage Access</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1 dropdown">
+                <a class="nav-link dropdown-toggle rounded" id="navbarDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#submoduleDropdown" aria-expanded="false" aria-controls="submoduleDropdown">
+                    <i class="fas fa-sliders"></i> Sub Modules
+                </a>
+                <div class="collapse rounded" id="submoduleDropdown">
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="registrar.php"><i class="fas fa-archive"></i> Registrar Page</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="hr.php"><i class="fas fa-users"></i> Human Resource</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="registrar.php"><i class="fas fa-archive"></i> MIS Page</a>
+                        </li>
+                        <li class="nav-item mb-1">
+                            <a class="nav-link rounded" href="its.php"><i class="fas fa-desktop"></i> IT System</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link rounded" href="my_profile.php"><i class="fas fa-user-circle"></i> My Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link rounded text-danger" href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <div class="container">
