@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Database connection and PHP logic remains the same
-$conn = new mysqli('localhost', 'crad_crad', 'crad', 'crad_calendar_booking');
+$conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }

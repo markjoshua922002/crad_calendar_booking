@@ -21,5 +21,12 @@
         <img src="../assets/bcplogo.png" alt="Logo" class="logo"> <!-- Update the logo path as necessary -->
         <h1 class="title">OSAS INTEG</h1>
     </div>
+
+    <?php
+    $conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
+    if ($conn->connect_error) {
+        die('Connection failed: ' . $conn->connect_error);
+    }
+    ?>
 </body>
 </html>

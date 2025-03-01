@@ -119,5 +119,12 @@
         <h1 class="title">FACULTY INTEG</h1>
     </div>
 
+    <?php
+    $conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
+    if ($conn->connect_error) {
+        die('Connection failed: ' . $conn->connect_error);
+    }
+    ?>
+
 </body>
 </html>

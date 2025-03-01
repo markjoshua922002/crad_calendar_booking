@@ -4,7 +4,7 @@ session_start();
 // Database credentials
 $host = getenv('DB_HOST') ?: 'localhost';
 $username = getenv('DB_USER') ?: 'crad_crad';
-$password = getenv('DB_PASS') ?: 'crad';
+$password = getenv('DB_PASS') ?: 'crad2025';
 $database = getenv('DB_NAME') ?: 'crad_calendar_booking';
 
 // Database connection
