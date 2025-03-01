@@ -10,9 +10,23 @@ if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
 
+// Search functionality
+$search_term = '';
+$search_condition = '';
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $search_term = $conn->real_escape_string($_GET['search']);
+    $search_condition = " WHERE name LIKE '%$search_term%'";
+}
+
 // Fetch existing logbook entries
-$logbook_query = "SELECT name, position, purpose, inquiry, submission_date, time FROM logbook ORDER BY submission_date DESC, time DESC";
+$logbook_query = "SELECT name, position, purpose, inquiry, submission_date, time FROM logbook$search_condition ORDER BY submission_date DESC, time DESC";
 $logbook_result = $conn->query($logbook_query);
+
+// Count total entries
+$count_query = "SELECT COUNT(*) as total FROM logbook$search_condition";
+$count_result = $conn->query($count_query);
+$count_row = $count_result->fetch_assoc();
+$total_entries = $count_row['total'];
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +37,42 @@ $logbook_result = $conn->query($logbook_query);
     <title>Form - BCP CRAD</title>
     <link rel="stylesheet" href="mycss/style.css?v=4">
     <link rel="stylesheet" href="mycss/sidebar.css?v=2">
-    <link rel="stylesheet" href="mycss/form.css?v=4"> <!-- Incremented version -->
+    <link rel="stylesheet" href="mycss/form.css?v=5"> <!-- Incremented version -->
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
+    <style>
+        /* Additional inline styles to ensure the new features work correctly */
+        .search-container {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .search-container button {
+            padding: 8px 16px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .search-container button:hover {
+            background-color: #003d7a;
+        }
+        
+        .result-count {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -130,6 +178,25 @@ $logbook_result = $conn->query($logbook_query);
     <!-- Right side - Data display container -->
     <div class="data-container">
         <h2>Logbook Entries</h2>
+        
+        <!-- Search bar -->
+        <div class="search-container">
+            <form action="form.php" method="GET">
+                <input type="text" name="search" placeholder="Search by name..." value="<?= htmlspecialchars($search_term) ?>">
+                <button type="submit">Search</button>
+                <?php if (!empty($search_term)): ?>
+                    <a href="form.php" class="reset-search">Clear</a>
+                <?php endif; ?>
+            </form>
+        </div>
+        
+        <!-- Results count -->
+        <div class="result-count">
+            Showing <?= $logbook_result->num_rows ?> <?= !empty($search_term) ? 'matched' : 'total' ?> entries
+            <?= !empty($search_term) ? "for \"" . htmlspecialchars($search_term) . "\"" : "" ?>
+        </div>
+        
+        <!-- Fixed-height scrollable container -->
         <div class="data-table-wrapper">
             <table class="data-table">
                 <thead>

@@ -28,18 +28,78 @@
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px); /* Fixed height based on viewport */
+}
+
+/* Search container styling */
+.search-container {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.search-container form {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.search-container button {
+    padding: 8px 16px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container button:hover {
+    background-color: #003d7a;
+}
+
+.reset-search {
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.reset-search:hover {
+    background-color: #5a6268;
+    text-decoration: none;
+}
+
+.result-count {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
 }
 
 .data-table-wrapper {
+    flex: 1; /* Take up remaining space */
     overflow-x: auto;
-    max-height: 600px;
     overflow-y: auto;
+    height: 0; /* This ensures the scrollbar works correctly */
+    border: 1px solid #eee;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
 }
 
 .data-table th,
@@ -54,6 +114,7 @@
     color: white;
     position: sticky;
     top: 0;
+    z-index: 10;
 }
 
 .data-table tbody tr:hover {
@@ -64,6 +125,7 @@
     text-align: center;
     font-style: italic;
     color: #777;
+    padding: 20px;
 }
 
 /* Container for the logbook page */
@@ -169,6 +231,7 @@
     
     .data-container {
         max-width: 100%;
+        height: 600px; /* Fixed height on mobile */
     }
 }
 
@@ -176,5 +239,9 @@
     .time-picker {
         flex-direction: column;
         gap: 5px;
+    }
+    
+    .search-container form {
+        flex-direction: column;
     }
 }
