@@ -147,7 +147,7 @@ $total_entries = $count_row['total'];
                 <input type="text" id="inquiry" name="inquiry">
             </div>
             <div class="form-group">
-                <label for="submission_date">Date:</label>
+                <label for="submission_date">Submission Date:</label>
                 <input type="date" id="submission_date" name="submission_date" required>
             </div>
             <div class="form-group">
