@@ -17,9 +17,11 @@ if ($conn->connect_error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form - BCP CRAD</title>
-    <link rel="stylesheet" href="mycss/style.css?v=3">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=1">
+    <link rel="stylesheet" href="mycss/style.css?v=4">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
+    <link rel="stylesheet" href="mycss/form.css?v=1"> <!-- New CSS file for forms -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
+    <link rel="icon" href="assets/bcplogo.png" type="image/png">
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -31,8 +33,8 @@ if ($conn->connect_error) {
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
-<div class="container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <div class="form-container" style="width: 50%; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+<div class="container">
+    <div class="form-container">
         <h2>Logbook Form</h2>
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -49,20 +51,20 @@ if ($conn->connect_error) {
             $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission, time) VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission', '$time')";
 
             if ($conn->query($sql) === TRUE) {
-                echo "<p style='color: green;'>New record created successfully</p>";
+                echo "<p class='success-message'>New record created successfully</p>";
             } else {
-                echo "<p style='color: red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+                echo "<p class='error-message'>Error: " . $sql . "<br>" . $conn->error . "</p>";
             }
         }
         ?>
-        <form action="form.php" method="POST">
+        <form action="form.php" method="POST" class="logbook-form">
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="name" name="name" required>
             </div>
             <div class="form-group">
                 <label for="position">Position:</label>
-                <select id="position" name="position" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <select id="position" name="position" required>
                     <option value="Student">Student</option>
                     <option value="Teacher">Teacher</option>
                     <option value="Staff">Staff</option>
@@ -71,21 +73,21 @@ if ($conn->connect_error) {
             </div>
             <div class="form-group">
                 <label for="purpose">Purpose:</label>
-                <input type="text" id="purpose" name="purpose" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="purpose" name="purpose" required>
             </div>
             <div class="form-group">
                 <label for="inquiry">Inquiry:</label>
-                <input type="text" id="inquiry" name="inquiry" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="inquiry" name="inquiry" required>
             </div>
             <div class="form-group">
                 <label for="submission">Submission:</label>
-                <input type="text" id="submission" name="submission" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="submission" name="submission" required>
             </div>
             <div class="form-group">
                 <label for="time">Time:</label>
-                <input type="text" id="time" name="time" class="timepicker" required style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <input type="text" id="time" name="time" class="timepicker" required>
             </div>
-            <button type="submit" style="padding: 10px 20px; background-color: #0056b3; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
+            <button type="submit" class="submit-button">Submit</button>
         </form>
     </div>
 </div>
@@ -105,6 +107,6 @@ if ($conn->connect_error) {
         });
     });
 </script>
-<script defer src="js/script.js"></script>
+<script defer src="js/script.js?v=10"></script>
 </body>
 </html>
