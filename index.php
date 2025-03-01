@@ -163,6 +163,7 @@ while ($row = $bookings->fetch_assoc()) {
 
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
+    <a href="osas.php">OSAS</a>
     <a href="form.php">LOGBOOK</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="logout.php" class="logout-button">Logout</a>
@@ -467,5 +468,6 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script defer src="js/script.js"></script>
 </body>
 </html>
