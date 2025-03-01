@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM fully loaded and parsed - v8");
+    console.log("DOM fully loaded and parsed - v9");
 
     // Debug element existence
     console.log("Menu button exists:", !!document.getElementById('menuButton'));
@@ -92,28 +92,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <p>${appointment.department_name}<br>
                                 ${appointment.room_name}<br>
                                 ${timeFrom} - ${timeTo}</p>
-                                <button class="view-details" data-id="${appointment.id}">View Details</button>
-                                <button class="edit-appointment" data-id="${appointment.id}">Edit</button>
+                                <button class="view-details" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>View Details</button>
+                                <button class="edit-appointment" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>Edit</button>
                             `;
                             appointmentList.appendChild(appointmentItem);
                         });
                         
-                        // Add event listeners to the view and edit buttons
-                        appointmentList.querySelectorAll('.view-details').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const appointmentId = this.getAttribute('data-id');
-                                console.log(`View details for appointment ${appointmentId}`);
-                                // Implement view details functionality
-                            });
-                        });
-                        
-                        appointmentList.querySelectorAll('.edit-appointment').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const appointmentId = this.getAttribute('data-id');
-                                console.log(`Edit appointment ${appointmentId}`);
-                                // Implement edit functionality
-                            });
-                        });
+                        // NOW ADD EVENT LISTENERS TO THE NEWLY CREATED BUTTONS
+                        addEventListenersToAppointmentButtons();
                     } else {
                         appointmentList.innerHTML = '<p>No appointments for this day.</p>';
                     }
@@ -129,6 +115,113 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     });
+    
+    // Function to add event listeners to appointment buttons (view and edit)
+    function addEventListenersToAppointmentButtons() {
+        console.log("Adding event listeners to appointment buttons");
+        
+        // View details buttons
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                console.log("View details button clicked");
+                try {
+                    const appointmentData = JSON.parse(this.getAttribute('data-appointment'));
+                    console.log("Viewing appointment:", appointmentData);
+                    
+                    // Display appointment details in the view modal
+                    const viewContainer = document.getElementById('viewContainer');
+                    const viewModal = document.getElementById('viewModal');
+                    
+                    if (viewContainer && viewModal) {
+                        const timeFrom = new Date(`2000-01-01T${appointmentData.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const timeTo = new Date(`2000-01-01T${appointmentData.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        viewContainer.innerHTML = `
+                            <div class="appointment-details">
+                                <p><strong>Research Adviser's Name:</strong> ${appointmentData.name}</p>
+                                <p><strong>Group Number:</strong> ${appointmentData.id_number}</p>
+                                <p><strong>Set:</strong> ${appointmentData.set}</p>
+                                <p><strong>Department:</strong> ${appointmentData.department_name}</p>
+                                <p><strong>Room:</strong> ${appointmentData.room_name}</p>
+                                <p><strong>Date:</strong> ${appointmentData.booking_date}</p>
+                                <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
+                                <p><strong>Agenda:</strong> ${appointmentData.reason}</p>
+                                <p><strong>Representative:</strong> ${appointmentData.representative_name}</p>
+                                <p><strong>Remarks:</strong> ${appointmentData.group_members || "None"}</p>
+                            </div>
+                        `;
+                        
+                        // Close the appointment modal and open the view modal
+                        document.getElementById('appointmentModal').style.display = 'none';
+                        viewModal.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error("Error displaying appointment details:", error);
+                }
+            });
+        });
+        
+        // Edit appointment buttons
+        document.querySelectorAll('.edit-appointment').forEach(button => {
+            button.addEventListener('click', function() {
+                console.log("Edit appointment button clicked");
+                try {
+                    const appointmentData = JSON.parse(this.getAttribute('data-appointment'));
+                    console.log("Editing appointment:", appointmentData);
+                    
+                    // Fill the edit form with the appointment data
+                    document.getElementById('appointment_id').value = appointmentData.id;
+                    document.getElementById('edit_department').value = appointmentData.department_id;
+                    document.getElementById('edit_name').value = appointmentData.name;
+                    document.getElementById('edit_id_number').value = appointmentData.id_number;
+                    document.getElementById('edit_set').value = appointmentData.set;
+                    document.getElementById('edit_date').value = appointmentData.booking_date;
+                    document.getElementById('edit_reason').value = appointmentData.reason;
+                    document.getElementById('edit_room').value = appointmentData.room_id;
+                    document.getElementById('edit_representative_name').value = appointmentData.representative_name;
+                    document.getElementById('edit_group_members').value = appointmentData.group_members;
+                    
+                    // Time handling - parse the time into components
+                    const timeFrom = new Date(`2000-01-01T${appointmentData.booking_time_from}`);
+                    const timeTo = new Date(`2000-01-01T${appointmentData.booking_time_to}`);
+                    
+                    const fromHour = timeFrom.getHours() % 12 || 12;
+                    const fromMinute = timeFrom.getMinutes();
+                    const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+                    
+                    const toHour = timeTo.getHours() % 12 || 12;
+                    const toMinute = timeTo.getMinutes();
+                    const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+                    
+                    document.getElementById('edit_time_from_hour').value = fromHour;
+                    document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+                    document.getElementById('edit_time_from_ampm').value = fromAMPM;
+                    
+                    document.getElementById('edit_time_to_hour').value = toHour;
+                    document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+                    document.getElementById('edit_time_to_ampm').value = toAMPM;
+                    
+                    // Close the appointment modal and open the edit modal
+                    document.getElementById('appointmentModal').style.display = 'none';
+                    document.getElementById('editModal').style.display = 'block';
+                } catch (error) {
+                    console.error("Error preparing edit form:", error);
+                }
+            });
+        });
+    }
+    
+    // Delete appointment button
+    const deleteButton1 = document.getElementById('delete_button');
+    if (deleteButton1) {
+        deleteButton1.addEventListener('click', function(e) {
+            e.preventDefault();
+            const appointmentId = document.getElementById('appointment_id').value;
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                window.location.href = `api/delete_appointment.php?id=${appointmentId}`;
+            }
+        });
+    }
     
     // Close modal buttons
     document.querySelectorAll('.close').forEach(closeBtn => {
