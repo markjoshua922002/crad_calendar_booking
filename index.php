@@ -53,7 +53,9 @@ if (isset($_POST['add_booking'])) {
             }
             $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
-                echo "Booking successfully added.";
+                // Redirect to avoid form resubmission
+                header('Location: index.php');
+                exit();
             } else {
                 echo "Error: " . $stmt->error;
             }
