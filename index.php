@@ -30,11 +30,22 @@ if (isset($_POST['add_booking'])) {
     } else {
         // Ensure date is in correct format
         try {
-            $parsed_date = new DateTime($date_input);
-            $date = $parsed_date->format('Y-m-d');
+            // Add more detailed debug output
+            error_log("Raw date from form: " . print_r($date_input, true));
             
-            // Debug
-            error_log("Original date input: $date_input, Parsed date: $date");
+            // Check if the date is in the correct format
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_input)) {
+                $date = $date_input; // Already in YYYY-MM-DD format
+            } else if (preg_match('/^\d{4}$/', $date_input)) {
+                // If only a year is provided, set it to January 1st of that year
+                $date = $date_input . '-01-01';
+            } else {
+                // Try to parse using DateTime
+                $parsed_date = new DateTime($date_input);
+                $date = $parsed_date->format('Y-m-d');
+            }
+            
+            error_log("Original date input: $date_input, Formatted date for MySQL: $date");
             
             // Combine time fields
             $time_from_hour = $_POST['time_from_hour'];
