@@ -19,7 +19,7 @@ if (isset($_POST['add_booking'])) {
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
-    $set = $_POST['set']; // Ensure this line is present
+    $set = $_POST['set'];
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
@@ -190,10 +190,6 @@ while ($row = $bookings->fetch_assoc()) {
                 </form>
             </div>
         </div>
-        <!-- Add this button to your HTML where you want the download button to appear -->
-        <form method="POST" action="download_appointments.php" style="text-align: right; margin-bottom: 10px;">
-            <button type="submit" name="download_appointments" style="padding: 5px 10px;">Download Appointments</button>
-        </form>
     </div>
 
     <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
