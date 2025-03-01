@@ -33,19 +33,30 @@ if (isset($_POST['add_booking'])) {
             // Add more detailed debug output
             error_log("Raw date from form: " . print_r($date_input, true));
             
-            // Check if the date is in the correct format
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_input)) {
-                $date = $date_input; // Already in YYYY-MM-DD format
-            } else if (preg_match('/^\d{4}$/', $date_input)) {
-                // If only a year is provided, set it to January 1st of that year
-                $date = $date_input . '-01-01';
-            } else {
+            // Force a complete date - handle the case where only year is provided
+            if ($date_input === '2025') {  // Exact match for just the year
+                // Set to current month/day in 2025 or first day of current month
+                $current_month_day = date('m-d');
+                $date = "2025-" . date('m-d');
+                error_log("Only year 2025 received, setting to: $date");
+            }
+            else if (preg_match('/^\d{4}$/', $date_input)) {
+                // If only a year is provided, set to first day of current month
+                $date = $date_input . '-' . date('m-d');
+                error_log("Only year received: $date_input, using current month/day: $date");
+            }
+            else if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_input)) {
+                $date = $date_input; // Already in correct format
+                error_log("Date is already in correct format: $date");
+            }
+            else {
                 // Try to parse using DateTime
                 $parsed_date = new DateTime($date_input);
                 $date = $parsed_date->format('Y-m-d');
+                error_log("Date parsed with DateTime: $date_input → $date");
             }
             
-            error_log("Original date input: $date_input, Formatted date for MySQL: $date");
+            error_log("Final date value for database: $date");
             
             // Combine time fields
             $time_from_hour = $_POST['time_from_hour'];
@@ -405,7 +416,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="PM">PM</option>
                     </select>
                 </div>
-                <input type="date" name="edit_date" id="edit_date" required>
+                <input type="date" name="edit_date" id="edit_date" required min="<?= date('Y-m-d') ?>">
                 <textarea name="edit_reason" id="edit_reason" placeholder="Agenda" required></textarea>
                 <select name="edit_room" id="edit_room" required>
                     <option value="">Room Number</option>
@@ -492,7 +503,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="PM">PM</option>
                     </select>
                 </div>
-                <input type="date" name="date" required>
+                <input type="date" name="date" required min="<?= date('Y-m-d') ?>">
                 <textarea name="reason" placeholder="Agenda" required></textarea>
                 <select name="room" required>
                     <option value="">Room Number</option>
@@ -542,7 +553,7 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=11"></script>
+<script defer src="js/script.js?v=12"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
