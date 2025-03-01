@@ -30,6 +30,9 @@ if (isset($_POST['add_booking'])) {
     
     $reason = $_POST['reason'];
 
+    // Debug: Log the values being processed
+    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
+
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
     if ($date < $current_date) {
@@ -53,10 +56,14 @@ if (isset($_POST['add_booking'])) {
             }
             $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
+                // Debug: Log successful insertion
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
                 // Redirect to avoid form resubmission
                 header('Location: index.php');
                 exit();
             } else {
+                // Debug: Log error
+                error_log("Error inserting booking: " . $stmt->error);
                 echo "Error: " . $stmt->error;
             }
             $stmt->close();
