@@ -159,7 +159,8 @@ while ($row = $bookings->fetch_assoc()) {
     <script defer src="js/script.js?v=7"></script>
 </head>
 <body>
-<button class="menu-button" id="menuButton">&#9776;</button>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
     <a href="osas.php">OSAS</a>
@@ -467,6 +468,5 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js"></script>
 </body>
 </html>
