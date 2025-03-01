@@ -15,6 +15,21 @@ if ($conn->connect_error) {
 
 // Handle form submissions
 if (isset($_POST['add_booking'])) {
+    // Debug the incoming form data
+    error_log("Received POST data: " . print_r($_POST, true));
+    
+    // Get the raw date value for debugging
+    $raw_date = $_POST['date'] ?? 'no date provided';
+    error_log("Raw date from form: $raw_date");
+    
+    // Check if the date is only a year (like '2025')
+    if (preg_match('/^\d{4}$/', $raw_date)) {
+        // Set to today's date in that year
+        $current_month_day = date('m-d');
+        $_POST['date'] = $raw_date . '-' . $current_month_day;
+        error_log("Adjusted date to: " . $_POST['date']);
+    }
+    
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
@@ -110,7 +125,7 @@ if (isset($_POST['add_booking'])) {
                     $warning = "Double booking detected for the specified time, date, and room.";
                 } else {
                     // Make sure we're binding the correct set value
-                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%d'), ?, ?, ?)");
                     if (!$stmt) {
                         die('Prepare failed: ' . $conn->error);
                     }
@@ -503,7 +518,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="PM">PM</option>
                     </select>
                 </div>
-                <input type="date" name="date" required min="<?= date('Y-m-d') ?>">
+                <input type="date" name="date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
                 <textarea name="reason" placeholder="Agenda" required></textarea>
                 <select name="room" required>
                     <option value="">Room Number</option>
@@ -553,7 +568,7 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=12"></script>
+<script defer src="js/script.js?v=13"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
