@@ -1,12 +1,14 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM fully loaded and parsed");
+    console.log("DOM fully loaded and parsed - v8");
 
     // Debug element existence
     console.log("Menu button exists:", !!document.getElementById('menuButton'));
     console.log("Sidebar exists:", !!document.getElementById('sidebar'));
     console.log("Container exists:", !!document.querySelector('.container'));
+    console.log("Calendar days:", document.querySelectorAll('.day').length);
+    console.log("Open booking button exists:", !!document.getElementById('openBookingModal'));
 
-    // Simplified sidebar toggle function
+    // Sidebar toggle
     const menuButton = document.getElementById('menuButton');
     if (menuButton) {
         console.log("Menu button found");
@@ -28,6 +30,166 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Menu button not found!");
     }
     
+    // Open booking modal on button click
+    const openBookingBtn = document.getElementById('openBookingModal');
+    if (openBookingBtn) {
+        openBookingBtn.addEventListener('click', function() {
+            console.log("Open booking button clicked");
+            const bookingModal = document.getElementById('bookingModal');
+            if (bookingModal) {
+                bookingModal.style.display = 'block';
+            }
+        });
+    }
+    
+    // Calendar day click to show appointments
+    const days = document.querySelectorAll('.day');
+    console.log(`Found ${days.length} calendar days`);
+    
+    days.forEach(day => {
+        if (day.querySelector('.day-number')) {  // Only attach to days that have a number
+            day.addEventListener('click', function() {
+                console.log("Calendar day clicked");
+                const dayNumber = this.querySelector('.day-number').textContent;
+                console.log(`Day ${dayNumber} clicked`);
+                
+                try {
+                    // Get appointments data for the clicked day
+                    const appointmentsDataElement = document.getElementById('appointmentsData');
+                    if (!appointmentsDataElement) {
+                        console.error("Appointments data element not found");
+                        return;
+                    }
+                    
+                    const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
+                    console.log("Appointments data:", appointmentsData);
+                    
+                    // Show appointments for the clicked day
+                    const appointmentList = document.getElementById('appointmentList');
+                    if (!appointmentList) {
+                        console.error("Appointment list element not found");
+                        return;
+                    }
+                    
+                    appointmentList.innerHTML = ''; // Clear previous appointments
+                    
+                    // Display appointments for this day
+                    const dayAppointments = appointmentsData[dayNumber] || [];
+                    console.log(`Found ${dayAppointments.length} appointments for day ${dayNumber}`);
+                    
+                    if (dayAppointments.length > 0) {
+                        dayAppointments.forEach(appointment => {
+                            // Format times for display
+                            const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            
+                            // Create appointment element
+                            const appointmentItem = document.createElement('div');
+                            appointmentItem.classList.add('appointment-item');
+                            appointmentItem.style.backgroundColor = appointment.color;
+                            appointmentItem.innerHTML = `
+                                <strong>${appointment.representative_name}</strong>
+                                <p>${appointment.department_name}<br>
+                                ${appointment.room_name}<br>
+                                ${timeFrom} - ${timeTo}</p>
+                                <button class="view-details" data-id="${appointment.id}">View Details</button>
+                                <button class="edit-appointment" data-id="${appointment.id}">Edit</button>
+                            `;
+                            appointmentList.appendChild(appointmentItem);
+                        });
+                        
+                        // Add event listeners to the view and edit buttons
+                        appointmentList.querySelectorAll('.view-details').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const appointmentId = this.getAttribute('data-id');
+                                console.log(`View details for appointment ${appointmentId}`);
+                                // Implement view details functionality
+                            });
+                        });
+                        
+                        appointmentList.querySelectorAll('.edit-appointment').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const appointmentId = this.getAttribute('data-id');
+                                console.log(`Edit appointment ${appointmentId}`);
+                                // Implement edit functionality
+                            });
+                        });
+                    } else {
+                        appointmentList.innerHTML = '<p>No appointments for this day.</p>';
+                    }
+                    
+                    // Show the appointments modal
+                    const appointmentModal = document.getElementById('appointmentModal');
+                    if (appointmentModal) {
+                        appointmentModal.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error("Error handling day click:", error);
+                }
+            });
+        }
+    });
+    
+    // Close modal buttons
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            console.log("Close button clicked");
+            // Find the parent modal and close it
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            console.log("Clicked outside modal content");
+            event.target.style.display = 'none';
+        }
+    });
+    
+    // Appointment items in the reminder list
+    document.querySelectorAll('#reminderList .appointment-item').forEach(item => {
+        item.addEventListener('click', function() {
+            try {
+                const appointmentData = JSON.parse(this.getAttribute('data-appointment'));
+                console.log("Clicked reminder appointment:", appointmentData);
+                
+                // Display appointment details in the view modal
+                const viewContainer = document.getElementById('viewContainer');
+                if (viewContainer) {
+                    const timeFrom = new Date(`2000-01-01T${appointmentData.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const timeTo = new Date(`2000-01-01T${appointmentData.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    viewContainer.innerHTML = `
+                        <div class="appointment-details">
+                            <p><strong>Research Adviser's Name:</strong> ${appointmentData.name}</p>
+                            <p><strong>Group Number:</strong> ${appointmentData.id_number}</p>
+                            <p><strong>Set:</strong> ${appointmentData.set}</p>
+                            <p><strong>Department:</strong> ${appointmentData.department_name}</p>
+                            <p><strong>Room:</strong> ${appointmentData.room_name}</p>
+                            <p><strong>Date:</strong> ${appointmentData.booking_date}</p>
+                            <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
+                            <p><strong>Agenda:</strong> ${appointmentData.reason}</p>
+                            <p><strong>Representative:</strong> ${appointmentData.representative_name}</p>
+                            <p><strong>Remarks:</strong> ${appointmentData.group_members || "None"}</p>
+                        </div>
+                    `;
+                    
+                    // Show the view modal
+                    const viewModal = document.getElementById('viewModal');
+                    if (viewModal) {
+                        viewModal.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error("Error displaying appointment details:", error);
+            }
+        });
+    });
+
     // Modal Handling
     const modals = {
         edit: {
