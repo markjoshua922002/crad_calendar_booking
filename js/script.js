@@ -1,25 +1,28 @@
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed");
 
-    // Toggle sidebar functionality
+    // Simplified sidebar toggle function
     const menuButton = document.getElementById('menuButton');
-    const sidebar = document.getElementById('sidebar');
-    const container = document.querySelector('.container');
-
-    if (menuButton && sidebar && container) {
+    if (menuButton) {
+        console.log("Menu button found");
         menuButton.addEventListener('click', function() {
             console.log("Menu button clicked");
-            sidebar.classList.toggle('open');
-            container.classList.toggle('shifted');
+            const sidebar = document.getElementById('sidebar');
+            const container = document.querySelector('.container');
+            
+            if (sidebar) {
+                sidebar.classList.toggle('open');
+                console.log("Sidebar toggled:", sidebar.classList.contains('open'));
+            }
+            
+            if (container) {
+                container.classList.toggle('shifted');
+            }
         });
     } else {
-        console.error("Menu elements not found:", { 
-            menuButton: !!menuButton, 
-            sidebar: !!sidebar, 
-            container: !!container 
-        });
+        console.error("Menu button not found!");
     }
-
+    
     // Modal Handling
     const modals = {
         edit: {
@@ -170,12 +173,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     $(document).ready(function(){
-        $('#menuButton').on('click', function() {
-            console.log("Menu button clicked via jQuery");
-            $('#sidebar').toggleClass('open');
-            $('.container').toggleClass('shifted');
-        });
-
         $('#time_from, #time_to').timepicker({
             timeFormat: 'h:i A',
             interval: 1,
