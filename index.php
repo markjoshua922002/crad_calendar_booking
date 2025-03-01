@@ -124,8 +124,28 @@ if (isset($_POST['add_booking'])) {
                 if ($result->num_rows > 0) {
                     $warning = "Double booking detected for the specified time, date, and room.";
                 } else {
+                    // Add this right before preparing the INSERT statement
+
+                    // Make absolutely sure the date is in the right format
+                    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                        // If it's not in YYYY-MM-DD format, let's fix it
+                        try {
+                            $dateObj = new DateTime($date);
+                            $date = $dateObj->format('Y-m-d');
+                            error_log("Date reformatted to ensure YYYY-MM-DD: $date");
+                        } catch (Exception $e) {
+                            error_log("Could not reformat date: $date, Error: " . $e->getMessage());
+                            $warning = "Invalid date format. Please use the date picker to select a date.";
+                            // Don't proceed with insertion
+                            throw new Exception("Invalid date format");
+                        }
+                    }
+
+                    // Debug the final date value
+                    error_log("Final validated date to insert: $date");
+
                     // Make sure we're binding the correct set value
-                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%d'), ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     if (!$stmt) {
                         die('Prepare failed: ' . $conn->error);
                     }
@@ -145,8 +165,10 @@ if (isset($_POST['add_booking'])) {
                         header('Location: index.php');
                         exit();
                     } else {
-                        // Debug: Log error
+                        // Debug: Log error with more details
                         error_log("Error inserting booking: " . $stmt->error);
+                        error_log("SQL State: " . $stmt->sqlstate);
+                        error_log("Error Code: " . $stmt->errno);
                         $warning = "Error: " . $stmt->error;
                     }
                     $stmt->close();
