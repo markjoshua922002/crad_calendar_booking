@@ -15,170 +15,60 @@ if ($conn->connect_error) {
 
 // Handle form submissions
 if (isset($_POST['add_booking'])) {
-    // Debug the incoming form data
-    error_log("Received POST data: " . print_r($_POST, true));
-    
-    // Get the raw date value for debugging
-    $raw_date = $_POST['date'] ?? 'no date provided';
-    error_log("Raw date from form: $raw_date");
-    
-    // Check if the date is only a year (like '2025')
-    if (preg_match('/^\d{4}$/', $raw_date)) {
-        // Set to today's date in that year
-        $current_month_day = date('m-d');
-        $_POST['date'] = $raw_date . '-' . $current_month_day;
-        error_log("Adjusted date to: " . $_POST['date']);
-    }
-    
     $name = $_POST['name'];
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
-    $set = $_POST['set']; // Make sure this is properly getting the set value
+    $set = $_POST['set'];
     $department = $_POST['department'];
     $room = $_POST['room'];
+    $date = date('Y-m-d', strtotime($_POST['date']));
     
-    // Fix date parsing - make sure it's in correct MySQL format YYYY-MM-DD
-    $date_input = $_POST['date'];
-    if (empty($date_input)) {
-        $warning = "Please select a date.";
+    // Combine time fields
+    $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
+    $time_to = date('H:i:s', strtotime($_POST['time_to_hour'] . ':' . $_POST['time_to_minute'] . ' ' . $_POST['time_to_ampm']));
+    
+    $reason = $_POST['reason'];
+
+    // Debug: Log the values being processed
+    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
+
+    // Check if the booking date is in the past
+    $current_date = date('Y-m-d');
+    if ($date < $current_date) {
+        $warning = "You cannot book a date that has already passed.";
     } else {
-        // Ensure date is in correct format
-        try {
-            // Add more detailed debug output
-            error_log("Raw date from form: " . print_r($date_input, true));
-            
-            // Force a complete date - handle the case where only year is provided
-            if ($date_input === '2025') {  // Exact match for just the year
-                // Set to current month/day in 2025 or first day of current month
-                $current_month_day = date('m-d');
-                $date = "2025-" . date('m-d');
-                error_log("Only year 2025 received, setting to: $date");
-            }
-            else if (preg_match('/^\d{4}$/', $date_input)) {
-                // If only a year is provided, set to first day of current month
-                $date = $date_input . '-' . date('m-d');
-                error_log("Only year received: $date_input, using current month/day: $date");
-            }
-            else if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_input)) {
-                $date = $date_input; // Already in correct format
-                error_log("Date is already in correct format: $date");
-            }
-            else {
-                // Try to parse using DateTime
-                $parsed_date = new DateTime($date_input);
-                $date = $parsed_date->format('Y-m-d');
-                error_log("Date parsed with DateTime: $date_input → $date");
-            }
-            
-            error_log("Final date value for database: $date");
-            
-            // Combine time fields
-            $time_from_hour = $_POST['time_from_hour'];
-            $time_from_minute = $_POST['time_from_minute'];
-            $time_from_ampm = $_POST['time_from_ampm'];
-            
-            $time_to_hour = $_POST['time_to_hour'];
-            $time_to_minute = $_POST['time_to_minute'];
-            $time_to_ampm = $_POST['time_to_ampm'];
-            
-            // Convert hours to 24-hour format if PM
-            if ($time_from_ampm === 'PM' && $time_from_hour < 12) {
-                $time_from_hour += 12;
-            } else if ($time_from_ampm === 'AM' && $time_from_hour == 12) {
-                $time_from_hour = 0;
-            }
-            
-            if ($time_to_ampm === 'PM' && $time_to_hour < 12) {
-                $time_to_hour += 12;
-            } else if ($time_to_ampm === 'AM' && $time_to_hour == 12) {
-                $time_to_hour = 0;
-            }
-            
-            // Format times in HH:MM:SS format
-            $time_from = sprintf("%02d:%02d:00", $time_from_hour, $time_from_minute);
-            $time_to = sprintf("%02d:%02d:00", $time_to_hour, $time_to_minute);
-            
-            // Debug
-            error_log("Formatted time from: $time_from, time to: $time_to");
-            
-            $reason = $_POST['reason'];
-            
-            // Debug: Log the values being processed
-            error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
-            
-            // Check if the booking date is in the past
-            $current_date = date('Y-m-d');
-            if ($date < $current_date) {
-                $warning = "You cannot book a date that has already passed.";
-            } else {
-                // Check for double booking
-                $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-                if (!$stmt) {
-                    die('Prepare failed: ' . $conn->error);
-                }
-                $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
-                if ($result->num_rows > 0) {
-                    $warning = "Double booking detected for the specified time, date, and room.";
-                } else {
-                    // Add this right before preparing the INSERT statement
-
-                    // Make absolutely sure the date is in the right format
-                    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-                        // If it's not in YYYY-MM-DD format, let's fix it
-                        try {
-                            $dateObj = new DateTime($date);
-                            $date = $dateObj->format('Y-m-d');
-                            error_log("Date reformatted to ensure YYYY-MM-DD: $date");
-                        } catch (Exception $e) {
-                            error_log("Could not reformat date: $date, Error: " . $e->getMessage());
-                            $warning = "Invalid date format. Please use the date picker to select a date.";
-                            // Don't proceed with insertion
-                            throw new Exception("Invalid date format");
-                        }
-                    }
-
-                    // Debug the final date value
-                    error_log("Final validated date to insert: $date");
-
-                    // Make sure we're binding the correct set value
-                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    if (!$stmt) {
-                        die('Prepare failed: ' . $conn->error);
-                    }
-                    
-                    // Debug the set value
-                    error_log("Set value before binding: '$set'");
-                    
-                    // Debug the date value
-                    error_log("Date value before binding: '$date'");
-                    
-                    $stmt->bind_param("sssssiiisss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
-                    
-                    if ($stmt->execute()) {
-                        // Debug: Log successful insertion
-                        error_log("Booking successfully inserted: ID=" . $stmt->insert_id . " with Set=$set");
-                        // Redirect to avoid form resubmission
-                        header('Location: index.php');
-                        exit();
-                    } else {
-                        // Debug: Log error with more details
-                        error_log("Error inserting booking: " . $stmt->error);
-                        error_log("SQL State: " . $stmt->sqlstate);
-                        error_log("Error Code: " . $stmt->errno);
-                        $warning = "Error: " . $stmt->error;
-                    }
-                    $stmt->close();
-                }
-                $stmt->close();
-            }
-        } catch (Exception $e) {
-            $warning = "Invalid date format. Please use the date picker to select a date.";
-            error_log("Date parsing error: " . $e->getMessage());
+        // Check for double booking
+        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
+        if (!$stmt) {
+            die('Prepare failed: ' . $conn->error);
         }
+        $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $warning = "Double booking detected for the specified time, date, and room.";
+        } else {
+            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if (!$stmt) {
+                die('Prepare failed: ' . $conn->error);
+            }
+            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            if ($stmt->execute()) {
+                // Debug: Log successful insertion
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
+                // Redirect to avoid form resubmission
+                header('Location: index.php');
+                exit();
+            } else {
+                // Debug: Log error
+                error_log("Error inserting booking: " . $stmt->error);
+                echo "Error: " . $stmt->error;
+            }
+            $stmt->close();
+        }
+        $stmt->close();
     }
 }
 
@@ -453,7 +343,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="PM">PM</option>
                     </select>
                 </div>
-                <input type="date" name="edit_date" id="edit_date" required min="<?= date('Y-m-d') ?>">
+                <input type="date" name="edit_date" id="edit_date" required>
                 <textarea name="edit_reason" id="edit_reason" placeholder="Agenda" required></textarea>
                 <select name="edit_room" id="edit_room" required>
                     <option value="">Room Number</option>
@@ -540,7 +430,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="PM">PM</option>
                     </select>
                 </div>
-                <input type="date" name="date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
+                <input type="date" name="date" required>
                 <textarea name="reason" placeholder="Agenda" required></textarea>
                 <select name="room" required>
                     <option value="">Room Number</option>
@@ -590,7 +480,7 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=13"></script>
+<script defer src="js/script.js?v=11"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
