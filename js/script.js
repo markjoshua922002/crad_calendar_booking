@@ -6,10 +6,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const sidebar = document.getElementById('sidebar');
     const container = document.querySelector('.container');
 
-    menuButton.addEventListener('click', function() {
-        sidebar.classList.toggle('open');
-        container.classList.toggle('shifted');
-    });
+    if (menuButton && sidebar && container) {
+        menuButton.addEventListener('click', function() {
+            console.log("Menu button clicked");
+            sidebar.classList.toggle('open');
+            container.classList.toggle('shifted');
+        });
+    } else {
+        console.error("Menu elements not found:", { 
+            menuButton: !!menuButton, 
+            sidebar: !!sidebar, 
+            container: !!container 
+        });
+    }
 
     // Modal Handling
     const modals = {
@@ -161,6 +170,12 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     $(document).ready(function(){
+        $('#menuButton').on('click', function() {
+            console.log("Menu button clicked via jQuery");
+            $('#sidebar').toggleClass('open');
+            $('.container').toggleClass('shifted');
+        });
+
         $('#time_from, #time_to').timepicker({
             timeFormat: 'h:i A',
             interval: 1,

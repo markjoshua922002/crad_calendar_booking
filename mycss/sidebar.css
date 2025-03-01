@@ -10,8 +10,8 @@
     align-items: center;
     padding-top: 20px;
     transition: left 0.3s; /* Smooth transition */
-    z-index: 999; /* Add this */
-    box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Optional improvement */
+    z-index: 999;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
 }
 .sidebar.open {
     left: 0; /* Show sidebar when open */
