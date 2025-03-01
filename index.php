@@ -105,14 +105,21 @@ if (isset($_POST['add_room'])) {
 $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
     $search_name = $_POST['search_name'];
-    $stmt = $conn->prepare("SELECT * FROM bookings WHERE representative_name LIKE ?");
+    $stmt = $conn->prepare("SELECT bookings.*, departments.name as department_name, departments.color, rooms.name as room_name 
+                          FROM bookings 
+                          JOIN departments ON bookings.department_id = departments.id 
+                          JOIN rooms ON bookings.room_id = rooms.id 
+                          WHERE representative_name LIKE ? OR name LIKE ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
     $search_param = "%$search_name%";
-    $stmt->bind_param("s", $search_param);
+    $stmt->bind_param("ss", $search_param, $search_param);
     $stmt->execute();
-    $searched_appointment = $stmt->get_result()->fetch_assoc();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $searched_appointment = $result->fetch_assoc();
+    }
     $stmt->close();
 }
 
@@ -184,6 +191,12 @@ while ($row = $bookings->fetch_assoc()) {
             </div>
         </div>
     </div>
+
+    <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
+        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
+            No appointments found for "<?= htmlspecialchars($search_name) ?>".
+        </div>
+    <?php endif; ?>
 
     <div class="calendar-container-wrapper">
         <div class="main-content">
@@ -468,5 +481,84 @@ while ($row = $bookings->fetch_assoc()) {
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script defer src="js/script.js?v=11"></script>
+
+<!-- Add this right before the closing body tag -->
+<?php if ($searched_appointment): ?>
+<script>
+    // Data to pass to the view modal
+    const searchedAppointmentData = <?= json_encode($searched_appointment) ?>;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show the appointment details in the view modal
+        const viewContainer = document.getElementById('viewContainer');
+        if (viewContainer) {
+            const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            viewContainer.innerHTML = `
+                <div class="appointment-details">
+                    <p><strong>Research Adviser's Name:</strong> ${searchedAppointmentData.name}</p>
+                    <p><strong>Group Number:</strong> ${searchedAppointmentData.id_number}</p>
+                    <p><strong>Set:</strong> ${searchedAppointmentData.set}</p>
+                    <p><strong>Department:</strong> ${searchedAppointmentData.department_name}</p>
+                    <p><strong>Room:</strong> ${searchedAppointmentData.room_name}</p>
+                    <p><strong>Date:</strong> ${searchedAppointmentData.booking_date}</p>
+                    <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
+                    <p><strong>Agenda:</strong> ${searchedAppointmentData.reason}</p>
+                    <p><strong>Representative:</strong> ${searchedAppointmentData.representative_name}</p>
+                    <p><strong>Remarks:</strong> ${searchedAppointmentData.group_members || "None"}</p>
+                </div>
+                <div class="form-actions-right" style="margin-top: 20px;">
+                    <button type="button" class="edit-search-result" data-id="${searchedAppointmentData.id}">Edit Appointment</button>
+                </div>
+            `;
+            
+            // Show the view modal automatically
+            document.getElementById('viewModal').style.display = 'block';
+            
+            // Add event listener to the edit button
+            document.querySelector('.edit-search-result').addEventListener('click', function() {
+                const appointmentId = this.getAttribute('data-id');
+                
+                // Fill the edit form with the appointment data
+                document.getElementById('appointment_id').value = searchedAppointmentData.id;
+                document.getElementById('edit_department').value = searchedAppointmentData.department_id;
+                document.getElementById('edit_name').value = searchedAppointmentData.name;
+                document.getElementById('edit_id_number').value = searchedAppointmentData.id_number;
+                document.getElementById('edit_set').value = searchedAppointmentData.set;
+                document.getElementById('edit_date').value = searchedAppointmentData.booking_date;
+                document.getElementById('edit_reason').value = searchedAppointmentData.reason;
+                document.getElementById('edit_room').value = searchedAppointmentData.room_id;
+                document.getElementById('edit_representative_name').value = searchedAppointmentData.representative_name;
+                document.getElementById('edit_group_members').value = searchedAppointmentData.group_members;
+                
+                // Time handling - parse the time into components
+                const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);
+                const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`);
+                
+                const fromHour = timeFrom.getHours() % 12 || 12;
+                const fromMinute = timeFrom.getMinutes();
+                const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+                
+                const toHour = timeTo.getHours() % 12 || 12;
+                const toMinute = timeTo.getMinutes();
+                const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+                
+                document.getElementById('edit_time_from_hour').value = fromHour;
+                document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_from_ampm').value = fromAMPM;
+                
+                document.getElementById('edit_time_to_hour').value = toHour;
+                document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_to_ampm').value = toAMPM;
+                
+                // Close the view modal and open the edit modal
+                document.getElementById('viewModal').style.display = 'none';
+                document.getElementById('editModal').style.display = 'block';
+            });
+        }
+    });
+</script>
+<?php endif; ?>
 </body>
 </html>
