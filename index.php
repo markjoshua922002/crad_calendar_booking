@@ -23,8 +23,11 @@ if (isset($_POST['add_booking'])) {
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
-    $time_from = date('H:i:s', strtotime($_POST['time_from']));
-    $time_to = date('H:i:s', strtotime($_POST['time_to']));
+    
+    // Combine time fields
+    $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
+    $time_to = date('H:i:s', strtotime($_POST['time_to_hour'] . ':' . $_POST['time_to_minute'] . ' ' . $_POST['time_to_ampm']));
+    
     $reason = $_POST['reason'];
 
     // Check if the booking date is in the past
