@@ -29,22 +29,7 @@
 .sidebar a:hover {
     background-color: #003f7a;
 }
-.menu-button {
-    position: fixed;
-    left: 10px;
-    top: 10px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 1000; /* Ensure button is on top */
-    transition: left 0.3s;
-}
-.menu-button:hover {
-    background-color: #003f7a;
-}
+
 .container {
     margin-left: 20px; /* Adjusted margin to accommodate sidebar */
     transition: margin-left 0.3s; /* Smooth transition */
