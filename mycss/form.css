@@ -51,6 +51,20 @@
     outline: none;
 }
 
+/* Time picker styling */
+.time-picker {
+    display: flex;
+    gap: 10px;
+}
+
+.time-picker select {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 /* Submit button */
 .submit-button {
     padding: 10px 20px;
@@ -89,5 +103,10 @@
 @media (max-width: 768px) {
     .form-container {
         width: 90%;
+    }
+    
+    .time-picker {
+        flex-direction: column;
+        gap: 5px;
     }
 }
