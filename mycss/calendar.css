@@ -77,6 +77,18 @@
     color: #fff;
 }
 
+#appointmentModal .modal-content {
+    width: 50%; /* Adjust the width as needed */
+    max-width: 400px; /* Maximum width */
+    max-height: 300px; /* Adjust the height to show 3 appointments */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+#appointmentList {
+    max-height: 240px; /* Adjust the height to fit within the modal content */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
 /* View modal styles */
 #viewModal {
     display: none;
