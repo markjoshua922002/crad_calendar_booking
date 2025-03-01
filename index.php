@@ -222,10 +222,12 @@ while ($row = $bookings->fetch_assoc()) {
                         foreach ($dayAppointments as $appointment) {
                             $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
                             if ($appointmentDateTime >= $currentDateTime && $appointmentDateTime <= $sevenDaysLater) {
+                                $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
+                                $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
                                 echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
                                 echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
                                 echo $appointment['department_name'] . '<br>';
-                                echo $appointment['booking_date'] . ' ' . $appointment['booking_time_from'] . ' - ' . $appointment['booking_time_to'];
+                                echo $appointment['booking_date'] . ' ' . $timeFrom . ' - ' . $timeTo;
                                 echo '</li>';
                             }
                         }
