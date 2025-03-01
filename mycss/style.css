@@ -190,10 +190,13 @@ button:hover,
 
 .time-picker {
     display: flex;
-    gap: 5px;
+    gap: 2px; /* Reduce gap to make them tabi-tabi (side by side) */
+    align-items: center;
 }
 
 .time-picker select {
-    padding: 5px;
-    font-size: 16px;
+    padding: 2px 4px; /* Make dropdowns smaller */
+    font-size: 14px; /* Reduce font size */
+    width: 60px; /* Adjust width to make it compact */
 }
+
