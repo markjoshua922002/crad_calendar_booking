@@ -190,6 +190,10 @@ while ($row = $bookings->fetch_assoc()) {
                 </form>
             </div>
         </div>
+        <!-- Add this button to your HTML where you want the download button to appear -->
+        <form method="POST" action="download_appointments.php" style="text-align: right; margin-bottom: 10px;">
+            <button type="submit" name="download_appointments" style="padding: 5px 10px;">Download Appointments</button>
+        </form>
     </div>
 
     <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
