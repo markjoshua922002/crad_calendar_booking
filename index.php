@@ -468,6 +468,6 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js"></script>
+<script defer src="js/script.js?v=7"></script>
 </body>
 </html>
