@@ -301,4 +301,36 @@ document.addEventListener("DOMContentLoaded", function() {
             $('#viewModal').hide();
         });
     });
+
+    function getTime(hourSelect, minuteSelect, ampmSelect) {
+        const hour = hourSelect.value;
+        const minute = minuteSelect.value;
+        const ampm = ampmSelect.value;
+
+        if (hour && minute && ampm) {
+            return `${hour}:${minute} ${ampm}`;
+        }
+        return '';
+    }
+
+    function setupTimePicker(hourSelectId, minuteSelectId, ampmSelectId, timeInputId) {
+        const hourSelect = document.getElementById(hourSelectId);
+        const minuteSelect = document.getElementById(minuteSelectId);
+        const ampmSelect = document.getElementById(ampmSelectId);
+        const timeInput = document.getElementById(timeInputId);
+
+        [hourSelect, minuteSelect, ampmSelect].forEach(select => {
+            select.addEventListener('change', function() {
+                timeInput.value = getTime(hourSelect, minuteSelect, ampmSelect);
+            });
+        });
+    }
+
+    // Setup time pickers for booking modal
+    setupTimePicker('time_from_hour', 'time_from_minute', 'time_from_ampm', 'time_from');
+    setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm', 'time_to');
+
+    // Setup time pickers for edit modal
+    setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm', 'edit_time_from');
+    setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm', 'edit_time_to');
 });

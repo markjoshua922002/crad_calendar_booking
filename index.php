@@ -135,7 +135,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=3">
+    <link rel="stylesheet" href="mycss/style.css?v=4">
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
     <link rel="stylesheet" href="mycss/calendar.css?v=16">
     <link rel="stylesheet" href="mycss/day.css">
@@ -144,7 +144,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
-    <script defer src="js/script.js?v=1"></script>
+    <script defer src="js/script.js?v=2"></script>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -271,8 +271,44 @@ while ($row = $bookings->fetch_assoc()) {
                 <?php endforeach; ?>
             </select>
             <input type="date" name="edit_date" id="edit_date" required>
-            <input type="text" name="edit_time_from" id="edit_time_from" required>
-            <input type="text" name="edit_time_to" id="edit_time_to" required>
+            <div class="time-picker">
+                <select id="edit_time_from_hour" name="edit_time_from_hour" required>
+                    <option value="">Hour</option>
+                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select id="edit_time_from_minute" name="edit_time_from_minute" required>
+                    <option value="">Minute</option>
+                    <?php for ($i = 0; $i < 60; $i++): ?>
+                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
+                    <option value="">AM/PM</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <div class="time-picker">
+                <select id="edit_time_to_hour" name="edit_time_to_hour" required>
+                    <option value="">Hour</option>
+                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select id="edit_time_to_minute" name="edit_time_to_minute" required>
+                    <option value="">Minute</option>
+                    <?php for ($i = 0; $i < 60; $i++): ?>
+                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
+                    <option value="">AM/PM</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
             <textarea name="edit_reason" id="edit_reason" required></textarea>
             <select name="edit_department" id="edit_department" required>
                 <option value="">Department</option>
@@ -326,8 +362,44 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $set ?>"><?= $set ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" name="time_from" id="time_from" placeholder="Start Time" required>
-                <input type="text" name="time_to" id="time_to" placeholder="End Time" required>
+                <div class="time-picker">
+                    <select id="time_from_hour" name="time_from_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_from_minute" name="time_from_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_from_ampm" name="time_from_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+                <div class="time-picker">
+                    <select id="time_to_hour" name="time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_to_minute" name="time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_to_ampm" name="time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
                 <input type="date" name="date" required>
                 <textarea name="reason" placeholder="Agenda" required></textarea>
                 <select name="room" required>
