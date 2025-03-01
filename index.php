@@ -22,59 +22,104 @@ if (isset($_POST['add_booking'])) {
     $set = $_POST['set']; // Make sure this is properly getting the set value
     $department = $_POST['department'];
     $room = $_POST['room'];
-    $date = date('Y-m-d', strtotime($_POST['date']));
     
-    // Combine time fields
-    $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
-    $time_to = date('H:i:s', strtotime($_POST['time_to_hour'] . ':' . $_POST['time_to_minute'] . ' ' . $_POST['time_to_ampm']));
-    
-    $reason = $_POST['reason'];
-
-    // Debug: Log the values being processed
-    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
-
-    // Check if the booking date is in the past
-    $current_date = date('Y-m-d');
-    if ($date < $current_date) {
-        $warning = "You cannot book a date that has already passed.";
+    // Fix date parsing - make sure it's in correct MySQL format YYYY-MM-DD
+    $date_input = $_POST['date'];
+    if (empty($date_input)) {
+        $warning = "Please select a date.";
     } else {
-        // Check for double booking
-        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-        if (!$stmt) {
-            die('Prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $warning = "Double booking detected for the specified time, date, and room.";
-        } else {
-            // Make sure we're binding the correct set value
-            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            if (!$stmt) {
-                die('Prepare failed: ' . $conn->error);
+        // Ensure date is in correct format
+        try {
+            $parsed_date = new DateTime($date_input);
+            $date = $parsed_date->format('Y-m-d');
+            
+            // Debug
+            error_log("Original date input: $date_input, Parsed date: $date");
+            
+            // Combine time fields
+            $time_from_hour = $_POST['time_from_hour'];
+            $time_from_minute = $_POST['time_from_minute'];
+            $time_from_ampm = $_POST['time_from_ampm'];
+            
+            $time_to_hour = $_POST['time_to_hour'];
+            $time_to_minute = $_POST['time_to_minute'];
+            $time_to_ampm = $_POST['time_to_ampm'];
+            
+            // Convert hours to 24-hour format if PM
+            if ($time_from_ampm === 'PM' && $time_from_hour < 12) {
+                $time_from_hour += 12;
+            } else if ($time_from_ampm === 'AM' && $time_from_hour == 12) {
+                $time_from_hour = 0;
             }
             
-            // Debug the set value
-            error_log("Set value before binding: '$set'");
+            if ($time_to_ampm === 'PM' && $time_to_hour < 12) {
+                $time_to_hour += 12;
+            } else if ($time_to_ampm === 'AM' && $time_to_hour == 12) {
+                $time_to_hour = 0;
+            }
             
-            $stmt->bind_param("sssssiiisss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            // Format times in HH:MM:SS format
+            $time_from = sprintf("%02d:%02d:00", $time_from_hour, $time_from_minute);
+            $time_to = sprintf("%02d:%02d:00", $time_to_hour, $time_to_minute);
             
-            if ($stmt->execute()) {
-                // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . " with Set=$set");
-                // Redirect to avoid form resubmission
-                header('Location: index.php');
-                exit();
+            // Debug
+            error_log("Formatted time from: $time_from, time to: $time_to");
+            
+            $reason = $_POST['reason'];
+            
+            // Debug: Log the values being processed
+            error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
+            
+            // Check if the booking date is in the past
+            $current_date = date('Y-m-d');
+            if ($date < $current_date) {
+                $warning = "You cannot book a date that has already passed.";
             } else {
-                // Debug: Log error
-                error_log("Error inserting booking: " . $stmt->error);
-                echo "Error: " . $stmt->error;
+                // Check for double booking
+                $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
+                if (!$stmt) {
+                    die('Prepare failed: ' . $conn->error);
+                }
+                $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                if ($result->num_rows > 0) {
+                    $warning = "Double booking detected for the specified time, date, and room.";
+                } else {
+                    // Make sure we're binding the correct set value
+                    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    if (!$stmt) {
+                        die('Prepare failed: ' . $conn->error);
+                    }
+                    
+                    // Debug the set value
+                    error_log("Set value before binding: '$set'");
+                    
+                    // Debug the date value
+                    error_log("Date value before binding: '$date'");
+                    
+                    $stmt->bind_param("sssssiiisss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+                    
+                    if ($stmt->execute()) {
+                        // Debug: Log successful insertion
+                        error_log("Booking successfully inserted: ID=" . $stmt->insert_id . " with Set=$set");
+                        // Redirect to avoid form resubmission
+                        header('Location: index.php');
+                        exit();
+                    } else {
+                        // Debug: Log error
+                        error_log("Error inserting booking: " . $stmt->error);
+                        $warning = "Error: " . $stmt->error;
+                    }
+                    $stmt->close();
+                }
+                $stmt->close();
             }
-            $stmt->close();
+        } catch (Exception $e) {
+            $warning = "Invalid date format. Please use the date picker to select a date.";
+            error_log("Date parsing error: " . $e->getMessage());
         }
-        $stmt->close();
     }
 }
 
