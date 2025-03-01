@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                   '<strong>Name:</strong> ' + appointment.name + '<br>' +
                                   '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
                                   '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
-                                  '<strong>Date:</strong> ' + appointment.set + '<br>' +
+                                  '<strong>Set:</strong> ' + appointment.set + '<br>' +
                                   '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
                                   '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
                                   '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
