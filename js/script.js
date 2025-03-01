@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM fully loaded and parsed - v9");
+    console.log("DOM fully loaded and parsed - v11");
 
     // Debug element existence
     console.log("Menu button exists:", !!document.getElementById('menuButton'));
@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Container exists:", !!document.querySelector('.container'));
     console.log("Calendar days:", document.querySelectorAll('.day').length);
     console.log("Open booking button exists:", !!document.getElementById('openBookingModal'));
+    console.log("Delete button exists:", !!document.getElementById('delete_button'));
 
     // Sidebar toggle
     const menuButton = document.getElementById('menuButton');
@@ -41,6 +42,25 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    
+    // FIX: Delete appointment button - Make sure this is properly attached
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'delete_button') {
+            console.log("Delete button clicked");
+            e.preventDefault(); // Prevent any default button behavior
+            
+            const appointmentId = document.getElementById('appointment_id').value;
+            console.log("Deleting appointment ID:", appointmentId);
+            
+            if (appointmentId && confirm('Are you sure you want to delete this appointment?')) {
+                console.log("Delete confirmed for appointment ID:", appointmentId);
+                // Redirect to the delete API endpoint
+                window.location.href = `api/delete_appointment.php?id=${appointmentId}`;
+            } else {
+                console.log("Delete cancelled or no appointment ID found");
+            }
+        }
+    });
     
     // Calendar day click to show appointments
     const days = document.querySelectorAll('.day');
@@ -219,18 +239,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.error("Error preparing edit form:", error);
                 }
             });
-        });
-    }
-    
-    // Delete appointment button
-    const deleteButton1 = document.getElementById('delete_button');
-    if (deleteButton1) {
-        deleteButton1.addEventListener('click', function(e) {
-            e.preventDefault();
-            const appointmentId = document.getElementById('appointment_id').value;
-            if (confirm('Are you sure you want to delete this appointment?')) {
-                window.location.href = `api/delete_appointment.php?id=${appointmentId}`;
-            }
         });
     }
     
