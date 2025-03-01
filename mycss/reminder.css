@@ -35,3 +35,10 @@
 .reminder-container li:hover {
     background-color: #e0e0e0;
 }
+
+#reminderList {
+    max-height: 300px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+    position: relative; /* Ensure the position is fixed within its container */
+}
