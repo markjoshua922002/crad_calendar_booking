@@ -138,7 +138,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=7">
+    <link rel="stylesheet" href="mycss/style.css?v=8">
     <link rel="stylesheet" href="mycss/sidebar.css?v=1">
     <link rel="stylesheet" href="mycss/calendar.css?v=21">
     <link rel="stylesheet" href="mycss/day.css">
@@ -227,7 +227,8 @@ while ($row = $bookings->fetch_assoc()) {
                                 echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
                                 echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
                                 echo $appointment['department_name'] . '<br>';
-                                echo $appointment['booking_date'] . ' ' . $timeFrom . ' - ' . $timeTo;
+                                echo $appointment['booking_date'] . '<br>';
+                                echo $timeFrom . ' - ' . $timeTo;
                                 echo '</li>';
                             }
                         }

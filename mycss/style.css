@@ -1,6 +1,7 @@
 /* General styles */
 body {
     font-family: Arial, sans-serif;
+    font-size: small;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -173,6 +174,7 @@ button:hover,
 .modal-content .modal-footer button:hover {
     background-color: #0056b3;
 }
+
 
 
 .close {
