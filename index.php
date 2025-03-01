@@ -19,7 +19,7 @@ if (isset($_POST['add_booking'])) {
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
-    $set = $_POST['set'];
+    $set = $_POST['set']; // Make sure this is properly getting the set value
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
@@ -50,14 +50,20 @@ if (isset($_POST['add_booking'])) {
         if ($result->num_rows > 0) {
             $warning = "Double booking detected for the specified time, date, and room.";
         } else {
+            // Make sure we're binding the correct set value
             $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if (!$stmt) {
                 die('Prepare failed: ' . $conn->error);
             }
-            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            
+            // Debug the set value
+            error_log("Set value before binding: '$set'");
+            
+            $stmt->bind_param("sssssiiisss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            
             if ($stmt->execute()) {
                 // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . " with Set=$set");
                 // Redirect to avoid form resubmission
                 header('Location: index.php');
                 exit();
