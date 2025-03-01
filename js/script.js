@@ -194,23 +194,6 @@ document.addEventListener("DOMContentLoaded", function() {
             $('#appointmentModal').show();
         });
 
-        // Show appointment details in view modal
-        $(document).on('click', '.view-button', function() {
-            var appointment = $(this).closest('.appointment-item').data('appointment');
-            var viewModalContent = $('#viewModal .modal-content');
-            viewModalContent.html('<span class="close" id="closeViewModal">&times;</span>' +
-                                  '<h2>Appointment Details</h2>' +
-                                  '<strong>Name:</strong> ' + appointment.name + '<br>' +
-                                  '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
-                                  '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
-                                  '<strong>Set:</strong> ' + appointment.set + '<br>' +
-                                  '<strong>Time:</strong> ' + appointment.booking_time_from + ' to ' + appointment.booking_time_to + '<br>' +
-                                  '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
-                                  '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
-                                  '<strong>Group Members:</strong> ' + appointment.group_members + '<br>' +
-                                  '<strong>Representative Name:</strong> ' + appointment.representative_name);
-            $('#viewModal').show();
-        });
 
         // Show appointment details in edit modal
         $(document).on('click', '.edit-button', function() {
@@ -297,6 +280,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                   '<strong>Representative Name:</strong> ' + appointment.representative_name + '<br>' +
                                   '<strong>Department:</strong> ' + appointment.department_name + '<br>' +
                                   '<strong>Room:</strong> ' + appointment.room_name + '<br>' +
+                                  '<strong>Set:</strong> ' + appointment.set + '<br>' +
                                   '<strong>Time:</strong> ' + timeFrom + ' to ' + timeTo + '<br>' +
                                   '<strong>Date:</strong> ' + appointment.booking_date + '<br>' +
                                   '<strong>Reason:</strong> ' + appointment.reason + '<br>' +
