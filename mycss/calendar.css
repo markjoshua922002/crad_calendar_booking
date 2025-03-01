@@ -22,20 +22,17 @@
 
 /* Appointment item styles */
 .appointment-item {
-    background-color: #007BFF;
-    color: white;
-    padding: 20px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ccc;
-    position: relative;
+    width: 90%; /* Adjust the width as needed */
+    margin: 5px auto; /* Center the items and add some spacing */
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    overflow: hidden; /* Ensure content doesn't overflow */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
 }
 
 .appointment-item:hover {
