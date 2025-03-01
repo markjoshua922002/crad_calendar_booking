@@ -1,18 +1,76 @@
+/* Page layout */
+.page-layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Form container styling */
 .form-container {
-    width: 50%;
+    flex: 1;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+/* Data container styling */
+.data-container {
+    flex: 2;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.data-table-wrapper {
+    overflow-x: auto;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.data-table th {
+    background-color: #0056b3;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.no-data {
+    text-align: center;
+    font-style: italic;
+    color: #777;
 }
 
 /* Container for the logbook page */
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
     min-height: 100vh;
     padding: 20px;
 }
@@ -100,11 +158,21 @@
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
-    .form-container {
-        width: 90%;
+@media (max-width: 900px) {
+    .page-layout {
+        flex-direction: column;
     }
     
+    .form-container {
+        max-width: 100%;
+    }
+    
+    .data-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
     .time-picker {
         flex-direction: column;
         gap: 5px;

@@ -9,6 +9,10 @@ $conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking'
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
+
+// Fetch existing logbook entries
+$logbook_query = "SELECT name, position, purpose, inquiry, submission_date, time FROM logbook ORDER BY submission_date DESC, time DESC";
+$logbook_result = $conn->query($logbook_query);
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +23,7 @@ if ($conn->connect_error) {
     <title>Form - BCP CRAD</title>
     <link rel="stylesheet" href="mycss/style.css?v=4">
     <link rel="stylesheet" href="mycss/sidebar.css?v=2">
-    <link rel="stylesheet" href="mycss/form.css?v=2"> <!-- Incremented version -->
+    <link rel="stylesheet" href="mycss/form.css?v=4"> <!-- Incremented version -->
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
 </head>
 <body>
@@ -32,7 +36,8 @@ if ($conn->connect_error) {
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
-<div class="container">
+<div class="container page-layout">
+    <!-- Left side - Form container -->
     <div class="form-container">
         <h2>Logbook Form</h2>
         <?php
@@ -41,7 +46,7 @@ if ($conn->connect_error) {
             $position = $conn->real_escape_string($_POST['position']);
             $purpose = $conn->real_escape_string($_POST['purpose']);
             $inquiry = $conn->real_escape_string($_POST['inquiry']);
-            $submission_date = $conn->real_escape_string($_POST['submission_date']); // Changed from submission to submission_date
+            $submission_date = $conn->real_escape_string($_POST['submission_date']);
             
             // Get time components and build the time string
             $hour = intval($_POST['time_hour']);
@@ -64,6 +69,8 @@ if ($conn->connect_error) {
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p class='success-message'>New record created successfully</p>";
+                // Refresh the page to show the new entry
+                echo "<script>window.location.href = 'form.php';</script>";
             } else {
                 echo "<p class='error-message'>Error: " . $sql . "<br>" . $conn->error . "</p>";
             }
@@ -118,6 +125,51 @@ if ($conn->connect_error) {
             </div>
             <button type="submit" class="submit-button">Submit</button>
         </form>
+    </div>
+    
+    <!-- Right side - Data display container -->
+    <div class="data-container">
+        <h2>Logbook Entries</h2>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Purpose</th>
+                        <th>Inquiry</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    if ($logbook_result->num_rows > 0) {
+                        while ($row = $logbook_result->fetch_assoc()) {
+                            // Convert time from 24-hour format to 12-hour format
+                            $time_obj = new DateTime($row['time']);
+                            $formatted_time = $time_obj->format('h:i A');
+                            
+                            // Format date
+                            $date_obj = new DateTime($row['submission_date']);
+                            $formatted_date = $date_obj->format('m/d/Y');
+                            
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['position']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['purpose']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['inquiry'] ?: 'N/A') . "</td>";
+                            echo "<td>" . $formatted_date . "</td>";
+                            echo "<td>" . $formatted_time . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6' class='no-data'>No entries found</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
