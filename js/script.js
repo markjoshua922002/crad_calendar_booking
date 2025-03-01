@@ -83,18 +83,29 @@ document.addEventListener("DOMContentLoaded", function() {
                             const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                             const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                             
-                            // Create appointment element
+                            // Create appointment element with a better structure
                             const appointmentItem = document.createElement('div');
                             appointmentItem.classList.add('appointment-item');
                             appointmentItem.style.backgroundColor = appointment.color;
+                            
+                            // Use this improved HTML structure with text-container
                             appointmentItem.innerHTML = `
-                                <strong>${appointment.representative_name}</strong>
-                                <p>${appointment.department_name}<br>
-                                ${appointment.room_name}<br>
-                                ${timeFrom} - ${timeTo}</p>
-                                <button class="view-details" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>View Details</button>
-                                <button class="edit-appointment" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>Edit</button>
+                                <div class="appointment-content">
+                                    <div class="appointment-text-container">
+                                        <h3 class="appointment-title">${appointment.representative_name}</h3>
+                                        <div class="appointment-details">
+                                            <p><strong>Department:</strong> ${appointment.department_name}</p>
+                                            <p><strong>Room:</strong> ${appointment.room_name}</p>
+                                            <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button class="view-details" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>View Details</button>
+                                        <button class="edit-appointment" data-id="${appointment.id}" data-appointment='${JSON.stringify(appointment)}'>Edit</button>
+                                    </div>
+                                </div>
                             `;
+                            
                             appointmentList.appendChild(appointmentItem);
                         });
                         

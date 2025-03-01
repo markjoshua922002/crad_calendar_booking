@@ -25,21 +25,66 @@
     background-color: #007BFF;
     color: white;
     padding: 20px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    margin-bottom: 15px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
     position: relative;
+    overflow: hidden;
 }
 
 .appointment-item:hover {
     background-color: #0056b3;
+}
+
+.appointment-content {
+    display: flex;
+    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.appointment-text-container {
+    flex: 1;
+    color: white;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.appointment-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.appointment-details p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.appointment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.view-details, .edit-appointment {
+    padding: 8px 12px;
+    background-color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.view-details:hover, .edit-appointment:hover {
+    background-color: #f0f0f0;
 }
 
 /* Appointment container styles */
@@ -84,8 +129,16 @@
 }
 
 #appointmentList {
-    max-height: 465px; /* Adjust the height to fit within the modal content */
+    max-height: 400px; /* Adjust the height to fit within the modal content */
     overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+}
+
+#appointmentList p {
+    text-align: center;
+    margin: 20px 0;
+    color: #777;
+    font-style: italic;
 }
 
 /* View modal styles */
