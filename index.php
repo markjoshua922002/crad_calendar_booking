@@ -109,7 +109,7 @@ if (isset($_POST['search_booking'])) {
                           FROM bookings 
                           JOIN departments ON bookings.department_id = departments.id 
                           JOIN rooms ON bookings.room_id = rooms.id 
-                          WHERE representative_name LIKE ? OR name LIKE ?");
+                          WHERE bookings.representative_name LIKE ? OR bookings.name LIKE ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
