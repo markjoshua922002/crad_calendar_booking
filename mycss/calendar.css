@@ -80,10 +80,11 @@
 #appointmentModal .modal-content {
     width: 50%; /* Adjust the width as needed */
     max-width: 400px; /* Maximum width */
+    height: 70%;
 }
 
 #appointmentList {
-    max-height: 240px; /* Adjust the height to fit within the modal content */
+    max-height: 465px; /* Adjust the height to fit within the modal content */
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
