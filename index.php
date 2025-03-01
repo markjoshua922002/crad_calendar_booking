@@ -263,7 +263,7 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="modal-content">
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
-        <form id="editForm" method="POST" action="api/update_appointment.php">
+        <form id="editForm" method="POST" action="api/update_appointment.php" class="form">
             <input type="hidden" name="appointment_id" id="appointment_id">
             <div class="form-grid">
                 <select name="edit_department" id="edit_department" required>
