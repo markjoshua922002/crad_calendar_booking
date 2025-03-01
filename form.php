@@ -26,7 +26,6 @@ if ($conn->connect_error) {
 
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
-    <a href="osas.php">OSAS</a>
     <a href="form.php">LOGBOOK</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="logout.php" class="logout-button">Logout</a>
