@@ -219,14 +219,17 @@ document.addEventListener("DOMContentLoaded", function() {
             $('#edit_id_number').val(appointment.id_number);
             $('#edit_set').val(appointment.set);
             $('#edit_date').val(appointment.booking_date);
-            $('#edit_time_from').val(appointment.booking_time_from);
-            $('#edit_time_to').val(appointment.booking_time_to);
+            $('#edit_time_from_hour').val(new Date('1970-01-01T' + appointment.booking_time_from + 'Z').getHours() % 12 || 12);
+            $('#edit_time_from_minute').val(new Date('1970-01-01T' + appointment.booking_time_from + 'Z').getMinutes());
+            $('#edit_time_from_ampm').val(new Date('1970-01-01T' + appointment.booking_time_from + 'Z').getHours() >= 12 ? 'PM' : 'AM');
+            $('#edit_time_to_hour').val(new Date('1970-01-01T' + appointment.booking_time_to + 'Z').getHours() % 12 || 12);
+            $('#edit_time_to_minute').val(new Date('1970-01-01T' + appointment.booking_time_to + 'Z').getMinutes());
+            $('#edit_time_to_ampm').val(new Date('1970-01-01T' + appointment.booking_time_to + 'Z').getHours() >= 12 ? 'PM' : 'AM');
             $('#edit_reason').val(appointment.reason);
             $('#edit_department').val(appointment.department_id);
             $('#edit_room').val(appointment.room_id);
-            $('#edit_group_members').val(appointment.group_members);
             $('#edit_representative_name').val(appointment.representative_name);
-            $('#appointmentModal').hide();
+            $('#edit_group_members').val(appointment.group_members);
             $('#editModal').show();
         });
 

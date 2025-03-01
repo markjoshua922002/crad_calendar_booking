@@ -263,81 +263,85 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="modal-content">
         <span class="close" id="closeEditModal">&times;</span>
         <h2>Edit Appointment</h2>
-        <form id="editForm">
+        <form id="editForm" method="POST" action="api/update_appointment.php">
             <input type="hidden" name="appointment_id" id="appointment_id">
-            <input type="text" name="edit_name" id="edit_name" required>
-            <select name="edit_id_number" id="edit_id_number" required>
-                <option value="">Group Number</option>
-                <?php for ($i = 1; $i <= 200; $i++): ?>
-                    <option value="<?= $i ?>"><?= $i ?></option>
-                <?php endfor; ?>
-            </select>
-            <select name="edit_set" id="edit_set" required>
-                <option value="">Set</option>
-                <?php foreach (range('A', 'F') as $set): ?>
-                    <option value="<?= $set ?>"><?= $set ?></option>
-                <?php endforeach; ?>
-            </select>
-            <input type="date" name="edit_date" id="edit_date" required>
-            <div class="time-picker">
-                <select id="edit_time_from_hour" name="edit_time_from_hour" required>
-                    <option value="">Hour</option>
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
+            <div class="form-grid">
+                <select name="edit_department" id="edit_department" required>
+                    <option value="">Department</option>
+                    <?php
+                    $departments->data_seek(0);
+                    while ($department = $departments->fetch_assoc()): ?>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <input type="text" name="edit_name" id="edit_name" placeholder="Research Adviser's Name" required>
+                <select name="edit_id_number" id="edit_id_number" required>
+                    <option value="">Group Number</option>
+                    <?php for ($i = 1; $i <= 200; $i++): ?>
                         <option value="<?= $i ?>"><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-                <select id="edit_time_from_minute" name="edit_time_from_minute" required>
-                    <option value="">Minute</option>
-                    <?php for ($i = 0; $i < 60; $i++): ?>
-                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                    <?php endfor; ?>
+                <select name="edit_set" id="edit_set" required>
+                    <option value="">Set</option>
+                    <?php foreach (range('A', 'F') as $set): ?>
+                        <option value="<?= $set ?>"><?= $set ?></option>
+                    <?php endforeach; ?>
                 </select>
-                <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
-                    <option value="">AM/PM</option>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
+                <div class="time-picker">
+                    <select id="edit_time_from_hour" name="edit_time_from_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_from_minute" name="edit_time_from_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+                <div class="time-picker">
+                    <select id="edit_time_to_hour" name="edit_time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_minute" name="edit_time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+                <input type="date" name="edit_date" id="edit_date" required>
+                <textarea name="edit_reason" id="edit_reason" placeholder="Agenda" required></textarea>
+                <select name="edit_room" id="edit_room" required>
+                    <option value="">Room Number</option>
+                    <?php
+                    $rooms->data_seek(0);
+                    while ($room = $rooms->fetch_assoc()): ?>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <?php endwhile; ?>
                 </select>
+                <input type="text" name="edit_representative_name" id="edit_representative_name" placeholder="Representative Name" required>
             </div>
-            <div class="time-picker">
-                <select id="edit_time_to_hour" name="edit_time_to_hour" required>
-                    <option value="">Hour</option>
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                        <option value="<?= $i ?>"><?= $i ?></option>
-                    <?php endfor; ?>
-                </select>
-                <select id="edit_time_to_minute" name="edit_time_to_minute" required>
-                    <option value="">Minute</option>
-                    <?php for ($i = 0; $i < 60; $i++): ?>
-                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                    <?php endfor; ?>
-                </select>
-                <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
-                    <option value="">AM/PM</option>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                </select>
+            <textarea name="edit_group_members" id="edit_group_members" placeholder="Remarks" rows="4" required></textarea>
+            <div class="form-actions-right">
+                <button type="submit" id="save_button">Save Changes</button>
+                <button type="button" id="delete_button">Delete Appointment</button>
             </div>
-            <textarea name="edit_reason" id="edit_reason" required></textarea>
-            <select name="edit_department" id="edit_department" required>
-                <option value="">Department</option>
-                <?php
-                $departments->data_seek(0);
-                while ($department = $departments->fetch_assoc()): ?>
-                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <select name="edit_room" id="edit_room" required>
-                <option value="">Room Number</option>
-                <?php
-                $rooms->data_seek(0);
-                while ($room = $rooms->fetch_assoc()): ?>
-                    <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                <?php endwhile; ?>
-            </select>
-            <input type="text" name="edit_representative_name" id="edit_representative_name" required>
-            <textarea name="edit_group_members" id="edit_group_members" rows="4" required></textarea>
-            <button type="submit" id="save_button">Save Changes</button>
-            <button type="button" id="delete_button">Delete Appointment</button>
         </form>
     </div>
 </div>
