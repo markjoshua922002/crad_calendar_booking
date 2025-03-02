@@ -33,6 +33,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
     <title>User Accounts</title>
     <link rel="stylesheet" href="mycss/style.css?v=1">
     <link rel="stylesheet" href="mycss/sidebar.css">
+    <style>
+        /* Specific styles for accounts.php */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align to the left */
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: left; /* Align text to the left */
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 600px;
+            margin: 0;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto; /* Add vertical scroll bar */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
@@ -42,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
     <a href="form.php">LOGBOOK</a>
     <a href="accounts.php">Users</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
-    
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 <!-- End of sidebar code -->
