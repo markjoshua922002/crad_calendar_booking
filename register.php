@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         $hashed_password = password_hash($reg_password, PASSWORD_BCRYPT);
         
         // Set activation status based on registration code
-        $is_active = ($reg_code === 'BCPCRAD2024') ? 1 : 0;
+        $is_active = (!empty($reg_code) && $reg_code === 'BCPCRAD2024') ? 1 : 0;
 
         // Insert the new user into the database
         $stmt = $conn->prepare("INSERT INTO users (username, password, is_active) VALUES (?, ?, ?)");
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 <h2>Register</h2>
                 <input type="text" name="reg_username" placeholder="Username" required>
                 <input type="password" name="reg_password" placeholder="Password" required>
-                <input type="text" name="reg_code" placeholder="Registration Code" required>
+                <input type="text" name="reg_code" placeholder="Registration Code">
                 <button type="submit" name="register">Register</button>
                 <?php if (isset($register_error)) echo "<p class='error'>$register_error</p>"; ?>
                 <?php if (isset($register_success)) echo "<p class='success'>$register_success</p>"; ?>
