@@ -49,37 +49,6 @@ $conn->close();
             padding: 0;
             background-color: #f4f4f4;
         }
-        .sidebar {
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background-color: #111;
-            padding-top: 20px;
-            display: none;
-        }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-        }
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-        .menu-button {
-            font-size: 30px;
-            cursor: pointer;
-            background-color: #111;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-        }
         .container {
             margin-left: 260px;
             padding: 20px;
