@@ -35,17 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
     <link rel="stylesheet" href="mycss/sidebar.css">
 </head>
 <body>
-    <div class="container">
-        <h1>User Accounts</h1>
-        <!-- Sidebar code from form.php -->
-        <div class="sidebar">
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="accounts.php">User Accounts</a></li>
-                <li><a href="form.php">Form</a></li>
-                <!-- Add more links as needed -->
-            </ul>
-        </div>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
+<div class="sidebar" id="sidebar">
+    <a href="index.php">CRAD</a>
+    <a href="form.php">LOGBOOK</a>
+    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    <a href="logout.php" class="logout-button">Logout</a>
+</div>
         <!-- End of sidebar code -->
 
         <table>
