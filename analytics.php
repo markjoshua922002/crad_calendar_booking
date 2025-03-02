@@ -39,8 +39,8 @@ $conn->close();
 <html>
 <head>
     <title>Department Booking Analytics</title>
-    <link rel="stylesheet" href="mycss/style.css?v=4">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
+    <link rel="stylesheet" href="mycss/style.css?v=13">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=3">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -48,6 +48,41 @@ $conn->close();
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+        }
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #111;
+            padding-top: 20px;
+            display: none;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .menu-button {
+            font-size: 30px;
+            cursor: pointer;
+            background-color: #111;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+        .container {
+            margin-left: 260px;
+            padding: 20px;
         }
     </style>
 </head>
