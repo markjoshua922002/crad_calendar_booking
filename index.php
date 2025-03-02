@@ -282,7 +282,40 @@ while ($row = $bookings->fetch_assoc()) {
     <div class="modal-content">
         <span class="close" id="closeAppointmentModal">&times;</span>
         <h2>Appointments</h2>
-        <div id="appointmentList"></div>
+        <div id="appointmentList">
+            <ul id="appointmentList">
+                <?php
+                // Fetch all appointments
+                $allAppointments = [];
+                foreach ($appointments as $day => $dayAppointments) {
+                    foreach ($dayAppointments as $appointment) {
+                        $allAppointments[] = $appointment;
+                    }
+                }
+
+                // Sort the appointments by date and time
+                usort($allAppointments, function($a, $b) {
+                    $dateTimeA = new DateTime($a['booking_date'] . ' ' . $a['booking_time_from']);
+                    $dateTimeB = new DateTime($b['booking_date'] . ' ' . $b['booking_time_from']);
+                    return $dateTimeA <=> $dateTimeB;
+                });
+
+                // Display the sorted appointments
+                foreach ($allAppointments as $appointment) {
+                    $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
+                    $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
+                    echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                    echo '<div class="text-container">';
+                    echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                    echo $appointment['department_name'] . '<br>';
+                    echo $appointment['booking_date'] . '<br>';
+                    echo $timeFrom . ' - ' . $timeTo;
+                    echo '</div>';
+                    echo '</li>';
+                }
+                ?>
+            </ul>
+        </div>
     </div>
 </div>
 
