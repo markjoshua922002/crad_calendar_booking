@@ -534,7 +534,7 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=11"></script>
+<script defer src="js/script.js?v=12"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
