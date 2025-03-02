@@ -154,7 +154,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=11">
+    <link rel="stylesheet" href="mycss/style.css?v=12">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
     <link rel="stylesheet" href="mycss/calendar.css?v=26">
     <link rel="stylesheet" href="mycss/day.css">
