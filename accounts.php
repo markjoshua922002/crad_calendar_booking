@@ -33,56 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
     <title>User Accounts</title>
     <link rel="stylesheet" href="mycss/style.css?v=1">
     <link rel="stylesheet" href="mycss/sidebar.css">
-    <style>
-        /* Specific styles for accounts.php */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .table-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        button {
-            padding: 5px 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
