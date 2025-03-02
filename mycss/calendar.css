@@ -265,6 +265,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 5px; /* Reduce the margin-bottom */
 }
 
 /* Container for the whole calendar */
@@ -276,4 +277,5 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-top: 5px; /* Reduce the margin-top */
 }

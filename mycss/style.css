@@ -206,6 +206,7 @@ button:hover,
     justify-content: flex-end;
     align-items: center;
     flex-grow: 1;
+    margin-bottom: 5px; /* Reduce the margin-bottom */
 }
 
 /* Modal styles */
@@ -274,5 +275,4 @@ button:hover,
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    
 }
