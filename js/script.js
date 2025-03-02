@@ -617,4 +617,111 @@ document.addEventListener("DOMContentLoaded", function() {
     // Setup time pickers for edit modal
     setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm', 'edit_time_from');
     setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm', 'edit_time_to');
+    
+    // Date input debugging
+    // Check all forms with date inputs
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+        console.log(`Found date input ${input.name} with value: ${input.value}`);
+        
+        input.addEventListener('change', function() {
+            console.log(`Date input ${this.name} changed to: ${this.value}`);
+        });
+    });
+    
+    // Log form submissions
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (this.querySelector('input[type="date"]')) {
+                const dateInput = this.querySelector('input[type="date"]');
+                console.log(`Form submitting with date value: ${dateInput.value}`);
+            }
+        });
+    });
+
+    // Get all forms with date inputs
+    const allForms = document.querySelectorAll('form');
+    
+    allForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const dateInput = this.querySelector('input[type="date"]');
+            if (dateInput) {
+                // Check if the date is just a year
+                if (dateInput.value === '2025' || dateInput.value.match(/^\d{4}$/)) {
+                    e.preventDefault(); // Prevent form submission
+                    
+                    // Set the date to the current day in the given year
+                    const year = dateInput.value;
+                    const today = new Date();
+                    const formattedDate = `${year}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                    
+                    dateInput.value = formattedDate;
+                    console.log(`Fixed date value: ${formattedDate}`);
+                    
+                    // Now submit the form
+                    setTimeout(() => {
+                        this.submit();
+                    }, 100);
+                }
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
+setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm', 'edit_time_from');
+setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm', 'edit_time_to');
+
+// Date input debugging
+// Check all forms with date inputs
+const dateInputs = document.querySelectorAll('input[type="date"]');
+dateInputs.forEach(input => {
+    console.log(`Found date input ${input.name} with value: ${input.value}`);
+    
+    input.addEventListener('change', function() {
+        console.log(`Date input ${this.name} changed to: ${this.value}`);
+    });
+});
+
+// Log form submissions
+const forms = document.querySelectorAll('form');
+forms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+        if (this.querySelector('input[type="date"]')) {
+            const dateInput = this.querySelector('input[type="date"]');
+            console.log(`Form submitting with date value: ${dateInput.value}`);
+        }
+    });
+});
+
+// Get all forms with date inputs
+const allForms = document.querySelectorAll('form');
+
+allForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const dateInput = this.querySelector('input[type="date"]');
+        if (dateInput) {
+            // Check if the date is just a year
+            if (dateInput.value === '2025' || dateInput.value.match(/^\d{4}$/)) {
+                e.preventDefault(); // Prevent form submission
+                
+                // Set the date to the current day in the given year
+                const year = dateInput.value;
+                const today = new Date();
+                const formattedDate = `${year}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                
+                dateInput.value = formattedDate;
+                console.log(`Fixed date value: ${formattedDate}`);
+                
+                // Now submit the form
+                setTimeout(() => {
+                    this.submit();
+                }, 100);
+            }
+        }
+    });
 });
