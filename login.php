@@ -1,4 +1,9 @@
 <?php
+// Set secure session parameters before starting the session
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', isset($_SERVER['HTTPS']));
+ini_set('session.cookie_samesite', 'Strict');
+
 session_start();
 
 // Database credentials
@@ -16,10 +21,6 @@ if ($conn->connect_error) {
     die('Connection failed. Please try again later.'); // Do not expose technical details
 }
 
-// Set secure session parameters
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', isset($_SERVER['HTTPS']));
-ini_set('session.cookie_samesite', 'Strict');
 session_regenerate_id(true); // Prevent session fixation
 
 // Handle login request
@@ -96,7 +97,7 @@ function clearLoginAttempts($username, $conn) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Login</title>
-    <link rel="stylesheet" href="css/style_login.css">
+    <link rel="stylesheet" href="mycss/style_login.css">
 
     <!-- Security headers -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
