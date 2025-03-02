@@ -193,18 +193,6 @@ while ($row = $bookings->fetch_assoc()) {
             <?= $warning ?>
         </div>
     <?php endif; ?>
-    <div class="search-container-wrapper">
-        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-            <div class="search-container" style="display: inline-block;">
-                <form method="POST" style="display: flex; gap: 5px;">
-                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
         <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
             No appointments found for "<?= htmlspecialchars($search_name) ?>".
