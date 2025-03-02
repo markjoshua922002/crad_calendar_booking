@@ -40,8 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
     <a href="form.php">LOGBOOK</a>
-    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     <a href="accounts.php">Users</a>
+    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 <!-- End of sidebar code -->
