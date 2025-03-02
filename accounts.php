@@ -99,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
 <!-- End of sidebar code -->
 
 <div class="container">
-    <h1>User Accounts</h1>
     <div class="table-container">
         <table>
             <thead>
