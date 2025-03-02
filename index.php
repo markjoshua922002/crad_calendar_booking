@@ -154,7 +154,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=12">
+    <link rel="stylesheet" href="mycss/style.css?v=13">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
     <link rel="stylesheet" href="mycss/calendar.css?v=26">
     <link rel="stylesheet" href="mycss/day.css">
@@ -167,11 +167,24 @@ while ($row = $bookings->fetch_assoc()) {
 <body>
 <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
+<div class="search-container-wrapper">
+    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+        <div class="search-container" style="display: inline-block;">
+            <form method="POST" style="display: flex; gap: 5px;">
+                <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
     <a href="osas.php">OSAS</a>
     <a href="form.php">LOGBOOK</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    <a href="accounts.php">Users</a>
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 <div class="container">
