@@ -238,20 +238,35 @@ while ($row = $bookings->fetch_assoc()) {
                     <?php
                     $currentDateTime = new DateTime();
                     $sevenDaysLater = (clone $currentDateTime)->modify('+7 days');
+                    $upcomingAppointments = [];
+
+                    // Collect upcoming appointments within the next 7 days
                     foreach ($appointments as $day => $dayAppointments) {
                         foreach ($dayAppointments as $appointment) {
                             $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
                             if ($appointmentDateTime >= $currentDateTime && $appointmentDateTime <= $sevenDaysLater) {
-                                $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
-                                $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
-                                echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
-                                echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
-                                echo $appointment['department_name'] . '<br>';
-                                echo $appointment['booking_date'] . '<br>';
-                                echo $timeFrom . ' - ' . $timeTo;
-                                echo '</li>';
+                                $upcomingAppointments[] = $appointment;
                             }
                         }
+                    }
+
+                    // Sort the upcoming appointments by date and time
+                    usort($upcomingAppointments, function($a, $b) {
+                        $dateTimeA = new DateTime($a['booking_date'] . ' ' . $a['booking_time_from']);
+                        $dateTimeB = new DateTime($b['booking_date'] . ' ' . $b['booking_time_from']);
+                        return $dateTimeA <=> $dateTimeB;
+                    });
+
+                    // Display the sorted upcoming appointments
+                    foreach ($upcomingAppointments as $appointment) {
+                        $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
+                        $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
+                        echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                        echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                        echo $appointment['department_name'] . '<br>';
+                        echo $appointment['booking_date'] . '<br>';
+                        echo $timeFrom . ' - ' . $timeTo;
+                        echo '</li>';
                     }
                     ?>
                 </ul>
