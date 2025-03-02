@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$conn = new mysqli('remote_host_address', 'remote_username', 'remote_password', 'remote_database_name');
+$conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
