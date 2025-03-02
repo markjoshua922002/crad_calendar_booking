@@ -170,7 +170,8 @@ while ($row = $bookings->fetch_assoc()) {
 <div class="sidebar" id="sidebar">
     <a href="index.php">CRAD</a>
     <a href="form.php">LOGBOOK</a>
-    <a href="accounts.php">Users</a>
+    <a href="accounts.php">USERS</a>
+    <a href="analytics.php">ANALYTICS</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
     
     <a href="logout.php" class="logout-button">Logout</a>
