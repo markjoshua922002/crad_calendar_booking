@@ -111,16 +111,22 @@ $total_entries = $count_row['total'];
             // Format time as HH:MM:SS
             $time = sprintf("%02d:%02d:00", $hour, $minute);
 
-            // Insert into database
-            $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission_date, time) 
-                    VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission_date', '$time')";
-
-            if ($conn->query($sql) === TRUE) {
-                echo "<p class='success-message'>New record created successfully</p>";
-                // Refresh the page to show the new entry
-                echo "<script>window.location.href = 'form.php';</script>";
+            // Check if the submission date is in the past
+            $current_date = date('Y-m-d');
+            if ($submission_date < $current_date) {
+                echo "<p class='error-message'>You cannot submit a log entry for a past date.</p>";
             } else {
-                echo "<p class='error-message'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+                // Insert into database
+                $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission_date, time) 
+                        VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission_date', '$time')";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "<p class='success-message'>New record created successfully</p>";
+                    // Refresh the page to show the new entry
+                    echo "<script>window.location.href = 'form.php';</script>";
+                } else {
+                    echo "<p class='error-message'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+                }
             }
         }
         ?>
@@ -148,7 +154,7 @@ $total_entries = $count_row['total'];
             </div>
             <div class="form-group">
                 <label for="submission_date">Submission Date:</label>
-                <input type="date" id="submission_date" name="submission_date" required>
+                <input type="date" id="submission_date" name="submission_date" required min="<?= date('Y-m-d') ?>">
             </div>
             <div class="form-group">
                 <label for="time">Time:</label>
