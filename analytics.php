@@ -13,7 +13,11 @@ if ($conn->connect_error) {
 // Fetch department booking data for the current month
 $currentMonth = date('m');
 $currentYear = date('Y');
-$sql = "SELECT department, COUNT(*) as bookings FROM appointments WHERE MONTH(booking_date) = ? AND YEAR(booking_date) = ? GROUP BY department";
+$sql = "SELECT d.name as department, COUNT(*) as bookings 
+        FROM appointments a 
+        JOIN departments d ON a.department_id = d.id 
+        WHERE MONTH(a.booking_date) = ? AND YEAR(a.booking_date) = ? 
+        GROUP BY d.name";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $currentMonth, $currentYear);
 $stmt->execute();
