@@ -11,20 +11,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $reg_password = $_POST['reg_password'];
     $reg_code = $_POST['reg_code'];
 
-    // Check the registration code
-    if ($reg_code === 'BCPCRAD2024') {
-        // Check if username already exists
-        $check_user = $conn->query("SELECT * FROM users WHERE username='$reg_username'");
-        if ($check_user->num_rows > 0) {
-            $register_error = "Username already exists!";
-        } else {
-            // Hash the password before saving
-            $hashed_password = password_hash($reg_password, PASSWORD_BCRYPT);
-            $conn->query("INSERT INTO users (username, password) VALUES ('$reg_username', '$hashed_password')");
-            $register_success = "Registration successful! You can now log in!";
-        }
+    // Check if username already exists
+    $check_user = $conn->query("SELECT * FROM users WHERE username='$reg_username'");
+    if ($check_user->num_rows > 0) {
+        $register_error = "Username already exists!";
     } else {
-        $register_error = "Invalid registration code!";
+        // Hash the password before saving
+        $hashed_password = password_hash($reg_password, PASSWORD_BCRYPT);
+        
+        // Set activation status based on registration code
+        $is_active = ($reg_code === 'BCPCRAD2024') ? 1 : 0;
+
+        // Insert the new user into the database
+        $stmt = $conn->prepare("INSERT INTO users (username, password, is_active) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $reg_username, $hashed_password, $is_active);
+        $stmt->execute();
+        $stmt->close();
+
+        if ($is_active) {
+            $register_success = "Registration successful! Your account is active. You can now log in!";
+        } else {
+            $register_success = "Registration successful! Your account is inactive. Please contact the administrator to activate your account.";
+        }
     }
 }
 ?>

@@ -36,6 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
 <body>
     <div class="container">
         <h1>User Accounts</h1>
+        <!-- Sidebar code from form.php -->
+        <div class="sidebar">
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="accounts.php">User Accounts</a></li>
+                <li><a href="form.php">Form</a></li>
+                <!-- Add more links as needed -->
+            </ul>
+        </div>
+        <!-- End of sidebar code -->
+
         <table>
             <thead>
                 <tr>
@@ -63,5 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
             </tbody>
         </table>
     </div>
+    <script src="myjs/script.js"></script>
 </body>
 </html>
