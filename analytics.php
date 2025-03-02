@@ -39,33 +39,68 @@ $conn->close();
 <html>
 <head>
     <title>Department Booking Analytics</title>
+    <link rel="stylesheet" href="mycss/style.css?v=4">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 <body>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
+<div class="sidebar" id="sidebar">
+    <a href="index.php">CRAD</a>
+    <a href="form.php">LOGBOOK</a>
+    <a href="accounts.php">Users</a>
+    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    
+    <a href="logout.php" class="logout-button">Logout</a>
+</div>
+
+<div class="container">
     <h1>Department Booking Analytics for <?php echo date('F Y'); ?></h1>
     <canvas id="bookingChart" width="400" height="200"></canvas>
-    <script>
-        var ctx = document.getElementById('bookingChart').getContext('2d');
-        var bookingChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($departments); ?>,
-                datasets: [{
-                    label: 'Number of Bookings',
-                    data: <?php echo json_encode($bookings); ?>,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+</div>
+
+<script>
+    var ctx = document.getElementById('bookingChart').getContext('2d');
+    var bookingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($departments); ?>,
+            datasets: [{
+                label: 'Number of Bookings',
+                data: <?php echo json_encode($bookings); ?>,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
-    </script>
+        }
+    });
+
+    // Sidebar script
+    document.getElementById('menuButton').addEventListener('click', function() {
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.style.display === 'block') {
+            sidebar.style.display = 'none';
+        } else {
+            sidebar.style.display = 'block';
+        }
+    });
+</script>
+<script src="js/script.js?v=11"></script>
 </body>
 </html>
