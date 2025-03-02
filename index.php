@@ -154,9 +154,9 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=16">
+    <link rel="stylesheet" href="mycss/style.css?v=13">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
-    <link rel="stylesheet" href="mycss/calendar.css?v=27">
+    <link rel="stylesheet" href="mycss/calendar.css?v=26">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=11">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
@@ -165,17 +165,16 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
 </head>
 <body>
-<div class="top-bar">
-    <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
-    <div class="search-container-wrapper">
-        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-            <div class="search-container" style="display: inline-block;">
-                <form method="POST" style="display: flex; gap: 5px;">
-                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-                </form>
-            </div>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+
+<div class="search-container-wrapper">
+    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+        <div class="search-container" style="display: inline-block;">
+            <form method="POST" style="display: flex; gap: 5px;">
+                <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+            </form>
         </div>
     </div>
 </div>
@@ -194,11 +193,21 @@ while ($row = $bookings->fetch_assoc()) {
             <?= $warning ?>
         </div>
     <?php endif; ?>
-    <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
-        <div class="warning-container">
-            <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
-                No appointments found for "<?= htmlspecialchars($search_name) ?>".
+    <div class="search-container-wrapper">
+        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+            <div class="search-container" style="display: inline-block;">
+                <form method="POST" style="display: flex; gap: 5px;">
+                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+                </form>
             </div>
+        </div>
+    </div>
+
+    <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
+        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
+            No appointments found for "<?= htmlspecialchars($search_name) ?>".
         </div>
     <?php endif; ?>
 
@@ -534,7 +543,7 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=12"></script>
+<script defer src="js/script.js?v=11"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>

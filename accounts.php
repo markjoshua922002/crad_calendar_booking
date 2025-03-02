@@ -47,14 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_activation']))
 
         .table-container {
             width: 100%;
-            max-width: 1000px;
-            height: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            overflow-y: auto; /* Add vertical scroll bar */
         }
 
         table {

@@ -201,14 +201,6 @@ button:hover,
     vertical-align: top;
 }
 
-.search-container-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    flex-grow: 1;
-    margin-bottom: 5px; /* Reduce the margin-botytom */
-}
-
 /* Modal styles */
 .modal {
     display: none;
@@ -268,11 +260,4 @@ button:hover,
     padding: 2px 4px; /* Make dropdowns smaller */
     font-size: 14px; /* Reduce font size */
     width: 60px; /* Adjust width to make it compact */
-}
-
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
 }
