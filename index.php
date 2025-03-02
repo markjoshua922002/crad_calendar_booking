@@ -299,7 +299,7 @@ while ($row = $bookings->fetch_assoc()) {
                         <option value="<?= $i ?>"><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-                <select name="edit_set" id="edit_set" required>
+                <select name="edit_set" id="edit_set" >
                     <option value="">Set</option>
                     <?php foreach (range('A', 'F') as $set): ?>
                         <option value="<?= $set ?>"><?= $set ?></option>
@@ -355,7 +355,7 @@ while ($row = $bookings->fetch_assoc()) {
                 </select>
                 <input type="text" name="edit_representative_name" id="edit_representative_name" placeholder="Representative Name" required>
             </div>
-            <textarea name="edit_group_members" id="edit_group_members" placeholder="Remarks" rows="4" required></textarea>
+            <textarea name="edit_group_members" id="edit_group_members" placeholder="Remarks" rows="4" ></textarea>
             <div class="form-actions-right">
                 <button type="submit" id="save_button">Save Changes</button>
                 <button type="button" id="delete_button">Delete Appointment</button>
