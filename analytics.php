@@ -59,7 +59,6 @@ $conn->close();
     <a href="form.php">LOGBOOK</a>
     <a href="accounts.php">Users</a>
     <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
-    
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
 
