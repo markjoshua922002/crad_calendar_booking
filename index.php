@@ -154,7 +154,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=13">
+    <link rel="stylesheet" href="mycss/style.css?v=14">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
     <link rel="stylesheet" href="mycss/calendar.css?v=26">
     <link rel="stylesheet" href="mycss/day.css">
@@ -165,16 +165,17 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
 </head>
 <body>
-<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
-
-<div class="search-container-wrapper">
-    <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-        <div class="search-container" style="display: inline-block;">
-            <form method="POST" style="display: flex; gap: 5px;">
-                <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-            </form>
+<div class="top-bar">
+    <button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
+    <div class="search-container-wrapper">
+        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+            <div class="search-container" style="display: inline-block;">
+                <form method="POST" style="display: flex; gap: 5px;">
+                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
