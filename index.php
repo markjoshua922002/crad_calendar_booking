@@ -194,8 +194,10 @@ while ($row = $bookings->fetch_assoc()) {
         </div>
     <?php endif; ?>
     <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
-        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
-            No appointments found for "<?= htmlspecialchars($search_name) ?>".
+        <div class="warning-container">
+            <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
+                No appointments found for "<?= htmlspecialchars($search_name) ?>".
+            </div>
         </div>
     <?php endif; ?>
 
