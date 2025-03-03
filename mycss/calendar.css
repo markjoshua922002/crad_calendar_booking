@@ -270,11 +270,12 @@
 /* Container for the whole calendar */
 .calendar-container-wrapper {
     display: flex;
+    flex-direction: column; /* Ensure the search container is above the calendar */
     justify-content: center;
     align-items: center;
-    width: 1000%; /* Adjust width to fit the container */
+    width: 100%; /* Adjust width to fit the container */
     max-width: 1400px; /* Set a maximum width */
-    margin-left: 0; /* Center the container */
+    margin: 0 auto; /* Center the container */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;

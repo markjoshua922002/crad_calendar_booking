@@ -156,7 +156,7 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=15">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
-    <link rel="stylesheet" href="mycss/calendar.css?v=30">
+    <link rel="stylesheet" href="mycss/calendar.css?v=31">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=11">
     <link rel="stylesheet" href="mycss/general.css?v=1">
@@ -178,104 +178,97 @@ while ($row = $bookings->fetch_assoc()) {
     
     <a href="logout.php" class="logout-button">Logout</a>
 </div>
+
 <div class="container">
-    <?php if (isset($warning)): ?>
-        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
-            <?= $warning ?>
-        </div>
-    <?php endif; ?>
-    <div class="search-container-wrapper">
-        <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
-            <div class="search-container" style="display: inline-block;">
-                <form method="POST" style="display: flex; gap: 5px;">
-                    <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
-                    <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
-                    <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <?php if (isset($_POST['search_booking']) && !$searched_appointment): ?>
-        <div class="warning" style="color: red; text-align: center; margin-bottom: 10px;">
-            No appointments found for "<?= htmlspecialchars($search_name) ?>".
-        </div>
-    <?php endif; ?>
-
-    <div class="calendar-container-wrapper">
-        <div class="main-content">
-            <div class="calendar-wrapper"> <!-- Add this wrapper -->
-                <div class="calendar-container">
-                    <div class="navigation" style="margin-bottom: 10px;">
-                        <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
-                        <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
-                        <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
-                    </div>
-
-                    <div class="weekday-header">
-                        <div>SUNDAY</div>
-                        <div>MONDAY</div>
-                        <div>TUESDAY</div>
-                        <div>WEDNESDAY</div>
-                        <div>THURSDAY</div>
-                        <div>FRIDAY</div>
-                        <div>SATURDAY</div>
-                    </div>
-
-                    <div class="calendar">
-                        <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-                            <div class="day"></div>
-                        <?php endfor; ?>
-
-                        <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                            <div class="day">
-                                <div class="day-number"><?= $day ?></div>
-                                <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
-                            </div>
-                        <?php endfor; ?>
+    <div class="calendar-wrapper">
+        <div class="calendar-container-wrapper">
+            <div class="search-container-wrapper">
+                <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+                    <div class="search-container" style="display: inline-block;">
+                        <form method="POST" style="display: flex; gap: 5px;">
+                            <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                            <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                            <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+                        </form>
                     </div>
                 </div>
-            </div> <!-- Close the wrapper -->
-            <div class="reminder-container">
-                <h2>Upcoming Appointments</h2>
-                <ul id="reminderList">
-                    <?php
-                    $currentDateTime = new DateTime();
-                    $sevenDaysLater = (clone $currentDateTime)->modify('+7 days');
-                    $upcomingAppointments = [];
+            </div>
+            <div class="calendar-container">
+                <div class="main-content">
+                    <div class="calendar-wrapper"> <!-- Add this wrapper -->
+                        <div class="calendar-container">
+                            <div class="navigation" style="margin-bottom: 10px;">
+                                <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+                                <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+                                <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+                            </div>
 
-                    // Collect upcoming appointments within the next 7 days
-                    foreach ($appointments as $day => $dayAppointments) {
-                        foreach ($dayAppointments as $appointment) {
-                            $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
-                            if ($appointmentDateTime >= $currentDateTime && $appointmentDateTime <= $sevenDaysLater) {
-                                $upcomingAppointments[] = $appointment;
+                            <div class="weekday-header">
+                                <div>SUNDAY</div>
+                                <div>MONDAY</div>
+                                <div>TUESDAY</div>
+                                <div>WEDNESDAY</div>
+                                <div>THURSDAY</div>
+                                <div>FRIDAY</div>
+                                <div>SATURDAY</div>
+                            </div>
+
+                            <div class="calendar">
+                                <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
+                                    <div class="day"></div>
+                                <?php endfor; ?>
+
+                                <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
+                                    <div class="day">
+                                        <div class="day-number"><?= $day ?></div>
+                                        <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
+                                    </div>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                    </div> <!-- Close the wrapper -->
+                    <div class="reminder-container">
+                        <h2>Upcoming Appointments</h2>
+                        <ul id="reminderList">
+                            <?php
+                            $currentDateTime = new DateTime();
+                            $sevenDaysLater = (clone $currentDateTime)->modify('+7 days');
+                            $upcomingAppointments = [];
+
+                            // Collect upcoming appointments within the next 7 days
+                            foreach ($appointments as $day => $dayAppointments) {
+                                foreach ($dayAppointments as $appointment) {
+                                    $appointmentDateTime = new DateTime($appointment['booking_date'] . ' ' . $appointment['booking_time_from']);
+                                    if ($appointmentDateTime >= $currentDateTime && $appointmentDateTime <= $sevenDaysLater) {
+                                        $upcomingAppointments[] = $appointment;
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    // Sort the upcoming appointments by date and time
-                    usort($upcomingAppointments, function($a, $b) {
-                        $dateTimeA = new DateTime($a['booking_date'] . ' ' . $a['booking_time_from']);
-                        $dateTimeB = new DateTime($b['booking_date'] . ' ' . $b['booking_time_from']);
-                        return $dateTimeA <=> $dateTimeB;
-                    });
+                            // Sort the upcoming appointments by date and time
+                            usort($upcomingAppointments, function($a, $b) {
+                                $dateTimeA = new DateTime($a['booking_date'] . ' ' . $a['booking_time_from']);
+                                $dateTimeB = new DateTime($b['booking_date'] . ' ' . $b['booking_time_from']);
+                                return $dateTimeA <=> $dateTimeB;
+                            });
 
-                    // Display the sorted upcoming appointments
-                    foreach ($upcomingAppointments as $appointment) {
-                        $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
-                        $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
-                        echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
-                        echo '<div class="text-container">';
-                        echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
-                        echo $appointment['department_name'] . '<br>';
-                        echo $appointment['booking_date'] . '<br>';
-                        echo $timeFrom . ' - ' . $timeTo;
-                        echo '</div>';
-                        echo '</li>';
-                    }
-                    ?>
-                </ul>
+                            // Display the sorted upcoming appointments
+                            foreach ($upcomingAppointments as $appointment) {
+                                $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
+                                $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
+                                echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                                echo '<div class="text-container">';
+                                echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                                echo $appointment['department_name'] . '<br>';
+                                echo $appointment['booking_date'] . '<br>';
+                                echo $timeFrom . ' - ' . $timeTo;
+                                echo '</div>';
+                                echo '</li>';
+                            }
+                            ?>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
