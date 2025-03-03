@@ -272,9 +272,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%; /* Adjust width to fit the container */
+    width: 200%; /* Adjust width to fit the container */
     max-width: 1400px; /* Set a maximum width */
-    margin: 0 auto; /* Center the container */
+    margin-left: 0; /* Center the container */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
