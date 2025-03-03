@@ -3,7 +3,7 @@ body {
     font-size: 14px;
     margin: 0;
     padding: 0;
-    background-color: #f1f3f4;
+    background-color: #D1F8EF;
     color: #3c4043;
     transform: scale(0.8); /* Scale down by 20% */
     transform-origin: top left; /* Ensure scaling starts from the top left corner */
@@ -47,13 +47,13 @@ th, td {
 }
 
 th {
-    background-color: #f1f3f4;
+    background-color: #A1E3F9;
 }
 
 button {
     padding: 8px 16px;
     border: none;
-    background-color: #4285f4;
+    background-color: #3674B5;
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
@@ -61,7 +61,7 @@ button {
 }
 
 button:hover {
-    background-color: #357ae8;
+    background-color: #578FCA;
 }
 
 header {
@@ -69,6 +69,8 @@ header {
     align-items: center;
     justify-content: space-between;
     padding: 20px 0;
+    background-color: #3674B5; /* Primary color for header */
+    color: #fff;
 }
 
 .logo {
