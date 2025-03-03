@@ -236,7 +236,8 @@
 .day {
     border: 1px solid #e0e0e0;
     padding: 10px;
-    min-height: 100px;
+    min-height: 70px;
+    width: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
