@@ -156,7 +156,7 @@ while ($row = $bookings->fetch_assoc()) {
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=15">
     <link rel="stylesheet" href="mycss/sidebar.css?v=3">
-    <link rel="stylesheet" href="mycss/calendar.css?v=29">
+    <link rel="stylesheet" href="mycss/calendar.css?v=30">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css?v=11">
     <link rel="stylesheet" href="mycss/general.css?v=1">
