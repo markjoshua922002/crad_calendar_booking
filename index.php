@@ -154,11 +154,7 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=13">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=3">
-    <link rel="stylesheet" href="mycss/calendar.css?v=26">
-    <link rel="stylesheet" href="mycss/day.css">
-    <link rel="stylesheet" href="mycss/reminder.css?v=11">
+    <link rel="stylesheet" href="mycss/style.css?v=14">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -583,6 +579,74 @@ while ($row = $bookings->fetch_assoc()) {
                 document.getElementById('edit_room').value = searchedAppointmentData.room_id;
                 document.getElementById('edit_representative_name').value = searchedAppointmentData.representative_name;
                 document.getElementById('edit_group_members').value = searchedAppointmentData.group_members;
+                
+                // Time handling - parse the time into components
+                const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);
+                const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`);
+                
+                const fromHour = timeFrom.getHours() % 12 || 12;
+                const fromMinute = timeFrom.getMinutes();
+                const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+                
+                const toHour = timeTo.getHours() % 12 || 12;
+                const toMinute = timeTo.getMinutes();
+                const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+                
+                document.getElementById('edit_time_from_hour').value = fromHour;
+                document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_from_ampm').value = fromAMPM;
+                
+                document.getElementById('edit_time_to_hour').value = toHour;
+                document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_to_ampm').value = toAMPM;
+                
+                // Close the view modal and open the edit modal
+                document.getElementById('viewModal').style.display = 'none';
+                document.getElementById('editModal').style.display = 'block';
+            });
+        }
+    });
+</script>
+</body>
+</html>
+</div>
+                <div class="form-group">
+                    <label for="edit_time_to_hour">To:</label>
+                    <select id="edit_time_to_hour" name="edit_time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_minute" name="edit_time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i += 5): ?>
+                            <option value="<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_reason">Reason:</label>
+                    <textarea id="edit_reason" name="edit_reason" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" name="update_booking">Update Booking</button>
+                    <button type="button" class="cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (viewContainer) {
+            document.querySelector('.edit-search-result').addEventListener('click', function() {
                 
                 // Time handling - parse the time into components
                 const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);

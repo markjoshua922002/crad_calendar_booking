@@ -4,7 +4,8 @@ body {
     font-size: small;
     margin: 0;
     padding: 0;
-    background-color: #78879e;
+    background-color: #f4f4f4;
+    color: #333;
 }
 
 .container {
@@ -16,6 +17,11 @@ body {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
+    transition: margin-left 0.3s;
+}
+
+.container.shifted {
+    margin-left: 170px; /* Adjust margin when sidebar is open */
 }
 
 .table-container {
@@ -46,14 +52,15 @@ th {
 button {
     padding: 5px 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #3674B5;
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #578FCA;
 }
 
 header {
@@ -100,21 +107,22 @@ header {
 /* Button styles */
 button,
 .add-action {
-    background-color: #007BFF;
+    background-color: #3674B5;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover,
 .add-action:hover {
-    background-color: #0056b3;
+    background-color: #578FCA;
 }
 
 .appointment {
-    background-color: #007BFF;
+    background-color: #3674B5;
     color: white;
     padding: 5px;
     margin-top: 5px;
@@ -124,7 +132,7 @@ button:hover,
 
 /* Appointment item styles */
 .appointment-item {
-    background-color: #007BFF;
+    background-color: #3674B5;
     color: white;
     padding: 20px;
     margin-bottom: 10px;
@@ -140,7 +148,7 @@ button:hover,
 }
 
 .appointment-item:hover {
-    background-color: #0056b3;
+    background-color: #578FCA;
 }
 
 .appointment-item .text-container {
@@ -154,7 +162,7 @@ button:hover,
 .weekday-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background-color: #0056b3;
+    background-color: #3674B5;
     color: white;
     padding: 5px 0;
     margin-bottom: 10px;
@@ -211,7 +219,6 @@ button:hover,
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
     padding-top: 60px;
 }
@@ -222,6 +229,8 @@ button:hover,
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .modal-content .modal-footer button {
@@ -233,8 +242,6 @@ button:hover,
 .modal-content .modal-footer button:hover {
     background-color: #0056b3;
 }
-
-
 
 .close {
     color: #aaa;
@@ -260,4 +267,390 @@ button:hover,
     padding: 2px 4px; /* Make dropdowns smaller */
     font-size: 14px; /* Reduce font size */
     width: 60px; /* Adjust width to make it compact */
+}
+
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    left: -150px; /* Hide sidebar by default */
+    top: 0;
+    height: 100%;
+    width: 150px;
+    background-color: #3674B5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    transition: left 0.3s; /* Smooth transition */
+    z-index: 999;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+.sidebar.open {
+    left: 0; /* Show sidebar when open */
+}
+.sidebar a {
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.sidebar a:hover {
+    background-color: #578FCA;
+}
+.menu-button {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background-color: #3674B5;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1000; /* Ensure button is on top */
+    transition: left 0.3s;
+}
+.menu-button:hover {
+    background-color: #578FCA;
+}
+
+/* Calendar styles */
+.calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.calendar-container {
+    width: 100%; /* Increase the width to make it bigger */
+    max-width: 1200px; /* Set a maximum width */
+    margin: 0 auto;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Appointment item styles */
+.appointment-item {
+    background-color: #3674B5;
+    color: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: hidden;
+    height: 90px;
+}
+
+.appointment-item:hover {
+    background-color: #578FCA;
+}
+
+.appointment-content {
+    display: flex;
+    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.appointment-text-container {
+    flex: 1;
+    color: rgb(0, 0, 0);
+    
+}
+
+.appointment-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.appointment-details p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.appointment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.view-details, .edit-appointment {
+    padding: 8px 12px;
+    background-color: #3674B5;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.view-details:hover, .edit-appointment:hover {
+    background-color: #578FCA;
+}
+
+/* Appointment container styles */
+.appointment-container {
+    background-color: #fff;
+    color: #000;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+}
+
+/* Appointment buttons styles */
+.appointment-buttons {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.appointment-buttons button {
+    background-color: #fff;
+    color: #3674B5;
+    border: 1px solid #3674B5;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.appointment-buttons button:hover {
+    background-color: #3674B5;
+    color: #fff;
+}
+
+#appointmentModal .modal-content {
+    width: 50%; /* Adjust the width as needed */
+    max-width: 400px; /* Maximum width */
+    height: 70%;
+}
+
+#appointmentList {
+    max-height: 400px; /* Adjust the height to fit within the modal content */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+}
+
+#appointmentList p {
+    text-align: center;
+    margin: 2px 0;
+    color: #000000;
+    font-style: italic;
+}
+
+/* View modal styles */
+#viewModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#viewModal .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#viewModal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#viewModal .close:hover,
+#viewModal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Weekday Header Styles */
+.weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #3674B5;
+    color: white;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.weekday-header div {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 5px 0;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.weekday-header div:last-child {
+    border-right: none;
+}
+
+/* Navigation styles */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-button {
+    background-color: #3674B5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #578FCA;
+}
+
+.month-year {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Day styles */
+.day {
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.day:hover {
+    background-color: #A1E3F9;
+}
+
+.day-number {
+    font-weight: bold;
+}
+
+.appointment-count {
+    font-size: 0.8em;
+    color: #666;
+}
+
+/* Container for the search bar */
+.search-container-wrapper {
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Container for the whole calendar */
+.calendar-container-wrapper {
+    width: 100%; /* Increase the width to make it bigger */
+    max-width: 1400px; /* Set a maximum width */
+    margin: 20px auto; /* Center the container and add some margin */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Reminder container styles */
+.reminder-container {
+    width: 15%; /* Increase the width to make it bigger */
+    max-width: 1400px; /* Set a maximum width */
+    margin: 0 auto; /* Center the container */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.reminder-container h2 {
+    margin-top: 0;
+}
+
+.reminder-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.reminder-container li {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.reminder-container li:hover {
+    background-color: #e0e0e0;
+}
+
+#reminderList {
+    max-height: 500px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+    position: relative; /* Ensure the position is fixed within its container */
+}
+
+/* Logout button styling */
+.logout-button {
+    padding: 10px 15px;
+    background-color: #FF4C4C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.logout-button:hover {
+    background-color: #cc0000;
 }
