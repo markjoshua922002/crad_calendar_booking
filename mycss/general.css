@@ -5,6 +5,8 @@ body {
     padding: 0;
     background-color: #f1f3f4;
     color: #3c4043;
+    transform: scale(0.8); /* Scale down by 20% */
+    transform-origin: top left; /* Ensure scaling starts from the top left corner */
 }
 
 .container {
