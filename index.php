@@ -155,6 +155,11 @@ while ($row = $bookings->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
     <link rel="stylesheet" href="mycss/style.css?v=15">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=3">
+    <link rel="stylesheet" href="mycss/calendar.css?v=26">
+    <link rel="stylesheet" href="mycss/day.css">
+    <link rel="stylesheet" href="mycss/reminder.css?v=11">
+    <link rel="stylesheet" href="mycss/general.css?v=1">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">

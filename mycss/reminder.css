@@ -5,17 +5,19 @@
 }
 
 .reminder-container {
-    width: 15%; /* Increase the width to make it bigger */
-    max-width: 1400px; /* Set a maximum width */
-    margin: 0 auto; /* Center the container */
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .reminder-container h2 {
     margin-top: 0;
+    font-size: 18px;
+    color: #3c4043;
 }
 
 .reminder-container ul {
@@ -24,7 +26,7 @@
 }
 
 .reminder-container li {
-    background-color: #f4f4f4;
+    background-color: #f1f3f4;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
