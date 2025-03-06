@@ -1,4 +1,3 @@
-
 /* Reset and base styles */
 * {
     margin: 0;
@@ -11,25 +10,29 @@ body {
     background-color: #f5f7fa;
     color: #333;
     line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* App container structure */
 .app-container {
     display: flex;
     min-height: 100vh;
+    position: relative; /* Added for proper positioning */
 }
 
 .main-content {
     flex: 1;
     padding: 30px;
     margin-left: 250px; /* Match sidebar width */
-    transition: margin-left 0.3s;
+    transition: margin-left 0.3s ease;
     position: relative;
+    width: calc(100% - 250px); /* Ensure proper width calculation */
 }
 
 /* When sidebar is collapsed */
 .sidebar-collapsed .main-content {
     margin-left: 70px;
+    width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
 }
 
 /* Top navigation bar */
@@ -40,6 +43,8 @@ body {
     margin-bottom: 30px;
     padding-bottom: 15px;
     border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px; /* Add gap between wrapped elements */
 }
 
 .page-title h1 {
@@ -75,6 +80,7 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 /* Search form styling */
@@ -486,6 +492,8 @@ body {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
+    position: relative; /* Added for proper positioning of children */
+    overflow: hidden; /* Prevent content overflow */
 }
 
 .modal-sm {
@@ -502,6 +510,10 @@ body {
     align-items: center;
     padding: 15px 20px;
     border-bottom: 1px solid #f0f0f0;
+    position: sticky; /* Keep header visible when scrolling */
+    top: 0;
+    background-color: #fff;
+    z-index: 10;
 }
 
 .modal-header h2 {
@@ -514,6 +526,7 @@ body {
     padding: 20px;
     overflow-y: auto;
     flex: 1;
+    max-height: calc(90vh - 120px); /* Adjust for header and potential footer */
 }
 
 .close-button {
@@ -522,10 +535,19 @@ body {
     font-size: 20px;
     cursor: pointer;
     color: #777;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    transition: background-color 0.2s;
 }
 
 .close-button:hover {
     color: #333;
+    background-color: #f0f0f0;
 }
 
 /* Form styling for modals */
@@ -538,44 +560,50 @@ body {
 .form-row {
     display: flex;
     gap: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .form-row > * {
     flex: 1;
+    min-width: 200px; /* Ensure minimum width for readability */
 }
 
 .form-group {
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
 }
 
 .form-group label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
+    margin-bottom: 5px;
     color: #555;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 8px 12px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s;
+    width: 100%; /* Ensure full width */
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    outline: none;
     border-color: #4285f4;
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
 }
 
 .time-inputs {
     display: flex;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .time-picker {
@@ -594,7 +622,8 @@ body {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 /* Appointment list in modal */
@@ -701,13 +730,13 @@ body {
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
-        padding: 20px;
+        width: 100%;
+        padding: 20px 15px;
     }
     
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
     }
     
     .user-controls {
@@ -716,11 +745,11 @@ body {
     }
     
     .search-input-container input {
-        width: 150px;
+        width: 100%;
     }
     
     .search-input-container input:focus {
-        width: 180px;
+        width: 100%;
     }
     
     .form-row {
@@ -730,6 +759,7 @@ body {
     .modal-content {
         width: 95%;
         margin: 20px auto;
+        max-height: 95vh;
     }
     
     .card-header {
@@ -739,6 +769,18 @@ body {
     }
     
     .view-options {
-        align-self: flex-end;
+        width: 100%;
+    }
+    
+    .calendar {
+        gap: 5px;
+    }
+    
+    .day {
+        height: 80px;
+    }
+    
+    .appointment-actions {
+        flex-direction: column;
     }
 }

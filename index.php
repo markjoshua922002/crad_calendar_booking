@@ -154,18 +154,95 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=16">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=4">
-    <link rel="stylesheet" href="mycss/calendar.css?v=32">
-    <link rel="stylesheet" href="mycss/day.css?v=2">
-    <link rel="stylesheet" href="mycss/reminder.css?v=12">
-    <link rel="stylesheet" href="mycss/general.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
+    <link rel="stylesheet" href="mycss/style.css">
+    <link rel="stylesheet" href="mycss/calendar.css">
+    <link rel="stylesheet" href="mycss/sidebar.css">
+    <link rel="stylesheet" href="mycss/form.css">
+    <link rel="stylesheet" href="mycss/day.css">
+    <link rel="stylesheet" href="mycss/reminder.css">
+    <link rel="stylesheet" href="mycss/general.css">
+    <style>
+        /* Additional fixes for modal positioning */
+        .modal-content {
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .appointment-item {
+            border-left: 4px solid;
+            background-color: #fff;
+            color: #333;
+        }
+        
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .appointment-actions button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .view-appointment {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .edit-appointment {
+            background-color: #4285f4;
+            color: white;
+        }
+        
+        /* Fix for day view modal */
+        #dayViewModal .modal-content {
+            max-width: 700px;
+        }
+        
+        /* Fix for appointment list */
+        .appointment-list {
+            max-height: 60vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        /* Fix for mobile view */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .user-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10px auto;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="app-container">

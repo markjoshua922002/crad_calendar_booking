@@ -5,12 +5,14 @@
     align-items: center;
     width: 100%;
     margin: 0 auto;
+    overflow: hidden; /* Prevent overflow */
 }
 
 .calendar-container {
     width: 100%; /* Increase the width to make it bigger */
     max-width: 1200px; /* Set a maximum width */
     margin: 0 auto;
+    overflow: hidden; /* Prevent overflow */
 }
 
 .calendar {
@@ -20,68 +22,284 @@
     margin-top: 10px;
 }
 
+/* Weekday header styling */
+.weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.weekday-header div {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 14px;
+}
+
+/* Day cell styling */
+.day {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 120px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.day.empty {
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+
+.day.current-day {
+    border: 2px solid #4285f4;
+}
+
+.day-number {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.day-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+}
+
+/* Day event styling */
+.day-event {
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: white;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.day-event:hover {
+    opacity: 0.9;
+}
+
+.event-time {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.more-events {
+    font-size: 12px;
+    color: #4285f4;
+    cursor: pointer;
+    text-align: center;
+    padding: 2px 0;
+    background-color: #e8f0fe;
+    border-radius: 4px;
+    margin-top: auto;
+}
+
+.more-events:hover {
+    background-color: #d2e3fc;
+}
+
 /* Appointment item styles */
 .appointment-item {
-    background-color: #4285f4;
-    color: white;
+    background-color: #fff;
+    color: #333;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #4285f4;
 }
 
 .appointment-item:hover {
-    background-color: #357ae8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.appointment-content {
+.appointment-header {
     display: flex;
-    width: 100%;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 10px;
 }
 
-.appointment-text-container {
-    flex: 1;
-    color: white;
+.appointment-header h3 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
 }
 
-.appointment-title {
-    margin-top: 0;
-    margin-bottom: 8px;
-    font-size: 18px;
+.appointment-time {
+    font-size: 14px;
+    color: #666;
+}
+
+.appointment-details {
+    margin-bottom: 10px;
 }
 
 .appointment-details p {
-    margin: 4px 0;
+    margin: 5px 0;
     font-size: 14px;
 }
 
 .appointment-actions {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
-.view-details, .edit-appointment {
-    padding: 8px 12px;
-    background-color: #fff;
-    color: #4285f4;
-    border: 1px solid #4285f4;
+.appointment-actions button {
+    padding: 6px 12px;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s, color 0.2s;
+    font-size: 14px;
+    transition: background-color 0.2s;
 }
 
-.view-details:hover, .edit-appointment:hover {
+.view-appointment {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.view-appointment:hover {
+    background-color: #e0e0e0;
+}
+
+.edit-appointment {
     background-color: #4285f4;
-    color: #fff;
+    color: white;
+}
+
+.edit-appointment:hover {
+    background-color: #3367d6;
+}
+
+/* Calendar navigation */
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-arrow {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-arrow:hover {
+    background-color: #e0e0e0;
+}
+
+.month-year {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .calendar {
+        gap: 5px;
+    }
+    
+    .weekday-header {
+        gap: 5px;
+    }
+    
+    .weekday-header div {
+        padding: 5px;
+        font-size: 12px;
+    }
+    
+    .day {
+        min-height: 80px;
+        padding: 5px;
+    }
+    
+    .day-number {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .day-event {
+        padding: 3px 5px;
+        font-size: 10px;
+        margin-bottom: 2px;
+    }
+    
+    .more-events {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .weekday-header {
+        display: none;
+    }
+    
+    .day {
+        margin-bottom: 10px;
+        min-height: auto;
+    }
+    
+    .day.empty {
+        display: none;
+    }
+    
+    .day-number {
+        font-size: 16px;
+    }
+    
+    .day-event {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
 }
 
 /* Appointment container styles */
@@ -176,32 +394,6 @@
     cursor: pointer;
 }
 
-/* Weekday Header Styles */
-.weekday-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #4285f4;
-    color: white;
-    padding: 10px 0;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.weekday-header div {
-    text-align: center;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 5px 0;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.weekday-header div:last-child {
-    border-right: none;
-}
-
 /* Navigation styles */
 .navigation {
     display: flex;
@@ -224,33 +416,6 @@
 
 .nav-button:hover {
     background-color: #357ae8;
-}
-
-.month-year {
-    font-size: 20px;
-    font-weight: bold;
-    color: #3c4043;
-}
-
-/* Day styles */
-.day {
-    border: 1px solid #e0e0e0;
-    padding: 10px;
-    min-height: 70px;
-    width: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-radius: 4px;
-}
-
-.day:hover {
-    background-color: #f1f3f4;
-}
-
-.day-number {
-    font-weight: bold;
-    font-size: 16px;
 }
 
 .appointment-count {

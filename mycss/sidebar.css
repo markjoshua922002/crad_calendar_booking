@@ -9,14 +9,17 @@
     color: #fff;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
+    overflow-y: auto; /* Allow scrolling for long menus */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Collapsed sidebar */
 .sidebar.collapsed {
     width: 70px;
+    overflow: visible; /* Allow dropdown menus to be visible */
 }
 
 /* Sidebar header with logo */
@@ -26,6 +29,7 @@
     align-items: center;
     gap: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 80px; /* Ensure consistent height */
 }
 
 .sidebar-logo {
@@ -33,6 +37,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0; /* Prevent logo from shrinking */
 }
 
 .sidebar-header h2 {
@@ -40,7 +45,9 @@
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for long text */
     transition: opacity 0.3s;
+    margin: 0; /* Remove default margin */
 }
 
 /* Sidebar menu items */
@@ -49,6 +56,7 @@
     flex-direction: column;
     padding: 20px 0;
     flex: 1;
+    overflow-y: auto; /* Allow scrolling for long menus */
 }
 
 .sidebar a {
@@ -61,6 +69,8 @@
     gap: 15px;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 .sidebar a:hover {
@@ -88,38 +98,44 @@
     min-width: 20px;
     display: flex;
     justify-content: center;
+    flex-shrink: 0; /* Prevent icon from shrinking */
 }
 
 .sidebar a span {
     transition: opacity 0.3s;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 /* Sidebar footer */
 .sidebar-footer {
     padding: 15px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto; /* Push to bottom */
 }
 
 .logout-button {
-    color: rgba(255, 255, 255, 0.7) !important;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s;
 }
 
 .logout-button:hover {
-    color: #fff !important;
-    background-color: rgba(234, 67, 53, 0.2) !important;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Styles for collapsed sidebar */
+/* Collapsed sidebar styles */
 .sidebar.collapsed .sidebar-header h2,
 .sidebar.collapsed a span {
     opacity: 0;
-    visibility: hidden;
+    width: 0;
+    height: 0;
+    overflow: hidden;
 }
 
 .sidebar.collapsed a {
     justify-content: center;
-    padding: 12px;
+    padding: 12px 0;
 }
 
 .sidebar.collapsed a i {
@@ -127,30 +143,63 @@
     font-size: 20px;
 }
 
-/* Responsive behavior */
+/* Mobile sidebar styles */
 @media screen and (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        width: 250px;
         box-shadow: none;
     }
     
     .sidebar.active {
         transform: translateX(0);
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
     
     .sidebar-overlay {
-        display: none;
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
+        width: 100%;
+        height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 99;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
     }
     
     .sidebar-overlay.active {
         display: block;
+        opacity: 1;
+    }
+    
+    /* Ensure collapsed sidebar is hidden on mobile */
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    /* Show full sidebar when active, even if it was collapsed */
+    .sidebar.collapsed.active {
+        width: 250px;
+        transform: translateX(0);
+    }
+    
+    /* Show text in sidebar when active on mobile, even if it was collapsed */
+    .sidebar.collapsed.active .sidebar-header h2,
+    .sidebar.collapsed.active a span {
+        opacity: 1;
+        width: auto;
+        height: auto;
+    }
+    
+    .sidebar.collapsed.active a {
+        justify-content: flex-start;
+        padding: 12px 20px;
+    }
+    
+    .sidebar.collapsed.active a i {
+        margin-right: 15px;
+        font-size: 18px;
     }
 }
