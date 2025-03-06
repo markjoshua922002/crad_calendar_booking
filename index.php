@@ -169,16 +169,118 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/general.css">
     <style>
         /* Additional fixes for modal positioning */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        
         .modal-content {
             position: relative;
+            background-color: #fff;
+            margin: 50px auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            animation: slideIn 0.3s;
             max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+        }
+        
+        .modal-body {
+            padding: 20px;
             overflow-y: auto;
+            flex: 1;
+            max-height: calc(90vh - 120px);
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #777;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            transition: background-color 0.2s;
+        }
+        
+        .close-button:hover {
+            color: #333;
+            background-color: #f0f0f0;
         }
         
         .appointment-item {
             border-left: 4px solid;
             background-color: #fff;
             color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .appointment-header h3 {
+            font-size: 16px;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .appointment-time {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .appointment-details {
+            margin-bottom: 10px;
+        }
+        
+        .appointment-details p {
+            margin: 5px 0;
+            font-size: 14px;
         }
         
         .appointment-actions {
@@ -201,9 +303,17 @@ while ($row = $bookings->fetch_assoc()) {
             color: #333;
         }
         
+        .view-appointment:hover {
+            background-color: #e0e0e0;
+        }
+        
         .edit-appointment {
             background-color: #4285f4;
             color: white;
+        }
+        
+        .edit-appointment:hover {
+            background-color: #3367d6;
         }
         
         /* Fix for day view modal */
@@ -241,6 +351,17 @@ while ($row = $bookings->fetch_assoc()) {
                 width: 95%;
                 margin: 10px auto;
             }
+        }
+        
+        /* Fix for modal animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -889,7 +1010,95 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=12"></script>
+<script defer src="js/script.js?v=13"></script>
+
+<!-- Modal initialization script -->
+<script>
+    // This script ensures all modals are properly initialized when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Modal initialization script running');
+        
+        // Direct initialization of all modals
+        const modals = {
+            'bookingModal': 'openBookingModal',
+            'editModal': null,
+            'viewModal': null,
+            'addDepartmentModal': 'openAddDepartmentModal',
+            'addRoomModal': 'openAddRoomModal',
+            'dayViewModal': null,
+            'appointmentModal': null
+        };
+        
+        // Initialize each modal
+        for (const [modalId, openButtonId] of Object.entries(modals)) {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error(`Modal with ID ${modalId} not found`);
+                continue;
+            }
+            
+            // Setup open button if provided
+            if (openButtonId) {
+                const openButton = document.getElementById(openButtonId);
+                if (openButton) {
+                    openButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        modal.style.display = 'block';
+                        console.log(`Modal ${modalId} opened via direct initialization`);
+                    });
+                }
+            }
+            
+            // Setup close button
+            const closeButtonId = `close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`;
+            const closeButton = document.getElementById(closeButtonId);
+            if (closeButton) {
+                closeButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    modal.style.display = 'none';
+                    console.log(`Modal ${modalId} closed via direct initialization`);
+                });
+            }
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    console.log(`Modal ${modalId} closed by clicking outside via direct initialization`);
+                }
+            });
+        }
+        
+        // Add click handlers to all buttons with data-modal attribute
+        document.querySelectorAll('[data-modal]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const modalId = this.getAttribute('data-modal');
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                    console.log(`Modal ${modalId} opened via data-modal attribute`);
+                }
+            });
+        });
+        
+        // Add click handlers to all close buttons
+        document.querySelectorAll('.close-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const modal = this.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    console.log(`Modal closed via close button`);
+                }
+            });
+        });
+    });
+</script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
