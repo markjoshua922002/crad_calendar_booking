@@ -787,12 +787,32 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
+<!-- Day View Modal -->
+<div id="dayViewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="dayTitle">Appointments</h2>
+            <button class="close-button" id="closeDayViewModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div id="appointmentList" class="appointment-list">
+                <!-- Appointments will be loaded here dynamically -->
+            </div>
+            <div class="form-actions">
+                <button type="button" id="openBookingFromDayView" class="primary-button">
+                    <i class="fas fa-plus"></i> Add Appointment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Add this element to hold the appointments data -->
 <script id="appointmentsData" type="application/json">
     <?= json_encode($appointments) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=11"></script>
+<script defer src="js/script.js?v=12"></script>
 
 <!-- Add this right before the closing body tag -->
 <?php if ($searched_appointment): ?>
