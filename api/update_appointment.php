@@ -1,16 +1,20 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
 }
 
+// Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_POST['appointment_id'])) {
     $appointment_id = $_POST['appointment_id'];
     $name = $_POST['edit_name'];
     $id_number = $_POST['edit_id_number'];
@@ -27,46 +31,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $reason = $_POST['edit_reason'];
 
-    // Debug: Log the values being processed
-    error_log("Updating Booking ID=$appointment_id: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
-
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
     if ($date < $current_date) {
-        $warning = "You cannot book a date that has already passed.";
+        echo '<script>alert("You cannot book a date that has already passed."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    
+    // Check for double booking, excluding this appointment
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? 
+                          AND id != ? 
+                          AND ((booking_time_from < ? AND booking_time_to > ?) 
+                           OR (booking_time_from < ? AND booking_time_to > ?))");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("sissss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        // Double booking detected
+        $stmt->close();
+        echo '<script>alert("Double booking detected for the specified time, date, and room."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    $stmt->close();
+    
+    // Update the booking
+    $stmt = $conn->prepare("UPDATE bookings SET name = ?, id_number = ?, group_members = ?, 
+                          representative_name = ?, `set` = ?, department_id = ?, 
+                          room_id = ?, booking_date = ?, booking_time_from = ?, 
+                          booking_time_to = ?, reason = ? WHERE id = ?");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("ssssissssssi", $name, $id_number, $group_members, $representative_name, $set, 
+                    $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
+    if ($stmt->execute()) {
+        $stmt->close();
+        header('Location: ../index.php');
+        exit();
     } else {
-        // Check for double booking
-        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND id != ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-        if (!$stmt) {
-            die('Prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param("siissss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $warning = "Double booking detected for the specified time, date, and room.";
-        } else {
-            $stmt = $conn->prepare("UPDATE bookings SET name = ?, id_number = ?, group_members = ?, representative_name = ?, `set` = ?, department_id = ?, room_id = ?, booking_date = ?, booking_time_from = ?, booking_time_to = ?, reason = ? WHERE id = ?");
-            if (!$stmt) {
-                die('Prepare failed: ' . $conn->error);
-            }
-            $stmt->bind_param("ssssissssssi", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
-            if ($stmt->execute()) {
-                // Debug: Log successful update
-                error_log("Booking ID=$appointment_id successfully updated.");
-                // Redirect to avoid form resubmission
-                header('Location: ../index.php');
-                exit();
-            } else {
-                // Debug: Log error
-                error_log("Error updating booking ID=$appointment_id: " . $stmt->error);
-                echo "Error: " . $stmt->error;
-            }
-            $stmt->close();
-        }
+        echo "Error updating record: " . $stmt->error;
         $stmt->close();
     }
+} else {
+    header('Location: ../index.php');
+    exit();
 }
 
 $conn->close();

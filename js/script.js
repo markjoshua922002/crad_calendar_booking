@@ -11,21 +11,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Sidebar toggle
     const menuButton = document.getElementById('menuButton');
-    if (menuButton) {
-        console.log("Menu button found");
+    // const sidebar = document.getElementById('sidebar'); // Removed redeclaration
+    
+    if (menuButton && sidebar) {
         menuButton.addEventListener('click', function() {
-            console.log("Menu button clicked");
-            const sidebar = document.getElementById('sidebar');
-            const container = document.querySelector('.container');
-            
-            if (sidebar) {
-                sidebar.classList.toggle('open');
-                console.log("Sidebar toggled:", sidebar.classList.contains('open'));
-            }
-            
-            if (container) {
-                container.classList.toggle('shifted');
-            }
+            sidebar.classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
         });
     } else {
         console.error("Menu button not found!");
@@ -407,25 +398,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Delete Handling
-    const deleteButton = document.getElementById('delete_button');
-    if (deleteButton) {
-        deleteButton.addEventListener('click', async () => {
+    // Delete appointment functionality
+    const deleteButtonElement = document.getElementById('delete_button');
+    if (deleteButtonElement) {
+        deleteButtonElement.addEventListener('click', function() {
+            const appointmentId = document.getElementById('appointment_id').value;
             if (confirm('Are you sure you want to delete this appointment?')) {
-                const appointmentId = document.getElementById('appointment_id').value;
-
-                try {
-                    const response = await fetch(`api/delete_appointment.php?id=${appointmentId}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        alert('Failed to delete appointment');
-                    }
-                } catch (error) {
-                    console.error('Delete error:', error);
-                }
+                window.location.href = `api/delete_appointment.php?id=${appointmentId}`;
             }
         });
     }
@@ -617,4 +596,611 @@ document.addEventListener("DOMContentLoaded", function() {
     // Setup time pickers for edit modal
     setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm', 'edit_time_from');
     setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm', 'edit_time_to');
+    
+    // Sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    
+    if (menuButton && sidebar) {
+        menuButton.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('sidebar-collapsed');
+        });
+    }
+
+    // Mobile sidebar handling
+    function handleMobileSidebar() {
+        if (window.innerWidth <= 768) {
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+
+            menuButton.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+    }
+    
+    handleMobileSidebar();
+    window.addEventListener('resize', handleMobileSidebar);
+    
+    // Modal functionality
+    // (This section is removed because it duplicates the earlier declaration)
+    
+    // Setup modal open/close functionality
+    Object.values(modals).forEach(modalObj => {
+        if (modalObj.openBtn && modalObj.modal) {
+            modalObj.openBtn.addEventListener('click', () => {
+                modalObj.modal.style.display = 'block';
+            });
+        }
+        
+        if (modalObj.closeBtn && modalObj.modal) {
+            modalObj.closeBtn.addEventListener('click', () => {
+                modalObj.modal.style.display = 'none';
+            });
+        }
+        
+        // Close modals when clicking outside
+        if (modalObj.modal) {
+            window.addEventListener('click', (event) => {
+                if (event.target === modalObj.modal) {
+                    modalObj.modal.style.display = 'none';
+                }
+            });
+        }
+    });
+    
+    // Handle appointment cards click events
+    const appointmentCards = document.querySelectorAll('.appointment-card, .event-item');
+    appointmentCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const appointmentData = JSON.parse(this.getAttribute('data-appointment'));
+            showAppointmentDetails(appointmentData);
+        });
+    });
+
+    // Calendar day click events for day view
+    const calendarDays = document.querySelectorAll('.calendar .day:not(.empty)');
+    calendarDays.forEach(day => {
+        day.addEventListener('click', function() {
+            const dayNumber = this.querySelector('.day-number').textContent;
+            // TODO: Implement day view
+            console.log(`Day ${dayNumber} clicked`);
+        });
+    });
+    
+    // View buttons for calendar views (month, week, day)
+    const viewButtons = document.querySelectorAll('.view-btn');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const view = this.getAttribute('data-view');
+            changeCalendarView(view);
+        });
+    });
+    
+    // Export calendar functionality
+    const exportButton = document.getElementById('exportCalendar');
+    if (exportButton) {
+        exportButton.addEventListener('click', function() {
+            // TODO: Implement calendar export
+            alert('Calendar export feature is coming soon!');
+        });
+    }
+    
+    // Show appointment details in view modal
+    function showAppointmentDetails(appointment) {
+        const viewContainer = document.getElementById('viewContainer');
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        viewContainer.innerHTML = `
+            <div class="appointment-view" style="border-left: 4px solid ${appointment.color}">
+                <div class="appointment-view-header">
+                    <h3>${appointment.representative_name}</h3>
+                    <span class="appointment-date">${appointment.booking_date}</span>
+                </div>
+                
+                <div class="appointment-details">
+                    <p>
+                        <strong>Research Adviser's Name</strong>
+                        ${appointment.name}
+                    </p>
+                    <p>
+                        <strong>Group Number</strong>
+                        ${appointment.id_number}
+                    </p>
+                    <p>
+                        <strong>Set</strong>
+                        ${appointment.set}
+                    </p>
+                    <p>
+                        <strong>Department</strong>
+                        ${appointment.department_name}
+                    </p>
+                    <p>
+                        <strong>Room</strong>
+                        ${appointment.room_name}
+                    </p>
+                    <p>
+                        <strong>Time</strong>
+                        ${timeFrom} - ${timeTo}
+                    </p>
+                    <p>
+                        <strong>Agenda</strong>
+                        ${appointment.reason}
+                    </p>
+                    <p>
+                        <strong>Remarks</strong>
+                        ${appointment.group_members || 'None'}
+                    </p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="edit-appointment-btn primary-button" data-id="${appointment.id}">
+                        <i class="fas fa-edit"></i> Edit Appointment
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Show the view modal
+        modals.view.modal.style.display = 'block';
+        
+        // Add edit button functionality
+        document.querySelector('.edit-appointment-btn').addEventListener('click', function() {
+            const appointmentId = this.getAttribute('data-id');
+            modals.view.modal.style.display = 'none';
+            populateEditForm(appointment);
+            modals.edit.modal.style.display = 'block';
+        });
+    }
+    
+    // Populate edit form with appointment data
+    function populateEditForm(appointment) {
+        document.getElementById('appointment_id').value = appointment.id;
+        document.getElementById('edit_department').value = appointment.department_id;
+        document.getElementById('edit_name').value = appointment.name;
+        document.getElementById('edit_id_number').value = appointment.id_number;
+        document.getElementById('edit_set').value = appointment.set;
+        document.getElementById('edit_date').value = appointment.booking_date;
+        document.getElementById('edit_reason').value = appointment.reason;
+        document.getElementById('edit_room').value = appointment.room_id;
+        document.getElementById('edit_representative_name').value = appointment.representative_name;
+        document.getElementById('edit_group_members').value = appointment.group_members;
+        
+        // Time handling - parse the time into components
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`);
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`);
+        
+        const fromHour = timeFrom.getHours() % 12 || 12;
+        const fromMinute = timeFrom.getMinutes();
+        const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+        
+        const toHour = timeTo.getHours() % 12 || 12;
+        const toMinute = timeTo.getMinutes();
+        const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+        
+        document.getElementById('edit_time_from_hour').value = fromHour;
+        document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+        document.getElementById('edit_time_from_ampm').value = fromAMPM;
+        
+        document.getElementById('edit_time_to_hour').value = toHour;
+        document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+        document.getElementById('edit_time_to_ampm').value = toAMPM;
+    }
+    
+    // Delete appointment functionality
+    const deleteButton = document.getElementById('delete_button');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function() {
+            const appointmentId = document.getElementById('appointment_id').value;
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                window.location.href = `api/delete_appointment.php?id=${appointmentId}`;
+            }
+        });
+    }
+    
+    // Change calendar view function
+    function changeCalendarView(view) {
+        // This is a placeholder for implementing different calendar views
+        console.log(`Changing to ${view} view`);
+        
+        // In a real implementation, you would hide/show or rebuild
+        // the calendar based on the selected view
+        
+        switch(view) {
+            case 'month':
+                // Show month view (default)
+                break;
+            case 'week':
+                alert('Week view will be implemented in the next version!');
+                break;
+            case 'day':
+                alert('Day view will be implemented in the next version!');
+                break;
+        }
+    }
+    
+    // More events functionality
+    const moreEventElements = document.querySelectorAll('.more-events');
+    moreEventElements.forEach(element => {
+        element.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const day = this.closest('.day');
+            const dayNumber = day.querySelector('.day-number').textContent;
+            
+            // TODO: Implement showing all events for this day
+            console.log(`Show all events for day ${dayNumber}`);
+        });
+    });
 });
+
+function setupModal(modalId, openButtonId, closeButtonId) {
+    const modal = document.getElementById(modalId);
+    
+    if (!modal) return;
+    
+    // Setup open button if provided
+    if (openButtonId) {
+        const openButton = document.getElementById(openButtonId);
+        if (openButton) {
+            openButton.addEventListener('click', function() {
+                modal.style.display = 'block';
+            });
+        }
+    }
+    
+    // Setup close button if provided
+    if (closeButtonId) {
+        const closeButton = document.getElementById(closeButtonId);
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function setupCalendarInteractions() {
+    // Handle calendar day click to show appointments for that day
+    const days = document.querySelectorAll('.day:not(.empty)');
+    const appointmentsData = JSON.parse(document.getElementById('appointmentsData').textContent);
+    
+    days.forEach(day => {
+        day.addEventListener('click', function() {
+            const dayNumber = this.querySelector('.day-number').textContent;
+            const dayAppointments = appointmentsData[dayNumber] || [];
+            
+            if (dayAppointments.length > 0) {
+                showDayAppointments(dayAppointments, dayNumber);
+            } else {
+                // Optionally open the booking modal pre-filled with this date
+                openBookingModalWithDate(dayNumber);
+            }
+        });
+    });
+    
+    // Handle "more events" click
+    const moreEvents = document.querySelectorAll('.more-events');
+    moreEvents.forEach(element => {
+        element.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const day = this.closest('.day');
+            const dayNumber = day.querySelector('.day-number').textContent;
+            const dayAppointments = appointmentsData[dayNumber] || [];
+            showDayAppointments(dayAppointments, dayNumber);
+        });
+    });
+    
+    // Handle individual event clicks within day cells
+    const dayEvents = document.querySelectorAll('.day-event');
+    dayEvents.forEach(event => {
+        event.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const day = this.closest('.day');
+            const dayNumber = day.querySelector('.day-number').textContent;
+            const dayAppointments = appointmentsData[dayNumber] || [];
+            
+            // Find the appointment that matches this event
+            // For simplicity, we're just using the first one that matches the time
+            const eventTime = this.querySelector('.event-time').textContent;
+            const appointment = dayAppointments.find(app => {
+                const appTime = new Date(`2000-01-01T${app.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                return appTime === eventTime;
+            });
+            
+            if (appointment) {
+                showAppointmentDetails(appointment);
+            }
+        });
+    });
+}
+
+function showDayAppointments(appointments, dayNumber) {
+    const viewContainer = document.getElementById('viewContainer');
+    if (!viewContainer) return;
+    
+    // Get the current month and year from the calendar header
+    const monthYearText = document.querySelector('.month-year').textContent;
+    const [month, year] = monthYearText.split(' ');
+    
+    // Create the content for viewing appointments
+    let content = `
+        <h3>Appointments for ${month} ${dayNumber}, ${year}</h3>
+        <div class="day-appointments-list">
+    `;
+    
+    appointments.forEach(appointment => {
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        content += `
+            <div class="day-appointment-item" data-appointment='${JSON.stringify(appointment)}'>
+                <div class="appointment-color" style="background-color: ${appointment.color}"></div>
+                <div class="appointment-content">
+                    <div class="appointment-time">${timeFrom} - ${timeTo}</div>
+                    <div class="appointment-title">${appointment.representative_name}</div>
+                    <div class="appointment-subtitle">${appointment.room_name} • ${appointment.department_name}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    content += `
+        </div>
+        <div class="form-actions">
+            <button type="button" class="add-appointment-day" data-day="${dayNumber}">
+                Add Appointment
+            </button>
+        </div>
+    `;
+    
+    viewContainer.innerHTML = content;
+    document.getElementById('viewModal').style.display = 'block';
+    
+    // Add event listeners to the appointment items
+    const appointmentItems = document.querySelectorAll('.day-appointment-item');
+    appointmentItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const appointment = JSON.parse(this.getAttribute('data-appointment'));
+            showAppointmentDetails(appointment);
+        });
+    });
+    
+    // Add event listener to the "Add Appointment" button
+    const addButton = document.querySelector('.add-appointment-day');
+    if (addButton) {
+        addButton.addEventListener('click', function() {
+            const day = this.getAttribute('data-day');
+            openBookingModalWithDate(day);
+        });
+    }
+}
+
+function openBookingModalWithDate(day) {
+    // Close the view modal if it's open
+    document.getElementById('viewModal').style.display = 'none';
+    
+    // Get the current month and year
+    const monthYearText = document.querySelector('.month-year').textContent;
+    const [month, year] = monthYearText.split(' ');
+    
+    // Convert month name to number
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthNum = months.indexOf(month) + 1;
+    
+    // Format the date for the date input
+    const dateStr = `${year}-${monthNum.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    
+    // Set the date in the booking modal
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        dateInput.value = dateStr;
+    }
+    
+    // Show the booking modal
+    document.getElementById('bookingModal').style.display = 'block';
+}
+
+function setupAppointmentClicks() {
+    // Setup clicks for upcoming events in sidebar
+    const eventItems = document.querySelectorAll('.event-item');
+    eventItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const appointment = JSON.parse(this.getAttribute('data-appointment'));
+            showAppointmentDetails(appointment);
+        });
+    });
+    
+    // Setup clicks for all appointments in the appointments modal
+    const appointmentCards = document.querySelectorAll('.appointment-card');
+    appointmentCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const appointment = JSON.parse(this.getAttribute('data-appointment'));
+            showAppointmentDetails(appointment);
+        });
+    });
+}
+
+function showAppointmentDetails(appointment) {
+    const viewContainer = document.getElementById('viewContainer');
+    if (!viewContainer) return;
+    
+    // Format the times
+    const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    // Format the date
+    const date = new Date(appointment.booking_date);
+    const formattedDate = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
+    viewContainer.innerHTML = `
+        <div class="appointment-header" style="border-color: ${appointment.color}">
+            <div class="appointment-title-large">${appointment.representative_name}</div>
+            <div class="appointment-subtitle">${formattedDate}</div>
+            <div class="appointment-time-large">${timeFrom} - ${timeTo}</div>
+        </div>
+        <div class="appointment-details">
+            <p><strong>Research Adviser's Name:</strong> ${appointment.name}</p>
+            <p><strong>Group Number:</strong> ${appointment.id_number}</p>
+            <p><strong>Set:</strong> ${appointment.set || 'Not specified'}</p>
+            <p><strong>Department:</strong> ${appointment.department_name}</p>
+            <p><strong>Room:</strong> ${appointment.room_name}</p>
+            <p><strong>Agenda:</strong> ${appointment.reason}</p>
+            <p><strong>Remarks:</strong> ${appointment.group_members || "None"}</p>
+        </div>
+        <div class="form-actions-right" style="margin-top: 20px;">
+            <button type="button" class="edit-appointment" data-id="${appointment.id}">Edit Appointment</button>
+        </div>
+    `;
+    
+    // Close any open modals
+    document.getElementById('appointmentModal').style.display = 'none';
+    
+    // Show the view modal
+    document.getElementById('viewModal').style.display = 'block';
+    
+    // Add event listener to the edit button
+    document.querySelector('.edit-appointment').addEventListener('click', function() {
+        fillEditForm(appointment);
+        document.getElementById('viewModal').style.display = 'none';
+        document.getElementById('editModal').style.display = 'block';
+    });
+}
+
+function fillEditForm(appointment) {
+    document.getElementById('appointment_id').value = appointment.id;
+    document.getElementById('edit_department').value = appointment.department_id;
+    document.getElementById('edit_name').value = appointment.name;
+    document.getElementById('edit_id_number').value = appointment.id_number;
+    document.getElementById('edit_set').value = appointment.set || '';
+    document.getElementById('edit_date').value = appointment.booking_date;
+    document.getElementById('edit_reason').value = appointment.reason;
+    document.getElementById('edit_room').value = appointment.room_id;
+    document.getElementById('edit_representative_name').value = appointment.representative_name;
+    document.getElementById('edit_group_members').value = appointment.group_members || '';
+    
+    // Time handling - parse the time into components
+    const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`);
+    const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`);
+    
+    const fromHour = timeFrom.getHours() % 12 || 12;
+    const fromMinute = timeFrom.getMinutes();
+    const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+    
+    const toHour = timeTo.getHours() % 12 || 12;
+    const toMinute = timeTo.getMinutes();
+    const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+    
+    document.getElementById('edit_time_from_hour').value = fromHour;
+    document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+    document.getElementById('edit_time_from_ampm').value = fromAMPM;
+    
+    document.getElementById('edit_time_to_hour').value = toHour;
+    document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+    document.getElementById('edit_time_to_ampm').value = toAMPM;
+}
+
+function setupExportCalendar() {
+    const exportButton = document.getElementById('exportCalendar');
+    if (exportButton) {
+        exportButton.addEventListener('click', function() {
+            const appointmentsData = JSON.parse(document.getElementById('appointmentsData').textContent);
+            exportToCSV(appointmentsData);
+        });
+    }
+}
+
+function exportToCSV(appointmentsData) {
+    // Flatten the appointments array
+    let allAppointments = [];
+    for (const day in appointmentsData) {
+        allAppointments = [...allAppointments, ...appointmentsData[day]];
+    }
+    
+    // Sort appointments by date
+    allAppointments.sort((a, b) => {
+        return new Date(a.booking_date) - new Date(b.booking_date);
+    });
+    
+    // Create CSV header
+    let csvContent = 'Date,Time From,Time To,Representative,Adviser,Room,Department,Group Number,Set,Agenda,Remarks\n';
+    
+    // Add rows for each appointment
+    allAppointments.forEach(appointment => {
+        // Format the times
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Escape any commas in text fields
+        const escapeComma = (text) => `"${(text || '').replace(/"/g, '""')}"`;
+        
+        csvContent += [
+            appointment.booking_date,
+            timeFrom,
+            timeTo,
+            escapeComma(appointment.representative_name),
+            escapeComma(appointment.name),
+            escapeComma(appointment.room_name),
+            escapeComma(appointment.department_name),
+            appointment.id_number,
+            escapeComma(appointment.set),
+            escapeComma(appointment.reason),
+            escapeComma(appointment.group_members)
+        ].join(',') + '\n';
+    });
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `calendar_bookings_${new Date().toISOString().slice(0,10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function setupDeleteAppointment() {
+    const deleteButton = document.getElementById('delete_button');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                const appointmentId = document.getElementById('appointment_id').value;
+                
+                // Create and send the DELETE request
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'api/delete_appointment.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (this.readyState === XMLHttpRequest.DONE) {
+                        if (this.status === 200) {
+                            alert('Appointment deleted successfully.');
+                            // Reload the page to refresh the calendar
+                            window.location.reload();
+                        } else {
+                            alert('Error deleting appointment: ' + this.responseText);
+                        }
+                    }
+                };
+                xhr.send('id=' + appointmentId);
+            }
+        });
+    }
+}
