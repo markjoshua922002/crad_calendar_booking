@@ -1,16 +1,26 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
+
+// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
     exit();
 }
 
+// Database connection
 $conn = new mysqli('localhost', 'crad_crad', 'crad2025', 'crad_calendar_booking');
 if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
+    http_response_code(500);
+    echo json_encode(['error' => 'Connection failed: ' . $conn->connect_error]);
+    exit();
 }
 
+// Handle POST request for updating an appointment
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
     $appointment_id = $_POST['appointment_id'];
     $name = $_POST['edit_name'];
     $id_number = $_POST['edit_id_number'];
@@ -27,46 +37,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $reason = $_POST['edit_reason'];
 
-    // Debug: Log the values being processed
-    error_log("Updating Booking ID=$appointment_id: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
-
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
     if ($date < $current_date) {
-        $warning = "You cannot book a date that has already passed.";
-    } else {
-        // Check for double booking
-        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND id != ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-        if (!$stmt) {
-            die('Prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param("siissss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $warning = "Double booking detected for the specified time, date, and room.";
-        } else {
-            $stmt = $conn->prepare("UPDATE bookings SET name = ?, id_number = ?, group_members = ?, representative_name = ?, `set` = ?, department_id = ?, room_id = ?, booking_date = ?, booking_time_from = ?, booking_time_to = ?, reason = ? WHERE id = ?");
-            if (!$stmt) {
-                die('Prepare failed: ' . $conn->error);
-            }
-            $stmt->bind_param("ssssissssssi", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
-            if ($stmt->execute()) {
-                // Debug: Log successful update
-                error_log("Booking ID=$appointment_id successfully updated.");
-                // Redirect to avoid form resubmission
-                header('Location: ../index.php');
-                exit();
-            } else {
-                // Debug: Log error
-                error_log("Error updating booking ID=$appointment_id: " . $stmt->error);
-                echo "Error: " . $stmt->error;
-            }
-            $stmt->close();
-        }
-        $stmt->close();
+        http_response_code(400);
+        echo json_encode(['error' => 'You cannot book a date that has already passed.']);
+        exit();
     }
+
+    // Check for double booking (excluding the current appointment)
+    $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND id != ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    
+    $stmt->bind_param("ssissss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        http_response_code(409); // Conflict
+        echo json_encode(['error' => 'Double booking detected for the specified time, date, and room.']);
+        exit();
+    }
+    
+    // Update the appointment
+    $stmt = $conn->prepare("UPDATE bookings SET name = ?, id_number = ?, group_members = ?, representative_name = ?, `set` = ?, department_id = ?, room_id = ?, booking_date = ?, booking_time_from = ?, booking_time_to = ?, reason = ? WHERE id = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    
+    $stmt->bind_param("ssssssssssssi", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
+    
+    if ($stmt->execute()) {
+        // Success
+        echo json_encode(['success' => true, 'message' => 'Appointment updated successfully']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Error updating appointment: ' . $stmt->error]);
+    }
+    
+    $stmt->close();
+} else {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Method not allowed']);
 }
 
 $conn->close();
