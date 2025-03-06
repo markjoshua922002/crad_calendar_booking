@@ -154,164 +154,82 @@ while ($row = $bookings->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Scheduling System</title>
-    <link rel="stylesheet" href="mycss/style.css?v=16">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=4">
-    <link rel="stylesheet" href="mycss/calendar.css?v=32">
-    <link rel="stylesheet" href="mycss/day.css?v=2">
-    <link rel="stylesheet" href="mycss/reminder.css?v=12">
-    <link rel="stylesheet" href="mycss/general.css?v=3">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="mycss/style.css?v=15">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=3">
+    <link rel="stylesheet" href="mycss/calendar.css?v=31">
+    <link rel="stylesheet" href="mycss/day.css">
+    <link rel="stylesheet" href="mycss/reminder.css?v=11">
+    <link rel="stylesheet" href="mycss/general.css?v=2">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
 </head>
 <body>
-<div class="app-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="assets/bcplogo.png" alt="Logo" class="sidebar-logo">
-            <h2>CRAD System</h2>
-        </div>
-        <div class="sidebar-menu">
-            <a href="index.php" class="active">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Calendar</span>
-            </a>
-            <a href="form.php">
-                <i class="fas fa-book"></i>
-                <span>Logbook</span>
-            </a>
-            <a href="accounts.php">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </a>
-            <a href="analytics.php">
-                <i class="fas fa-chart-bar"></i>
-                <span>Analytics</span>
-            </a>
-        </div>
-        <div class="sidebar-footer">
-            <a href="logout.php" class="logout-button">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </div>
+<button class="menu-button" id="menuButton">&#9776;</button> <!-- Menu button -->
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="top-bar">
-            <button class="menu-toggle" id="menuButton">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="page-title">
-                <h1>Calendar Dashboard</h1>
-                <p><?= date('l, F j, Y') ?></p>
-            </div>
-            <div class="user-controls">
-                <button id="openBookingModal" class="action-button primary">
-                    <i class="fas fa-plus"></i> New Booking
-                </button>
-                <form method="POST" class="search-form">
-                    <div class="search-input-container">
-                        <input type="text" name="search_name" placeholder="Search by name...">
-                        <button type="submit" name="search_booking">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+<div class="sidebar" id="sidebar">
+    <a href="index.php">CRAD</a>
+    <a href="form.php">LOGBOOK</a>
+    <a href="accounts.php">USERS</a>
+    <a href="analytics.php">ANALYTICS</a>
+    <div style="flex-grow: 1;"></div> <!-- Spacer to push logout button to the bottom -->
+    
+    <a href="logout.php" class="logout-button">Logout</a>
+</div>
 
-        <div class="dashboard-layout">
-            <!-- Calendar Section -->
-            <div class="calendar-section">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="calendar-navigation">
-                            <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-arrow">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                            <h2 class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></h2>
-                            <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-arrow">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        </div>
-                        <div class="view-options">
-                            <button class="view-btn active" data-view="month">Month</button>
-                            <button class="view-btn" data-view="week">Week</button>
-                            <button class="view-btn" data-view="day">Day</button>
-                        </div>
-                    </div>
-
-                    <div class="calendar-body">
-                        <div class="weekday-header">
-                            <div>Sun</div>
-                            <div>Mon</div>
-                            <div>Tue</div>
-                            <div>Wed</div>
-                            <div>Thu</div>
-                            <div>Fri</div>
-                            <div>Sat</div>
-                        </div>
-
-                        <div class="calendar">
-                            <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
-                                <div class="day empty"></div>
-                            <?php endfor; ?>
-
-                            <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
-                                <?php
-                                $currentDate = "$year-$month-" . str_pad($day, 2, '0', STR_PAD_LEFT);
-                                $isCurrentDay = ($currentDate === date('Y-m-d'));
-                                ?>
-                                <div class="day <?= $isCurrentDay ? 'current-day' : '' ?>">
-                                    <div class="day-header">
-                                        <span class="day-number"><?= $day ?></span>
-                                        <?php if (isset($appointments[$day]) && count($appointments[$day]) > 0): ?>
-                                            <span class="appointment-badge" data-count="<?= count($appointments[$day]) ?>"><?= count($appointments[$day]) ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <?php if (isset($appointments[$day]) && count($appointments[$day]) > 0): ?>
-                                        <div class="day-content">
-                                            <?php
-                                            $count = 0;
-                                            foreach ($appointments[$day] as $appointment):
-                                                if ($count < 2):
-                                                    $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
-                                                    ?>
-                                                    <div class="day-event" style="background-color: <?= $appointment['color'] ?>">
-                                                        <span class="event-time"><?= $timeFrom ?></span>
-                                                        <span class="event-title"><?= htmlspecialchars($appointment['representative_name']) ?></span>
-                                                    </div>
-                                                <?php endif;
-                                                $count++;
-                                            endforeach;
-                                            
-                                            if ($count > 2): ?>
-                                                <div class="more-events">+<?= $count - 2 ?> more</div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endfor; ?>
-                        </div>
+<div class="container">
+    <div class="calendar-wrapper">
+        <div class="calendar-container-wrapper">
+            <div class="search-container-wrapper">
+                <div class="form-actions" style="text-align: right; margin-bottom: 10px;">
+                    <div class="search-container" style="display: inline-block;">
+                        <form method="POST" style="display: flex; gap: 5px;">
+                            <input type="text" name="search_name" placeholder="Search by Name" required style="width: 150px; padding: 5px;">
+                            <button type="submit" name="search_booking" style="padding: 5px 10px;">Search</button>
+                            <button type="button" id="openBookingModal" style="padding: 5px 10px;">Book</button>
+                        </form>
                     </div>
                 </div>
             </div>
+            <div class="calendar-container">
+                <div class="main-content">
+                    <div class="calendar-wrapper"> <!-- Add this wrapper -->
+                        <div class="calendar-container">
+                            <div class="navigation" style="margin-bottom: 10px;">
+                                <a href="index.php?month=<?= ($month == 1) ? 12 : $month-1 ?>&year=<?= ($month == 1) ? $year-1 : $year ?>" class="nav-button">Previous</a>
+                                <span class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></span>
+                                <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-button">Next</a>
+                            </div>
 
-            <!-- Sidebar Content -->
-            <div class="dashboard-sidebar">
-                <!-- Upcoming Appointments -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-calendar-check"></i> Upcoming Appointments</h2>
-                    </div>
-                    <div class="card-body">
-                        <ul class="upcoming-events">
+                            <div class="weekday-header">
+                                <div>SUNDAY</div>
+                                <div>MONDAY</div>
+                                <div>TUESDAY</div>
+                                <div>WEDNESDAY</div>
+                                <div>THURSDAY</div>
+                                <div>FRIDAY</div>
+                                <div>SATURDAY</div>
+                            </div>
+
+                            <div class="calendar">
+                                <?php for ($i = 0; $i < $firstDayOfMonth; $i++): ?>
+                                    <div class="day"></div>
+                                <?php endfor; ?>
+
+                                <?php for ($day = 1; $day <= $totalDaysInMonth; $day++): ?>
+                                    <div class="day">
+                                        <div class="day-number"><?= $day ?></div>
+                                        <div class="appointment-count"><?= isset($appointments[$day]) ? count($appointments[$day]) : '' ?></div>
+                                    </div>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                    </div> <!-- Close the wrapper -->
+                    <div class="reminder-container">
+                        <h2>Upcoming Appointments</h2>
+                        <ul id="reminderList">
                             <?php
                             $currentDateTime = new DateTime();
                             $sevenDaysLater = (clone $currentDateTime)->modify('+7 days');
@@ -335,52 +253,20 @@ while ($row = $bookings->fetch_assoc()) {
                             });
 
                             // Display the sorted upcoming appointments
-                            if (count($upcomingAppointments) > 0):
-                                foreach ($upcomingAppointments as $appointment):
-                                    $appointmentDate = new DateTime($appointment['booking_date']);
-                                    $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
-                                    $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
-                                    ?>
-                                    <li class="event-item" data-appointment='<?= json_encode($appointment) ?>'>
-                                        <div class="event-color" style="background-color: <?= $appointment['color'] ?>"></div>
-                                        <div class="event-details">
-                                            <div class="event-date"><?= $appointmentDate->format('D, M j') ?> · <?= $timeFrom ?> - <?= $timeTo ?></div>
-                                            <div class="event-title"><?= htmlspecialchars($appointment['representative_name']) ?></div>
-                                            <div class="event-location"><i class="fas fa-map-marker-alt"></i> <?= $appointment['room_name'] ?></div>
-                                        </div>
-                                    </li>
-                                <?php endforeach;
-                            else: ?>
-                                <li class="no-events">No upcoming appointments</li>
-                            <?php endif; ?>
+                            foreach ($upcomingAppointments as $appointment) {
+                                $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
+                                $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
+                                echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                                echo '<div class="text-container">';
+                                echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                                echo $appointment['department_name'] . '<br>';
+                                echo $appointment['booking_date'] . '<br>';
+                                echo $timeFrom . ' - ' . $timeTo;
+                                echo '</div>';
+                                echo '</li>';
+                            }
+                            ?>
                         </ul>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="quick-actions">
-                            <button id="openDepartmentModal" class="action-tile">
-                                <i class="fas fa-building"></i>
-                                <span>Add Department</span>
-                            </button>
-                            <button id="openRoomModal" class="action-tile">
-                                <i class="fas fa-door-open"></i>
-                                <span>Add Room</span>
-                            </button>
-                            <button id="viewAllAppointments" class="action-tile">
-                                <i class="fas fa-list"></i>
-                                <span>All Appointments</span>
-                            </button>
-                            <button id="exportCalendar" class="action-tile">
-                                <i class="fas fa-file-export"></i>
-                                <span>Export Calendar</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -391,12 +277,10 @@ while ($row = $bookings->fetch_assoc()) {
 <!-- Modals -->
 <div id="appointmentModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>All Appointments</h2>
-            <button class="close-button" id="closeAppointmentModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <div class="appointments-list">
+        <span class="close" id="closeAppointmentModal">&times;</span>
+        <h2>Appointments</h2>
+        <div id="appointmentList">
+            <ul id="appointmentList">
                 <?php
                 // Fetch all appointments
                 $allAppointments = [];
@@ -414,376 +298,227 @@ while ($row = $bookings->fetch_assoc()) {
                 });
 
                 // Display the sorted appointments
-                foreach ($allAppointments as $appointment):
-                    $appointmentDate = new DateTime($appointment['booking_date']);
+                foreach ($allAppointments as $appointment) {
                     $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
                     $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
-                    ?>
-                    <div class="appointment-card" data-appointment='<?= json_encode($appointment) ?>'>
-                        <div class="appointment-color" style="background-color: <?= $appointment['color'] ?>"></div>
-                        <div class="appointment-content">
-                            <div class="appointment-date">
-                                <?= $appointmentDate->format('l, F j, Y') ?>
-                            </div>
-                            <div class="appointment-title">
-                                <?= htmlspecialchars($appointment['representative_name']) ?>
-                            </div>
-                            <div class="appointment-details">
-                                <span><i class="fas fa-clock"></i> <?= $timeFrom ?> - <?= $timeTo ?></span>
-                                <span><i class="fas fa-map-marker-alt"></i> <?= $appointment['room_name'] ?></span>
-                                <span><i class="fas fa-building"></i> <?= $appointment['department_name'] ?></span>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+                    echo '<li class="appointment-item" style="background-color: ' . $appointment['color'] . ';" data-appointment=\'' . json_encode($appointment) . '\'>';
+                    echo '<div class="text-container">';
+                    echo '<strong>' . $appointment['representative_name'] . '</strong><br>';
+                    echo $appointment['department_name'] . '<br>';
+                    echo $appointment['booking_date'] . '<br>';
+                    echo $timeFrom . ' - ' . $timeTo;
+                    echo '</div>';
+                    echo '</li>';
+                }
+                ?>
+            </ul>
         </div>
     </div>
 </div>
 
 <div id="viewModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>Appointment Details</h2>
-            <button class="close-button" id="closeViewModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <div id="viewContainer"></div>
-        </div>
+        <span class="close" id="closeViewModal">&times;</span>
+        <h2>Appointment Details</h2>
+        <div id="viewContainer"></div>
     </div>
 </div>
 
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>Edit Appointment</h2>
-            <button class="close-button" id="closeEditModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <form id="editForm" method="POST" action="api/update_appointment.php" class="booking-form">
-                <input type="hidden" name="appointment_id" id="appointment_id">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="edit_department">Department</label>
-                        <select name="edit_department" id="edit_department" required>
-                            <option value="">Select Department</option>
-                            <?php
-                            $departments->data_seek(0);
-                            while ($department = $departments->fetch_assoc()): ?>
-                                <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_room">Room</label>
-                        <select name="edit_room" id="edit_room" required>
-                            <option value="">Select Room</option>
-                            <?php
-                            $rooms->data_seek(0);
-                            while ($room = $rooms->fetch_assoc()): ?>
-                                <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
+        <span class="close" id="closeEditModal">&times;</span>
+        <h2>Edit Appointment</h2>
+        <form id="editForm" method="POST" action="api/update_appointment.php" class="form">
+            <input type="hidden" name="appointment_id" id="appointment_id">
+            <div class="form-grid">
+                <select name="edit_department" id="edit_department" required>
+                    <option value="">Department</option>
+                    <?php
+                    $departments->data_seek(0);
+                    while ($department = $departments->fetch_assoc()): ?>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <input type="text" name="edit_name" id="edit_name" placeholder="Research Adviser's Name" required>
+                <select name="edit_id_number" id="edit_id_number" required>
+                    <option value="">Group Number</option>
+                    <?php for ($i = 1; $i <= 200; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="edit_set" id="edit_set" >
+                    <option value="">Set</option>
+                    <?php foreach (range('A', 'F') as $set): ?>
+                        <option value="<?= $set ?>"><?= $set ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="time-picker">
+                    <select id="edit_time_from_hour" name="edit_time_from_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_from_minute" name="edit_time_from_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="edit_name">Research Adviser's Name</label>
-                        <input type="text" name="edit_name" id="edit_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_representative_name">Representative Name</label>
-                        <input type="text" name="edit_representative_name" id="edit_representative_name" required>
-                    </div>
+                <div class="time-picker">
+                    <select id="edit_time_to_hour" name="edit_time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_minute" name="edit_time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="edit_id_number">Group Number</label>
-                        <select name="edit_id_number" id="edit_id_number" required>
-                            <option value="">Select Group Number</option>
-                            <?php for ($i = 1; $i <= 200; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_set">Set</label>
-                        <select name="edit_set" id="edit_set">
-                            <option value="">Select Set</option>
-                            <?php foreach (range('A', 'F') as $set): ?>
-                                <option value="<?= $set ?>"><?= $set ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="edit_date">Date</label>
-                        <input type="date" name="edit_date" id="edit_date" required>
-                    </div>
-                </div>
-
-                <div class="form-row time-inputs">
-                    <div class="form-group">
-                        <label>Time From</label>
-                        <div class="time-picker">
-                            <select id="edit_time_from_hour" name="edit_time_from_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <span>:</span>
-                            <select id="edit_time_from_minute" name="edit_time_from_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Time To</label>
-                        <div class="time-picker">
-                            <select id="edit_time_to_hour" name="edit_time_to_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <span>:</span>
-                            <select id="edit_time_to_minute" name="edit_time_to_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit_reason">Agenda</label>
-                    <textarea name="edit_reason" id="edit_reason" rows="3" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit_group_members">Remarks</label>
-                    <textarea name="edit_group_members" id="edit_group_members" rows="3"></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" id="delete_button" class="danger-button">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                    <button type="submit" id="save_button" class="primary-button">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
+                <input type="date" name="edit_date" id="edit_date" required>
+                <textarea name="edit_reason" id="edit_reason" placeholder="Agenda" required></textarea>
+                <select name="edit_room" id="edit_room" required>
+                    <option value="">Room Number</option>
+                    <?php
+                    $rooms->data_seek(0);
+                    while ($room = $rooms->fetch_assoc()): ?>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <input type="text" name="edit_representative_name" id="edit_representative_name" placeholder="Representative Name" required>
+            </div>
+            <textarea name="edit_group_members" id="edit_group_members" placeholder="Remarks" rows="4" ></textarea>
+            <div class="form-actions-right">
+                <button type="submit" id="save_button">Save Changes</button>
+                <button type="button" id="delete_button">Delete Appointment</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Booking Modal -->
 <div id="bookingModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>Book Schedule</h2>
-            <button class="close-button" id="closeBookingModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" class="booking-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="department">Department</label>
-                        <select name="department" id="department" required>
-                            <option value="">Select Department</option>
-                            <?php
-                            $departments->data_seek(0);
-                            while ($department = $departments->fetch_assoc()): ?>
-                                <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="room">Room</label>
-                        <select name="room" id="room" required>
-                            <option value="">Select Room</option>
-                            <?php
-                            $rooms->data_seek(0);
-                            while ($room = $rooms->fetch_assoc()): ?>
-                                <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
+        <span class="close" id="closeBookingModal">&times;</span>
+        <h2>Book Schedule</h2>
+        <form method="POST" class="form">
+            <div class="form-grid">
+                <select name="department" required>
+                    <option value="">Department</option>
+                    <?php
+                    $departments->data_seek(0);
+                    while ($department = $departments->fetch_assoc()): ?>
+                        <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <input type="text" name="name" placeholder="Research Adviser's Name" required>
+                <select name="id_number" required>
+                    <option value="">Group Number</option>
+                    <?php for ($i = 1; $i <= 200; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="set" required>
+                    <option value="">Set</option>
+                    <?php foreach (range('A', 'F') as $set): ?>
+                        <option value="<?= $set ?>"><?= $set ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="time-picker">
+                    <select id="time_from_hour" name="time_from_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_from_minute" name="time_from_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_from_ampm" name="time_from_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Research Adviser's Name</label>
-                        <input type="text" name="name" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="representative_name">Representative Name</label>
-                        <input type="text" name="representative_name" id="representative_name" required>
-                    </div>
+                <div class="time-picker">
+                    <select id="time_to_hour" name="time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_to_minute" name="time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i++): ?>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="time_to_ampm" name="time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="id_number">Group Number</label>
-                        <select name="id_number" id="id_number" required>
-                            <option value="">Select Group Number</option>
-                            <?php for ($i = 1; $i <= 200; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="set">Set</label>
-                        <select name="set" id="set" required>
-                            <option value="">Select Set</option>
-                            <?php foreach (range('A', 'F') as $set): ?>
-                                <option value="<?= $set ?>"><?= $set ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input type="date" name="date" id="date" required>
-                    </div>
-                </div>
-
-                <div class="form-row time-inputs">
-                    <div class="form-group">
-                        <label>Time From</label>
-                        <div class="time-picker">
-                            <select id="time_from_hour" name="time_from_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <span>:</span>
-                            <select id="time_from_minute" name="time_from_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <select id="time_from_ampm" name="time_from_ampm" required>
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Time To</label>
-                        <div class="time-picker">
-                            <select id="time_to_hour" name="time_to_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <span>:</span>
-                            <select id="time_to_minute" name="time_to_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
-                            <select id="time_to_ampm" name="time_to_ampm" required>
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="reason">Agenda</label>
-                    <textarea name="reason" id="reason" rows="3" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="group_members">Remarks</label>
-                    <textarea name="group_members" id="group_members" rows="3"></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" name="add_booking" class="primary-button">
-                        <i class="fas fa-calendar-plus"></i> Book Schedule
-                    </button>
-                </div>
-            </form>
-        </div>
+                <input type="date" name="date" required>
+                <textarea name="reason" placeholder="Agenda" required></textarea>
+                <select name="room" required>
+                    <option value="">Room Number</option>
+                    <?php
+                    $rooms->data_seek(0);
+                    while ($room = $rooms->fetch_assoc()): ?>
+                        <option value="<?= $room['id'] ?>"><?= $room['name'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+                <input type="text" name="representative_name" placeholder="Representative Name" required>
+            </div>
+            <textarea name="group_members" placeholder="Remarks" rows="4" ></textarea>
+            <div class="form-actions-right">
+                <button type="submit" name="add_booking" class="book-button">Book Schedule</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Add Department Modal -->
 <div id="addDepartmentModal" class="modal">
-    <div class="modal-content modal-sm">
-        <div class="modal-header">
-            <h2>Add Department</h2>
-            <button class="close-button" id="closeAddDepartmentModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="api/add_department.php">
-                <div class="form-group">
-                    <label for="department_name">Department Name</label>
-                    <input type="text" name="department_name" id="department_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="color">Color</label>
-                    <input type="color" name="color" id="color" value="#ff0000" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" name="add_department" class="primary-button">
-                        <i class="fas fa-plus"></i> Add Department
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close" id="closeAddDepartmentModal">&times;</span>
+        <h2>Add Department</h2>
+        <form method="POST" action="api/add_department.php">
+            <input type="text" name="department_name" placeholder="Department Name" required>
+            <input type="color" name="color" value="#ff0000" required>
+            <button type="submit" name="add_department">Add Department</button>
+        </form>
     </div>
 </div>
 
 <!-- Add Room Modal -->
 <div id="addRoomModal" class="modal">
-    <div class="modal-content modal-sm">
-        <div class="modal-header">
-            <h2>Add Room</h2>
-            <button class="close-button" id="closeAddRoomModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="api/add_room.php">
-                <div class="form-group">
-                    <label for="room_name">Room Name</label>
-                    <input type="text" name="room_name" id="room_name" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" name="add_room" class="primary-button">
-                        <i class="fas fa-plus"></i> Add Room
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close" id="closeAddRoomModal">&times;</span>
+        <h2>Add Room</h2>
+        <form method="POST" action="api/add_room.php">
+            <input type="text" name="room_name" placeholder="Room Name" required>
+            <button type="submit" name="add_room">Add Room</button>
+        </form>
     </div>
 </div>
 
@@ -830,6 +565,8 @@ while ($row = $bookings->fetch_assoc()) {
             
             // Add event listener to the edit button
             document.querySelector('.edit-search-result').addEventListener('click', function() {
+                const appointmentId = this.getAttribute('data-id');
+                
                 // Fill the edit form with the appointment data
                 document.getElementById('appointment_id').value = searchedAppointmentData.id;
                 document.getElementById('edit_department').value = searchedAppointmentData.department_id;
@@ -841,6 +578,74 @@ while ($row = $bookings->fetch_assoc()) {
                 document.getElementById('edit_room').value = searchedAppointmentData.room_id;
                 document.getElementById('edit_representative_name').value = searchedAppointmentData.representative_name;
                 document.getElementById('edit_group_members').value = searchedAppointmentData.group_members;
+                
+                // Time handling - parse the time into components
+                const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);
+                const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`);
+                
+                const fromHour = timeFrom.getHours() % 12 || 12;
+                const fromMinute = timeFrom.getMinutes();
+                const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
+                
+                const toHour = timeTo.getHours() % 12 || 12;
+                const toMinute = timeTo.getMinutes();
+                const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
+                
+                document.getElementById('edit_time_from_hour').value = fromHour;
+                document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_from_ampm').value = fromAMPM;
+                
+                document.getElementById('edit_time_to_hour').value = toHour;
+                document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
+                document.getElementById('edit_time_to_ampm').value = toAMPM;
+                
+                // Close the view modal and open the edit modal
+                document.getElementById('viewModal').style.display = 'none';
+                document.getElementById('editModal').style.display = 'block';
+            });
+        }
+    });
+</script>
+</body>
+</html>
+</div>
+                <div class="form-group">
+                    <label for="edit_time_to_hour">To:</label>
+                    <select id="edit_time_to_hour" name="edit_time_to_hour" required>
+                        <option value="">Hour</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_minute" name="edit_time_to_minute" required>
+                        <option value="">Minute</option>
+                        <?php for ($i = 0; $i < 60; $i += 5): ?>
+                            <option value="<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
+                        <option value="">AM/PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_reason">Reason:</label>
+                    <textarea id="edit_reason" name="edit_reason" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" name="update_booking">Update Booking</button>
+                    <button type="button" class="cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (viewContainer) {
+            document.querySelector('.edit-search-result').addEventListener('click', function() {
                 
                 // Time handling - parse the time into components
                 const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);
