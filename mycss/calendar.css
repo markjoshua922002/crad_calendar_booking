@@ -15,7 +15,6 @@
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
     overflow: hidden; /* Prevent scrolling */
-    margin-top: 10px; /* Add space at the top */
 }
 
 .calendar-container {

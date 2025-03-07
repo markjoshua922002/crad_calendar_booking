@@ -190,10 +190,6 @@ while ($row = $bookings->fetch_assoc()) {
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px); /* Ensure proper width calculation */
-            height: 100vh; /* Fixed height to prevent scrolling */
-            overflow-y: auto; /* Allow scrolling within the main content */
-            display: flex;
-            flex-direction: column;
         }
         
         /* When sidebar is collapsed */
@@ -211,7 +207,6 @@ while ($row = $bookings->fetch_assoc()) {
             border-bottom: 1px solid #e0e0e0;
             position: relative;
             gap: 20px;
-            flex-shrink: 0; /* Prevent top bar from shrinking */
         }
         
         /* New top content container */
@@ -222,6 +217,7 @@ while ($row = $bookings->fetch_assoc()) {
             width: 100%;
             flex-wrap: wrap;
             gap: 20px;
+            margin-bottom: 1000px;
         }
         
         .menu-toggle {
@@ -532,16 +528,6 @@ while ($row = $bookings->fetch_assoc()) {
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Dashboard layout fix */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 1fr 300px; /* Fixed width for sidebar */
-            gap: 20px;
-            height: calc(100vh - 150px); /* Fixed height to prevent scrolling */
-            overflow: hidden; /* Prevent overall scrolling */
-            margin-top: 20px; /* Add space between top bar and dashboard */
         }
     </style>
 </head>
