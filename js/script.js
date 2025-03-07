@@ -82,7 +82,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening Add Department modal");
+                
+                // Close any other open modals first
+                document.querySelectorAll('.modal').forEach(m => {
+                    if (m.id !== 'addDepartmentModal' && m.style.display === 'flex') {
+                        m.style.display = 'none';
+                    }
+                });
+                
+                // Use flex display for centering
                 addDepartmentModal.style.display = 'flex';
+                addDepartmentModal.style.justifyContent = 'center';
+                addDepartmentModal.style.alignItems = 'center';
+                
                 centerModal(addDepartmentModal);
             });
         } else {
@@ -99,7 +111,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening Add Room modal");
+                
+                // Close any other open modals first
+                document.querySelectorAll('.modal').forEach(m => {
+                    if (m.id !== 'addRoomModal' && m.style.display === 'flex') {
+                        m.style.display = 'none';
+                    }
+                });
+                
+                // Use flex display for centering
                 addRoomModal.style.display = 'flex';
+                addRoomModal.style.justifyContent = 'center';
+                addRoomModal.style.alignItems = 'center';
+                
                 centerModal(addRoomModal);
             });
         } else {
@@ -117,7 +141,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening All Appointments modal");
+                
+                // Close any other open modals first
+                document.querySelectorAll('.modal').forEach(m => {
+                    if (m.id !== 'appointmentModal' && m.style.display === 'flex') {
+                        m.style.display = 'none';
+                    }
+                });
+                
+                // Use flex display for centering
                 appointmentModal.style.display = 'flex';
+                appointmentModal.style.justifyContent = 'center';
+                appointmentModal.style.alignItems = 'center';
+                
                 centerModal(appointmentModal);
             });
         } else {
@@ -284,6 +320,9 @@ function setupModal(modalId, openButtonId, closeButtonId) {
         
         console.log(`Setting up modal: ${modalId}`);
         
+        // Ensure the modal has the correct initial styles
+        modal.style.display = 'none';
+        
         // Setup open button if provided
         if (openButtonId) {
             const openButton = document.getElementById(openButtonId);
@@ -293,8 +332,17 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                     e.preventDefault();
                     e.stopPropagation(); // Prevent event bubbling
                     
+                    // Close any other open modals first
+                    document.querySelectorAll('.modal').forEach(m => {
+                        if (m.id !== modalId && m.style.display === 'flex') {
+                            m.style.display = 'none';
+                        }
+                    });
+                    
                     // Use flex display for centering
                     modal.style.display = 'flex';
+                    modal.style.justifyContent = 'center';
+                    modal.style.alignItems = 'center';
                     
                     console.log(`Modal ${modalId} opened`);
                     
@@ -364,25 +412,36 @@ function setupModal(modalId, openButtonId, closeButtonId) {
 // Function to center a modal in the viewport
 function centerModal(modal) {
     try {
-        const modalContent = modal.querySelector('.modal-content');
-        if (!modalContent) return;
+        if (!modal) return;
         
-        // Reset any previous margin adjustments
-        modalContent.style.marginTop = '0';
+        console.log("Centering modal:", modal.id);
+        
+        // Ensure the modal is using flex display
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        
+        const modalContent = modal.querySelector('.modal-content');
+        if (!modalContent) {
+            console.error("Modal content not found");
+            return;
+        }
+        
+        // Reset any previous styles
+        modalContent.style.margin = 'auto';
+        modalContent.style.maxHeight = '90vh';
         
         // Check if the modal content is taller than the viewport
         const viewportHeight = window.innerHeight;
         const contentHeight = modalContent.offsetHeight;
         
-        if (contentHeight > viewportHeight * 0.9) {
-            // If content is too tall, align to top with a small margin
-            modalContent.style.marginTop = '5vh';
-        }
+        console.log(`Modal content height: ${contentHeight}px, Viewport height: ${viewportHeight}px`);
         
-        // Ensure the modal is scrollable if needed
-        if (contentHeight > viewportHeight) {
-            modalContent.style.overflowY = 'auto';
+        if (contentHeight > viewportHeight * 0.9) {
+            // If content is too tall, set a max height and enable scrolling
             modalContent.style.maxHeight = '90vh';
+            modalContent.style.overflowY = 'auto';
+            console.log("Modal content is tall, enabling scrolling");
         }
     } catch (error) {
         console.error('Error centering modal:', error);
@@ -488,7 +547,18 @@ function showDayAppointments(appointments, dayNumber) {
         // Show the day view modal
         const dayViewModal = document.getElementById('dayViewModal');
         if (dayViewModal) {
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'dayViewModal' && m.style.display === 'flex') {
+                    m.style.display = 'none';
+                }
+            });
+            
+            // Use flex display for centering
             dayViewModal.style.display = 'flex';
+            dayViewModal.style.justifyContent = 'center';
+            dayViewModal.style.alignItems = 'center';
+            
             centerModal(dayViewModal);
         }
         
@@ -548,7 +618,18 @@ function openBookingModalWithDate(day) {
         // Show the booking modal
         const bookingModal = document.getElementById('bookingModal');
         if (bookingModal) {
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'bookingModal' && m.style.display === 'flex') {
+                    m.style.display = 'none';
+                }
+            });
+            
+            // Use flex display for centering
             bookingModal.style.display = 'flex';
+            bookingModal.style.justifyContent = 'center';
+            bookingModal.style.alignItems = 'center';
+            
             centerModal(bookingModal);
         } else {
             console.error("Booking modal not found");
@@ -640,7 +721,18 @@ function showAppointmentDetails(appointment) {
         // Show the view modal
         const viewModal = document.getElementById('viewModal');
         if (viewModal) {
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'viewModal' && m.style.display === 'flex') {
+                    m.style.display = 'none';
+                }
+            });
+            
+            // Use flex display for centering
             viewModal.style.display = 'flex';
+            viewModal.style.justifyContent = 'center';
+            viewModal.style.alignItems = 'center';
+            
             centerModal(viewModal);
         } else {
             console.error("View modal not found");
@@ -753,7 +845,18 @@ function fillEditForm(appointment) {
         // Show the edit modal
         const editModal = document.getElementById('editModal');
         if (editModal) {
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'editModal' && m.style.display === 'flex') {
+                    m.style.display = 'none';
+                }
+            });
+            
+            // Use flex display for centering
             editModal.style.display = 'flex';
+            editModal.style.justifyContent = 'center';
+            editModal.style.alignItems = 'center';
+            
             centerModal(editModal);
         } else {
             console.error("Edit modal not found");

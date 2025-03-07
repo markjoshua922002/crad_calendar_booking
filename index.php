@@ -1369,28 +1369,41 @@ while ($row = $bookings->fetch_assoc()) {
                 const modalContent = modal.querySelector('.modal-content');
                 if (!modalContent) return;
                 
-                // Reset any previous margin adjustments
-                modalContent.style.marginTop = '0';
+                // Ensure the modal is using flex display
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                
+                // Reset any previous styles
+                modalContent.style.margin = 'auto';
+                modalContent.style.maxHeight = '90vh';
                 
                 // Check if the modal content is taller than the viewport
                 const viewportHeight = window.innerHeight;
                 const contentHeight = modalContent.offsetHeight;
                 
                 if (contentHeight > viewportHeight * 0.9) {
-                    // If content is too tall, align to top with a small margin
-                    modalContent.style.marginTop = '5vh';
-                }
-                
-                // Ensure the modal is scrollable if needed
-                if (contentHeight > viewportHeight) {
-                    modalContent.style.overflowY = 'auto';
+                    // If content is too tall, set a max height and enable scrolling
                     modalContent.style.maxHeight = '90vh';
+                    modalContent.style.overflowY = 'auto';
                 }
             }
             
             // Show the view modal automatically
             const viewModal = document.getElementById('viewModal');
+            
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'viewModal' && m.style.display === 'flex') {
+                    m.style.display = 'none';
+                }
+            });
+            
+            // Use flex display for centering
             viewModal.style.display = 'flex';
+            viewModal.style.justifyContent = 'center';
+            viewModal.style.alignItems = 'center';
+            
             centerModal(viewModal);
             
             // Add event listener to the edit button
