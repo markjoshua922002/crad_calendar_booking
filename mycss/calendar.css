@@ -14,6 +14,7 @@
     display: flex;
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
+    overflow: hidden; /* Prevent scrolling */
 }
 
 .calendar-container {
@@ -28,7 +29,8 @@
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     margin-top: 10px;
-    height: calc(100% - 30px); /* Account for margins and padding */
+    height: 100%; /* Take full height */
+    overflow: visible; /* Don't add scroll */
 }
 
 /* Weekday header styling */
@@ -39,6 +41,7 @@
     margin-bottom: 10px;
     text-align: center;
     font-weight: 600;
+    height: 40px; /* Fixed height for weekday header */
 }
 
 .weekday-header div {
@@ -47,6 +50,9 @@
     border-radius: 8px;
     color: #495057;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Day cell styling */
@@ -54,13 +60,13 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 10px;
-    min-height: 120px;
+    height: 110px; /* Fixed height for day cells */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden; /* Prevent content overflow */
+    overflow: hidden; /* Hide overflow content */
 }
 
 .day:hover {
@@ -90,6 +96,7 @@
     flex-direction: column;
     gap: 5px;
     overflow: hidden;
+    max-height: 70px; /* Limit height to prevent overflow */
 }
 
 /* Day event styling */
@@ -539,10 +546,11 @@
     display: flex;
     flex-direction: column;
     width: 100%; /* Take full width of parent */
+    overflow: hidden; /* Prevent scrolling */
 }
 
 .calendar-body {
     flex: 1;
-    overflow-y: auto; /* Allow scrolling if content is too tall */
+    overflow: hidden; /* Prevent scrolling */
     padding: 15px;
 }
