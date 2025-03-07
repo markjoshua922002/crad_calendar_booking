@@ -182,6 +182,24 @@ while ($row = $bookings->fetch_assoc()) {
             animation: fadeIn 0.3s;
         }
         
+        /* Remove scrollbars */
+        body, html {
+            overflow: hidden !important;
+        }
+        
+        .app-container {
+            overflow: hidden !important;
+        }
+        
+        .main-content {
+            overflow: hidden !important;
+            height: 100vh;
+        }
+        
+        .dashboard-layout {
+            overflow: hidden !important;
+        }
+        
         /* Fix for main content positioning */
         .main-content {
             flex: 1;
@@ -190,6 +208,8 @@ while ($row = $bookings->fetch_assoc()) {
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px); /* Ensure proper width calculation */
+            height: 100vh; /* Fixed height to prevent scrolling */
+            overflow: hidden !important; /* Prevent scrolling */
         }
         
         /* When sidebar is collapsed */
