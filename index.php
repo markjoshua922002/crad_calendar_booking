@@ -167,6 +167,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/day.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/reminder.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="css/conflict-resolver.css?v=<?= time() ?>">
     <style>
         /* Additional fixes for modal positioning */
         .modal {
@@ -1121,6 +1122,35 @@ while ($row = $bookings->fetch_assoc()) {
                     <textarea name="group_members" id="group_members" rows="3"></textarea>
                 </div>
 
+                <!-- Conflict Resolution AI Component -->
+                <div id="conflict-resolution-container" style="display: none;">
+                    <div class="conflict-alert">
+                        <h4>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Scheduling Conflict Detected
+                            <span class="ai-badge"><i class="fas fa-robot"></i> AI Assistant</span>
+                        </h4>
+                        <p id="conflict-message">There are scheduling conflicts with your requested time. Please review the suggestions below.</p>
+                        
+                        <div class="conflict-details">
+                            <h5>Alternative Times</h5>
+                            <div id="alternative-times" class="alternatives-container">
+                                <!-- Alternative time slots will be inserted here -->
+                            </div>
+                            
+                            <h5>Alternative Rooms</h5>
+                            <div id="alternative-rooms" class="alternatives-container">
+                                <!-- Alternative rooms will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <div class="conflict-actions">
+                            <button type="button" class="ignore-conflicts">Keep Original Time</button>
+                            <button type="button" class="apply-alternative" disabled>Apply Selected Alternative</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" name="add_booking" class="primary-button">
                         <i class="fas fa-calendar-plus"></i> Book Schedule
@@ -1205,8 +1235,15 @@ while ($row = $bookings->fetch_assoc()) {
 <script id="appointmentsData" type="application/json">
     <?= json_encode($appointments) ?>
 </script>
+<script id="roomsData" type="application/json">
+    <?= json_encode($rooms->fetch_all(MYSQLI_ASSOC)) ?>
+</script>
+<script id="departmentsData" type="application/json">
+    <?= json_encode($departments->fetch_all(MYSQLI_ASSOC)) ?>
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer src="js/script.js?v=13"></script>
+<script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
+<script defer src="js/script.js?v=14"></script>
 
 <!-- Modal initialization script -->
 <script>

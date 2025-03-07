@@ -1,3 +1,6 @@
+// Initialize conflict resolver
+let conflictResolver = null;
+
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed - v14");
 
@@ -67,6 +70,9 @@ document.addEventListener("DOMContentLoaded", function() {
         setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm');
         setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm');
         setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm');
+
+        // Initialize Conflict Resolver
+        initializeConflictResolver();
 
         // Direct event listeners for Add Department and Add Room buttons
         const openAddDepartmentBtn = document.getElementById('openAddDepartmentModal');
@@ -1074,4 +1080,319 @@ function handleSidebarToggle() {
     } catch (error) {
         console.error("Error in handleSidebarToggle:", error);
     }
+}
+
+// Initialize the Conflict Resolver
+function initializeConflictResolver() {
+    try {
+        console.log("Initializing Conflict Resolver...");
+        
+        // Get data from JSON elements
+        const appointmentsDataElement = document.getElementById('appointmentsData');
+        const roomsDataElement = document.getElementById('roomsData');
+        const departmentsDataElement = document.getElementById('departmentsData');
+        
+        if (!appointmentsDataElement || !roomsDataElement || !departmentsDataElement) {
+            console.error("Missing data elements for Conflict Resolver");
+            return;
+        }
+        
+        // Parse the JSON data
+        const appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
+        const rooms = JSON.parse(roomsDataElement.textContent || '[]');
+        const departments = JSON.parse(departmentsDataElement.textContent || '[]');
+        
+        // Flatten appointments into an array
+        const flatAppointments = [];
+        for (const day in appointments) {
+            if (appointments.hasOwnProperty(day)) {
+                appointments[day].forEach(appointment => {
+                    flatAppointments.push(appointment);
+                });
+            }
+        }
+        
+        // Create the ConflictResolver instance
+        conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
+        console.log("Conflict Resolver initialized successfully");
+        
+        // Setup form submission handling for conflict detection
+        setupConflictDetection();
+    } catch (error) {
+        console.error("Error initializing Conflict Resolver:", error);
+    }
+}
+
+// Setup conflict detection on form submission
+function setupConflictDetection() {
+    const bookingForm = document.querySelector('#bookingModal form');
+    if (!bookingForm) {
+        console.error("Booking form not found");
+        return;
+    }
+    
+    // Get form elements
+    const dateInput = document.getElementById('date');
+    const roomSelect = document.getElementById('room');
+    const departmentSelect = document.getElementById('department');
+    const timeFromHour = document.getElementById('time_from_hour');
+    const timeFromMinute = document.getElementById('time_from_minute');
+    const timeFromAmpm = document.getElementById('time_from_ampm');
+    const timeToHour = document.getElementById('time_to_hour');
+    const timeToMinute = document.getElementById('time_to_minute');
+    const timeToAmpm = document.getElementById('time_to_ampm');
+    
+    // Add event listeners to check for conflicts when time or room changes
+    [dateInput, roomSelect, timeFromHour, timeFromMinute, timeFromAmpm, 
+     timeToHour, timeToMinute, timeToAmpm].forEach(element => {
+        if (element) {
+            element.addEventListener('change', checkForConflicts);
+        }
+    });
+    
+    // Add form submission handler
+    bookingForm.addEventListener('submit', function(e) {
+        // Only check if we have a conflict resolver
+        if (!conflictResolver) return;
+        
+        // Check for conflicts before submitting
+        const hasConflicts = checkForConflicts();
+        
+        // If there are conflicts and the user hasn't explicitly chosen to ignore them,
+        // prevent form submission
+        if (hasConflicts && !bookingForm.dataset.ignoreConflicts) {
+            e.preventDefault();
+            
+            // Show the conflict resolution container
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.style.display = 'block';
+                
+                // Scroll to the conflict container
+                conflictContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+    
+    // Handle "Keep Original Time" button
+    const ignoreConflictsBtn = document.querySelector('.ignore-conflicts');
+    if (ignoreConflictsBtn) {
+        ignoreConflictsBtn.addEventListener('click', function() {
+            // Mark the form to ignore conflicts
+            bookingForm.dataset.ignoreConflicts = 'true';
+            
+            // Hide the conflict container
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.style.display = 'none';
+            }
+        });
+    }
+    
+    // Handle "Apply Selected Alternative" button
+    const applyAlternativeBtn = document.querySelector('.apply-alternative');
+    if (applyAlternativeBtn) {
+        applyAlternativeBtn.addEventListener('click', function() {
+            // Get the selected alternative
+            const selectedTimeCard = document.querySelector('#alternative-times .alternative-card.selected');
+            const selectedRoomCard = document.querySelector('#alternative-rooms .alternative-card.selected');
+            
+            // Apply the selected time if any
+            if (selectedTimeCard) {
+                const timeFrom = selectedTimeCard.dataset.timeFrom;
+                const timeTo = selectedTimeCard.dataset.timeTo;
+                
+                // Parse the time values
+                const [fromHour, fromMinute, fromAmpm] = parseTimeString(timeFrom);
+                const [toHour, toMinute, toAmpm] = parseTimeString(timeTo);
+                
+                // Update the form fields
+                timeFromHour.value = fromHour;
+                timeFromMinute.value = fromMinute;
+                timeFromAmpm.value = fromAmpm;
+                timeToHour.value = toHour;
+                timeToMinute.value = toMinute;
+                timeToAmpm.value = toAmpm;
+            }
+            
+            // Apply the selected room if any
+            if (selectedRoomCard) {
+                roomSelect.value = selectedRoomCard.dataset.roomId;
+            }
+            
+            // Hide the conflict container
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.style.display = 'none';
+            }
+            
+            // Mark the form to ignore conflicts (since we've resolved them)
+            bookingForm.dataset.ignoreConflicts = 'true';
+        });
+    }
+}
+
+// Parse a time string like "9:00 AM" into [hour, minute, ampm]
+function parseTimeString(timeStr) {
+    const [time, ampm] = timeStr.split(' ');
+    const [hour, minute] = time.split(':');
+    return [parseInt(hour), minute, ampm];
+}
+
+// Check for conflicts and update the UI
+function checkForConflicts() {
+    if (!conflictResolver) return false;
+    
+    // Get form values
+    const dateInput = document.getElementById('date');
+    const roomSelect = document.getElementById('room');
+    const departmentSelect = document.getElementById('department');
+    const timeFromHour = document.getElementById('time_from_hour');
+    const timeFromMinute = document.getElementById('time_from_minute');
+    const timeFromAmpm = document.getElementById('time_from_ampm');
+    const timeToHour = document.getElementById('time_to_hour');
+    const timeToMinute = document.getElementById('time_to_minute');
+    const timeToAmpm = document.getElementById('time_to_ampm');
+    
+    // Ensure all required fields have values
+    if (!dateInput?.value || !roomSelect?.value || !departmentSelect?.value ||
+        !timeFromHour?.value || !timeFromMinute?.value || !timeFromAmpm?.value ||
+        !timeToHour?.value || !timeToMinute?.value || !timeToAmpm?.value) {
+        return false;
+    }
+    
+    // Format the time values
+    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value} ${timeFromAmpm.value}`;
+    const timeTo = `${timeToHour.value}:${timeToMinute.value} ${timeToAmpm.value}`;
+    
+    // Calculate duration in minutes
+    const fromMinutes = (parseInt(timeFromHour.value) % 12) * 60 + parseInt(timeFromMinute.value);
+    const toMinutes = (parseInt(timeToHour.value) % 12) * 60 + parseInt(timeToMinute.value);
+    let durationMinutes = toMinutes - fromMinutes;
+    
+    // Adjust for AM/PM
+    if (timeFromAmpm.value === 'AM' && timeToAmpm.value === 'PM') {
+        durationMinutes += 12 * 60;
+    } else if (timeFromAmpm.value === 'PM' && timeToAmpm.value === 'AM') {
+        durationMinutes += 24 * 60;
+    }
+    
+    // Handle negative duration (crossing midnight)
+    if (durationMinutes <= 0) {
+        durationMinutes += 24 * 60;
+    }
+    
+    // Analyze the booking for conflicts
+    const analysis = conflictResolver.analyzeBooking(
+        dateInput.value,
+        roomSelect.value,
+        departmentSelect.value,
+        timeFrom,
+        timeTo,
+        durationMinutes
+    );
+    
+    // Update the UI based on the analysis
+    updateConflictUI(analysis);
+    
+    return analysis.hasConflicts;
+}
+
+// Update the conflict resolution UI
+function updateConflictUI(analysis) {
+    const conflictContainer = document.getElementById('conflict-resolution-container');
+    const conflictMessage = document.getElementById('conflict-message');
+    const alternativeTimesContainer = document.getElementById('alternative-times');
+    const alternativeRoomsContainer = document.getElementById('alternative-rooms');
+    const applyAlternativeBtn = document.querySelector('.apply-alternative');
+    
+    if (!conflictContainer || !conflictMessage || !alternativeTimesContainer || 
+        !alternativeRoomsContainer || !applyAlternativeBtn) {
+        console.error("Conflict UI elements not found");
+        return;
+    }
+    
+    // If no conflicts, hide the container and return
+    if (!analysis.hasConflicts) {
+        conflictContainer.style.display = 'none';
+        return;
+    }
+    
+    // Show the container
+    conflictContainer.style.display = 'block';
+    
+    // Update the message
+    conflictMessage.textContent = analysis.message;
+    
+    // Clear previous alternatives
+    alternativeTimesContainer.innerHTML = '';
+    alternativeRoomsContainer.innerHTML = '';
+    
+    // Add alternative times
+    if (analysis.alternativeTimes && analysis.alternativeTimes.length > 0) {
+        analysis.alternativeTimes.forEach(alt => {
+            const card = document.createElement('div');
+            card.className = 'alternative-card';
+            card.dataset.timeFrom = alt.timeFrom;
+            card.dataset.timeTo = alt.timeTo;
+            
+            card.innerHTML = `
+                <h6><i class="fas fa-clock"></i> Alternative Time <span class="score">${alt.score}</span></h6>
+                <p>${alt.timeFrom} - ${alt.timeTo}</p>
+            `;
+            
+            // Add click handler to select this alternative
+            card.addEventListener('click', function() {
+                // Remove selected class from all time cards
+                document.querySelectorAll('#alternative-times .alternative-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to this card
+                card.classList.add('selected');
+                
+                // Enable the apply button
+                applyAlternativeBtn.disabled = false;
+            });
+            
+            alternativeTimesContainer.appendChild(card);
+        });
+    } else {
+        alternativeTimesContainer.innerHTML = '<p>No alternative times available.</p>';
+    }
+    
+    // Add alternative rooms
+    if (analysis.alternativeRooms && analysis.alternativeRooms.length > 0) {
+        analysis.alternativeRooms.forEach(alt => {
+            const card = document.createElement('div');
+            card.className = 'alternative-card';
+            card.dataset.roomId = alt.roomId;
+            
+            card.innerHTML = `
+                <h6><i class="fas fa-door-open"></i> Alternative Room <span class="score">${alt.score}</span></h6>
+                <p>${alt.roomName}</p>
+            `;
+            
+            // Add click handler to select this alternative
+            card.addEventListener('click', function() {
+                // Remove selected class from all room cards
+                document.querySelectorAll('#alternative-rooms .alternative-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to this card
+                card.classList.add('selected');
+                
+                // Enable the apply button
+                applyAlternativeBtn.disabled = false;
+            });
+            
+            alternativeRoomsContainer.appendChild(card);
+        });
+    } else {
+        alternativeRoomsContainer.innerHTML = '<p>No alternative rooms available.</p>';
+    }
+    
+    // Disable the apply button initially
+    applyAlternativeBtn.disabled = true;
 }
