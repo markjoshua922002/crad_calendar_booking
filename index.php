@@ -1364,6 +1364,33 @@ while ($row = $bookings->fetch_assoc()) {
                 </div>
             `;
             
+            // Function to show a modal
+            function showModal(modal) {
+                if (!modal) return;
+                
+                // Use flex display for centering
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                
+                // Center the modal
+                centerModal(modal);
+                
+                // Prevent body scrolling
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Function to hide a modal
+            function hideModal(modal) {
+                if (!modal) return;
+                
+                // Hide the modal
+                modal.style.display = 'none';
+                
+                // Restore body scrolling
+                document.body.style.overflow = '';
+            }
+            
             // Function to center a modal
             function centerModal(modal) {
                 const modalContent = modal.querySelector('.modal-content');
@@ -1376,16 +1403,16 @@ while ($row = $bookings->fetch_assoc()) {
                 
                 // Reset any previous styles
                 modalContent.style.margin = 'auto';
-                modalContent.style.maxHeight = '90vh';
                 
-                // Check if the modal content is taller than the viewport
+                // Ensure the modal content doesn't exceed the viewport height
                 const viewportHeight = window.innerHeight;
-                const contentHeight = modalContent.offsetHeight;
+                const contentHeight = modalContent.scrollHeight;
                 
                 if (contentHeight > viewportHeight * 0.9) {
-                    // If content is too tall, set a max height and enable scrolling
-                    modalContent.style.maxHeight = '90vh';
+                    modalContent.style.maxHeight = `${viewportHeight * 0.9}px`;
                     modalContent.style.overflowY = 'auto';
+                } else {
+                    modalContent.style.maxHeight = 'none';
                 }
             }
             
@@ -1395,16 +1422,12 @@ while ($row = $bookings->fetch_assoc()) {
             // Close any other open modals first
             document.querySelectorAll('.modal').forEach(m => {
                 if (m.id !== 'viewModal' && m.style.display === 'flex') {
-                    m.style.display = 'none';
+                    hideModal(m);
                 }
             });
             
-            // Use flex display for centering
-            viewModal.style.display = 'flex';
-            viewModal.style.justifyContent = 'center';
-            viewModal.style.alignItems = 'center';
-            
-            centerModal(viewModal);
+            // Show the modal
+            showModal(viewModal);
             
             // Add event listener to the edit button
             document.querySelector('.edit-search-result').addEventListener('click', function() {
@@ -1441,11 +1464,10 @@ while ($row = $bookings->fetch_assoc()) {
                 document.getElementById('edit_time_to_ampm').value = toAMPM;
                 
                 // Close the view modal and open the edit modal
-                viewModal.style.display = 'none';
+                hideModal(viewModal);
                 
                 const editModal = document.getElementById('editModal');
-                editModal.style.display = 'flex';
-                centerModal(editModal);
+                showModal(editModal);
             });
         }
     });
