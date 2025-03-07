@@ -10,7 +10,7 @@
 
 .calendar-container {
     width: 100%; /* Increase the width to make it bigger */
-    max-width: 100%; /* Use full width of container */
+    max-width: 1200px; /* Set a maximum width */
     margin: 0 auto;
     overflow: hidden; /* Prevent overflow */
 }
@@ -20,7 +20,6 @@
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     margin-top: 10px;
-    min-height: 600px; /* Minimum height for the calendar */
 }
 
 /* Weekday header styling */
@@ -46,7 +45,7 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 10px;
-    min-height: 100px; /* Reduced minimum height */
+    min-height: 120px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -239,12 +238,6 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 1024px) {
-    .calendar {
-        min-height: auto; /* Allow natural height on smaller screens */
-    }
-}
-
 @media (max-width: 768px) {
     .calendar {
         gap: 5px;
@@ -277,18 +270,6 @@
     
     .more-events {
         font-size: 10px;
-    }
-    
-    .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 10px 15px;
-    }
-    
-    .view-options {
-        width: 100%;
-        justify-content: space-between;
     }
 }
 
@@ -525,38 +506,4 @@
     padding: 5px; /* Make dropdowns smaller */
     font-size: 14px; /* Reduce font size */
     width: 60px; /* Adjust width to make it compact */
-}
-
-/* Card header styling */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    background-color: #fff;
-}
-
-.view-options {
-    display: flex;
-    gap: 10px;
-}
-
-.view-btn {
-    padding: 8px 16px;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.view-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.view-btn.active {
-    background-color: #4285f4;
-    color: white;
 }
