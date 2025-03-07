@@ -68,21 +68,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        // Sidebar toggle
-        const menuButton = document.getElementById('menuButton');
-        const sidebar = document.getElementById('sidebar');
-        
-        if (menuButton && sidebar) {
-            menuButton.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                const mainContent = document.querySelector('.main-content');
-                if (mainContent) {
-                    mainContent.classList.toggle('expanded');
-                }
-            });
-        } else {
-            console.error("Menu button or sidebar not found!");
-        }
+        // Setup sidebar toggle
+        handleSidebarToggle();
         
         // Setup calendar interactions
         setupCalendarInteractions();
@@ -806,21 +793,95 @@ function setupTimePicker(hourSelectId, minuteSelectId, ampmSelectId, timeInputId
 }
 
 function handleMobileSidebar() {
-    const menuButton = document.getElementById('menuButton');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (menuButton && sidebar) {
-        menuButton.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-        });
+    try {
+        console.log("Setting up mobile sidebar");
         
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const isMobile = window.innerWidth < 768;
-            if (isMobile && !sidebar.contains(event.target) && event.target !== menuButton) {
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (!menuButton || !sidebar) {
+            console.error("Menu button or sidebar not found for mobile handling");
+            return;
+        }
+        
+        // Create overlay for mobile sidebar
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+        
+        // Check if we're on mobile
+        const isMobile = () => window.innerWidth < 768;
+        
+        // Handle resize events
+        window.addEventListener('resize', function() {
+            if (!isMobile()) {
+                // Remove mobile-specific classes when returning to desktop
                 sidebar.classList.remove('active');
+                overlay.classList.remove('active');
             }
         });
+        
+        // Handle menu button click on mobile
+        menuButton.addEventListener('click', function(e) {
+            if (isMobile()) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log("Menu button clicked on mobile");
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                // Prevent the regular sidebar toggle from running
+                e.stopImmediatePropagation();
+            }
+        });
+        
+        // Close sidebar when clicking overlay
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        
+        // Add CSS for overlay if not already in stylesheet
+        if (!document.getElementById('mobile-sidebar-styles')) {
+            const style = document.createElement('style');
+            style.id = 'mobile-sidebar-styles';
+            style.textContent = `
+                .sidebar-overlay {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 99;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                }
+                
+                .sidebar-overlay.active {
+                    display: block;
+                    opacity: 1;
+                }
+                
+                @media (max-width: 768px) {
+                    .sidebar {
+                        transform: translateX(-100%);
+                        transition: transform 0.3s ease;
+                        z-index: 100;
+                    }
+                    
+                    .sidebar.active {
+                        transform: translateX(0);
+                        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    } catch (error) {
+        console.error("Error in handleMobileSidebar:", error);
     }
 }
 
@@ -840,5 +901,46 @@ function changeCalendarView(view) {
         case 'day':
             alert('Day view will be implemented in the next version!');
             break;
+    }
+}
+
+// Sidebar toggle
+function handleSidebarToggle() {
+    try {
+        console.log("Setting up sidebar toggle");
+        
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        
+        if (!menuButton) {
+            console.error("Menu button not found");
+            return;
+        }
+        
+        if (!sidebar) {
+            console.error("Sidebar not found");
+            return;
+        }
+        
+        menuButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log("Menu button clicked");
+            sidebar.classList.toggle('collapsed');
+            
+            if (mainContent) {
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.style.marginLeft = '70px';
+                    mainContent.style.width = 'calc(100% - 70px)';
+                } else {
+                    mainContent.style.marginLeft = '250px';
+                    mainContent.style.width = 'calc(100% - 250px)';
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error in handleSidebarToggle:", error);
     }
 }

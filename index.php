@@ -182,6 +182,108 @@ while ($row = $bookings->fetch_assoc()) {
             animation: fadeIn 0.3s;
         }
         
+        /* Fix for main content positioning */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 250px; /* Match sidebar width */
+            transition: margin-left 0.3s ease;
+            position: relative;
+            width: calc(100% - 250px); /* Ensure proper width calculation */
+        }
+        
+        /* When sidebar is collapsed */
+        .sidebar.collapsed + .main-content {
+            margin-left: 70px;
+            width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
+        }
+        
+        /* Fix for top bar positioning */
+        .top-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            position: relative;
+            gap: 20px;
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: color 0.2s, background-color 0.2s;
+            order: -1; /* Ensure it's the first item */
+            margin-right: 10px;
+        }
+        
+        .menu-toggle:hover {
+            background-color: #f0f0f0;
+            color: #4285f4;
+        }
+        
+        .page-title {
+            margin-right: auto; /* Push other elements to the right */
+        }
+        
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .page-title p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: auto; /* Push to the right */
+        }
+        
+        /* Responsive adjustments for top bar */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 15px;
+            }
+            
+            .top-bar {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .menu-toggle {
+                order: -1;
+                margin-right: 0;
+            }
+            
+            .page-title {
+                order: 0;
+                width: calc(100% - 50px); /* Full width minus menu button */
+                margin-right: 0;
+            }
+            
+            .user-controls {
+                order: 1;
+                width: 100%;
+                margin-top: 15px;
+                margin-left: 0;
+                justify-content: space-between;
+            }
+        }
+        
         .modal-content {
             position: relative;
             background-color: #fff;
@@ -332,17 +434,6 @@ while ($row = $bookings->fetch_assoc()) {
         
         /* Fix for mobile view */
         @media (max-width: 768px) {
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .user-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
             .form-row {
                 flex-direction: column;
             }
