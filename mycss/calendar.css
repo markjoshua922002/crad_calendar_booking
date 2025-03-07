@@ -10,7 +10,7 @@
 
 .calendar-section {
     width: 1000px; /* Set fixed width to 1000px */
-    height: 950px; /* Increased height to 950px */
+    height: 1000px; /* Increased height to 1000px */
     display: flex;
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
@@ -21,13 +21,13 @@
     width: 1000px; /* Match the width of calendar-section */
     margin: 0 auto;
     overflow: hidden; /* Prevent overflow */
-    height: 900px; /* Increased height to 900px */
+    height: 950px; /* Increased height to 950px */
 }
 
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(6, 1fr); /* Ensure 6 rows of equal height */
+    grid-auto-rows: minmax(130px, 1fr); /* Auto adjust row height with minimum of 130px */
     gap: 10px; /* Adjusted gap for better spacing */
     margin-top: 10px;
     height: 100%; /* Take full height */
@@ -38,11 +38,11 @@
 .weekday-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: 10px; /* Match the gap of the calendar grid */
+    margin-bottom: 10px;
     text-align: center;
     font-weight: 600;
-    height: 45px;
+    height: 40px;
 }
 
 .weekday-header div {
@@ -61,7 +61,7 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 10px;
-    height: 130px; /* Fixed height for day cells */
+    height: 125px; /* Slightly reduced fixed height for day cells */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -582,5 +582,5 @@
 .calendar-body {
     flex: 1;
     overflow: hidden; /* Prevent scrolling */
-    padding: 15px; /* Adjusted padding for better spacing */
+    padding: 10px; /* Reduced padding to maximize space for the grid */
 }
