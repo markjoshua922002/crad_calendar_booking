@@ -804,21 +804,32 @@ function setupDeleteAppointment() {
     }
 }
 
-function setupTimePicker(hourSelectId, minuteSelectId, ampmSelectId, timeInputId) {
-    const hourSelect = document.getElementById(hourSelectId);
-    const minuteSelect = document.getElementById(minuteSelectId);
+function setupTimePicker(hourInputId, minuteInputId, ampmSelectId, timeInputId) {
+    const hourInput = document.getElementById(hourInputId);
+    const minuteInput = document.getElementById(minuteInputId);
     const ampmSelect = document.getElementById(ampmSelectId);
     const timeInput = document.getElementById(timeInputId);
     
-    if (!hourSelect || !minuteSelect || !ampmSelect) {
+    if (!hourInput || !minuteInput || !ampmSelect) {
+        console.error(`Time picker elements not found: ${hourInputId}, ${minuteInputId}, ${ampmSelectId}`);
         return;
     }
     
     const updateTimeInput = () => {
-        if (hourSelect.value && minuteSelect.value && ampmSelect.value) {
-            let hour = parseInt(hourSelect.value);
-            const minute = minuteSelect.value;
+        if (hourInput.value && minuteInput.value && ampmSelect.value) {
+            let hour = parseInt(hourInput.value);
+            const minute = parseInt(minuteInput.value);
             const ampm = ampmSelect.value;
+            
+            // Validate input ranges
+            if (hour < 1) hour = 1;
+            if (hour > 12) hour = 12;
+            hourInput.value = hour;
+            
+            let validMinute = minute;
+            if (validMinute < 0) validMinute = 0;
+            if (validMinute > 59) validMinute = 59;
+            minuteInput.value = validMinute;
             
             // Convert to 24-hour format
             if (ampm === 'PM' && hour < 12) {
@@ -828,7 +839,8 @@ function setupTimePicker(hourSelectId, minuteSelectId, ampmSelectId, timeInputId
             }
             
             // Format as HH:MM:SS
-            const time = `${hour.toString().padStart(2, '0')}:${minute}:00`;
+            const formattedMinute = validMinute.toString().padStart(2, '0');
+            const time = `${hour.toString().padStart(2, '0')}:${formattedMinute}:00`;
             
             if (timeInput) {
                 timeInput.value = time;
@@ -837,9 +849,13 @@ function setupTimePicker(hourSelectId, minuteSelectId, ampmSelectId, timeInputId
     };
     
     // Add event listeners to update the hidden time input
-    hourSelect.addEventListener('change', updateTimeInput);
-    minuteSelect.addEventListener('change', updateTimeInput);
+    hourInput.addEventListener('input', updateTimeInput);
+    minuteInput.addEventListener('input', updateTimeInput);
     ampmSelect.addEventListener('change', updateTimeInput);
+    
+    // Set initial values if needed
+    hourInput.value = hourInput.value || "9";
+    minuteInput.value = minuteInput.value || "00";
 }
 
 function handleMobileSidebar() {

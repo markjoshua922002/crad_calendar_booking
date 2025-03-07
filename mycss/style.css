@@ -616,6 +616,21 @@ body {
     border-radius: 4px;
 }
 
+.time-picker input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 70px;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+/* Remove spinner buttons in Chrome, Safari, Edge, Opera */
+.time-picker input[type="number"]::-webkit-outer-spin-button,
+.time-picker input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;

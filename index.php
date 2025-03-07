@@ -901,19 +901,9 @@ while ($row = $bookings->fetch_assoc()) {
                     <div class="form-group">
                         <label>Time From</label>
                         <div class="time-picker">
-                            <select id="edit_time_from_hour" name="edit_time_from_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="edit_time_from_hour" name="edit_time_from_hour" min="1" max="12" placeholder="Hour" required>
                             <span>:</span>
-                            <select id="edit_time_from_minute" name="edit_time_from_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="edit_time_from_minute" name="edit_time_from_minute" min="0" max="59" step="1" placeholder="Min" required>
                             <select id="edit_time_from_ampm" name="edit_time_from_ampm" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
@@ -923,19 +913,9 @@ while ($row = $bookings->fetch_assoc()) {
                     <div class="form-group">
                         <label>Time To</label>
                         <div class="time-picker">
-                            <select id="edit_time_to_hour" name="edit_time_to_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="edit_time_to_hour" name="edit_time_to_hour" min="1" max="12" placeholder="Hour" required>
                             <span>:</span>
-                            <select id="edit_time_to_minute" name="edit_time_to_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="edit_time_to_minute" name="edit_time_to_minute" min="0" max="59" step="1" placeholder="Min" required>
                             <select id="edit_time_to_ampm" name="edit_time_to_ampm" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
@@ -1044,19 +1024,9 @@ while ($row = $bookings->fetch_assoc()) {
                     <div class="form-group">
                         <label>Time From</label>
                         <div class="time-picker">
-                            <select id="time_from_hour" name="time_from_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="time_from_hour" name="time_from_hour" min="1" max="12" placeholder="Hour" required>
                             <span>:</span>
-                            <select id="time_from_minute" name="time_from_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="time_from_minute" name="time_from_minute" min="0" max="59" step="1" placeholder="Min" required>
                             <select id="time_from_ampm" name="time_from_ampm" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
@@ -1066,19 +1036,9 @@ while ($row = $bookings->fetch_assoc()) {
                     <div class="form-group">
                         <label>Time To</label>
                         <div class="time-picker">
-                            <select id="time_to_hour" name="time_to_hour" required>
-                                <option value="">Hour</option>
-                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="time_to_hour" name="time_to_hour" min="1" max="12" placeholder="Hour" required>
                             <span>:</span>
-                            <select id="time_to_minute" name="time_to_minute" required>
-                                <option value="">Min</option>
-                                <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                    <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                <?php endfor; ?>
-                            </select>
+                            <input type="number" id="time_to_minute" name="time_to_minute" min="0" max="59" step="1" placeholder="Min" required>
                             <select id="time_to_ampm" name="time_to_ampm" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
