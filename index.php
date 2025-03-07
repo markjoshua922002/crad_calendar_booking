@@ -162,7 +162,7 @@ while ($row = $bookings->fetch_assoc()) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
     <link rel="stylesheet" href="mycss/style.css">
     <link rel="stylesheet" href="mycss/calendar.css">
-    <link rel="stylesheet" href="mycss/sidebar.css?v=2">
+    <link rel="stylesheet" href="mycss/sidebar.css">
     <link rel="stylesheet" href="mycss/form.css">
     <link rel="stylesheet" href="mycss/day.css">
     <link rel="stylesheet" href="mycss/reminder.css">
