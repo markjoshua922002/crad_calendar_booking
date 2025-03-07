@@ -9,10 +9,10 @@
 }
 
 .calendar-container {
-    width: 100%; /* Increase the width to make it bigger */
-    max-width: 1200px; /* Set a maximum width */
+    width: 1000px; /* Increase the width to make it bigger */
     margin: 0 auto;
     overflow: hidden; /* Prevent overflow */
+    height: 800px;
 }
 
 .calendar {
