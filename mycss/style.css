@@ -165,9 +165,7 @@ body {
 }
 
 /* Calendar specific styles in card */
-.calendar-section {
-    grid-column: 1;
-}
+
 
 .calendar-body {
     padding: 15px;
