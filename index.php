@@ -1364,8 +1364,34 @@ while ($row = $bookings->fetch_assoc()) {
                 </div>
             `;
             
+            // Function to center a modal
+            function centerModal(modal) {
+                const modalContent = modal.querySelector('.modal-content');
+                if (!modalContent) return;
+                
+                // Reset any previous margin adjustments
+                modalContent.style.marginTop = '0';
+                
+                // Check if the modal content is taller than the viewport
+                const viewportHeight = window.innerHeight;
+                const contentHeight = modalContent.offsetHeight;
+                
+                if (contentHeight > viewportHeight * 0.9) {
+                    // If content is too tall, align to top with a small margin
+                    modalContent.style.marginTop = '5vh';
+                }
+                
+                // Ensure the modal is scrollable if needed
+                if (contentHeight > viewportHeight) {
+                    modalContent.style.overflowY = 'auto';
+                    modalContent.style.maxHeight = '90vh';
+                }
+            }
+            
             // Show the view modal automatically
-            document.getElementById('viewModal').style.display = 'block';
+            const viewModal = document.getElementById('viewModal');
+            viewModal.style.display = 'flex';
+            centerModal(viewModal);
             
             // Add event listener to the edit button
             document.querySelector('.edit-search-result').addEventListener('click', function() {
@@ -1402,8 +1428,11 @@ while ($row = $bookings->fetch_assoc()) {
                 document.getElementById('edit_time_to_ampm').value = toAMPM;
                 
                 // Close the view modal and open the edit modal
-                document.getElementById('viewModal').style.display = 'none';
-                document.getElementById('editModal').style.display = 'block';
+                viewModal.style.display = 'none';
+                
+                const editModal = document.getElementById('editModal');
+                editModal.style.display = 'flex';
+                centerModal(editModal);
             });
         }
     });

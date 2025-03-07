@@ -477,21 +477,26 @@ body {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
     animation: fadeIn 0.3s;
+    
+    /* Flexbox for centering */
+    display: none; /* Will be changed to flex when modal is shown */
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
     background-color: #fff;
-    margin: 50px auto;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    width: 90%;
+    margin: 0 auto; /* Center horizontally */
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 80%;
     max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
     animation: slideIn 0.3s;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    position: relative; /* Added for proper positioning of children */
-    overflow: hidden; /* Prevent content overflow */
+    max-height: 90vh; /* Prevent modal from being taller than viewport */
+    overflow-y: auto; /* Add scrolling for tall content */
 }
 
 .modal-sm {
@@ -506,25 +511,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
     border-bottom: 1px solid #f0f0f0;
-    position: sticky; /* Keep header visible when scrolling */
-    top: 0;
-    background-color: #fff;
-    z-index: 10;
 }
 
 .modal-header h2 {
-    font-size: 18px;
-    font-weight: 600;
     margin: 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
 }
 
 .modal-body {
-    padding: 20px;
+    max-height: calc(80vh - 130px); /* Allow scrolling for very tall content */
     overflow-y: auto;
-    flex: 1;
-    max-height: calc(90vh - 120px); /* Adjust for header and potential footer */
+    padding-right: 5px; /* Space for scrollbar */
 }
 
 .close-button {
@@ -778,7 +780,7 @@ body {
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
+    from { transform: translateY(-30px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 

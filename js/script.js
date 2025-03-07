@@ -82,7 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening Add Department modal");
-                addDepartmentModal.style.display = 'block';
+                addDepartmentModal.style.display = 'flex';
+                centerModal(addDepartmentModal);
             });
         } else {
             console.error("Add Department button or modal not found:", {
@@ -98,7 +99,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening Add Room modal");
-                addRoomModal.style.display = 'block';
+                addRoomModal.style.display = 'flex';
+                centerModal(addRoomModal);
             });
         } else {
             console.error("Add Room button or modal not found:", {
@@ -115,7 +117,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Opening All Appointments modal");
-                appointmentModal.style.display = 'block';
+                appointmentModal.style.display = 'flex';
+                centerModal(appointmentModal);
             });
         } else {
             console.error("View All Appointments button or modal not found:", {
@@ -274,7 +277,6 @@ document.addEventListener("DOMContentLoaded", function() {
 function setupModal(modalId, openButtonId, closeButtonId) {
     try {
         const modal = document.getElementById(modalId);
-        
         if (!modal) {
             console.error(`Modal with ID ${modalId} not found`);
             return;
@@ -290,8 +292,14 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                 openButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation(); // Prevent event bubbling
-                    modal.style.display = 'block';
+                    
+                    // Use flex display for centering
+                    modal.style.display = 'flex';
+                    
                     console.log(`Modal ${modalId} opened`);
+                    
+                    // Center the modal in the viewport
+                    centerModal(modal);
                     
                     // If this is the booking modal, check for conflicts
                     if (modalId === 'bookingModal') {
@@ -341,8 +349,43 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                 console.log(`Modal ${modalId} closed by clicking outside`);
             }
         });
+        
+        // Handle window resize to keep modal centered
+        window.addEventListener('resize', function() {
+            if (modal.style.display === 'flex') {
+                centerModal(modal);
+            }
+        });
     } catch (error) {
         console.error(`Error setting up modal ${modalId}:`, error);
+    }
+}
+
+// Function to center a modal in the viewport
+function centerModal(modal) {
+    try {
+        const modalContent = modal.querySelector('.modal-content');
+        if (!modalContent) return;
+        
+        // Reset any previous margin adjustments
+        modalContent.style.marginTop = '0';
+        
+        // Check if the modal content is taller than the viewport
+        const viewportHeight = window.innerHeight;
+        const contentHeight = modalContent.offsetHeight;
+        
+        if (contentHeight > viewportHeight * 0.9) {
+            // If content is too tall, align to top with a small margin
+            modalContent.style.marginTop = '5vh';
+        }
+        
+        // Ensure the modal is scrollable if needed
+        if (contentHeight > viewportHeight) {
+            modalContent.style.overflowY = 'auto';
+            modalContent.style.maxHeight = '90vh';
+        }
+    } catch (error) {
+        console.error('Error centering modal:', error);
     }
 }
 
@@ -393,7 +436,7 @@ function showDayAppointments(appointments, dayNumber) {
         // Clear previous appointments
         appointmentList.innerHTML = '';
         
-        // Update the day title
+        // Set the day title
         const dayTitle = document.getElementById('dayTitle');
         if (dayTitle) {
             const monthYearElement = document.querySelector('.month-year');
@@ -401,17 +444,18 @@ function showDayAppointments(appointments, dayNumber) {
             dayTitle.textContent = `Appointments for ${currentMonth} ${dayNumber}`;
         }
         
-        // Display appointments
-        if (appointments.length > 0) {
+        // Add appointments to the list
+        if (appointments.length === 0) {
+            appointmentList.innerHTML = '<p>No appointments for this day.</p>';
+        } else {
             appointments.forEach(appointment => {
                 try {
                     // Format times for display
                     const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     
-                    // Create appointment element
                     const appointmentItem = document.createElement('div');
-                    appointmentItem.classList.add('appointment-item');
+                    appointmentItem.className = 'appointment-item';
                     appointmentItem.style.borderLeft = `4px solid ${appointment.color || '#4285f4'}`;
                     appointmentItem.dataset.id = appointment.id;
                     
@@ -438,43 +482,28 @@ function showDayAppointments(appointments, dayNumber) {
             });
             
             // Add event listeners to the view and edit buttons
-            document.querySelectorAll('.view-appointment').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const appointmentId = this.dataset.id;
-                    const appointment = appointments.find(a => a.id == appointmentId);
-                    if (appointment) {
-                        showAppointmentDetails(appointment);
-                    } else {
-                        console.error(`Appointment with ID ${appointmentId} not found`);
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.edit-appointment').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const appointmentId = this.dataset.id;
-                    const appointment = appointments.find(a => a.id == appointmentId);
-                    if (appointment) {
-                        fillEditForm(appointment);
-                    } else {
-                        console.error(`Appointment with ID ${appointmentId} not found`);
-                    }
-                });
-            });
-        } else {
-            appointmentList.innerHTML = '<div class="no-appointments">No appointments for this day</div>';
+            setupAppointmentClicks();
         }
         
         // Show the day view modal
         const dayViewModal = document.getElementById('dayViewModal');
         if (dayViewModal) {
-            dayViewModal.style.display = 'block';
-        } else {
-            console.error("Day view modal not found");
+            dayViewModal.style.display = 'flex';
+            centerModal(dayViewModal);
+        }
+        
+        // Setup the "Add Appointment" button in the day view
+        const openBookingFromDayView = document.getElementById('openBookingFromDayView');
+        if (openBookingFromDayView) {
+            openBookingFromDayView.onclick = function() {
+                // Hide the day view modal
+                if (dayViewModal) {
+                    dayViewModal.style.display = 'none';
+                }
+                
+                // Open the booking modal with the selected date
+                openBookingModalWithDate(dayNumber);
+            };
         }
     } catch (error) {
         console.error("Error in showDayAppointments:", error);
@@ -482,25 +511,50 @@ function showDayAppointments(appointments, dayNumber) {
 }
 
 function openBookingModalWithDate(day) {
-    console.log(`Opening booking modal with date: ${day}`);
-    
-    const dateInput = document.getElementById('date');
-    if (dateInput) {
-        // Get current month and year
-        const monthYear = document.querySelector('.month-year').textContent;
+    try {
+        console.log(`Opening booking modal with date: ${day}`);
+        
+        // Get the current month and year from the UI
+        const monthYearElement = document.querySelector('.month-year');
+        if (!monthYearElement) {
+            console.error("Month/year element not found");
+            return;
+        }
+        
+        const monthYear = monthYearElement.textContent;
         const [month, year] = monthYear.split(' ');
         
-        // Create date string in YYYY-MM-DD format
-        const monthIndex = new Date(`${month} 1, 2000`).getMonth() + 1;
-        const formattedDate = `${year}-${monthIndex.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        // Convert month name to month number
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthNumber = monthNames.indexOf(month) + 1;
         
-        dateInput.value = formattedDate;
-    }
-    
-    // Open the booking modal
-    const bookingModal = document.getElementById('bookingModal');
-    if (bookingModal) {
-        bookingModal.style.display = 'block';
+        if (monthNumber === 0) {
+            console.error(`Invalid month name: ${month}`);
+            return;
+        }
+        
+        // Format the date as YYYY-MM-DD
+        const formattedDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        console.log(`Formatted date: ${formattedDate}`);
+        
+        // Set the date in the booking form
+        const dateInput = document.getElementById('date');
+        if (dateInput) {
+            dateInput.value = formattedDate;
+        } else {
+            console.error("Date input not found");
+        }
+        
+        // Show the booking modal
+        const bookingModal = document.getElementById('bookingModal');
+        if (bookingModal) {
+            bookingModal.style.display = 'flex';
+            centerModal(bookingModal);
+        } else {
+            console.error("Booking modal not found");
+        }
+    } catch (error) {
+        console.error("Error in openBookingModalWithDate:", error);
     }
 }
 
@@ -537,7 +591,7 @@ function setupAppointmentClicks() {
 
 function showAppointmentDetails(appointment) {
     try {
-        console.log(`Showing details for appointment: ${appointment.id}`);
+        console.log("Showing appointment details:", appointment);
         
         const viewContainer = document.getElementById('viewContainer');
         if (!viewContainer) {
@@ -546,73 +600,50 @@ function showAppointmentDetails(appointment) {
         }
         
         // Format times for display
-        let timeFrom = '';
-        let timeTo = '';
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        try {
-            timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        } catch (error) {
-            console.error("Error formatting time:", error);
-            timeFrom = appointment.booking_time_from || 'N/A';
-            timeTo = appointment.booking_time_to || 'N/A';
-        }
-        
+        // Create the appointment details HTML
         viewContainer.innerHTML = `
             <div class="appointment-details">
                 <p><strong>Research Adviser's Name:</strong> ${appointment.name || 'N/A'}</p>
                 <p><strong>Group Number:</strong> ${appointment.id_number || 'N/A'}</p>
-                <p><strong>Set:</strong> ${appointment.set || "N/A"}</p>
+                <p><strong>Set:</strong> ${appointment.set || 'N/A'}</p>
                 <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
                 <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
                 <p><strong>Date:</strong> ${appointment.booking_date || 'N/A'}</p>
                 <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
                 <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
-                <p><strong>Representative:</strong> ${appointment.representative_name || "N/A"}</p>
-                <p><strong>Remarks:</strong> ${appointment.group_members || "None"}</p>
+                <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
+                <p><strong>Remarks:</strong> ${appointment.group_members || 'None'}</p>
             </div>
-            <div class="form-actions-right" style="margin-top: 20px;">
-                <button type="button" class="edit-appointment-btn" data-id="${appointment.id}">Edit Appointment</button>
+            <div class="form-actions">
+                <button type="button" class="edit-from-view" data-id="${appointment.id}">Edit Appointment</button>
             </div>
         `;
         
-        // Close any other open modals
-        document.querySelectorAll('.modal').forEach(modal => {
-            if (modal.id !== 'viewModal') {
-                modal.style.display = 'none';
-            }
-        });
+        // Add event listener to the edit button
+        const editButton = viewContainer.querySelector('.edit-from-view');
+        if (editButton) {
+            editButton.addEventListener('click', function() {
+                // Hide the view modal
+                const viewModal = document.getElementById('viewModal');
+                if (viewModal) {
+                    viewModal.style.display = 'none';
+                }
+                
+                // Fill and show the edit form
+                fillEditForm(appointment);
+            });
+        }
         
         // Show the view modal
         const viewModal = document.getElementById('viewModal');
         if (viewModal) {
-            viewModal.style.display = 'block';
+            viewModal.style.display = 'flex';
+            centerModal(viewModal);
         } else {
             console.error("View modal not found");
-            return;
-        }
-        
-        // Add event listener to the edit button
-        const editButton = document.querySelector('.edit-appointment-btn');
-        if (editButton) {
-            editButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                fillEditForm(appointment);
-                
-                // Close the view modal and open the edit modal
-                viewModal.style.display = 'none';
-                
-                const editModal = document.getElementById('editModal');
-                if (editModal) {
-                    editModal.style.display = 'block';
-                } else {
-                    console.error("Edit modal not found");
-                }
-            });
-        } else {
-            console.error("Edit button not found in view modal");
         }
     } catch (error) {
         console.error("Error in showAppointmentDetails:", error);
@@ -621,84 +652,109 @@ function showAppointmentDetails(appointment) {
 
 function fillEditForm(appointment) {
     try {
-        console.log(`Filling edit form for appointment: ${appointment.id}`);
+        console.log("Filling edit form with appointment:", appointment);
         
-        // Set the appointment ID in the hidden field
-        const appointmentIdField = document.getElementById('appointment_id');
-        if (appointmentIdField) {
-            appointmentIdField.value = appointment.id;
-        } else {
-            console.error("Appointment ID field not found");
+        // Set the appointment ID
+        const appointmentIdInput = document.getElementById('appointment_id');
+        if (appointmentIdInput) {
+            appointmentIdInput.value = appointment.id;
         }
         
-        // Fill in the form fields
-        const fields = {
-            'edit_department': appointment.department_id,
-            'edit_name': appointment.name,
-            'edit_id_number': appointment.id_number,
-            'edit_set': appointment.set,
-            'edit_date': appointment.booking_date,
-            'edit_reason': appointment.reason,
-            'edit_room': appointment.room_id,
-            'edit_representative_name': appointment.representative_name,
-            'edit_group_members': appointment.group_members
-        };
-        
-        for (const [fieldId, value] of Object.entries(fields)) {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.value = value || '';
-            } else {
-                console.warn(`Field with ID ${fieldId} not found`);
-            }
+        // Set the department
+        const departmentSelect = document.getElementById('edit_department');
+        if (departmentSelect) {
+            departmentSelect.value = appointment.department_id;
         }
         
-        // Time handling - parse the time into components
+        // Set the room
+        const roomSelect = document.getElementById('edit_room');
+        if (roomSelect) {
+            roomSelect.value = appointment.room_id;
+        }
+        
+        // Set the name
+        const nameInput = document.getElementById('edit_name');
+        if (nameInput) {
+            nameInput.value = appointment.name || '';
+        }
+        
+        // Set the ID number
+        const idNumberInput = document.getElementById('edit_id_number');
+        if (idNumberInput) {
+            idNumberInput.value = appointment.id_number || '';
+        }
+        
+        // Set the set
+        const setInput = document.getElementById('edit_set');
+        if (setInput) {
+            setInput.value = appointment.set || '';
+        }
+        
+        // Set the date
+        const dateInput = document.getElementById('edit_date');
+        if (dateInput) {
+            dateInput.value = appointment.booking_date || '';
+        }
+        
+        // Set the reason
+        const reasonInput = document.getElementById('edit_reason');
+        if (reasonInput) {
+            reasonInput.value = appointment.reason || '';
+        }
+        
+        // Set the representative name
+        const representativeNameInput = document.getElementById('edit_representative_name');
+        if (representativeNameInput) {
+            representativeNameInput.value = appointment.representative_name || '';
+        }
+        
+        // Set the group members
+        const groupMembersInput = document.getElementById('edit_group_members');
+        if (groupMembersInput) {
+            groupMembersInput.value = appointment.group_members || '';
+        }
+        
+        // Set the time values
         try {
+            // Parse the time values
             const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`);
             const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`);
             
+            // Extract hours, minutes, and AM/PM
             const fromHour = timeFrom.getHours() % 12 || 12;
-            const fromMinute = timeFrom.getMinutes();
+            const fromMinute = timeFrom.getMinutes().toString().padStart(2, '0');
             const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
             
             const toHour = timeTo.getHours() % 12 || 12;
-            const toMinute = timeTo.getMinutes();
+            const toMinute = timeTo.getMinutes().toString().padStart(2, '0');
             const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
             
-            // Set time fields
-            const timeFields = {
-                'edit_time_from_hour': fromHour,
-                'edit_time_from_minute': fromMinute.toString().padStart(2, '0'),
-                'edit_time_from_ampm': fromAMPM,
-                'edit_time_to_hour': toHour,
-                'edit_time_to_minute': toMinute.toString().padStart(2, '0'),
-                'edit_time_to_ampm': toAMPM
-            };
+            // Set the time from values
+            const timeFromHourInput = document.getElementById('edit_time_from_hour');
+            const timeFromMinuteInput = document.getElementById('edit_time_from_minute');
+            const timeFromAMPMInput = document.getElementById('edit_time_from_ampm');
             
-            for (const [fieldId, value] of Object.entries(timeFields)) {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.value = value;
-                } else {
-                    console.warn(`Time field with ID ${fieldId} not found`);
-                }
-            }
+            if (timeFromHourInput) timeFromHourInput.value = fromHour;
+            if (timeFromMinuteInput) timeFromMinuteInput.value = fromMinute;
+            if (timeFromAMPMInput) timeFromAMPMInput.value = fromAMPM;
+            
+            // Set the time to values
+            const timeToHourInput = document.getElementById('edit_time_to_hour');
+            const timeToMinuteInput = document.getElementById('edit_time_to_minute');
+            const timeToAMPMInput = document.getElementById('edit_time_to_ampm');
+            
+            if (timeToHourInput) timeToHourInput.value = toHour;
+            if (timeToMinuteInput) timeToMinuteInput.value = toMinute;
+            if (timeToAMPMInput) timeToAMPMInput.value = toAMPM;
         } catch (error) {
-            console.error("Error parsing appointment times:", error);
+            console.error("Error setting time values:", error);
         }
-        
-        // Close any other open modals
-        document.querySelectorAll('.modal').forEach(modal => {
-            if (modal.id !== 'editModal') {
-                modal.style.display = 'none';
-            }
-        });
         
         // Show the edit modal
         const editModal = document.getElementById('editModal');
         if (editModal) {
-            editModal.style.display = 'block';
+            editModal.style.display = 'flex';
+            centerModal(editModal);
         } else {
             console.error("Edit modal not found");
         }
