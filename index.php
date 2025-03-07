@@ -573,7 +573,7 @@ while ($row = $bookings->fetch_assoc()) {
             </button>
             <div class="top-content">
                 <div class="page-title">
-                    <h1>Calendar Dashboard</h1>
+                    <h1>Calendar</h1>
                     <p><?= date('l, F j, Y') ?></p>
                 </div>
                 <div class="user-controls">
