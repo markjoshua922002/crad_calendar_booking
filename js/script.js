@@ -810,52 +810,120 @@ function setupTimePicker(hourInputId, minuteInputId, ampmSelectId, timeInputId) 
     const ampmSelect = document.getElementById(ampmSelectId);
     const timeInput = document.getElementById(timeInputId);
     
+    // Get the dropdown elements
+    const hourSelect = document.getElementById(hourInputId + '_select');
+    const minuteSelect = document.getElementById(minuteInputId + '_select');
+    
+    // Get the toggle button
+    const toggleBtn = document.querySelector(`.toggle-time-input[data-target="${hourInputId.replace('_hour', '')}"]`);
+    
     if (!hourInput || !minuteInput || !ampmSelect) {
         console.error(`Time picker elements not found: ${hourInputId}, ${minuteInputId}, ${ampmSelectId}`);
         return;
     }
     
     const updateTimeInput = () => {
-        if (hourInput.value && minuteInput.value && ampmSelect.value) {
-            let hour = parseInt(hourInput.value);
-            const minute = parseInt(minuteInput.value);
-            const ampm = ampmSelect.value;
-            
-            // Validate input ranges
-            if (hour < 1) hour = 1;
-            if (hour > 12) hour = 12;
-            hourInput.value = hour;
-            
-            let validMinute = minute;
-            if (validMinute < 0) validMinute = 0;
-            if (validMinute > 59) validMinute = 59;
-            minuteInput.value = validMinute;
-            
-            // Convert to 24-hour format
-            if (ampm === 'PM' && hour < 12) {
-                hour += 12;
-            } else if (ampm === 'AM' && hour === 12) {
-                hour = 0;
+        let hour, minute;
+        
+        // Check if we're in dropdown mode or input mode
+        const isDropdownMode = hourInput.parentElement.classList.contains('show-dropdown');
+        
+        if (isDropdownMode) {
+            hour = parseInt(hourSelect.value || 0);
+            minute = parseInt(minuteSelect.value || 0);
+        } else {
+            hour = parseInt(hourInput.value || 0);
+            minute = parseInt(minuteInput.value || 0);
+        }
+        
+        const ampm = ampmSelect.value;
+        
+        // Validate input ranges
+        if (hour < 1) hour = 1;
+        if (hour > 12) hour = 12;
+        
+        let validMinute = minute;
+        if (validMinute < 0) validMinute = 0;
+        if (validMinute > 59) validMinute = 59;
+        
+        // Update both input and select values
+        hourInput.value = hour;
+        minuteInput.value = validMinute;
+        
+        // Find matching options in the selects
+        const setSelectByValue = (select, value) => {
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value == value) {
+                    select.selectedIndex = i;
+                    break;
+                }
             }
-            
-            // Format as HH:MM:SS
-            const formattedMinute = validMinute.toString().padStart(2, '0');
-            const time = `${hour.toString().padStart(2, '0')}:${formattedMinute}:00`;
-            
-            if (timeInput) {
-                timeInput.value = time;
-            }
+        };
+        
+        setSelectByValue(hourSelect, hour);
+        setSelectByValue(minuteSelect, validMinute.toString().padStart(2, '0'));
+        
+        // Convert to 24-hour format
+        let hour24 = hour;
+        if (ampm === 'PM' && hour < 12) {
+            hour24 += 12;
+        } else if (ampm === 'AM' && hour === 12) {
+            hour24 = 0;
+        }
+        
+        // Format as HH:MM:SS
+        const formattedMinute = validMinute.toString().padStart(2, '0');
+        const time = `${hour24.toString().padStart(2, '0')}:${formattedMinute}:00`;
+        
+        if (timeInput) {
+            timeInput.value = time;
         }
     };
     
     // Add event listeners to update the hidden time input
     hourInput.addEventListener('input', updateTimeInput);
     minuteInput.addEventListener('input', updateTimeInput);
+    hourSelect.addEventListener('change', updateTimeInput);
+    minuteSelect.addEventListener('change', updateTimeInput);
     ampmSelect.addEventListener('change', updateTimeInput);
     
+    // Toggle between input and dropdown
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const hourContainer = hourInput.parentElement;
+            const minuteContainer = minuteInput.parentElement;
+            
+            hourContainer.classList.toggle('show-dropdown');
+            minuteContainer.classList.toggle('show-dropdown');
+            
+            // Update the icon
+            const icon = toggleBtn.querySelector('i');
+            if (hourContainer.classList.contains('show-dropdown')) {
+                icon.className = 'fas fa-keyboard'; // Show keyboard icon when in dropdown mode
+                toggleBtn.title = "Switch to direct input";
+            } else {
+                icon.className = 'fas fa-list'; // Show list icon when in input mode
+                toggleBtn.title = "Switch to dropdown selection";
+            }
+            
+            updateTimeInput();
+        });
+    }
+    
     // Set initial values if needed
-    hourInput.value = hourInput.value || "9";
-    minuteInput.value = minuteInput.value || "00";
+    if (!hourInput.value && !hourSelect.value) {
+        hourInput.value = "9";
+        setSelectByValue(hourSelect, "9");
+    }
+    
+    if (!minuteInput.value && !minuteSelect.value) {
+        minuteInput.value = "00";
+        setSelectByValue(minuteSelect, "00");
+    }
+    
+    // Initial update
+    updateTimeInput();
 }
 
 function handleMobileSidebar() {
