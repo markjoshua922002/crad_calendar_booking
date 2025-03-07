@@ -50,6 +50,56 @@ document.addEventListener("DOMContentLoaded", function() {
         setupModal('dayViewModal', null, 'closeDayViewModal');
         setupModal('appointmentModal', null, 'closeAppointmentModal');
 
+        // Direct event listeners for Add Department and Add Room buttons
+        const openAddDepartmentBtn = document.getElementById('openAddDepartmentModal');
+        const addDepartmentModal = document.getElementById('addDepartmentModal');
+        if (openAddDepartmentBtn && addDepartmentModal) {
+            openAddDepartmentBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Opening Add Department modal");
+                addDepartmentModal.style.display = 'block';
+            });
+        } else {
+            console.error("Add Department button or modal not found:", {
+                button: !!openAddDepartmentBtn,
+                modal: !!addDepartmentModal
+            });
+        }
+
+        const openAddRoomBtn = document.getElementById('openAddRoomModal');
+        const addRoomModal = document.getElementById('addRoomModal');
+        if (openAddRoomBtn && addRoomModal) {
+            openAddRoomBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Opening Add Room modal");
+                addRoomModal.style.display = 'block';
+            });
+        } else {
+            console.error("Add Room button or modal not found:", {
+                button: !!openAddRoomBtn,
+                modal: !!addRoomModal
+            });
+        }
+
+        // Direct event listener for View All Appointments button
+        const viewAllAppointmentsBtn = document.getElementById('viewAllAppointments');
+        const appointmentModal = document.getElementById('appointmentModal');
+        if (viewAllAppointmentsBtn && appointmentModal) {
+            viewAllAppointmentsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Opening All Appointments modal");
+                appointmentModal.style.display = 'block';
+            });
+        } else {
+            console.error("View All Appointments button or modal not found:", {
+                button: !!viewAllAppointmentsBtn,
+                modal: !!appointmentModal
+            });
+        }
+
         // Setup "Add Appointment" button in day view modal
         const openBookingFromDayView = document.getElementById('openBookingFromDayView');
         if (openBookingFromDayView) {

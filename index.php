@@ -734,11 +734,11 @@ while ($row = $bookings->fetch_assoc()) {
                     </div>
                     <div class="card-body">
                         <div class="quick-actions">
-                            <button id="openDepartmentModal" class="action-tile">
+                            <button id="openAddDepartmentModal" class="action-tile">
                                 <i class="fas fa-building"></i>
                                 <span>Add Department</span>
                             </button>
-                            <button id="openRoomModal" class="action-tile">
+                            <button id="openAddRoomModal" class="action-tile">
                                 <i class="fas fa-door-open"></i>
                                 <span>Add Room</span>
                             </button>
