@@ -1,14 +1,6 @@
-/* Add this at the top of the file to remove scrollbars */
+/* Just remove scrollbar */
 body {
-    overflow: hidden !important; /* Prevent scrolling on the body */
-}
-
-html {
-    overflow: hidden !important; /* Prevent scrolling on html element */
-}
-
-.app-container {
-    overflow: hidden !important; /* Prevent scrolling on the app container */
+    overflow: hidden; /* Prevent scrolling on the body */
 }
 
 /* Calendar styles */
@@ -27,7 +19,7 @@ html {
     display: flex;
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
-    overflow: hidden !important; /* Prevent scrolling */
+    overflow: hidden; /* Prevent scrolling */
     padding-bottom: 20px; /* Add padding at the bottom to ensure visibility of last row */
 }
 
@@ -598,12 +590,7 @@ html {
 
 .calendar-body {
     flex: 1;
-    overflow: hidden !important; /* Prevent scrolling */
+    overflow: hidden; /* Prevent scrolling */
     padding: 8px; /* Reduced padding to maximize space for the grid */
     margin-bottom: 15px; /* Add margin at the bottom */
-}
-
-.main-content {
-    overflow: hidden !important; /* Prevent scrolling in main content */
-    height: 100vh !important; /* Set height to viewport height */
 }
