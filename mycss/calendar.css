@@ -15,6 +15,7 @@
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
     overflow: hidden; /* Prevent scrolling */
+    padding-bottom: 20px; /* Add padding at the bottom to ensure visibility of last row */
 }
 
 .calendar-container {
@@ -22,15 +23,17 @@
     margin: 0 auto;
     overflow: hidden; /* Prevent overflow */
     height: 950px; /* Increased height to 950px */
+    transform: scale(0.95); /* Scale down slightly to fit all content */
+    transform-origin: top center; /* Scale from the top center */
 }
 
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: minmax(110px, 1fr); /* Match the day cell height */
+    grid-template-rows: repeat(6, 105px); /* Fixed height rows */
     gap: 8px; /* Reduced gap for better spacing */
     margin-top: 8px; /* Reduced margin */
-    height: 100%; /* Take full height */
+    height: auto; /* Let height adjust naturally */
     overflow: visible; /* Don't add scroll */
 }
 
@@ -61,7 +64,7 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 8px; /* Reduced padding */
-    height: 110px; /* Reduced height for day cells */
+    height: 105px; /* Match the grid row height */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -576,11 +579,13 @@
     display: flex;
     flex-direction: column;
     width: 100%; /* Take full width of parent */
-    overflow: hidden; /* Prevent scrolling */
+    overflow: visible; /* Allow content to be visible */
+    padding-bottom: 10px; /* Add padding at the bottom */
 }
 
 .calendar-body {
     flex: 1;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: visible; /* Allow content to be visible even if it overflows slightly */
     padding: 8px; /* Reduced padding to maximize space for the grid */
+    margin-bottom: 15px; /* Add margin at the bottom */
 }
