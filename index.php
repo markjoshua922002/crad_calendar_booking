@@ -217,6 +217,7 @@ while ($row = $bookings->fetch_assoc()) {
             width: 100%;
             flex-wrap: wrap;
             gap: 20px;
+            margin-bottom: 1000px;
         }
         
         .menu-toggle {
