@@ -160,13 +160,13 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
-    <link rel="stylesheet" href="mycss/style.css">
-    <link rel="stylesheet" href="mycss/calendar.css">
-    <link rel="stylesheet" href="mycss/sidebar.css">
-    <link rel="stylesheet" href="mycss/form.css">
-    <link rel="stylesheet" href="mycss/day.css">
-    <link rel="stylesheet" href="mycss/reminder.css">
-    <link rel="stylesheet" href="mycss/general.css">
+    <link rel="stylesheet" href="mycss/style.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/calendar.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/sidebar.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/form.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/day.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/reminder.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
     <style>
         /* Additional fixes for modal positioning */
         .modal {
