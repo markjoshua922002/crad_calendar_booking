@@ -201,12 +201,21 @@ while ($row = $bookings->fetch_assoc()) {
         /* Fix for top bar positioning */
         .top-bar {
             display: flex;
-            justify-content: flex-start;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid #e0e0e0;
             position: relative;
+            gap: 20px;
+        }
+        
+        /* New top content container */
+        .top-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
             gap: 20px;
         }
         
@@ -219,8 +228,8 @@ while ($row = $bookings->fetch_assoc()) {
             padding: 8px;
             border-radius: 4px;
             transition: color 0.2s, background-color 0.2s;
-            order: -1; /* Ensure it's the first item */
             margin-right: 10px;
+            flex-shrink: 0;
         }
         
         .menu-toggle:hover {
@@ -229,7 +238,7 @@ while ($row = $bookings->fetch_assoc()) {
         }
         
         .page-title {
-            margin-right: auto; /* Push other elements to the right */
+            flex-shrink: 0;
         }
         
         .page-title h1 {
@@ -248,7 +257,69 @@ while ($row = $bookings->fetch_assoc()) {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-left: auto; /* Push to the right */
+            flex-wrap: wrap;
+        }
+        
+        /* Action button styling */
+        .action-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .action-button.primary {
+            background-color: #4285f4;
+            color: white;
+        }
+        
+        .action-button.primary:hover {
+            background-color: #3367d6;
+        }
+        
+        /* Search form styling */
+        .search-form {
+            position: relative;
+        }
+        
+        .search-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input-container input {
+            padding: 8px 15px 8px 35px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 200px;
+            font-size: 14px;
+            background-color: #f8f8f8;
+            transition: all 0.3s;
+        }
+        
+        .search-input-container input:focus {
+            width: 250px;
+            border-color: #4285f4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+        }
+        
+        .search-input-container button {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #777;
+            font-size: 14px;
+            cursor: pointer;
         }
         
         /* Responsive adjustments for top bar */
@@ -261,26 +332,29 @@ while ($row = $bookings->fetch_assoc()) {
             
             .top-bar {
                 flex-wrap: wrap;
-                justify-content: space-between;
+            }
+            
+            .top-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
             
             .menu-toggle {
-                order: -1;
-                margin-right: 0;
-            }
-            
-            .page-title {
-                order: 0;
-                width: calc(100% - 50px); /* Full width minus menu button */
                 margin-right: 0;
             }
             
             .user-controls {
-                order: 1;
                 width: 100%;
-                margin-top: 15px;
-                margin-left: 0;
                 justify-content: space-between;
+            }
+            
+            .search-input-container input {
+                width: 100%;
+            }
+            
+            .search-input-container input:focus {
+                width: 100%;
             }
         }
         
@@ -496,22 +570,24 @@ while ($row = $bookings->fetch_assoc()) {
             <button class="menu-toggle" id="menuButton">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="page-title">
-                <h1>Calendar Dashboard</h1>
-                <p><?= date('l, F j, Y') ?></p>
-            </div>
-            <div class="user-controls">
-                <button id="openBookingModal" class="action-button primary">
-                    <i class="fas fa-plus"></i> New Booking
-                </button>
-                <form method="POST" class="search-form">
-                    <div class="search-input-container">
-                        <input type="text" name="search_name" placeholder="Search by name...">
-                        <button type="submit" name="search_booking">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+            <div class="top-content">
+                <div class="page-title">
+                    <h1>Calendar Dashboard</h1>
+                    <p><?= date('l, F j, Y') ?></p>
+                </div>
+                <div class="user-controls">
+                    <button id="openBookingModal" class="action-button primary">
+                        <i class="fas fa-plus"></i> New Booking
+                    </button>
+                    <form method="POST" class="search-form">
+                        <div class="search-input-container">
+                            <input type="text" name="search_name" placeholder="Search by name...">
+                            <button type="submit" name="search_booking">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
