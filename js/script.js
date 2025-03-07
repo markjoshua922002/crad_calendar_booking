@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM fully loaded and parsed - v13");
+    console.log("DOM fully loaded and parsed - v14");
 
     // Add global error handler to catch and log JavaScript errors
     window.onerror = function(message, source, lineno, colno, error) {
@@ -51,6 +51,18 @@ document.addEventListener("DOMContentLoaded", function() {
         setupModal('appointmentModal', null, 'closeAppointmentModal');
 
         // Initialize time pickers
+        console.log("Initializing time pickers...");
+        
+        // Check if time picker elements exist
+        console.log("Time picker elements:", {
+            time_from_hour: !!document.getElementById('time_from_hour'),
+            time_from_minute: !!document.getElementById('time_from_minute'),
+            time_from_ampm: !!document.getElementById('time_from_ampm'),
+            time_to_hour: !!document.getElementById('time_to_hour'),
+            time_to_minute: !!document.getElementById('time_to_minute'),
+            time_to_ampm: !!document.getElementById('time_to_ampm')
+        });
+        
         setupTimePicker('time_from_hour', 'time_from_minute', 'time_from_ampm');
         setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm');
         setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm');
@@ -848,20 +860,35 @@ function setupTimePicker(hourInputId, minuteInputId, ampmSelectId) {
 
 // Function to setup the time dropdown functionality
 function setupTimeDropdown(inputId) {
+    console.log(`Setting up time dropdown for: ${inputId}`);
+    
     const input = document.getElementById(inputId);
-    if (!input) return;
+    if (!input) {
+        console.error(`Input element not found: ${inputId}`);
+        return;
+    }
     
     const dropdownId = `${inputId}_dropdown`;
     const dropdown = document.getElementById(dropdownId);
-    if (!dropdown) return;
+    if (!dropdown) {
+        console.error(`Dropdown element not found: ${dropdownId}`);
+        return;
+    }
     
     const toggleBtn = document.querySelector(`[data-target="${dropdownId}"]`);
-    if (!toggleBtn) return;
+    if (!toggleBtn) {
+        console.error(`Toggle button not found for: ${dropdownId}`);
+        return;
+    }
+    
+    console.log(`Found all elements for ${inputId} dropdown`);
     
     // Toggle dropdown when button is clicked
-    toggleBtn.addEventListener('click', (e) => {
+    toggleBtn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        
+        console.log(`Toggle button clicked for: ${inputId}`);
         
         // Close all other dropdowns first
         document.querySelectorAll('.time-input-container').forEach(container => {
@@ -872,11 +899,13 @@ function setupTimeDropdown(inputId) {
         
         // Toggle this dropdown
         input.parentElement.classList.toggle('show-dropdown');
+        console.log(`Dropdown toggled: ${input.parentElement.classList.contains('show-dropdown')}`);
     });
     
     // Handle dropdown item selection
     dropdown.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', function() {
+            console.log(`Dropdown item clicked: ${item.dataset.value}`);
             input.value = item.dataset.value;
             input.parentElement.classList.remove('show-dropdown');
             
@@ -887,7 +916,7 @@ function setupTimeDropdown(inputId) {
     });
     
     // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', function(e) {
         if (!input.parentElement.contains(e.target)) {
             input.parentElement.classList.remove('show-dropdown');
         }

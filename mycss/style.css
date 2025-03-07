@@ -613,13 +613,14 @@ body {
 .time-input-container {
     position: relative;
     display: inline-block;
+    width: 70px;
 }
 
 .time-picker input[type="number"] {
-    padding: 8px;
+    padding: 8px 25px 8px 8px; /* Add padding on the right for the dropdown button */
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 70px;
+    width: 100%;
     -moz-appearance: textfield; /* Firefox */
 }
 
@@ -637,14 +638,15 @@ body {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #777;
+    color: #4285f4;
     cursor: pointer;
     padding: 0;
-    font-size: 12px;
+    font-size: 14px;
+    z-index: 2; /* Ensure button is above input */
 }
 
 .toggle-time-input:hover {
-    color: #333;
+    color: #2b5797;
 }
 
 .time-dropdown {
@@ -658,7 +660,7 @@ body {
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
-    z-index: 10;
+    z-index: 1000; /* Higher z-index to ensure it appears above other elements */
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -669,6 +671,7 @@ body {
 .dropdown-item {
     padding: 8px 12px;
     cursor: pointer;
+    text-align: center;
 }
 
 .dropdown-item:hover {
