@@ -190,12 +190,61 @@ while ($row = $bookings->fetch_assoc()) {
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px); /* Ensure proper width calculation */
+            height: 100vh; /* Fixed height to prevent scrolling */
+            overflow-y: auto; /* Allow scrolling within the main content */
         }
         
         /* When sidebar is collapsed */
         .sidebar.collapsed + .main-content {
             margin-left: 70px;
             width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
+        }
+        
+        /* Dashboard layout fix */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px; /* Fixed width for sidebar */
+            gap: 20px;
+            height: calc(100vh - 150px); /* Fixed height to prevent scrolling */
+            overflow: hidden; /* Prevent overall scrolling */
+        }
+        
+        /* Calendar section fix */
+        .calendar-section {
+            overflow-y: auto; /* Allow scrolling within calendar section */
+            height: 100%; /* Take full height of parent */
+        }
+        
+        /* Dashboard sidebar fix */
+        .dashboard-sidebar {
+            width: 300px; /* Fixed width */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%; /* Take full height of parent */
+            overflow-y: auto; /* Allow scrolling within sidebar */
+        }
+        
+        /* Card styling */
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            height: fit-content; /* Adjust height based on content */
+        }
+        
+        /* Calendar card specific */
+        .calendar-section .card {
+            height: 100%; /* Take full height of parent */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calendar-body {
+            flex: 1;
+            overflow-y: auto; /* Allow scrolling within calendar body */
+            padding: 15px;
         }
         
         /* Fix for top bar positioning */
@@ -217,7 +266,6 @@ while ($row = $bookings->fetch_assoc()) {
             width: 100%;
             flex-wrap: wrap;
             gap: 20px;
-            margin-bottom: 1000px;
         }
         
         .menu-toggle {
@@ -261,74 +309,26 @@ while ($row = $bookings->fetch_assoc()) {
             flex-wrap: wrap;
         }
         
-        /* Action button styling */
-        .action-button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background-color 0.2s;
-        }
-        
-        .action-button.primary {
-            background-color: #4285f4;
-            color: white;
-        }
-        
-        .action-button.primary:hover {
-            background-color: #3367d6;
-        }
-        
-        /* Search form styling */
-        .search-form {
-            position: relative;
-        }
-        
-        .search-input-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-input-container input {
-            padding: 8px 15px 8px 35px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            width: 200px;
-            font-size: 14px;
-            background-color: #f8f8f8;
-            transition: all 0.3s;
-        }
-        
-        .search-input-container input:focus {
-            width: 250px;
-            border-color: #4285f4;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
-        }
-        
-        .search-input-container button {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #777;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
         /* Responsive adjustments for top bar */
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr; /* Stack on smaller screens */
+                height: auto; /* Allow natural height */
+                overflow: visible;
+            }
+            
+            .dashboard-sidebar {
+                width: 100%;
+            }
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0;
                 width: 100%;
                 padding: 20px 15px;
+                height: auto; /* Allow natural height on mobile */
+                overflow-y: visible;
             }
             
             .top-bar {
@@ -528,6 +528,99 @@ while ($row = $bookings->fetch_assoc()) {
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Sidebar cards specific */
+        .dashboard-sidebar .card {
+            max-height: calc(50% - 10px); /* Each card takes about half the height minus gap */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Upcoming events card */
+        .upcoming-events {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            max-height: 300px; /* Fixed height for upcoming events list */
+        }
+        
+        .event-item {
+            display: flex;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .event-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .event-color {
+            width: 4px;
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+        
+        .event-details {
+            flex: 1;
+        }
+        
+        .event-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .event-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .event-location {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Quick actions styling */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 5px;
+        }
+        
+        .action-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            text-align: center;
+            height: 100px;
+        }
+        
+        .action-tile:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .action-tile i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #4285f4;
+        }
+        
+        .action-tile span {
+            font-size: 14px;
+            font-weight: 500;
         }
     </style>
 </head>
