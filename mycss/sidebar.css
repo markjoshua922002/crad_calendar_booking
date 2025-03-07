@@ -16,7 +16,7 @@
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Collapsed sidebar */
+/* Collapsed sidebar ok */
 .sidebar.collapsed {
     width: 70px;
     overflow: visible; /* Allow dropdown menus to be visible */
