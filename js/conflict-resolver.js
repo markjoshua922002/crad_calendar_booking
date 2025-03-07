@@ -40,6 +40,9 @@ class ConflictResolver {
      * Initialize availability maps for rooms and departments
      */
     initializeAvailabilityMaps() {
+        console.log("Initializing availability maps...");
+        console.log(`Processing ${this.rooms.length} rooms and ${this.departments.length} departments`);
+        
         // Initialize room availability
         this.rooms.forEach(room => {
             this.roomAvailability[room.id] = {};
@@ -51,20 +54,51 @@ class ConflictResolver {
         });
         
         // Populate with existing appointments
-        this.appointments.forEach(appointment => {
+        console.log(`Processing ${this.appointments.length} appointments`);
+        this.appointments.forEach((appointment, index) => {
+            if (index < 5) {
+                console.log(`Processing appointment: ${JSON.stringify(appointment)}`);
+            }
             this.updateAvailabilityMaps(appointment);
         });
+        
+        // Log the first few entries in the availability maps for debugging
+        console.log("Room availability map sample:");
+        let roomSample = {};
+        Object.keys(this.roomAvailability).slice(0, 2).forEach(roomId => {
+            roomSample[roomId] = this.roomAvailability[roomId];
+        });
+        console.log(roomSample);
     }
     
     /**
      * Update availability maps with an appointment
      */
     updateAvailabilityMaps(appointment) {
+        // Skip if appointment doesn't have required fields
+        if (!appointment.booking_date || !appointment.booking_time_from || 
+            !appointment.booking_time_to || !appointment.room_id || !appointment.department_id) {
+            console.warn("Skipping appointment with missing fields:", appointment);
+            return;
+        }
+        
         const date = appointment.booking_date;
-        const timeFrom = this.convertTo24Hour(appointment.booking_time_from);
-        const timeTo = this.convertTo24Hour(appointment.booking_time_to);
+        let timeFrom, timeTo;
+        
+        try {
+            timeFrom = this.convertTo24Hour(appointment.booking_time_from);
+            timeTo = this.convertTo24Hour(appointment.booking_time_to);
+        } catch (error) {
+            console.error("Error converting appointment times:", error);
+            console.error("Problematic appointment:", appointment);
+            return;
+        }
         
         // Update room availability
+        if (!this.roomAvailability[appointment.room_id]) {
+            this.roomAvailability[appointment.room_id] = {};
+        }
+        
         if (!this.roomAvailability[appointment.room_id][date]) {
             this.roomAvailability[appointment.room_id][date] = [];
         }
@@ -76,6 +110,10 @@ class ConflictResolver {
         });
         
         // Update department availability
+        if (!this.departmentAvailability[appointment.department_id]) {
+            this.departmentAvailability[appointment.department_id] = {};
+        }
+        
         if (!this.departmentAvailability[appointment.department_id][date]) {
             this.departmentAvailability[appointment.department_id][date] = [];
         }
@@ -91,18 +129,47 @@ class ConflictResolver {
      * Convert time string to 24-hour format
      */
     convertTo24Hour(timeStr) {
-        const [time, modifier] = timeStr.split(' ');
-        let [hours, minutes] = time.split(':');
+        console.log(`Converting time to 24-hour format: ${timeStr}`);
         
-        if (hours === '12') {
-            hours = '00';
+        // Handle SQL time format (HH:MM:SS)
+        if (timeStr.includes(':') && !timeStr.includes(' ')) {
+            // Check if it's already in 24-hour format
+            const parts = timeStr.split(':');
+            if (parts.length >= 2) {
+                // It's already in 24-hour format, just return the HH:MM part
+                return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
+            }
         }
         
-        if (modifier === 'PM') {
-            hours = parseInt(hours, 10) + 12;
+        // Handle 12-hour format with AM/PM
+        try {
+            const [timePart, modifier] = timeStr.split(' ');
+            if (!timePart || !modifier) {
+                throw new Error(`Invalid time format: ${timeStr}`);
+            }
+            
+            let [hours, minutes] = timePart.split(':');
+            hours = parseInt(hours, 10);
+            minutes = parseInt(minutes, 10);
+            
+            if (isNaN(hours) || isNaN(minutes)) {
+                throw new Error(`Invalid time components: hours=${hours}, minutes=${minutes}`);
+            }
+            
+            // Convert to 24-hour format
+            if (hours === 12) {
+                hours = modifier.toUpperCase() === 'AM' ? 0 : 12;
+            } else if (modifier.toUpperCase() === 'PM') {
+                hours += 12;
+            }
+            
+            const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            console.log(`Converted time: ${timeStr} -> ${result}`);
+            return result;
+        } catch (error) {
+            console.error(`Error converting time: ${timeStr}`, error);
+            throw new Error(`Failed to convert time: ${timeStr}`);
         }
-        
-        return `${hours.padStart(2, '0')}:${minutes}`;
     }
     
     /**
@@ -127,16 +194,25 @@ class ConflictResolver {
      * Check if a proposed booking conflicts with existing bookings
      */
     checkConflicts(date, roomId, timeFrom, timeTo) {
+        console.log(`Checking conflicts for date: ${date}, room: ${roomId}, time: ${timeFrom} - ${timeTo}`);
         const conflicts = [];
         
         // Convert times to 24-hour format if they aren't already
         const startTime = timeFrom.includes(' ') ? this.convertTo24Hour(timeFrom) : timeFrom;
         const endTime = timeTo.includes(' ') ? this.convertTo24Hour(timeTo) : timeTo;
         
+        console.log(`Converted times for conflict check: ${startTime} - ${endTime}`);
+        
         // Check room availability
         if (this.roomAvailability[roomId] && this.roomAvailability[roomId][date]) {
+            console.log(`Found ${this.roomAvailability[roomId][date].length} existing bookings for this room and date`);
+            
             this.roomAvailability[roomId][date].forEach(booking => {
+                console.log(`Checking against booking: ${booking.timeFrom} - ${booking.timeTo}`);
+                
                 if (this.isTimeOverlap(startTime, endTime, booking.timeFrom, booking.timeTo)) {
+                    console.log(`Conflict detected with booking ID: ${booking.appointmentId}`);
+                    
                     conflicts.push({
                         type: 'room',
                         roomId,
@@ -146,8 +222,11 @@ class ConflictResolver {
                     });
                 }
             });
+        } else {
+            console.log(`No existing bookings found for room ${roomId} on date ${date}`);
         }
         
+        console.log(`Conflict check complete. Found ${conflicts.length} conflicts.`);
         return conflicts;
     }
     
@@ -155,7 +234,9 @@ class ConflictResolver {
      * Check if two time ranges overlap
      */
     isTimeOverlap(start1, end1, start2, end2) {
-        return (start1 < end2 && end1 > start2);
+        const result = (start1 < end2 && end1 > start2);
+        console.log(`Time overlap check: ${start1} < ${end2} && ${end1} > ${start2} = ${result}`);
+        return result;
     }
     
     /**
