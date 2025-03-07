@@ -50,6 +50,12 @@ document.addEventListener("DOMContentLoaded", function() {
         setupModal('dayViewModal', null, 'closeDayViewModal');
         setupModal('appointmentModal', null, 'closeAppointmentModal');
 
+        // Initialize time pickers
+        setupTimePicker('time_from_hour', 'time_from_minute', 'time_from_ampm');
+        setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm');
+        setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm');
+        setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm');
+
         // Direct event listeners for Add Department and Add Room buttons
         const openAddDepartmentBtn = document.getElementById('openAddDepartmentModal');
         const addDepartmentModal = document.getElementById('addDepartmentModal');
@@ -144,12 +150,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
         }
-        
-        // Setup time pickers
-        setupTimePicker('time_from_hour', 'time_from_minute', 'time_from_ampm', 'time_from');
-        setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm', 'time_to');
-        setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm', 'edit_time_from');
-        setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm', 'edit_time_to');
         
         // Handle mobile sidebar
         handleMobileSidebar();
@@ -804,126 +804,94 @@ function setupDeleteAppointment() {
     }
 }
 
-function setupTimePicker(hourInputId, minuteInputId, ampmSelectId, timeInputId) {
+function setupTimePicker(hourInputId, minuteInputId, ampmSelectId) {
     const hourInput = document.getElementById(hourInputId);
     const minuteInput = document.getElementById(minuteInputId);
     const ampmSelect = document.getElementById(ampmSelectId);
-    const timeInput = document.getElementById(timeInputId);
-    
-    // Get the dropdown elements
-    const hourSelect = document.getElementById(hourInputId + '_select');
-    const minuteSelect = document.getElementById(minuteInputId + '_select');
-    
-    // Get the toggle button
-    const toggleBtn = document.querySelector(`.toggle-time-input[data-target="${hourInputId.replace('_hour', '')}"]`);
     
     if (!hourInput || !minuteInput || !ampmSelect) {
         console.error(`Time picker elements not found: ${hourInputId}, ${minuteInputId}, ${ampmSelectId}`);
         return;
     }
     
+    // Setup dropdown functionality
+    setupTimeDropdown(hourInputId);
+    setupTimeDropdown(minuteInputId);
+    
     const updateTimeInput = () => {
-        let hour, minute;
-        
-        // Check if we're in dropdown mode or input mode
-        const isDropdownMode = hourInput.parentElement.classList.contains('show-dropdown');
-        
-        if (isDropdownMode) {
-            hour = parseInt(hourSelect.value || 0);
-            minute = parseInt(minuteSelect.value || 0);
-        } else {
-            hour = parseInt(hourInput.value || 0);
-            minute = parseInt(minuteInput.value || 0);
-        }
-        
-        const ampm = ampmSelect.value;
-        
-        // Validate input ranges
-        if (hour < 1) hour = 1;
-        if (hour > 12) hour = 12;
-        
-        let validMinute = minute;
-        if (validMinute < 0) validMinute = 0;
-        if (validMinute > 59) validMinute = 59;
-        
-        // Update both input and select values
-        hourInput.value = hour;
-        minuteInput.value = validMinute;
-        
-        // Find matching options in the selects
-        const setSelectByValue = (select, value) => {
-            for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].value == value) {
-                    select.selectedIndex = i;
-                    break;
-                }
-            }
-        };
-        
-        setSelectByValue(hourSelect, hour);
-        setSelectByValue(minuteSelect, validMinute.toString().padStart(2, '0'));
-        
-        // Convert to 24-hour format
-        let hour24 = hour;
-        if (ampm === 'PM' && hour < 12) {
-            hour24 += 12;
-        } else if (ampm === 'AM' && hour === 12) {
-            hour24 = 0;
-        }
-        
-        // Format as HH:MM:SS
-        const formattedMinute = validMinute.toString().padStart(2, '0');
-        const time = `${hour24.toString().padStart(2, '0')}:${formattedMinute}:00`;
-        
-        if (timeInput) {
-            timeInput.value = time;
+        if (hourInput.value && minuteInput.value && ampmSelect.value) {
+            let hour = parseInt(hourInput.value);
+            const minute = parseInt(minuteInput.value);
+            const ampm = ampmSelect.value;
+            
+            // Validate input ranges
+            if (hour < 1) hour = 1;
+            if (hour > 12) hour = 12;
+            hourInput.value = hour;
+            
+            let validMinute = minute;
+            if (validMinute < 0) validMinute = 0;
+            if (validMinute > 59) validMinute = 59;
+            minuteInput.value = validMinute;
         }
     };
     
     // Add event listeners to update the hidden time input
     hourInput.addEventListener('input', updateTimeInput);
     minuteInput.addEventListener('input', updateTimeInput);
-    hourSelect.addEventListener('change', updateTimeInput);
-    minuteSelect.addEventListener('change', updateTimeInput);
     ampmSelect.addEventListener('change', updateTimeInput);
     
-    // Toggle between input and dropdown
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const hourContainer = hourInput.parentElement;
-            const minuteContainer = minuteInput.parentElement;
-            
-            hourContainer.classList.toggle('show-dropdown');
-            minuteContainer.classList.toggle('show-dropdown');
-            
-            // Update the icon
-            const icon = toggleBtn.querySelector('i');
-            if (hourContainer.classList.contains('show-dropdown')) {
-                icon.className = 'fas fa-keyboard'; // Show keyboard icon when in dropdown mode
-                toggleBtn.title = "Switch to direct input";
-            } else {
-                icon.className = 'fas fa-list'; // Show list icon when in input mode
-                toggleBtn.title = "Switch to dropdown selection";
-            }
-            
-            updateTimeInput();
-        });
-    }
-    
     // Set initial values if needed
-    if (!hourInput.value && !hourSelect.value) {
-        hourInput.value = "9";
-        setSelectByValue(hourSelect, "9");
-    }
+    hourInput.value = hourInput.value || "9";
+    minuteInput.value = minuteInput.value || "00";
+}
+
+// Function to setup the time dropdown functionality
+function setupTimeDropdown(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
     
-    if (!minuteInput.value && !minuteSelect.value) {
-        minuteInput.value = "00";
-        setSelectByValue(minuteSelect, "00");
-    }
+    const dropdownId = `${inputId}_dropdown`;
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
     
-    // Initial update
-    updateTimeInput();
+    const toggleBtn = document.querySelector(`[data-target="${dropdownId}"]`);
+    if (!toggleBtn) return;
+    
+    // Toggle dropdown when button is clicked
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Close all other dropdowns first
+        document.querySelectorAll('.time-input-container').forEach(container => {
+            if (container !== input.parentElement) {
+                container.classList.remove('show-dropdown');
+            }
+        });
+        
+        // Toggle this dropdown
+        input.parentElement.classList.toggle('show-dropdown');
+    });
+    
+    // Handle dropdown item selection
+    dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            input.value = item.dataset.value;
+            input.parentElement.classList.remove('show-dropdown');
+            
+            // Trigger input event to update any dependent values
+            const event = new Event('input', { bubbles: true });
+            input.dispatchEvent(event);
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!input.parentElement.contains(e.target)) {
+            input.parentElement.classList.remove('show-dropdown');
+        }
+    });
 }
 
 function handleMobileSidebar() {

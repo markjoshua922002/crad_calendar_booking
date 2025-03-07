@@ -612,20 +612,14 @@ body {
 
 .time-input-container {
     position: relative;
-    width: 70px;
-}
-
-.time-picker select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    display: inline-block;
 }
 
 .time-picker input[type="number"] {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 100%;
+    width: 70px;
     -moz-appearance: textfield; /* Firefox */
 }
 
@@ -636,39 +630,55 @@ body {
     margin: 0;
 }
 
-/* Style for the toggle button */
 .toggle-time-input {
-    background: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 6px 8px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #777;
     cursor: pointer;
-    color: #555;
-    transition: all 0.2s ease;
+    padding: 0;
+    font-size: 12px;
 }
 
 .toggle-time-input:hover {
-    background: #e0e0e0;
     color: #333;
 }
 
-/* Default state: show inputs, hide dropdowns */
 .time-dropdown {
     display: none;
     position: absolute;
-    top: 0;
+    top: 100%;
     left: 0;
     width: 100%;
-    height: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* When showing dropdowns */
 .show-dropdown .time-dropdown {
     display: block;
 }
 
-.show-dropdown input[type="number"] {
-    display: none;
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.time-picker select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .form-actions {
