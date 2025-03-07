@@ -10,7 +10,7 @@
 
 .calendar-section {
     width: 1000px; /* Set fixed width to 1000px */
-    height: 900px; /* Increased height to 900px */
+    height: 950px; /* Increased height to 950px */
     display: flex;
     flex-direction: column;
     margin: 0 auto; /* Center the calendar section */
@@ -21,13 +21,14 @@
     width: 1000px; /* Match the width of calendar-section */
     margin: 0 auto;
     overflow: hidden; /* Prevent overflow */
-    height: 850px; /* Increased height to 850px */
+    height: 900px; /* Increased height to 900px */
 }
 
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 15px; /* Increased gap for better spacing */
+    grid-template-rows: repeat(6, 1fr); /* Ensure 6 rows of equal height */
+    gap: 10px; /* Adjusted gap for better spacing */
     margin-top: 10px;
     height: 100%; /* Take full height */
     overflow: visible; /* Don't add scroll */
@@ -60,7 +61,7 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 10px;
-    height: auto; /* Increased height for day cells */
+    height: 130px; /* Fixed height for day cells */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -90,13 +91,35 @@
     color: #333;
 }
 
+/* Adjust day content to fit within fixed height */
 .day-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 5px;
     overflow: hidden; /* Hide overflow content */
-    max-height: 80px; /* Increased max height for content */
+    max-height: 90px; /* Increased max height for content */
+}
+
+/* Day header with number and badge */
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* Appointment badge */
+.appointment-badge {
+    background-color: #4285f4;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
 
 /* Day event styling */
@@ -111,6 +134,9 @@
     text-overflow: ellipsis;
     cursor: pointer;
     transition: opacity 0.2s;
+    height: 25px; /* Fixed height for day events */
+    display: flex;
+    align-items: center;
 }
 
 .day-event:hover {
@@ -137,6 +163,10 @@
     background-color: #e8f0fe;
     border-radius: 4px;
     margin-top: auto;
+    height: 22px; /* Fixed height for more events indicator */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .more-events:hover {
@@ -552,5 +582,5 @@
 .calendar-body {
     flex: 1;
     overflow: hidden; /* Prevent scrolling */
-    padding: 20px; /* Increased padding for better spacing */
+    padding: 15px; /* Adjusted padding for better spacing */
 }
