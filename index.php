@@ -169,39 +169,50 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
     <link rel="stylesheet" href="css/conflict-resolver.css?v=<?= time() ?>">
     <style>
-        /* Additional fixes for modal positioning */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s;
-        }
-        
         /* Remove scrollbar */
         body {
             overflow: hidden;
+            background-color: #f5f7fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
+        }
+        
+        /* App container for proper layout */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            max-width: 2133px; /* 1920px * 1.11 */
+            margin: 0 auto;
         }
         
         /* Fix for main content positioning */
         .main-content {
             flex: 1;
-            padding: 30px;
+            padding: 15px 20px;
             margin-left: 250px; /* Match sidebar width */
             transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 250px); /* Ensure proper width calculation */
+            width: calc(100% - 250px); /* Match sidebar width */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 978px;
+            max-height: 100vh;
         }
         
         /* When sidebar is collapsed */
-        .sidebar.collapsed + .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
+        .sidebar.collapsed + .main-content,
+        .sidebar-collapsed .main-content {
+            margin-left: 70px; /* Match collapsed sidebar width */
+            width: calc(100% - 70px); /* Match collapsed sidebar width */
         }
         
         /* Fix for top bar positioning */
@@ -1482,5 +1493,77 @@ while ($row = $bookings->fetch_assoc()) {
     });
 </script>
 <?php endif; ?>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const appContainer = document.querySelector('.app-container');
+        const mainContent = document.querySelector('.main-content');
+        
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                appContainer.classList.toggle('sidebar-collapsed');
+            });
+        }
+        
+        // Handle responsive behavior
+        function handleResponsive() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed');
+                appContainer.classList.add('sidebar-collapsed');
+                
+                // On mobile, clicking outside sidebar should close it
+                mainContent.addEventListener('click', function() {
+                    if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                        sidebar.classList.add('collapsed');
+                        appContainer.classList.add('sidebar-collapsed');
+                    }
+                });
+            }
+        }
+        
+        // Initialize responsive behavior
+        handleResponsive();
+        
+        // Update on window resize
+        window.addEventListener('resize', handleResponsive);
+        
+        // Handle mobile sidebar
+        function handleMobileSidebar() {
+            const menuButton = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (!menuButton || !sidebar) return;
+            
+            // Create overlay for mobile sidebar
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+            
+            // Toggle sidebar on menu button click
+            menuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+        
+        // Initialize mobile sidebar
+        if (window.innerWidth <= 768) {
+            handleMobileSidebar();
+        }
+        
+        // Your existing calendar code...
+    });
+</script>
 </body>
 </html>
