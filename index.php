@@ -213,21 +213,11 @@ while ($row = $bookings->fetch_assoc()) {
         /* Fix for top bar positioning */
         .top-bar {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid #e0e0e0;
             position: relative;
-            gap: 20px;
-        }
-        
-        /* New top content container */
-        .top-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            flex-wrap: wrap;
             gap: 20px;
         }
         
@@ -249,27 +239,39 @@ while ($row = $bookings->fetch_assoc()) {
             color: #4285f4;
         }
         
+        .top-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
         .page-title {
-            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .page-title h1 {
             font-size: 24px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 5px;
+            margin: 0;
         }
         
         .page-title p {
             color: #666;
             font-size: 14px;
+            margin: 0;
         }
         
         .user-controls {
             display: flex;
             align-items: center;
             gap: 15px;
-            flex-wrap: wrap;
+            margin-left: auto;
         }
         
         /* Action button styling */
@@ -336,37 +338,25 @@ while ($row = $bookings->fetch_assoc()) {
         
         /* Responsive adjustments for top bar */
         @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px 15px;
-            }
-            
             .top-bar {
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
             }
             
             .top-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+                flex-wrap: wrap;
             }
             
-            .menu-toggle {
-                margin-right: 0;
+            .page-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
             
             .user-controls {
                 width: 100%;
-                justify-content: space-between;
-            }
-            
-            .search-input-container input {
-                width: 100%;
-            }
-            
-            .search-input-container input:focus {
-                width: 100%;
+                margin-top: 15px;
+                justify-content: flex-start;
+                gap: 10px;
             }
         }
         
@@ -577,25 +567,25 @@ while ($row = $bookings->fetch_assoc()) {
     <!-- Main Content -->
     <div class="main-content">
         <div class="top-bar">
-            <button class="menu-toggle" id="menuButton">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="top-content">
-                <div class="page-title">
+            <div class="page-title">
+                <button class="menu-toggle" id="menuButton">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
                     <h1>Calendar</h1>
                     <p><?= date('l, F j, Y') ?></p>
                 </div>
-                <div class="user-controls">
-                    <button id="openBookingModal" class="action-button primary">
-                        <i class="fas fa-plus"></i> New Booking
-                    </button>
-                    <div class="search-form">
-                        <div class="search-input-container">
-                            <input type="text" id="search_name" placeholder="Search by name...">
-                            <button type="button" id="search_button">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+            </div>
+            <div class="user-controls">
+                <button id="openBookingModal" class="action-button primary">
+                    <i class="fas fa-plus"></i> New Booking
+                </button>
+                <div class="search-form">
+                    <div class="search-input-container">
+                        <input type="text" id="search_name" placeholder="Search by name...">
+                        <button type="button" id="search_button">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
             </div>
