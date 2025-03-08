@@ -68,10 +68,10 @@ $total_entries = $count_row['total'];
         .main-content {
             flex: 1;
             padding: 15px 20px;
-            margin-left: 200px;
+            margin-left: 250px;
             transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 200px);
+            width: calc(100% - 250px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -433,10 +433,10 @@ $total_entries = $count_row['total'];
         
         /* Compact sidebar */
         .sidebar {
-            height: 978px;
-            max-height: 100vh;
+            height: 125vh;
+            max-height: 125vh;
             overflow: hidden;
-            width: 200px;
+            width: 250px;
         }
         
         .sidebar-header {
@@ -633,7 +633,7 @@ $total_entries = $count_row['total'];
                     </div>
                 </form>
             </div>
-            
+
             <!-- Results Count -->
             <?php if (!empty($search_term) || $logbook_result->num_rows > 0): ?>
                 <div class="result-count">
@@ -645,168 +645,168 @@ $total_entries = $count_row['total'];
             
             <!-- Main Layout -->
             <div class="page-layout">
-                <!-- Left side - Form container -->
-                <div class="form-container">
+    <!-- Left side - Form container -->
+    <div class="form-container">
                     <h2><i class="fas fa-edit"></i> Logbook Form</h2>
                     
-                    <?php
-                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                        $name = $conn->real_escape_string($_POST['name']);
-                        $position = $conn->real_escape_string($_POST['position']);
-                        $purpose = $conn->real_escape_string($_POST['purpose']);
-                        $inquiry = $conn->real_escape_string($_POST['inquiry']);
-                        $submission_date = $conn->real_escape_string($_POST['submission_date']);
-                        
-                        // Get time components and build the time string
-                        $hour = intval($_POST['time_hour']);
-                        $minute = intval($_POST['time_minute']);
-                        $ampm = $_POST['time_ampm'];
-                        
-                        // Convert to 24-hour format for database
-                        if ($ampm === 'PM' && $hour < 12) {
-                            $hour += 12;
-                        } else if ($ampm === 'AM' && $hour === 12) {
-                            $hour = 0;
-                        }
-                        
-                        // Format time as HH:MM:SS
-                        $time = sprintf("%02d:%02d:00", $hour, $minute);
+        <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $name = $conn->real_escape_string($_POST['name']);
+            $position = $conn->real_escape_string($_POST['position']);
+            $purpose = $conn->real_escape_string($_POST['purpose']);
+            $inquiry = $conn->real_escape_string($_POST['inquiry']);
+            $submission_date = $conn->real_escape_string($_POST['submission_date']);
+            
+            // Get time components and build the time string
+            $hour = intval($_POST['time_hour']);
+            $minute = intval($_POST['time_minute']);
+            $ampm = $_POST['time_ampm'];
+            
+            // Convert to 24-hour format for database
+            if ($ampm === 'PM' && $hour < 12) {
+                $hour += 12;
+            } else if ($ampm === 'AM' && $hour === 12) {
+                $hour = 0;
+            }
+            
+            // Format time as HH:MM:SS
+            $time = sprintf("%02d:%02d:00", $hour, $minute);
 
-                        // Check if the submission date is in the past
-                        $current_date = date('Y-m-d');
-                        if ($submission_date < $current_date) {
+            // Check if the submission date is in the past
+            $current_date = date('Y-m-d');
+            if ($submission_date < $current_date) {
                             echo "<div class='error-message'><i class='fas fa-exclamation-circle'></i> You cannot submit a log entry for a past date.</div>";
-                        } else {
-                            // Insert into database
-                            $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission_date, time) 
-                                    VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission_date', '$time')";
+            } else {
+                // Insert into database
+                $sql = "INSERT INTO logbook (name, position, purpose, inquiry, submission_date, time) 
+                        VALUES ('$name', '$position', '$purpose', '$inquiry', '$submission_date', '$time')";
 
-                            if ($conn->query($sql) === TRUE) {
+                if ($conn->query($sql) === TRUE) {
                                 echo "<div class='success-message'><i class='fas fa-check-circle'></i> New record created successfully</div>";
-                                // Refresh the page to show the new entry
-                                echo "<script>window.location.href = 'form.php';</script>";
-                            } else {
+                    // Refresh the page to show the new entry
+                    echo "<script>window.location.href = 'form.php';</script>";
+                } else {
                                 echo "<div class='error-message'><i class='fas fa-exclamation-circle'></i> Error: " . $sql . "<br>" . $conn->error . "</div>";
-                            }
-                        }
-                    }
-                    ?>
+                }
+            }
+        }
+        ?>
                     
-                    <form action="form.php" method="POST" class="logbook-form">
-                        <div class="form-group">
-                            <label for="name">Name:</label>
+        <form action="form.php" method="POST" class="logbook-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
                             <input type="text" id="name" name="name" placeholder="Enter full name" required>
-                        </div>
+            </div>
                         
-                        <div class="form-group">
-                            <label for="position">Position:</label>
-                            <select id="position" name="position" required>
+            <div class="form-group">
+                <label for="position">Position:</label>
+                <select id="position" name="position" required>
                                 <option value="" disabled selected>Select position</option>
-                                <option value="Student">Student</option>
-                                <option value="Teacher">Teacher</option>
-                                <option value="Staff">Staff</option>
-                                <option value="Visitor">Visitor</option>
-                            </select>
-                        </div>
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Visitor">Visitor</option>
+                </select>
+            </div>
                         
-                        <div class="form-group">
-                            <label for="purpose">Purpose:</label>
+            <div class="form-group">
+                <label for="purpose">Purpose:</label>
                             <input type="text" id="purpose" name="purpose" placeholder="Purpose of visit" required>
-                        </div>
+            </div>
                         
-                        <div class="form-group">
+            <div class="form-group">
                             <label for="inquiry">Inquiry (Optional):</label>
                             <input type="text" id="inquiry" name="inquiry" placeholder="Additional information">
-                        </div>
+            </div>
                         
-                        <div class="form-group">
+            <div class="form-group">
                             <label for="submission_date">Date:</label>
-                            <input type="date" id="submission_date" name="submission_date" required min="<?= date('Y-m-d') ?>">
-                        </div>
+                <input type="date" id="submission_date" name="submission_date" required min="<?= date('Y-m-d') ?>">
+            </div>
                         
-                        <div class="form-group">
-                            <label for="time">Time:</label>
-                            <div class="time-picker">
-                                <select id="time_hour" name="time_hour" required>
+            <div class="form-group">
+                <label for="time">Time:</label>
+                <div class="time-picker">
+                    <select id="time_hour" name="time_hour" required>
                                     <option value="" disabled selected>Hour</option>
-                                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                                        <option value="<?= $i ?>"><?= $i ?></option>
-                                    <?php endfor; ?>
-                                </select>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?= $i ?>"><?= $i ?></option>
+                        <?php endfor; ?>
+                    </select>
                                 
-                                <select id="time_minute" name="time_minute" required>
+                    <select id="time_minute" name="time_minute" required>
                                     <option value="" disabled selected>Minute</option>
                                     <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                    <?php endfor; ?>
-                                </select>
+                            <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                        <?php endfor; ?>
+                    </select>
                                 
-                                <select id="time_ampm" name="time_ampm" required>
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
-                            </div>
-                        </div>
+                    <select id="time_ampm" name="time_ampm" required>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+            </div>
                         
                         <button type="submit" class="submit-button">
                             <i class="fas fa-save"></i> Submit
                         </button>
-                    </form>
-                </div>
-                
-                <!-- Right side - Data display container -->
-                <div class="data-container">
+        </form>
+    </div>
+    
+    <!-- Right side - Data display container -->
+    <div class="data-container">
                     <h2><i class="fas fa-list"></i> Logbook Entries</h2>
-                    
-                    <!-- Fixed-height scrollable container -->
-                    <div class="data-table-wrapper">
+        
+        <!-- Fixed-height scrollable container -->
+        <div class="data-table-wrapper">
                         <div class="data-table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Purpose</th>
-                                        <th>Inquiry</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php 
-                                    if ($logbook_result->num_rows > 0) {
-                                        while ($row = $logbook_result->fetch_assoc()) {
-                                            // Convert time from 24-hour format to 12-hour format
-                                            $time_obj = new DateTime($row['time']);
-                                            $formatted_time = $time_obj->format('h:i A');
-                                            
-                                            // Format date
-                                            $date_obj = new DateTime($row['submission_date']);
-                                            $formatted_date = $date_obj->format('m/d/Y');
-                                            
-                                            echo "<tr>";
-                                            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['position']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['purpose']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['inquiry'] ?: 'N/A') . "</td>";
-                                            echo "<td>" . $formatted_date . "</td>";
-                                            echo "<td>" . $formatted_time . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='6' class='no-data'>No entries found</td></tr>";
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Purpose</th>
+                        <th>Inquiry</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    if ($logbook_result->num_rows > 0) {
+                        while ($row = $logbook_result->fetch_assoc()) {
+                            // Convert time from 24-hour format to 12-hour format
+                            $time_obj = new DateTime($row['time']);
+                            $formatted_time = $time_obj->format('h:i A');
+                            
+                            // Format date
+                            $date_obj = new DateTime($row['submission_date']);
+                            $formatted_date = $date_obj->format('m/d/Y');
+                            
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['position']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['purpose']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['inquiry'] ?: 'N/A') . "</td>";
+                            echo "<td>" . $formatted_date . "</td>";
+                            echo "<td>" . $formatted_time . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6' class='no-data'>No entries found</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Toggle sidebar
