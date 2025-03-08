@@ -1,7 +1,4 @@
-/* Just remove scrollbar */
-body {
-    overflow: hidden; /* Prevent scrolling on the body */
-}
+
 
 /* Calendar styles */
 .calendar-wrapper {
