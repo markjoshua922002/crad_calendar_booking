@@ -556,7 +556,7 @@ function setupCalendarInteractions() {
 
 function showDayAppointments(appointments, dayNumber) {
     try {
-        console.log(`Showing appointments for day ${dayNumber}`);
+        console.log(`Showing appointments for day ${dayNumber}:`, appointments);
         
         const appointmentList = document.getElementById('appointmentList');
         if (!appointmentList) {
@@ -587,7 +587,7 @@ function showDayAppointments(appointments, dayNumber) {
                     
                     const appointmentItem = document.createElement('div');
                     appointmentItem.className = 'appointment-item';
-                    appointmentItem.style.borderLeft = `4px solid ${appointment.color || '#4285f4'}`;
+                    appointmentItem.style.borderLeftColor = appointment.color || '#4285f4';
                     appointmentItem.dataset.id = appointment.id;
                     
                     appointmentItem.innerHTML = `
@@ -598,22 +598,44 @@ function showDayAppointments(appointments, dayNumber) {
                         <div class="appointment-details">
                             <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
                             <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
+                            <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
                             <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
                         </div>
                         <div class="appointment-actions">
-                            <button class="view-appointment" data-id="${appointment.id}">View</button>
-                            <button class="edit-appointment" data-id="${appointment.id}">Edit</button>
+                            <button class="view-appointment" data-id="${appointment.id}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="edit-appointment" data-id="${appointment.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
                         </div>
                     `;
                     
                     appointmentList.appendChild(appointmentItem);
+                    
+                    // Add event listeners directly to the buttons
+                    const viewButton = appointmentItem.querySelector('.view-appointment');
+                    const editButton = appointmentItem.querySelector('.edit-appointment');
+                    
+                    if (viewButton) {
+                        viewButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            showAppointmentDetails(appointment);
+                        });
+                    }
+                    
+                    if (editButton) {
+                        editButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            fillEditForm(appointment);
+                        });
+                    }
                 } catch (error) {
                     console.error("Error creating appointment item:", error, appointment);
                 }
             });
-            
-            // Add event listeners to the view and edit buttons
-            setupAppointmentClicks();
         }
         
         // Show the day view modal
