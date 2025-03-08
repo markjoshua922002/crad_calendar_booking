@@ -553,10 +553,6 @@ $total_entries = $count_row['total'];
                     <i class="fas fa-book"></i>
                     <span>Logbook</span>
                 </a>
-                <a href="accounts.php" class="<?= basename($_SERVER['PHP_SELF']) == 'accounts.php' ? 'active' : '' ?>">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
                 <a href="analytics.php" class="<?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'active' : '' ?>">
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>

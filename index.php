@@ -553,10 +553,6 @@ while ($row = $bookings->fetch_assoc()) {
                 <i class="fas fa-book"></i>
                 <span>Logbook</span>
             </a>
-            <a href="accounts.php">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </a>
             <a href="analytics.php">
                 <i class="fas fa-chart-bar"></i>
                 <span>Analytics</span>
