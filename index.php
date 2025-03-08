@@ -1256,7 +1256,7 @@ while ($row = $bookings->fetch_assoc()) {
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
-<script defer src="js/script.js?v=14"></script>
+<script defer src="js/script.js?<?= time() ?>"></script>
 
 <!-- Modal initialization script -->
 <script>
