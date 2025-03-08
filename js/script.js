@@ -425,33 +425,35 @@ function showModal(modal) {
             }
         });
         
-        // Calculate scrollbar width and add padding to body
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.paddingRight = scrollbarWidth + 'px';
-        
         // Add class to body to prevent scrolling
         document.body.classList.add('modal-open');
         
-        // Show modal with flex display
-        modal.style.display = 'flex';
+        // Reset any previous styles
+        modal.style.cssText = '';
         
-        // Force a reflow to ensure the transition works
-        modal.offsetHeight;
-        
-        // Add styles for centering and visibility
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+        // Show modal with flex display and ensure full coverage
+        modal.style.cssText = `
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            padding: 0;
+        `;
         
         // Ensure the modal content is visible and centered
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
-            modalContent.style.opacity = '1';
-            modalContent.style.transform = 'translateY(0)';
-            
-            // Ensure proper max-height
-            const viewportHeight = window.innerHeight;
-            modalContent.style.maxHeight = `calc(${viewportHeight}px - 40px)`;
+            modalContent.style.cssText = `
+                opacity: 1;
+                transform: translateY(0);
+                margin: auto;
+                max-height: 90vh;
+            `;
             
             // Log modal dimensions for debugging
             console.log(`Modal content dimensions: ${modalContent.offsetWidth}x${modalContent.offsetHeight}`);
@@ -488,23 +490,19 @@ function hideModal(modal) {
     console.log(`Hiding modal: ${modal.id}`);
     
     try {
-        // Hide the modal
-        modal.style.display = 'none';
-        modal.style.backgroundColor = '';
+        // Reset all modal styles
+        modal.style.cssText = 'display: none;';
         
         // Remove body scroll lock only if no other modals are visible
         const visibleModals = document.querySelectorAll('.modal[style*="flex"]');
         if (visibleModals.length === 0) {
             document.body.classList.remove('modal-open');
-            document.body.style.paddingRight = '';
         }
         
-        // Reset modal content transform
+        // Reset modal content styles
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
-            modalContent.style.opacity = '';
-            modalContent.style.transform = '';
-            modalContent.style.maxHeight = '';
+            modalContent.style.cssText = '';
         }
     } catch (error) {
         console.error(`Error hiding modal ${modal.id}:`, error);

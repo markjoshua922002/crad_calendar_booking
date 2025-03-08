@@ -468,19 +468,15 @@ body {
 /* Modal styles */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 9999;
     display: none;
     justify-content: center;
     align-items: center;
-    overflow-y: auto;
-    box-sizing: border-box;
+    padding: 0;
 }
 
 /* Modal content container */
@@ -492,9 +488,9 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     position: relative;
     animation: slideIn 0.3s ease;
-    margin: 20px;
+    margin: auto;
     overflow: hidden;
-    max-height: calc(100vh - 40px);
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
 }
@@ -534,7 +530,6 @@ body {
     padding: 20px;
     overflow-y: auto;
     flex: 1;
-    position: relative;
 }
 
 /* Close button */
@@ -802,7 +797,8 @@ body {
 /* Ensure body doesn't scroll when modal is open */
 body.modal-open {
     overflow: hidden;
-    padding-right: 15px; /* Prevent layout shift when scrollbar disappears */
+    width: 100%;
+    height: 100%;
 }
 
 /* Responsive adjustments */
@@ -847,8 +843,7 @@ body.modal-open {
     
     .modal-content {
         width: 95%;
-        margin: 10px;
-        max-height: calc(100vh - 20px);
+        max-height: calc(100vh - 40px);
     }
     
     .card-header {
