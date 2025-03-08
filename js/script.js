@@ -437,12 +437,15 @@ function showModal(modal) {
             justify-content: center;
             align-items: center;
             position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
             z-index: 9999;
-            padding: 0;
+            overflow: hidden;
         `;
         
         // Ensure the modal content is visible and centered
@@ -451,8 +454,10 @@ function showModal(modal) {
             modalContent.style.cssText = `
                 opacity: 1;
                 transform: translateY(0);
-                margin: auto;
-                max-height: 90vh;
+                margin: 20px auto;
+                max-height: 85vh;
+                width: 90%;
+                position: relative;
             `;
             
             // Log modal dimensions for debugging
@@ -497,6 +502,7 @@ function hideModal(modal) {
         const visibleModals = document.querySelectorAll('.modal[style*="flex"]');
         if (visibleModals.length === 0) {
             document.body.classList.remove('modal-open');
+            document.body.style.position = '';
         }
         
         // Reset modal content styles

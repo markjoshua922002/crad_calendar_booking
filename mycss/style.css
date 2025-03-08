@@ -468,15 +468,18 @@ body {
 /* Modal styles */
 .modal {
     position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 9999;
     display: none;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    overflow: hidden;
 }
 
 /* Modal content container */
@@ -488,9 +491,9 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     position: relative;
     animation: slideIn 0.3s ease;
-    margin: auto;
+    margin: 20px auto;
     overflow: hidden;
-    max-height: 90vh;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
 }
@@ -797,6 +800,7 @@ body {
 /* Ensure body doesn't scroll when modal is open */
 body.modal-open {
     overflow: hidden;
+    position: fixed;
     width: 100%;
     height: 100%;
 }
