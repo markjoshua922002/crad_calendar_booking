@@ -1284,128 +1284,51 @@ while ($row = $bookings->fetch_assoc()) {
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
 <script defer src="js/script.js?<?= time() ?>"></script>
 
-<!-- Modal initialization script
+<!-- Toggle sidebar script
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Modal initialization script running');
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const appContainer = document.querySelector('.app-container');
+    const mainContent = document.querySelector('.main-content');
     
-    // Direct initialization of all modals
-    const modals = {
-        'bookingModal': 'openBookingModal',
-        'editModal': null,
-        'viewModal': null,
-        'addDepartmentModal': 'openAddDepartmentModal',
-        'addRoomModal': 'openAddRoomModal',
-        'dayViewModal': null,
-        'appointmentModal': null
-    };
-    
-    function showModal(modal) {
-        if (!modal) return;
-        modal.classList.add('show');
-        document.body.classList.add('modal-open');
-        
-        // Center the modal content
-        const modalContent = modal.querySelector('.modal-content');
-        if (modalContent) {
-            const windowHeight = window.innerHeight;
-            const contentHeight = modalContent.offsetHeight;
-            if (contentHeight < windowHeight) {
-                modal.style.alignItems = 'center';
-            } else {
-                modal.style.alignItems = 'flex-start';
-            }
-        }
+    // Check localStorage for sidebar state on page load
+    const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (isSidebarCollapsed) {
+        sidebar.classList.add('collapsed');
+        appContainer.classList.add('sidebar-collapsed');
     }
     
-    function hideModal(modal) {
-        if (!modal) return;
-        modal.classList.remove('show');
-        document.body.classList.remove('modal-open');
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            appContainer.classList.toggle('sidebar-collapsed');
+            
+            // Store sidebar state in localStorage
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
     }
     
-    // Initialize each modal
-    for (const [modalId, openButtonId] of Object.entries(modals)) {
-        const modal = document.getElementById(modalId);
-        if (!modal) {
-            console.error(`Modal with ID ${modalId} not found`);
-            continue;
-        }
-        
-        // Setup open button if provided
-        if (openButtonId) {
-            const openButton = document.getElementById(openButtonId);
-            if (openButton) {
-                openButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showModal(modal);
-                    console.log(`Modal ${modalId} opened via direct initialization`);
-                });
-            }
-        }
-        
-        // Setup close button
-        const closeButtonId = `close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`;
-        const closeButton = document.getElementById(closeButtonId);
-        if (closeButton) {
-            closeButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                hideModal(modal);
-                console.log(`Modal ${modalId} closed via direct initialization`);
+    // Handle responsive behavior
+    function handleResponsive() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('collapsed');
+            appContainer.classList.add('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', 'true');
+            
+            // On mobile, clicking outside sidebar should close it
+            mainContent.addEventListener('click', function() {
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.add('collapsed');
+                    appContainer.classList.add('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                }
             });
         }
-        
-        // Close modal when clicking outside
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                hideModal(modal);
-                console.log(`Modal ${modalId} closed by clicking outside`);
-            }
-        });
     }
     
-    // Add click handlers to all buttons with data-modal attribute
-    document.querySelectorAll('[data-modal]').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const modalId = this.getAttribute('data-modal');
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                showModal(modal);
-                console.log(`Modal ${modalId} opened via data-modal attribute`);
-            }
-        });
-    });
+    // Initial check
+    handleResponsive();
     
-    // Add click handlers to all close buttons
-    document.querySelectorAll('.close-button').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const modal = this.closest('.modal');
-            if (modal) {
-                hideModal(modal);
-                console.log(`Modal closed via close button`);
-            }
-        });
-    });
-    
-    // Handle window resize for modal positioning
-    window.addEventListener('resize', function() {
-        const visibleModal = document.querySelector('.modal.show');
-        if (visibleModal) {
-            const modalContent = visibleModal.querySelector('.modal-content');
-            if (modalContent) {
-                const windowHeight = window.innerHeight;
-                const contentHeight = modalContent.offsetHeight;
-                if (contentHeight < windowHeight) {
-                    visibleModal.style.alignItems = 'center';
-                } else {
-                    visibleModal.style.alignItems = 'flex-start';
-                }
-            }
-        }
-    });
+    // Listen for window resize
+    window.addEventListener('resize', handleResponsive);
 });

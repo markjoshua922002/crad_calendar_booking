@@ -569,15 +569,15 @@ $total_entries = $count_row['total'];
         
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
-                <button id="menuToggle" class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
                 <div class="page-title">
-                    <h1>Logbook</h1>
-                    <p>Track and manage visitor information</p>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Logbook</h1>
+                        <p><?= date('l, F j, Y') ?></p>
+                    </div>
                 </div>
             </div>
             
@@ -773,16 +773,25 @@ $total_entries = $count_row['total'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle sidebar
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
             const appContainer = document.querySelector('.app-container');
             const mainContent = document.querySelector('.main-content');
             
+            // Check localStorage for sidebar state on page load
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                appContainer.classList.add('sidebar-collapsed');
+            }
+            
             if (menuToggle && sidebar) {
                 menuToggle.addEventListener('click', function() {
                     sidebar.classList.toggle('collapsed');
                     appContainer.classList.toggle('sidebar-collapsed');
+                    
+                    // Store sidebar state in localStorage
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
                 });
             }
             
@@ -791,12 +800,14 @@ $total_entries = $count_row['total'];
                 if (window.innerWidth <= 768) {
                     sidebar.classList.add('collapsed');
                     appContainer.classList.add('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
                     
                     // On mobile, clicking outside sidebar should close it
                     mainContent.addEventListener('click', function() {
                         if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
                             sidebar.classList.add('collapsed');
                             appContainer.classList.add('sidebar-collapsed');
+                            localStorage.setItem('sidebarCollapsed', 'true');
                         }
                     });
                 }
@@ -807,6 +818,37 @@ $total_entries = $count_row['total'];
             
             // Listen for window resize
             window.addEventListener('resize', handleResponsive);
+            
+            // Handle mobile sidebar
+            function handleMobileSidebar() {
+                const menuButton = document.getElementById('menuToggle');
+                const sidebar = document.getElementById('sidebar');
+                
+                if (!menuButton || !sidebar) return;
+                
+                // Create overlay for mobile sidebar
+                const overlay = document.createElement('div');
+                overlay.className = 'sidebar-overlay';
+                document.body.appendChild(overlay);
+                
+                // Toggle sidebar on menu button click
+                menuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+                
+                // Close sidebar when clicking overlay
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+            
+            // Initialize mobile sidebar
+            if (window.innerWidth <= 768) {
+                handleMobileSidebar();
+            }
         });
     </script>
 </body>
