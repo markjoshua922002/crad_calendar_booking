@@ -954,42 +954,19 @@ body {
 .appointment-item {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
     margin-bottom: 12px;
     position: relative;
+}
+
+.appointment-content {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 20px;
     align-items: start;
-}
-
-.appointment-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.appointment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-}
-
-.appointment-header h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-}
-
-.appointment-time {
-    font-size: 14px;
-    color: #666;
-    margin-top: 4px;
 }
 
 .appointment-info {
@@ -998,13 +975,24 @@ body {
     gap: 12px;
 }
 
+.appointment-info p {
+    margin: 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.appointment-info p strong {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
 .appointment-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    align-self: flex-start;
-    position: sticky;
-    top: 20px;
+    min-width: 120px;
 }
 
 .appointment-actions button {
@@ -1018,28 +1006,18 @@ body {
     align-items: center;
     gap: 6px;
     white-space: nowrap;
-    min-width: 120px;
     justify-content: center;
+    font-weight: 500;
 }
 
 .view-appointment {
     background-color: #f1f3f4;
     color: #333;
-    font-weight: 500;
-}
-
-.view-appointment:hover {
-    background-color: #e8eaed;
 }
 
 .edit-appointment {
     background-color: #4285f4;
     color: white;
-    font-weight: 500;
-}
-
-.edit-appointment:hover {
-    background-color: #3367d6;
 }
 
 /* Day view modal specific styles */
@@ -1069,7 +1047,7 @@ body {
 
 /* Responsive styles for appointment items */
 @media (max-width: 640px) {
-    .appointment-item {
+    .appointment-content {
         grid-template-columns: 1fr;
     }
 
@@ -1080,7 +1058,6 @@ body {
     .appointment-actions {
         flex-direction: row;
         justify-content: flex-end;
-        position: static;
         margin-top: 15px;
     }
 }

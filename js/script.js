@@ -592,11 +592,15 @@ function showDayAppointments(appointments, dayNumber) {
                     
                     appointmentItem.innerHTML = `
                         <div class="appointment-content">
-                            <div class="appointment-header">
-                                <h3>${appointment.name || 'Unnamed Appointment'}</h3>
-                                <span class="appointment-time">${timeFrom} - ${timeTo}</span>
-                            </div>
                             <div class="appointment-info">
+                                <p>
+                                    <strong>Research Adviser</strong>
+                                    ${appointment.name || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Time</strong>
+                                    ${timeFrom} - ${timeTo}
+                                </p>
                                 <p>
                                     <strong>Department</strong>
                                     ${appointment.department_name || 'N/A'}
@@ -614,14 +618,14 @@ function showDayAppointments(appointments, dayNumber) {
                                     ${appointment.reason || 'N/A'}
                                 </p>
                             </div>
-                        </div>
-                        <div class="appointment-actions">
-                            <button class="view-appointment" data-id="${appointment.id}">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
-                            <button class="edit-appointment" data-id="${appointment.id}">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
+                            <div class="appointment-actions">
+                                <button class="view-appointment" data-id="${appointment.id}">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="edit-appointment" data-id="${appointment.id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </div>
                         </div>
                     `;
                     
@@ -655,29 +659,7 @@ function showDayAppointments(appointments, dayNumber) {
         // Show the day view modal
         const dayViewModal = document.getElementById('dayViewModal');
         if (dayViewModal) {
-            // Close any other open modals first
-            document.querySelectorAll('.modal').forEach(m => {
-                if (m.id !== 'dayViewModal' && m.style.display === 'flex') {
-                    hideModal(m);
-                }
-            });
-            
-            // Show the modal
             showModal(dayViewModal);
-        }
-        
-        // Setup the "Add Appointment" button in the day view
-        const openBookingFromDayView = document.getElementById('openBookingFromDayView');
-        if (openBookingFromDayView) {
-            openBookingFromDayView.onclick = function() {
-                // Hide the day view modal
-                if (dayViewModal) {
-                    hideModal(dayViewModal);
-                }
-                
-                // Open the booking modal with the selected date
-                openBookingModalWithDate(dayNumber);
-            };
         }
     } catch (error) {
         console.error("Error in showDayAppointments:", error);
