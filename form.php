@@ -42,13 +42,14 @@ $total_entries = $count_row['total'];
     <link rel="stylesheet" href="mycss/form.css?v=<?= time() ?>">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <style>
-        /* Additional styles for the logbook page */
+        /* Additional styles for the logbook page - optimized for 1920px x 978px */
         body {
             overflow: hidden;
             background-color: #f5f7fa;
             height: 100vh;
             margin: 0;
             padding: 0;
+            font-size: 14px;
         }
         
         .app-container {
@@ -56,11 +57,13 @@ $total_entries = $count_row['total'];
             height: 100vh;
             position: relative;
             overflow: hidden;
+            max-width: 1920px;
+            margin: 0 auto;
         }
         
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 20px 25px;
             margin-left: 250px;
             transition: margin-left 0.3s ease;
             position: relative;
@@ -68,6 +71,8 @@ $total_entries = $count_row['total'];
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 978px;
+            max-height: 100vh;
         }
         
         .sidebar-collapsed .main-content {
@@ -83,6 +88,7 @@ $total_entries = $count_row['total'];
             padding-bottom: 10px;
             border-bottom: 1px solid #e0e0e0;
             flex-shrink: 0;
+            height: 50px;
         }
         
         .page-title h1 {
@@ -104,16 +110,18 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 10px;
             background-color: #fff;
-            padding: 10px;
+            padding: 12px 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
+            height: 30px;
         }
         
         .search-container form {
             display: flex;
             width: 100%;
             gap: 10px;
+            align-items: center;
         }
         
         .search-container input {
@@ -123,6 +131,7 @@ $total_entries = $count_row['total'];
             border-radius: 6px;
             font-size: 13px;
             transition: all 0.3s;
+            height: 20px;
         }
         
         .search-container input:focus {
@@ -132,7 +141,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container button {
-            padding: 8px 15px;
+            padding: 6px 15px;
             background-color: #4285f4;
             color: white;
             border: none;
@@ -144,6 +153,7 @@ $total_entries = $count_row['total'];
             align-items: center;
             gap: 8px;
             font-size: 13px;
+            height: 36px;
         }
         
         .search-container button:hover {
@@ -151,7 +161,7 @@ $total_entries = $count_row['total'];
         }
         
         .reset-search {
-            padding: 8px 15px;
+            padding: 6px 15px;
             background-color: #f1f3f4;
             color: #5f6368;
             border: none;
@@ -164,6 +174,7 @@ $total_entries = $count_row['total'];
             align-items: center;
             justify-content: center;
             font-size: 13px;
+            height: 36px;
         }
         
         .reset-search:hover {
@@ -180,6 +191,9 @@ $total_entries = $count_row['total'];
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
+            height: 20px;
+            display: flex;
+            align-items: center;
         }
         
         .page-layout {
@@ -188,18 +202,20 @@ $total_entries = $count_row['total'];
             flex: 1;
             overflow: hidden;
             min-height: 0; /* Important for flex children to respect parent height */
+            height: calc(978px - 170px); /* Adjusted for 1920x978 resolution */
         }
         
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 15px;
+            padding: 15px 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             max-height: 100%;
+            width: 30%;
         }
         
         .form-container h2 {
@@ -222,12 +238,13 @@ $total_entries = $count_row['total'];
         .data-container {
             flex: 2;
             background-color: #fff;
-            padding: 15px;
+            padding: 15px 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            width: 70%;
         }
         
         .data-container h2 {
@@ -253,6 +270,13 @@ $total_entries = $count_row['total'];
             border: 1px solid #f0f0f0;
             border-radius: 6px;
             min-height: 0; /* Important for flex children */
+            height: calc(978px - 250px); /* Adjusted for 1920x978 resolution */
+        }
+        
+        .data-table-container {
+            overflow-y: auto;
+            max-height: 100%;
+            min-height: 0; /* Important for flex children */
         }
         
         .data-table {
@@ -265,7 +289,7 @@ $total_entries = $count_row['total'];
             background-color: #f8f9fa;
             color: #5f6368;
             font-weight: 600;
-            padding: 10px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 2px solid #e0e0e0;
             position: sticky;
@@ -274,7 +298,7 @@ $total_entries = $count_row['total'];
         }
         
         .data-table td {
-            padding: 8px 10px;
+            padding: 8px 12px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
             color: #333;
@@ -316,6 +340,8 @@ $total_entries = $count_row['total'];
             border-radius: 6px;
             font-size: 13px;
             transition: all 0.3s;
+            height: 36px;
+            box-sizing: border-box;
         }
         
         .form-group input:focus,
@@ -338,6 +364,7 @@ $total_entries = $count_row['total'];
             border-radius: 6px;
             font-size: 13px;
             transition: all 0.3s;
+            height: 36px;
         }
         
         .time-picker select:focus {
@@ -360,6 +387,7 @@ $total_entries = $count_row['total'];
             align-items: center;
             gap: 8px;
             margin-top: 5px;
+            height: 36px;
         }
         
         .submit-button:hover {
@@ -396,18 +424,15 @@ $total_entries = $count_row['total'];
             flex: 1;
             padding-right: 5px;
             min-height: 0; /* Important for flex children */
-        }
-        
-        .data-table-container {
-            overflow-y: auto;
-            max-height: 100%;
-            min-height: 0; /* Important for flex children */
+            max-height: calc(978px - 250px); /* Adjusted for 1920x978 resolution */
         }
         
         /* Compact sidebar */
         .sidebar {
-            height: 100vh;
+            height: 978px;
+            max-height: 100vh;
             overflow: hidden;
+            width: 250px;
         }
         
         .sidebar-header {
@@ -419,6 +444,25 @@ $total_entries = $count_row['total'];
             padding: 10px 15px;
         }
         
+        /* Specific for 1920x978 resolution */
+        @media screen and (width: 1920px) and (height: 978px) {
+            .main-content {
+                height: 978px;
+            }
+            
+            .page-layout {
+                height: 808px; /* 978px - (top-bar + search + result-count) */
+            }
+            
+            .data-table-wrapper {
+                height: 728px; /* 808px - (padding + header) */
+            }
+            
+            .logbook-form {
+                max-height: 728px; /* Same as data-table-wrapper */
+            }
+        }
+        
         /* Mobile responsiveness */
         @media (max-width: 1200px) {
             .page-layout {
@@ -427,6 +471,7 @@ $total_entries = $count_row['total'];
             
             .form-container, .data-container {
                 max-height: none;
+                width: 100%;
             }
             
             .form-container {
