@@ -208,7 +208,7 @@ while ($row = $bookings->fetch_assoc()) {
             display: flex;
             gap: 20px;
             flex: 1;
-            min-height: calc(100vh - 100px); /* Subtract top bar height */
+            height: calc(100vh - 100px); /* Fixed height instead of min-height */
         }
         
         /* Calendar section */
@@ -216,6 +216,7 @@ while ($row = $bookings->fetch_assoc()) {
             flex: 1;
             display: flex;
             flex-direction: column;
+            height: 100%; /* Full height of parent */
         }
         
         .calendar-section .card {
@@ -226,24 +227,30 @@ while ($row = $bookings->fetch_assoc()) {
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 0;
+            height: 100%; /* Full height of parent */
+            overflow: hidden; /* Prevent content overflow */
         }
         
         .calendar-section .card-header {
             padding: 15px 20px;
             border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .calendar-section .card-body {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         
         .calendar-body {
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* Important for flex overflow */
+            overflow: hidden; /* Contain the overflow */
+        }
+        
+        .weekday-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            padding: 10px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         
         .calendar {
@@ -252,7 +259,8 @@ while ($row = $bookings->fetch_assoc()) {
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
             padding: 10px;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow calendar grid to scroll */
+            min-height: 0; /* Allow flex container to shrink */
         }
         
         /* Dashboard sidebar */
@@ -262,20 +270,24 @@ while ($row = $bookings->fetch_assoc()) {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            height: 100%; /* Full height of parent */
+            overflow-y: auto; /* Allow sidebar to scroll if content is too long */
         }
         
         /* Responsive adjustments */
         @media (max-width: 1024px) {
             .dashboard-layout {
                 flex-direction: column;
+                height: auto; /* Allow height to adjust on mobile */
             }
             
             .dashboard-sidebar {
                 width: 100%;
+                height: auto;
             }
             
             .calendar-section {
-                min-height: 600px;
+                height: 600px; /* Fixed height on mobile */
             }
         }
         
