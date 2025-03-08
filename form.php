@@ -43,6 +43,11 @@ $total_entries = $count_row['total'];
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <style>
         /* Additional styles for the logbook page */
+        body {
+            overflow-y: auto;
+            background-color: #f5f7fa;
+        }
+        
         .app-container {
             display: flex;
             min-height: 100vh;
@@ -56,6 +61,7 @@ $total_entries = $count_row['total'];
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px);
+            overflow-y: auto;
         }
         
         .sidebar-collapsed .main-content {
@@ -166,6 +172,8 @@ $total_entries = $count_row['total'];
         .page-layout {
             display: flex;
             gap: 30px;
+            height: calc(100vh - 200px);
+            min-height: 600px;
         }
         
         .form-container {
@@ -174,7 +182,8 @@ $total_entries = $count_row['total'];
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            height: fit-content;
+            overflow-y: auto;
+            max-height: 100%;
         }
         
         .form-container h2 {
@@ -187,6 +196,10 @@ $total_entries = $count_row['total'];
             display: flex;
             align-items: center;
             gap: 10px;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
         }
         
         .form-container h2 i {
@@ -201,7 +214,8 @@ $total_entries = $count_row['total'];
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 140px);
+            max-height: 100%;
+            overflow: hidden;
         }
         
         .data-container h2 {
@@ -214,6 +228,10 @@ $total_entries = $count_row['total'];
             display: flex;
             align-items: center;
             gap: 10px;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
         }
         
         .data-container h2 i {
@@ -226,6 +244,7 @@ $total_entries = $count_row['total'];
             overflow-y: auto;
             border: 1px solid #f0f0f0;
             border-radius: 6px;
+            height: calc(100% - 60px);
         }
         
         .data-table {
@@ -360,13 +379,18 @@ $total_entries = $count_row['total'];
         }
         
         /* Mobile responsiveness */
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .page-layout {
+                height: auto;
                 flex-direction: column;
             }
             
             .form-container, .data-container {
-                width: 100%;
+                max-height: none;
+            }
+            
+            .form-container {
+                margin-bottom: 30px;
             }
             
             .data-container {
@@ -374,11 +398,26 @@ $total_entries = $count_row['total'];
             }
         }
         
+        @media (max-width: 992px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .data-container {
+                height: 500px;
+            }
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0;
                 width: 100%;
-                padding: 20px;
+                padding: 15px;
+            }
+            
+            .sidebar-collapsed .main-content {
+                margin-left: 0;
+                width: 100%;
             }
             
             .time-picker {
@@ -394,6 +433,35 @@ $total_entries = $count_row['total'];
                 align-items: flex-start;
                 gap: 15px;
             }
+            
+            .data-container {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+            }
+            
+            .form-container, .data-container {
+                padding: 15px;
+            }
+            
+            .search-container {
+                padding: 10px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Fix for sidebar height */
+        .sidebar {
+            height: 100vh;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -641,6 +709,7 @@ $total_entries = $count_row['total'];
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
             const appContainer = document.querySelector('.app-container');
+            const mainContent = document.querySelector('.main-content');
             
             if (menuToggle && sidebar) {
                 menuToggle.addEventListener('click', function() {
@@ -654,6 +723,14 @@ $total_entries = $count_row['total'];
                 if (window.innerWidth <= 768) {
                     sidebar.classList.add('collapsed');
                     appContainer.classList.add('sidebar-collapsed');
+                    
+                    // On mobile, clicking outside sidebar should close it
+                    mainContent.addEventListener('click', function() {
+                        if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                            sidebar.classList.add('collapsed');
+                            appContainer.classList.add('sidebar-collapsed');
+                        }
+                    });
                 }
             }
             
@@ -662,6 +739,27 @@ $total_entries = $count_row['total'];
             
             // Listen for window resize
             window.addEventListener('resize', handleResponsive);
+            
+            // Adjust heights on window resize
+            function adjustHeights() {
+                if (window.innerWidth > 1200) {
+                    const topBarHeight = document.querySelector('.top-bar').offsetHeight;
+                    const searchContainerHeight = document.querySelector('.search-container').offsetHeight;
+                    const resultCountHeight = document.querySelector('.result-count') ? 
+                                             document.querySelector('.result-count').offsetHeight + 15 : 0;
+                    
+                    const totalHeight = topBarHeight + searchContainerHeight + resultCountHeight + 60; // 60px for padding
+                    document.querySelector('.page-layout').style.height = `calc(100vh - ${totalHeight}px)`;
+                } else {
+                    document.querySelector('.page-layout').style.height = 'auto';
+                }
+            }
+            
+            // Call once on load
+            setTimeout(adjustHeights, 100);
+            
+            // Call on resize
+            window.addEventListener('resize', adjustHeights);
         });
     </script>
 </body>
