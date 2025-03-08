@@ -190,14 +190,14 @@ $total_entries = $count_row['total'];
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 12px 15px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 100%;
             width: 28%;
+            height: fit-content;
+            min-height: 0;
         }
         
         .form-container h2 {
@@ -302,6 +302,10 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group:last-child {
             margin-bottom: 10px;
         }
         
@@ -356,24 +360,7 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            padding: 6px 12px;
-            background-color: #4285f4;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-            height: 30px;
-        }
-        
-        .submit-button:hover {
-            background-color: #3367d6;
+            margin-top: 10px;
         }
         
         .success-message {
@@ -402,11 +389,9 @@ $total_entries = $count_row['total'];
         
         /* Scrollable areas when needed */
         .logbook-form {
-            overflow-y: auto;
-            flex: 1;
-            padding-right: 5px;
-            min-height: 0; /* Important for flex children */
-            max-height: calc(978px - 200px); /* Adjusted for more compact layout */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
         /* Specific for 1920x978 resolution with zoom out */
