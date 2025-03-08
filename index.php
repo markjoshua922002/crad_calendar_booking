@@ -203,6 +203,82 @@ while ($row = $bookings->fetch_assoc()) {
             min-height: 100vh;
         }
         
+        /* Dashboard layout */
+        .dashboard-layout {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: calc(100vh - 100px); /* Subtract top bar height */
+        }
+        
+        /* Calendar section */
+        .calendar-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calendar-section .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0;
+        }
+        
+        .calendar-section .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .calendar-section .card-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .calendar-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* Important for flex overflow */
+        }
+        
+        .calendar {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        /* Dashboard sidebar */
+        .dashboard-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar {
+                width: 100%;
+            }
+            
+            .calendar-section {
+                min-height: 600px;
+            }
+        }
+        
         /* When sidebar is collapsed */
         .sidebar.collapsed + .main-content,
         .sidebar-collapsed .main-content {
