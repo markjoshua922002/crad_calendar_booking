@@ -587,23 +587,37 @@ function showDayAppointments(appointments, dayNumber) {
                     
                     const appointmentItem = document.createElement('div');
                     appointmentItem.className = 'appointment-item';
-                    appointmentItem.style.borderLeftColor = appointment.color || '#4285f4';
+                    appointmentItem.style.borderLeft = `4px solid ${appointment.color || '#4285f4'}`;
                     appointmentItem.dataset.id = appointment.id;
                     
                     appointmentItem.innerHTML = `
-                        <div class="appointment-header">
-                            <h3>${appointment.name || 'Unnamed Appointment'}</h3>
-                            <span class="appointment-time">${timeFrom} - ${timeTo}</span>
-                        </div>
-                        <div class="appointment-details">
-                            <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
-                            <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
-                            <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
-                            <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
+                        <div class="appointment-content">
+                            <div class="appointment-header">
+                                <h3>${appointment.name || 'Unnamed Appointment'}</h3>
+                                <span class="appointment-time">${timeFrom} - ${timeTo}</span>
+                            </div>
+                            <div class="appointment-info">
+                                <p>
+                                    <strong>Department</strong>
+                                    ${appointment.department_name || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Room</strong>
+                                    ${appointment.room_name || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Representative</strong>
+                                    ${appointment.representative_name || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Agenda</strong>
+                                    ${appointment.reason || 'N/A'}
+                                </p>
+                            </div>
                         </div>
                         <div class="appointment-actions">
                             <button class="view-appointment" data-id="${appointment.id}">
-                                <i class="fas fa-eye"></i> View
+                                <i class="fas fa-eye"></i> View Details
                             </button>
                             <button class="edit-appointment" data-id="${appointment.id}">
                                 <i class="fas fa-edit"></i> Edit
