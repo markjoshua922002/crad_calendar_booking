@@ -91,11 +91,11 @@ $total_entries = $count_row['total'];
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #e0e0e0;
             flex-shrink: 0;
-            height: 40px;
+            min-height: 40px;
         }
         
         .page-title h1 {
@@ -113,75 +113,50 @@ $total_entries = $count_row['total'];
         }
         
         .search-container {
-            margin-bottom: 10px;
-            display: flex;
-            gap: 8px;
+            margin-bottom: 15px;
             background-color: #fff;
-            padding: 8px 12px;
+            padding: 12px;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
-            height: 24px;
         }
         
         .search-container form {
             display: flex;
-            width: 100%;
-            gap: 8px;
             align-items: center;
+            gap: 10px;
+            width: 100%;
         }
         
         .search-container input {
             flex: 1;
-            padding: 6px 10px;
+            min-width: 200px;
+            padding: 8px 12px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             font-size: 12px;
-            transition: all 0.3s;
-            height: 16px;
+            height: 32px;
         }
         
-        .search-container input:focus {
-            outline: none;
-            border-color: #4285f4;
-            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-        }
-        
-        .search-container button {
-            padding: 4px 12px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s;
+        .search-actions {
             display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .search-container button,
+        .reset-search {
+            height: 32px;
+            padding: 0 16px;
+            white-space: nowrap;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
-            height: 28px;
         }
         
         .search-container button:hover {
             background-color: #3367d6;
-        }
-        
-        .reset-search {
-            padding: 4px 12px;
-            background-color: #f1f3f4;
-            color: #5f6368;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            height: 28px;
         }
         
         .reset-search:hover {
@@ -208,8 +183,8 @@ $total_entries = $count_row['total'];
             gap: 15px;
             flex: 1;
             overflow: hidden;
-            min-height: 0; /* Important for flex children to respect parent height */
-            height: calc(978px - 130px); /* Adjusted for more compact layout */
+            min-height: 0;
+            height: calc(100vh - 180px); /* Adjust for top bar + search + padding */
         }
         
         .form-container {
@@ -506,12 +481,28 @@ $total_entries = $count_row['total'];
             
             .search-container form {
                 flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-actions {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            
+            .search-container input {
+                width: 100%;
             }
             
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .page-title {
+                width: 100%;
             }
         }
         
