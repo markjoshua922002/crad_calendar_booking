@@ -585,14 +585,14 @@ while ($row = $bookings->fetch_assoc()) {
                     <button id="openBookingModal" class="action-button primary">
                         <i class="fas fa-plus"></i> New Booking
                     </button>
-                    <form method="POST" class="search-form">
+                    <div class="search-form">
                         <div class="search-input-container">
-                            <input type="text" name="search_name" placeholder="Search by name...">
-                            <button type="submit" name="search_booking">
+                            <input type="text" id="search_name" placeholder="Search by name...">
+                            <button type="button" id="search_button">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -654,7 +654,7 @@ while ($row = $bookings->fetch_assoc()) {
                                                 if ($count < 2):
                                                     $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
                                                     ?>
-                                                    <div class="day-event" style="background-color: <?= $appointment['color'] ?>">
+                                                    <div class="day-event" style="background-color: <?= $appointment['color'] ?>" data-id="<?= $appointment['id'] ?>">
                                                         <span class="event-time"><?= $timeFrom ?></span>
                                                         <span class="event-title"><?= htmlspecialchars($appointment['representative_name']) ?></span>
                                                     </div>
@@ -712,7 +712,7 @@ while ($row = $bookings->fetch_assoc()) {
                                     $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
                                     $timeTo = date('g:i A', strtotime($appointment['booking_time_to']));
                                     ?>
-                                    <li class="event-item" data-appointment='<?= json_encode($appointment) ?>'>
+                                    <li class="event-item upcoming-appointment" data-id="<?= $appointment['id'] ?>">
                                         <div class="event-color" style="background-color: <?= $appointment['color'] ?>"></div>
                                         <div class="event-details">
                                             <div class="event-date"><?= $appointmentDate->format('D, M j') ?> · <?= $timeFrom ?> - <?= $timeTo ?></div>
@@ -1227,6 +1227,19 @@ while ($row = $bookings->fetch_assoc()) {
                     <i class="fas fa-plus"></i> Add Appointment
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results Modal -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Search Results</h2>
+            <button class="close-button" id="closeSearchModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div id="searchResults"></div>
         </div>
     </div>
 </div>

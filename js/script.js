@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", function() {
             addDepartmentModal: !!document.getElementById('addDepartmentModal'),
             addRoomModal: !!document.getElementById('addRoomModal'),
             dayViewModal: !!document.getElementById('dayViewModal'),
-            appointmentModal: !!document.getElementById('appointmentModal')
+            appointmentModal: !!document.getElementById('appointmentModal'),
+            searchModal: !!document.getElementById('searchModal')
         });
         
         // Log all close buttons for debugging
@@ -41,7 +42,8 @@ document.addEventListener("DOMContentLoaded", function() {
             closeAddDepartmentModal: !!document.getElementById('closeAddDepartmentModal'),
             closeAddRoomModal: !!document.getElementById('closeAddRoomModal'),
             closeDayViewModal: !!document.getElementById('closeDayViewModal'),
-            closeAppointmentModal: !!document.getElementById('closeAppointmentModal')
+            closeAppointmentModal: !!document.getElementById('closeAppointmentModal'),
+            closeSearchModal: !!document.getElementById('closeSearchModal')
         });
 
         // Initialize all modals
@@ -52,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setupModal('addRoomModal', 'openAddRoomModal', 'closeAddRoomModal');
         setupModal('dayViewModal', null, 'closeDayViewModal');
         setupModal('appointmentModal', null, 'closeAppointmentModal');
+        setupModal('searchModal', null, 'closeSearchModal');
 
         // Initialize time pickers
         console.log("Initializing time pickers...");
@@ -177,6 +180,12 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Setup appointment clicks
         setupAppointmentClicks();
+        
+        // Setup upcoming appointment clicks
+        setupUpcomingAppointmentClicks();
+        
+        // Setup search functionality
+        setupSearch();
         
         // Setup delete appointment functionality
         setupDeleteAppointment();
@@ -517,7 +526,7 @@ function showDayAppointments(appointments, dayNumber) {
         
         // Add appointments to the list
         if (appointments.length === 0) {
-            appointmentList.innerHTML = '<p>No appointments for this day.</p>';
+            appointmentList.innerHTML = '<p class="no-appointments">No appointments for this day.</p>';
         } else {
             appointments.forEach(appointment => {
                 try {
@@ -647,8 +656,9 @@ function setupAppointmentClicks() {
     console.log("Setting up appointment clicks");
     
     // Add click event to all appointment items in the calendar
-    document.querySelectorAll('.appointment').forEach(appointment => {
+    document.querySelectorAll('.day-event').forEach(appointment => {
         appointment.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation(); // Prevent triggering the day click event
             
             const appointmentId = this.dataset.id;
@@ -669,6 +679,68 @@ function setupAppointmentClicks() {
             
             if (foundAppointment) {
                 showAppointmentDetails(foundAppointment);
+            } else {
+                console.error(`Appointment with ID ${appointmentId} not found`);
+            }
+        });
+    });
+    
+    // Add click event to view appointment buttons
+    document.querySelectorAll('.view-appointment').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent triggering the day click event
+            
+            const appointmentId = this.dataset.id;
+            console.log(`View appointment button clicked: ${appointmentId}`);
+            
+            // Get appointment data from the hidden JSON element
+            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
+            
+            // Find the appointment in the data
+            let foundAppointment = null;
+            Object.values(appointmentsData).forEach(dayAppointments => {
+                dayAppointments.forEach(appointment => {
+                    if (appointment.id == appointmentId) {
+                        foundAppointment = appointment;
+                    }
+                });
+            });
+            
+            if (foundAppointment) {
+                showAppointmentDetails(foundAppointment);
+            } else {
+                console.error(`Appointment with ID ${appointmentId} not found`);
+            }
+        });
+    });
+    
+    // Add click event to edit appointment buttons
+    document.querySelectorAll('.edit-appointment').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent triggering the day click event
+            
+            const appointmentId = this.dataset.id;
+            console.log(`Edit appointment button clicked: ${appointmentId}`);
+            
+            // Get appointment data from the hidden JSON element
+            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
+            
+            // Find the appointment in the data
+            let foundAppointment = null;
+            Object.values(appointmentsData).forEach(dayAppointments => {
+                dayAppointments.forEach(appointment => {
+                    if (appointment.id == appointmentId) {
+                        foundAppointment = appointment;
+                    }
+                });
+            });
+            
+            if (foundAppointment) {
+                fillEditForm(foundAppointment);
+            } else {
+                console.error(`Appointment with ID ${appointmentId} not found`);
             }
         });
     });
@@ -1648,4 +1720,220 @@ function updateConflictUI(analysis) {
     
     // Disable the apply button initially
     applyAlternativeBtn.disabled = true;
+}
+
+function setupUpcomingAppointmentClicks() {
+    console.log("Setting up upcoming appointment clicks");
+    
+    // Add click event to all upcoming appointment items in the sidebar
+    document.querySelectorAll('.event-item.upcoming-appointment').forEach(appointment => {
+        appointment.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const appointmentId = this.dataset.id;
+            console.log(`Upcoming appointment clicked: ${appointmentId}`);
+            
+            // Get appointment data from the hidden JSON element
+            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
+            
+            // Find the appointment in the data
+            let foundAppointment = null;
+            Object.values(appointmentsData).forEach(dayAppointments => {
+                dayAppointments.forEach(appointment => {
+                    if (appointment.id == appointmentId) {
+                        foundAppointment = appointment;
+                    }
+                });
+            });
+            
+            if (foundAppointment) {
+                showAppointmentDetails(foundAppointment);
+            } else {
+                console.error(`Appointment with ID ${appointmentId} not found in data`);
+                console.log("Available appointment data:", appointmentsData);
+            }
+        });
+    });
+}
+
+function showUpcomingAppointmentDetails(appointment) {
+    try {
+        console.log("Showing upcoming appointment details:", appointment);
+        
+        const viewContainer = document.getElementById('viewContainer');
+        if (!viewContainer) {
+            console.error("View container not found");
+            return;
+        }
+        
+        // Format times for display
+        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Create the appointment details HTML
+        viewContainer.innerHTML = `
+            <div class="appointment-details">
+                <p><strong>Research Adviser's Name:</strong> ${appointment.name || 'N/A'}</p>
+                <p><strong>Group Number:</strong> ${appointment.id_number || 'N/A'}</p>
+                <p><strong>Set:</strong> ${appointment.set || 'N/A'}</p>
+                <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
+                <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
+                <p><strong>Date:</strong> ${appointment.booking_date || 'N/A'}</p>
+                <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
+                <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
+                <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
+                <p><strong>Remarks:</strong> ${appointment.group_members || 'None'}</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="edit-from-view" data-id="${appointment.id}">Edit Appointment</button>
+            </div>
+        `;
+        
+        // Add event listener to the edit button
+        const editButton = viewContainer.querySelector('.edit-from-view');
+        if (editButton) {
+            editButton.addEventListener('click', function() {
+                // Hide the view modal
+                const viewModal = document.getElementById('viewModal');
+                if (viewModal) {
+                    hideModal(viewModal);
+                }
+                
+                // Fill and show the edit form
+                fillEditForm(appointment);
+            });
+        }
+        
+        // Show the view modal
+        const viewModal = document.getElementById('viewModal');
+        if (viewModal) {
+            // Close any other open modals first
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.id !== 'viewModal' && m.style.display === 'flex') {
+                    hideModal(m);
+                }
+            });
+            
+            // Show the modal
+            showModal(viewModal);
+        } else {
+            console.error("View modal not found");
+        }
+    } catch (error) {
+        console.error("Error in showUpcomingAppointmentDetails:", error);
+    }
+}
+
+function setupSearch() {
+    console.log("Setting up search functionality");
+    
+    const searchInput = document.getElementById('search_name');
+    const searchButton = document.getElementById('search_button');
+    const searchResults = document.getElementById('searchResults');
+    const searchModal = document.getElementById('searchModal');
+    
+    if (!searchInput || !searchButton || !searchResults || !searchModal) {
+        console.error("Search elements not found:", {
+            searchInput: !!searchInput,
+            searchButton: !!searchButton,
+            searchResults: !!searchResults,
+            searchModal: !!searchModal
+        });
+        return;
+    }
+    
+    // Add event listener to search button
+    searchButton.addEventListener('click', function() {
+        performSearch();
+    });
+    
+    // Add event listener to search input for Enter key
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
+        }
+    });
+    
+    function performSearch() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        if (searchTerm.length < 2) {
+            alert("Please enter at least 2 characters to search");
+            return;
+        }
+        
+        console.log(`Performing search for: ${searchTerm}`);
+        
+        // Get appointment data from the hidden JSON element
+        const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
+        
+        // Find matching appointments
+        const matchingAppointments = [];
+        Object.values(appointmentsData).forEach(dayAppointments => {
+            dayAppointments.forEach(appointment => {
+                // Search in name, representative name, and reason
+                if (
+                    (appointment.name && appointment.name.toLowerCase().includes(searchTerm)) ||
+                    (appointment.representative_name && appointment.representative_name.toLowerCase().includes(searchTerm)) ||
+                    (appointment.reason && appointment.reason.toLowerCase().includes(searchTerm))
+                ) {
+                    matchingAppointments.push(appointment);
+                }
+            });
+        });
+        
+        console.log(`Found ${matchingAppointments.length} matching appointments`);
+        
+        // Display search results
+        if (matchingAppointments.length === 0) {
+            searchResults.innerHTML = '<p>No appointments found matching your search.</p>';
+        } else {
+            searchResults.innerHTML = `<p>Found ${matchingAppointments.length} appointments matching your search:</p>`;
+            
+            const resultsContainer = document.createElement('div');
+            resultsContainer.className = 'search-results-container';
+            
+            matchingAppointments.forEach(appointment => {
+                try {
+                    // Format times for display
+                    const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    const appointmentItem = document.createElement('div');
+                    appointmentItem.className = 'appointment-item';
+                    appointmentItem.style.borderLeft = `4px solid ${appointment.color || '#4285f4'}`;
+                    appointmentItem.dataset.id = appointment.id;
+                    
+                    appointmentItem.innerHTML = `
+                        <div class="appointment-header">
+                            <h3>${appointment.name || 'Unnamed Appointment'}</h3>
+                            <span class="appointment-time">${appointment.booking_date} · ${timeFrom} - ${timeTo}</span>
+                        </div>
+                        <div class="appointment-details">
+                            <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
+                            <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
+                            <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="view-appointment" data-id="${appointment.id}">View</button>
+                            <button class="edit-appointment" data-id="${appointment.id}">Edit</button>
+                        </div>
+                    `;
+                    
+                    resultsContainer.appendChild(appointmentItem);
+                } catch (error) {
+                    console.error("Error creating search result item:", error, appointment);
+                }
+            });
+            
+            searchResults.appendChild(resultsContainer);
+            
+            // Add event listeners to the view and edit buttons
+            setupAppointmentClicks();
+        }
+        
+        // Show the search modal
+        showModal(searchModal);
+    }
 }
