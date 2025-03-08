@@ -42,14 +42,18 @@ $total_entries = $count_row['total'];
     <link rel="stylesheet" href="mycss/form.css?v=<?= time() ?>">
     <link rel="icon" href="assets/bcplogo.png" type="image/png">
     <style>
-        /* Additional styles for the logbook page - optimized for 1920px x 978px */
+        /* Additional styles for the logbook page - maximum zoom out */
         body {
             overflow: hidden;
             background-color: #f5f7fa;
             height: 100vh;
             margin: 0;
             padding: 0;
-            font-size: 14px;
+            font-size: 12px;
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
         }
         
         .app-container {
@@ -57,17 +61,17 @@ $total_entries = $count_row['total'];
             height: 100vh;
             position: relative;
             overflow: hidden;
-            max-width: 1920px;
+            max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
         }
         
         .main-content {
             flex: 1;
-            padding: 20px 25px;
-            margin-left: 250px;
+            padding: 15px 20px;
+            margin-left: 200px;
             transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 250px);
+            width: calc(100% - 200px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -76,62 +80,62 @@ $total_entries = $count_row['total'];
         }
         
         .sidebar-collapsed .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px);
+            margin-left: 60px;
+            width: calc(100% - 60px);
         }
         
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #e0e0e0;
             flex-shrink: 0;
-            height: 50px;
+            height: 40px;
         }
         
         .page-title h1 {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             margin-top: 0;
         }
         
         .page-title p {
             color: #666;
-            font-size: 13px;
+            font-size: 12px;
             margin: 0;
         }
         
         .search-container {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             background-color: #fff;
-            padding: 12px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
-            height: 30px;
+            height: 24px;
         }
         
         .search-container form {
             display: flex;
             width: 100%;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
         
         .search-container input {
             flex: 1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 4px;
+            font-size: 12px;
             transition: all 0.3s;
-            height: 20px;
+            height: 16px;
         }
         
         .search-container input:focus {
@@ -141,19 +145,19 @@ $total_entries = $count_row['total'];
         }
         
         .search-container button {
-            padding: 6px 15px;
+            padding: 4px 12px;
             background-color: #4285f4;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
             transition: background-color 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            height: 36px;
+            gap: 6px;
+            font-size: 12px;
+            height: 28px;
         }
         
         .search-container button:hover {
@@ -161,11 +165,11 @@ $total_entries = $count_row['total'];
         }
         
         .reset-search {
-            padding: 6px 15px;
+            padding: 4px 12px;
             background-color: #f1f3f4;
             color: #5f6368;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
             transition: background-color 0.3s;
@@ -173,8 +177,8 @@ $total_entries = $count_row['total'];
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            height: 36px;
+            font-size: 12px;
+            height: 28px;
         }
         
         .reset-search:hover {
@@ -183,51 +187,51 @@ $total_entries = $count_row['total'];
         }
         
         .result-count {
-            margin-bottom: 15px;
-            font-size: 13px;
+            margin-bottom: 10px;
+            font-size: 12px;
             color: #5f6368;
             background-color: #fff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 6px 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
-            height: 20px;
+            height: 16px;
             display: flex;
             align-items: center;
         }
         
         .page-layout {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             flex: 1;
             overflow: hidden;
             min-height: 0; /* Important for flex children to respect parent height */
-            height: calc(978px - 170px); /* Adjusted for 1920x978 resolution */
+            height: calc(978px - 130px); /* Adjusted for more compact layout */
         }
         
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             max-height: 100%;
-            width: 30%;
+            width: 28%;
         }
         
         .form-container h2 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin: 0 0 15px 0;
-            padding-bottom: 10px;
+            margin: 0 0 12px 0;
+            padding-bottom: 8px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
         
@@ -238,25 +242,25 @@ $total_entries = $count_row['total'];
         .data-container {
             flex: 2;
             background-color: #fff;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            width: 70%;
+            width: 72%;
         }
         
         .data-container h2 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin: 0 0 15px 0;
-            padding-bottom: 10px;
+            margin: 0 0 12px 0;
+            padding-bottom: 8px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
         
@@ -268,9 +272,9 @@ $total_entries = $count_row['total'];
             flex: 1;
             overflow: hidden;
             border: 1px solid #f0f0f0;
-            border-radius: 6px;
+            border-radius: 4px;
             min-height: 0; /* Important for flex children */
-            height: calc(978px - 250px); /* Adjusted for 1920x978 resolution */
+            height: calc(978px - 200px); /* Adjusted for more compact layout */
         }
         
         .data-table-container {
@@ -282,23 +286,23 @@ $total_entries = $count_row['total'];
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
         
         .data-table th {
             background-color: #f8f9fa;
             color: #5f6368;
             font-weight: 600;
-            padding: 10px 12px;
+            padding: 8px 10px;
             text-align: left;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
             position: sticky;
             top: 0;
             z-index: 10;
         }
         
         .data-table td {
-            padding: 8px 12px;
+            padding: 6px 10px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
             color: #333;
@@ -316,31 +320,31 @@ $total_entries = $count_row['total'];
             text-align: center;
             font-style: italic;
             color: #777;
-            padding: 20px;
+            padding: 15px;
         }
         
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-weight: 500;
             color: #333;
-            font-size: 13px;
+            font-size: 12px;
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 4px;
+            font-size: 12px;
             transition: all 0.3s;
-            height: 36px;
+            height: 30px;
             box-sizing: border-box;
         }
         
@@ -354,17 +358,17 @@ $total_entries = $count_row['total'];
         
         .time-picker {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         
         .time-picker select {
             flex: 1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 4px;
+            font-size: 12px;
             transition: all 0.3s;
-            height: 36px;
+            height: 30px;
         }
         
         .time-picker select:focus {
@@ -374,20 +378,20 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background-color: #4285f4;
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
             transition: background-color 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 5px;
-            height: 36px;
+            gap: 6px;
+            margin-top: 4px;
+            height: 30px;
         }
         
         .submit-button:hover {
@@ -396,26 +400,26 @@ $total_entries = $count_row['total'];
         
         .success-message {
             color: #0f9d58;
-            padding: 10px;
+            padding: 8px;
             background-color: #e6f4ea;
-            border-radius: 6px;
-            margin-bottom: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 12px;
         }
         
         .error-message {
             color: #d93025;
-            padding: 10px;
+            padding: 8px;
             background-color: #fce8e6;
-            border-radius: 6px;
-            margin-bottom: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 12px;
         }
         
         /* Scrollable areas when needed */
@@ -424,7 +428,7 @@ $total_entries = $count_row['total'];
             flex: 1;
             padding-right: 5px;
             min-height: 0; /* Important for flex children */
-            max-height: calc(978px - 250px); /* Adjusted for 1920x978 resolution */
+            max-height: calc(978px - 200px); /* Adjusted for more compact layout */
         }
         
         /* Compact sidebar */
@@ -432,39 +436,70 @@ $total_entries = $count_row['total'];
             height: 978px;
             max-height: 100vh;
             overflow: hidden;
-            width: 250px;
+            width: 200px;
         }
         
         .sidebar-header {
-            padding: 15px;
-            min-height: 60px;
+            padding: 10px;
+            min-height: 50px;
+        }
+        
+        .sidebar-logo {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 16px;
         }
         
         .sidebar a {
-            padding: 10px 15px;
+            padding: 8px 12px;
+            font-size: 12px;
         }
         
-        /* Specific for 1920x978 resolution */
+        .sidebar a i {
+            font-size: 14px;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+        }
+        
+        /* Specific for 1920x978 resolution with zoom out */
         @media screen and (width: 1920px) and (height: 978px) {
+            body {
+                transform: scale(0.9);
+                transform-origin: top left;
+                width: 111.11%;
+                height: 111.11%;
+            }
+            
             .main-content {
                 height: 978px;
             }
             
             .page-layout {
-                height: 808px; /* 978px - (top-bar + search + result-count) */
+                height: 848px; /* 978px - (top-bar + search + result-count) with reduced sizes */
             }
             
             .data-table-wrapper {
-                height: 728px; /* 808px - (padding + header) */
+                height: 778px; /* 848px - (padding + header) with reduced sizes */
             }
             
             .logbook-form {
-                max-height: 728px; /* Same as data-table-wrapper */
+                max-height: 778px; /* Same as data-table-wrapper */
             }
         }
         
         /* Mobile responsiveness */
         @media (max-width: 1200px) {
+            body {
+                transform: none;
+                width: 100%;
+                height: 100%;
+            }
+            
             .page-layout {
                 flex-direction: column;
             }
@@ -475,13 +510,13 @@ $total_entries = $count_row['total'];
             }
             
             .form-container {
-                margin-bottom: 15px;
+                margin-bottom: 10px;
             }
         }
         
         @media (max-width: 992px) {
             .main-content {
-                padding: 15px;
+                padding: 12px;
             }
         }
         
@@ -489,7 +524,7 @@ $total_entries = $count_row['total'];
             .main-content {
                 margin-left: 0;
                 width: 100%;
-                padding: 10px;
+                padding: 8px;
             }
             
             .sidebar-collapsed .main-content {
@@ -508,26 +543,26 @@ $total_entries = $count_row['total'];
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 8px;
             }
         }
         
         @media (max-width: 576px) {
             .main-content {
-                padding: 8px;
+                padding: 6px;
             }
             
             .form-container, .data-container {
-                padding: 10px;
-            }
-            
-            .search-container {
                 padding: 8px;
             }
             
+            .search-container {
+                padding: 6px;
+            }
+            
             .data-table th, .data-table td {
-                padding: 6px 8px;
-                font-size: 12px;
+                padding: 4px 6px;
+                font-size: 11px;
             }
         }
     </style>
