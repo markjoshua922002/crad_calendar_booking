@@ -966,17 +966,17 @@ body {
     align-items: start;
 }
 
-.appointment-item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
 .appointment-content {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .appointment-header {
-    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
 }
 
 .appointment-header h3 {
@@ -990,7 +990,6 @@ body {
     font-size: 14px;
     color: #666;
     margin-top: 4px;
-    display: block;
 }
 
 .appointment-info {
@@ -999,26 +998,13 @@ body {
     gap: 12px;
 }
 
-.appointment-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #555;
-    display: flex;
-    flex-direction: column;
-}
-
-.appointment-info p strong {
-    font-weight: 500;
-    color: #666;
-    margin-bottom: 4px;
-    font-size: 12px;
-}
-
 .appointment-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    justify-content: flex-start;
+    align-self: flex-start;
+    position: sticky;
+    top: 20px;
 }
 
 .appointment-actions button {
@@ -1032,15 +1018,14 @@ body {
     align-items: center;
     gap: 6px;
     white-space: nowrap;
-}
-
-.appointment-actions button i {
-    font-size: 14px;
+    min-width: 120px;
+    justify-content: center;
 }
 
 .view-appointment {
     background-color: #f1f3f4;
     color: #333;
+    font-weight: 500;
 }
 
 .view-appointment:hover {
@@ -1050,6 +1035,7 @@ body {
 .edit-appointment {
     background-color: #4285f4;
     color: white;
+    font-weight: 500;
 }
 
 .edit-appointment:hover {
@@ -1094,6 +1080,7 @@ body {
     .appointment-actions {
         flex-direction: row;
         justify-content: flex-end;
+        position: static;
         margin-top: 15px;
     }
 }
