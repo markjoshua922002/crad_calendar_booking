@@ -421,24 +421,25 @@ function showModal(modal) {
         document.querySelectorAll('.modal').forEach(m => {
             if (m !== modal && m.style.display === 'flex') {
                 console.log(`Closing other modal: ${m.id}`);
-                m.style.display = 'none';
+                hideModal(m);
             }
         });
         
-        // Use flex display for centering
+        // Add class to body to prevent scrolling
+        document.body.classList.add('modal-open');
+        
+        // Reset modal position and display
         modal.style.display = 'flex';
         modal.style.justifyContent = 'center';
         modal.style.alignItems = 'center';
         
-        // Center the modal
-        centerModal(modal);
-        
-        // Prevent body scrolling
-        document.body.style.overflow = 'hidden';
-        
-        // Log modal dimensions for debugging
+        // Ensure the modal content is visible and centered
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
+            modalContent.style.opacity = '1';
+            modalContent.style.transform = 'translateY(0)';
+            
+            // Log modal dimensions for debugging
             console.log(`Modal content dimensions: ${modalContent.offsetWidth}x${modalContent.offsetHeight}`);
         }
         
@@ -472,11 +473,25 @@ function hideModal(modal) {
     
     console.log(`Hiding modal: ${modal.id}`);
     
-    // Hide the modal
-    modal.style.display = 'none';
-    
-    // Restore body scrolling
-    document.body.style.overflow = '';
+    try {
+        // Hide the modal
+        modal.style.display = 'none';
+        
+        // Remove body scroll lock only if no other modals are visible
+        const visibleModals = document.querySelectorAll('.modal[style*="flex"]');
+        if (visibleModals.length === 0) {
+            document.body.classList.remove('modal-open');
+        }
+        
+        // Reset modal content transform
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.style.opacity = '';
+            modalContent.style.transform = '';
+        }
+    } catch (error) {
+        console.error(`Error hiding modal ${modal.id}:`, error);
+    }
 }
 
 // Function to center a modal in the viewport
@@ -486,11 +501,6 @@ function centerModal(modal) {
         
         console.log("Centering modal:", modal.id);
         
-        // Reset any previous styles
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        
         // Get the modal content
         const modalContent = modal.querySelector('.modal-content');
         if (!modalContent) {
@@ -498,21 +508,23 @@ function centerModal(modal) {
             return;
         }
         
-        // Reset any previous styles
+        // Reset positioning styles
         modalContent.style.margin = 'auto';
         
-        // Ensure the modal content doesn't exceed the viewport height
+        // Calculate viewport dimensions
         const viewportHeight = window.innerHeight;
         const contentHeight = modalContent.scrollHeight;
         
         console.log(`Modal ${modal.id} - Content height: ${contentHeight}px, Viewport height: ${viewportHeight}px`);
         
+        // Adjust max-height if content is too tall
         if (contentHeight > viewportHeight * 0.9) {
             modalContent.style.maxHeight = `${viewportHeight * 0.9}px`;
             modalContent.style.overflowY = 'auto';
-            console.log(`Modal ${modal.id} - Content exceeds 90% of viewport, setting max-height and enabling scrolling`);
+            console.log(`Modal ${modal.id} - Content exceeds 90% of viewport, enabling scrolling`);
         } else {
-            modalContent.style.maxHeight = 'none';
+            modalContent.style.maxHeight = '';
+            modalContent.style.overflowY = '';
             console.log(`Modal ${modal.id} - Content fits within viewport`);
         }
     } catch (error) {
