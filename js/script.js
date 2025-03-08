@@ -1998,10 +1998,11 @@ function setupSearch() {
     }
 }
 
-// Modal handling
+// Modal handling functions
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
+        modal.style.display = 'flex';
         document.body.classList.add('modal-open');
         modal.classList.add('show');
         
@@ -2010,40 +2011,61 @@ function openModal(modalId) {
         if (firstInput) {
             firstInput.focus();
         }
-        
-        // Handle click outside to close
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal(modalId);
-            }
-        });
-        
-        // Handle escape key to close
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal(modalId);
-            }
-        });
     }
 }
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
+        modal.style.display = 'none';
         document.body.classList.remove('modal-open');
         modal.classList.remove('show');
     }
 }
 
-// Attach modal close handlers
+// Setup modal handlers
 document.addEventListener('DOMContentLoaded', function() {
-    const closeButtons = document.querySelectorAll('.close-button');
-    closeButtons.forEach(button => {
+    // Close modal when clicking outside
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+
+    // Close modal when clicking close button
+    document.querySelectorAll('.close-button').forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.modal');
             if (modal) {
                 closeModal(modal.id);
             }
         });
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const visibleModal = document.querySelector('.modal.show');
+            if (visibleModal) {
+                closeModal(visibleModal.id);
+            }
+        }
+    });
+
+    // Setup modal triggers
+    const modalTriggers = {
+        'openBookingModal': 'bookingModal',
+        'openAddDepartmentModal': 'addDepartmentModal',
+        'openAddRoomModal': 'addRoomModal',
+        'viewAllAppointments': 'appointmentModal'
+    };
+
+    Object.entries(modalTriggers).forEach(([triggerId, modalId]) => {
+        const trigger = document.getElementById(triggerId);
+        if (trigger) {
+            trigger.addEventListener('click', () => openModal(modalId));
+        }
     });
 });
