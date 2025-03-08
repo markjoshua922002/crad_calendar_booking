@@ -122,7 +122,6 @@ function clearLoginAttempts($username, $conn) {
                 <button type="submit" name="login">Login</button>
                 <?php if (isset($login_error)) echo "<p class='error'>$login_error</p>"; ?>
             </form>
-            <p>Don't have an account? <a href="register.php">Register here</a>.</p>
         </div>
     </div>
 </body>
