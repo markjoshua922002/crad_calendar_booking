@@ -1282,53 +1282,7 @@ while ($row = $bookings->fetch_assoc()) {
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
-<script defer src="js/script.js?<?= time() ?>"></script>
-
-<!-- Toggle sidebar script
-document.addEventListener('DOMContentLoaded', function() {
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const appContainer = document.querySelector('.app-container');
-    const mainContent = document.querySelector('.main-content');
-    
-    // Check localStorage for sidebar state on page load
-    const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-    if (isSidebarCollapsed) {
-        sidebar.classList.add('collapsed');
-        appContainer.classList.add('sidebar-collapsed');
-    }
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            appContainer.classList.toggle('sidebar-collapsed');
-            
-            // Store sidebar state in localStorage
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        });
-    }
-    
-    // Handle responsive behavior
-    function handleResponsive() {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.add('collapsed');
-            appContainer.classList.add('sidebar-collapsed');
-            localStorage.setItem('sidebarCollapsed', 'true');
-            
-            // On mobile, clicking outside sidebar should close it
-            mainContent.addEventListener('click', function() {
-                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
-                    sidebar.classList.add('collapsed');
-                    appContainer.classList.add('sidebar-collapsed');
-                    localStorage.setItem('sidebarCollapsed', 'true');
-                }
-            });
-        }
-    }
-    
-    // Initial check
-    handleResponsive();
-    
-    // Listen for window resize
-    window.addEventListener('resize', handleResponsive);
-});
+<script src="js/script.js?v=<?= time() ?>"></script>
+<script src="js/sidebar.js?v=<?= time() ?>"></script>
+</body>
+</html>
