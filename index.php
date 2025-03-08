@@ -186,22 +186,47 @@ while ($row = $bookings->fetch_assoc()) {
         /* Remove scrollbar */
         body {
             overflow: hidden;
+            background-color: #f5f7fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
+        }
+        
+        /* App container for proper layout */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            max-width: 2133px; /* 1920px * 1.11 */
+            margin: 0 auto;
         }
         
         /* Fix for main content positioning */
         .main-content {
             flex: 1;
-            padding: 30px;
+            padding: 15px 20px;
             margin-left: 250px; /* Match sidebar width */
             transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 250px); /* Ensure proper width calculation */
+            width: calc(100% - 250px); /* Match sidebar width */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 978px;
+            max-height: 100vh;
         }
         
         /* When sidebar is collapsed */
-        .sidebar.collapsed + .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
+        .sidebar.collapsed + .main-content,
+        .sidebar-collapsed .main-content {
+            margin-left: 70px; /* Match collapsed sidebar width */
+            width: calc(100% - 70px); /* Match collapsed sidebar width */
         }
         
         /* Fix for top bar positioning */
@@ -541,19 +566,19 @@ while ($row = $bookings->fetch_assoc()) {
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="assets/bcplogo.png" alt="Logo" class="sidebar-logo">
-            <h2>CRAD System</h2>
+            <img src="assets/bcplogo.png" alt="BCP Logo" class="sidebar-logo">
+            <h2>BCP CRAD</h2>
         </div>
         <div class="sidebar-menu">
-            <a href="index.php" class="active">
+            <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Calendar</span>
             </a>
-            <a href="form.php">
+            <a href="form.php" class="<?= basename($_SERVER['PHP_SELF']) == 'form.php' ? 'active' : '' ?>">
                 <i class="fas fa-book"></i>
                 <span>Logbook</span>
             </a>
-            <a href="analytics.php">
+            <a href="analytics.php" class="<?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'active' : '' ?>">
                 <i class="fas fa-chart-bar"></i>
                 <span>Analytics</span>
             </a>
@@ -569,7 +594,7 @@ while ($row = $bookings->fetch_assoc()) {
     <!-- Main Content -->
     <div class="main-content">
         <div class="top-bar">
-            <button class="menu-toggle" id="menuButton">
+            <button id="menuToggle" class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="top-content">
@@ -1256,8 +1281,74 @@ while ($row = $bookings->fetch_assoc()) {
 
 <!-- Modal initialization script -->
 <script>
-    // This script ensures all modals are properly initialized when the page loads
     document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const appContainer = document.querySelector('.app-container');
+        const mainContent = document.querySelector('.main-content');
+        
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                appContainer.classList.toggle('sidebar-collapsed');
+            });
+        }
+        
+        // Handle responsive behavior
+        function handleResponsive() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed');
+                appContainer.classList.add('sidebar-collapsed');
+                
+                // On mobile, clicking outside sidebar should close it
+                mainContent.addEventListener('click', function() {
+                    if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                        sidebar.classList.add('collapsed');
+                        appContainer.classList.add('sidebar-collapsed');
+                    }
+                });
+            }
+        }
+        
+        // Initialize responsive behavior
+        handleResponsive();
+        
+        // Update on window resize
+        window.addEventListener('resize', handleResponsive);
+        
+        // Handle mobile sidebar
+        function handleMobileSidebar() {
+            const menuButton = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (!menuButton || !sidebar) return;
+            
+            // Create overlay for mobile sidebar
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+            
+            // Toggle sidebar on menu button click
+            menuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+        
+        // Initialize mobile sidebar
+        if (window.innerWidth <= 768) {
+            handleMobileSidebar();
+        }
+        
+        // Modal initialization
         console.log('Modal initialization script running');
         
         // Direct initialization of all modals
@@ -1339,6 +1430,8 @@ while ($row = $bookings->fetch_assoc()) {
                 }
             });
         });
+        
+        // Your existing calendar code...
     });
 </script>
 

@@ -49,12 +49,16 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Poppins', Arial, sans-serif;
+            overflow: hidden;
+            background-color: #f5f7fa;
+            height: 100vh;
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
-            overflow: hidden;
-            height: 100vh;
+            font-size: 12px;
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
         }
         
         .app-container {
@@ -62,7 +66,7 @@ $conn->close();
             height: 100vh;
             position: relative;
             overflow: hidden;
-            max-width: 2133px;
+            max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
         }
         
@@ -242,9 +246,11 @@ $conn->close();
         
         // Sidebar toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
             const appContainer = document.querySelector('.app-container');
+            const mainContent = document.querySelector('.main-content');
             
             if (menuToggle && sidebar) {
                 menuToggle.addEventListener('click', function() {
@@ -252,6 +258,28 @@ $conn->close();
                     appContainer.classList.toggle('sidebar-collapsed');
                 });
             }
+            
+            // Handle responsive behavior
+            function handleResponsive() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('collapsed');
+                    appContainer.classList.add('sidebar-collapsed');
+                    
+                    // On mobile, clicking outside sidebar should close it
+                    mainContent.addEventListener('click', function() {
+                        if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                            sidebar.classList.add('collapsed');
+                            appContainer.classList.add('sidebar-collapsed');
+                        }
+                    });
+                }
+            }
+            
+            // Initialize responsive behavior
+            handleResponsive();
+            
+            // Update on window resize
+            window.addEventListener('resize', handleResponsive);
             
             // Handle mobile sidebar
             function handleMobileSidebar() {
