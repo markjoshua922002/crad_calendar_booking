@@ -272,6 +272,36 @@ while ($row = $bookings->fetch_assoc()) {
             gap: 20px;
             height: 100%; /* Full height of parent */
             overflow-y: auto; /* Allow sidebar to scroll if content is too long */
+            padding-right: 0; /* Remove right padding to align scrollbar to edge */
+            margin-right: 0; /* Remove right margin */
+            position: relative; /* Ensure proper stacking context */
+        }
+        
+        /* Sidebar scrollbar styling */
+        .dashboard-sidebar::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+            position: absolute; /* Position the scrollbar */
+            right: 0; /* Align to the right edge */
+        }
+        
+        .dashboard-sidebar::-webkit-scrollbar-track {
+            background: transparent; /* Make the track transparent */
+        }
+        
+        .dashboard-sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent thumb */
+            border-radius: 4px; /* Rounded corners */
+        }
+        
+        .dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.3); /* Darker on hover */
+        }
+        
+        /* Card styling within sidebar */
+        .dashboard-sidebar .card {
+            margin-right: 0; /* Remove right margin from cards */
+            width: 100%; /* Full width */
+            box-sizing: border-box; /* Include padding in width calculation */
         }
         
         /* Responsive adjustments */
