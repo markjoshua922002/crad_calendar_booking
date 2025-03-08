@@ -1997,3 +1997,53 @@ function setupSearch() {
         }
     }
 }
+
+// Modal handling
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        document.body.classList.add('modal-open');
+        modal.classList.add('show');
+        
+        // Focus first input if exists
+        const firstInput = modal.querySelector('input, select, textarea');
+        if (firstInput) {
+            firstInput.focus();
+        }
+        
+        // Handle click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal(modalId);
+            }
+        });
+        
+        // Handle escape key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal(modalId);
+            }
+        });
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        document.body.classList.remove('modal-open');
+        modal.classList.remove('show');
+    }
+}
+
+// Attach modal close handlers
+document.addEventListener('DOMContentLoaded', function() {
+    const closeButtons = document.querySelectorAll('.close-button');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                closeModal(modal.id);
+            }
+        });
+    });
+});

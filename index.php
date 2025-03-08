@@ -484,11 +484,14 @@ while ($row = $bookings->fetch_assoc()) {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow-y: auto;
+            display: flex;
             justify-content: center;
             align-items: flex-start;
             padding: 20px;
@@ -510,25 +513,6 @@ while ($row = $bookings->fetch_assoc()) {
             overflow: hidden;
         }
         
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            background-color: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-            position: relative;
-        }
-        
         /* Modal animations */
         @keyframes slideIn {
             from {
@@ -543,23 +527,198 @@ while ($row = $bookings->fetch_assoc()) {
         
         /* Ensure modal is centered when displayed as flex */
         .modal.show {
-            display: flex;
+            display: flex !important;
         }
         
         /* Prevent body scrolling when modal is open */
         body.modal-open {
-            overflow: hidden;
+            overflow: hidden !important;
+            padding-right: 17px; /* Width of scrollbar to prevent layout shift */
         }
         
         /* Responsive adjustments for modal */
         @media (max-width: 768px) {
             .modal-content {
                 width: 95%;
-                margin: 10px;
+                margin: 10px auto;
             }
             
             .modal {
                 padding: 10px;
+            }
+        }
+        
+        /* Fix for modal backdrop */
+        .modal::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        
+        /* Ensure modals are always on top */
+        .modal {
+            z-index: 9999;
+        }
+        
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            position: relative;
+        }
+        
+        /* Fix for nested scrollable content */
+        .modal-body .data-table-wrapper {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        /* Ensure proper stacking context */
+        .app-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sidebar {
+            z-index: 2;
+        }
+        
+        .modal {
+            z-index: 9999;
+        }
+        
+        /* Fix for modal close button */
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        
+        .close-button:hover {
+            color: #333;
+        }
+        
+        /* Ensure proper modal sizing for different types */
+        .modal-sm .modal-content {
+            max-width: 400px;
+        }
+        
+        .modal-lg .modal-content {
+            max-width: 800px;
+        }
+        
+        /* Fix for form elements inside modal */
+        .modal .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .modal input,
+        .modal select,
+        .modal textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        /* Fix for modal actions */
+        .modal .form-actions {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: auto;
+        }
+        
+        /* Ensure proper button styling in modals */
+        .modal .primary-button,
+        .modal .danger-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .modal .primary-button {
+            background-color: #4285f4;
+            color: white;
+        }
+        
+        .modal .danger-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        /* Fix for modal transitions */
+        .modal {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Ensure proper modal positioning on all screen sizes */
+        @media (min-height: 600px) {
+            .modal-content {
+                margin: 40px auto;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .modal-content {
+                margin: 20px auto;
+                max-height: calc(100vh - 40px);
+            }
+        }
+        
+        /* Fix for mobile devices */
+        @media (max-width: 576px) {
+            .modal {
+                padding: 0;
+            }
+            
+            .modal-content {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                border-radius: 0;
+                max-height: none;
+            }
+            
+            .modal-body {
+                -webkit-overflow-scrolling: touch;
             }
         }
     </style>
