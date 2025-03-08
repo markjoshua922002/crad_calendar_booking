@@ -2,7 +2,7 @@
 let conflictResolver = null;
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM fully loaded and parsed - v14");
+    console.log("DOM fully loaded and parsed - v15");
 
     // Add global error handler to catch and log JavaScript errors
     window.onerror = function(message, source, lineno, colno, error) {
@@ -23,15 +23,50 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Delete button exists:", !!document.getElementById('delete_button'));
         
         // Log all modals for debugging
+        const modals = {
+            bookingModal: document.getElementById('bookingModal'),
+            editModal: document.getElementById('editModal'),
+            viewModal: document.getElementById('viewModal'),
+            addDepartmentModal: document.getElementById('addDepartmentModal'),
+            addRoomModal: document.getElementById('addRoomModal'),
+            dayViewModal: document.getElementById('dayViewModal'),
+            appointmentModal: document.getElementById('appointmentModal'),
+            searchModal: document.getElementById('searchModal')
+        };
+        
         console.log("Modals found:", {
-            bookingModal: !!document.getElementById('bookingModal'),
-            editModal: !!document.getElementById('editModal'),
-            viewModal: !!document.getElementById('viewModal'),
-            addDepartmentModal: !!document.getElementById('addDepartmentModal'),
-            addRoomModal: !!document.getElementById('addRoomModal'),
-            dayViewModal: !!document.getElementById('dayViewModal'),
-            appointmentModal: !!document.getElementById('appointmentModal'),
-            searchModal: !!document.getElementById('searchModal')
+            bookingModal: !!modals.bookingModal,
+            editModal: !!modals.editModal,
+            viewModal: !!modals.viewModal,
+            addDepartmentModal: !!modals.addDepartmentModal,
+            addRoomModal: !!modals.addRoomModal,
+            dayViewModal: !!modals.dayViewModal,
+            appointmentModal: !!modals.appointmentModal,
+            searchModal: !!modals.searchModal
+        });
+        
+        // Debug modal styles
+        Object.entries(modals).forEach(([name, modal]) => {
+            if (modal) {
+                console.log(`Modal ${name} styles:`, {
+                    display: modal.style.display,
+                    position: getComputedStyle(modal).position,
+                    zIndex: getComputedStyle(modal).zIndex,
+                    width: getComputedStyle(modal).width,
+                    height: getComputedStyle(modal).height
+                });
+                
+                const modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    console.log(`Modal ${name} content styles:`, {
+                        width: getComputedStyle(modalContent).width,
+                        maxWidth: getComputedStyle(modalContent).maxWidth,
+                        margin: getComputedStyle(modalContent).margin
+                    });
+                } else {
+                    console.error(`Modal ${name} content not found`);
+                }
+            }
         });
         
         // Log all close buttons for debugging
@@ -319,6 +354,8 @@ function setupModal(modalId, openButtonId, closeButtonId) {
         
         // Ensure the modal has the correct initial styles
         modal.style.display = 'none';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
         
         // Setup open button if provided
         if (openButtonId) {
@@ -329,35 +366,8 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                     e.preventDefault();
                     e.stopPropagation(); // Prevent event bubbling
                     
-                    // Close any other open modals first
-                    document.querySelectorAll('.modal').forEach(m => {
-                        if (m.id !== modalId && m.style.display === 'flex') {
-                            m.style.display = 'none';
-                        }
-                    });
-                    
                     // Show the modal
                     showModal(modal);
-                    
-                    // If this is the booking modal, check for conflicts
-                    if (modalId === 'bookingModal') {
-                        // Reset the ignore conflicts flag
-                        const bookingForm = modal.querySelector('form');
-                        if (bookingForm) {
-                            delete bookingForm.dataset.ignoreConflicts;
-                        }
-                        
-                        // Hide the conflict container initially
-                        const conflictContainer = document.getElementById('conflict-resolution-container');
-                        if (conflictContainer) {
-                            conflictContainer.style.display = 'none';
-                        }
-                        
-                        // Check for conflicts after a short delay to allow form to initialize
-                        setTimeout(function() {
-                            checkForConflicts();
-                        }, 500);
-                    }
                 });
             } else {
                 console.error(`Open button with ID ${openButtonId} not found`);
@@ -399,20 +409,61 @@ function setupModal(modalId, openButtonId, closeButtonId) {
 
 // Function to show a modal
 function showModal(modal) {
-    if (!modal) return;
+    if (!modal) {
+        console.error("Cannot show modal: modal is null or undefined");
+        return;
+    }
     
     console.log(`Showing modal: ${modal.id}`);
     
-    // Use flex display for centering
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    
-    // Center the modal
-    centerModal(modal);
-    
-    // Prevent body scrolling
-    document.body.style.overflow = 'hidden';
+    try {
+        // Close any other open modals first
+        document.querySelectorAll('.modal').forEach(m => {
+            if (m !== modal && m.style.display === 'flex') {
+                console.log(`Closing other modal: ${m.id}`);
+                m.style.display = 'none';
+            }
+        });
+        
+        // Use flex display for centering
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        
+        // Center the modal
+        centerModal(modal);
+        
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+        
+        // Log modal dimensions for debugging
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            console.log(`Modal content dimensions: ${modalContent.offsetWidth}x${modalContent.offsetHeight}`);
+        }
+        
+        // Special handling for booking modal
+        if (modal.id === 'bookingModal') {
+            // Reset the ignore conflicts flag
+            const bookingForm = modal.querySelector('form');
+            if (bookingForm) {
+                delete bookingForm.dataset.ignoreConflicts;
+            }
+            
+            // Hide the conflict container initially
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.style.display = 'none';
+            }
+            
+            // Check for conflicts after a short delay to allow form to initialize
+            setTimeout(function() {
+                checkForConflicts();
+            }, 500);
+        }
+    } catch (error) {
+        console.error(`Error showing modal ${modal.id}:`, error);
+    }
 }
 
 // Function to hide a modal
@@ -1757,74 +1808,6 @@ function setupUpcomingAppointmentClicks() {
     });
 }
 
-function showUpcomingAppointmentDetails(appointment) {
-    try {
-        console.log("Showing upcoming appointment details:", appointment);
-        
-        const viewContainer = document.getElementById('viewContainer');
-        if (!viewContainer) {
-            console.error("View container not found");
-            return;
-        }
-        
-        // Format times for display
-        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        // Create the appointment details HTML
-        viewContainer.innerHTML = `
-            <div class="appointment-details">
-                <p><strong>Research Adviser's Name:</strong> ${appointment.name || 'N/A'}</p>
-                <p><strong>Group Number:</strong> ${appointment.id_number || 'N/A'}</p>
-                <p><strong>Set:</strong> ${appointment.set || 'N/A'}</p>
-                <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
-                <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
-                <p><strong>Date:</strong> ${appointment.booking_date || 'N/A'}</p>
-                <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
-                <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
-                <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
-                <p><strong>Remarks:</strong> ${appointment.group_members || 'None'}</p>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="edit-from-view" data-id="${appointment.id}">Edit Appointment</button>
-            </div>
-        `;
-        
-        // Add event listener to the edit button
-        const editButton = viewContainer.querySelector('.edit-from-view');
-        if (editButton) {
-            editButton.addEventListener('click', function() {
-                // Hide the view modal
-                const viewModal = document.getElementById('viewModal');
-                if (viewModal) {
-                    hideModal(viewModal);
-                }
-                
-                // Fill and show the edit form
-                fillEditForm(appointment);
-            });
-        }
-        
-        // Show the view modal
-        const viewModal = document.getElementById('viewModal');
-        if (viewModal) {
-            // Close any other open modals first
-            document.querySelectorAll('.modal').forEach(m => {
-                if (m.id !== 'viewModal' && m.style.display === 'flex') {
-                    hideModal(m);
-                }
-            });
-            
-            // Show the modal
-            showModal(viewModal);
-        } else {
-            console.error("View modal not found");
-        }
-    } catch (error) {
-        console.error("Error in showUpcomingAppointmentDetails:", error);
-    }
-}
-
 function setupSearch() {
     console.log("Setting up search functionality");
     
@@ -1870,20 +1853,35 @@ function setupSearch() {
         
         // Find matching appointments
         const matchingAppointments = [];
+        const exactMatchesByRepresentative = [];
+        const partialMatchesByRepresentative = [];
+        const otherMatches = [];
+        
         Object.values(appointmentsData).forEach(dayAppointments => {
             dayAppointments.forEach(appointment => {
-                // Search in name, representative name, and reason
-                if (
+                // Check for representative name match first (prioritized)
+                if (appointment.representative_name && appointment.representative_name.toLowerCase() === searchTerm) {
+                    // Exact match on representative name (highest priority)
+                    exactMatchesByRepresentative.push(appointment);
+                } else if (appointment.representative_name && appointment.representative_name.toLowerCase().includes(searchTerm)) {
+                    // Partial match on representative name (medium priority)
+                    partialMatchesByRepresentative.push(appointment);
+                } else if (
                     (appointment.name && appointment.name.toLowerCase().includes(searchTerm)) ||
-                    (appointment.representative_name && appointment.representative_name.toLowerCase().includes(searchTerm)) ||
                     (appointment.reason && appointment.reason.toLowerCase().includes(searchTerm))
                 ) {
-                    matchingAppointments.push(appointment);
+                    // Match on other fields (lowest priority)
+                    otherMatches.push(appointment);
                 }
             });
         });
         
-        console.log(`Found ${matchingAppointments.length} matching appointments`);
+        // Combine results in priority order
+        matchingAppointments.push(...exactMatchesByRepresentative);
+        matchingAppointments.push(...partialMatchesByRepresentative);
+        matchingAppointments.push(...otherMatches);
+        
+        console.log(`Found ${matchingAppointments.length} matching appointments (${exactMatchesByRepresentative.length} exact representative matches, ${partialMatchesByRepresentative.length} partial representative matches, ${otherMatches.length} other matches)`);
         
         // Display search results
         if (matchingAppointments.length === 0) {
@@ -1905,6 +1903,11 @@ function setupSearch() {
                     appointmentItem.style.borderLeft = `4px solid ${appointment.color || '#4285f4'}`;
                     appointmentItem.dataset.id = appointment.id;
                     
+                    // Highlight if this is a representative name match
+                    const isRepresentativeMatch = 
+                        exactMatchesByRepresentative.includes(appointment) || 
+                        partialMatchesByRepresentative.includes(appointment);
+                    
                     appointmentItem.innerHTML = `
                         <div class="appointment-header">
                             <h3>${appointment.name || 'Unnamed Appointment'}</h3>
@@ -1913,6 +1916,7 @@ function setupSearch() {
                         <div class="appointment-details">
                             <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
                             <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
+                            <p><strong>Representative:</strong> <span class="${isRepresentativeMatch ? 'highlight-match' : ''}">${appointment.representative_name || 'N/A'}</span></p>
                             <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
                         </div>
                         <div class="appointment-actions">
@@ -1934,6 +1938,11 @@ function setupSearch() {
         }
         
         // Show the search modal
-        showModal(searchModal);
+        const searchModal = document.getElementById('searchModal');
+        if (searchModal) {
+            showModal(searchModal);
+        } else {
+            console.error("Search modal not found");
+        }
     }
 }

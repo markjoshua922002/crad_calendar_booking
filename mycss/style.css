@@ -469,7 +469,7 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999; /* Ensure modals are on top of everything */
     left: 0;
     top: 0;
     width: 100%;
@@ -941,4 +941,12 @@ body {
 
 .search-results-container .edit-appointment:hover {
     background-color: #3367d6;
+}
+
+/* Highlight for search matches */
+.highlight-match {
+    background-color: #ffeb3b;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
 }
