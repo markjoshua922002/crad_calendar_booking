@@ -552,23 +552,25 @@ while ($row = $bookings->fetch_assoc()) {
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="assets/bcplogo.png" alt="Logo" class="sidebar-logo">
-            <h2>CRAD System</h2>
+            <img src="assets/bcplogo.png" alt="BCP Logo" class="sidebar-logo">
+            <h2>BCP CRAD</h2>
         </div>
+        
         <div class="sidebar-menu">
-            <a href="index.php" class="active">
+            <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Calendar</span>
             </a>
-            <a href="form.php">
+            <a href="form.php" class="<?= basename($_SERVER['PHP_SELF']) == 'form.php' ? 'active' : '' ?>">
                 <i class="fas fa-book"></i>
                 <span>Logbook</span>
             </a>
-            <a href="analytics.php">
+            <a href="analytics.php" class="<?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'active' : '' ?>">
                 <i class="fas fa-chart-bar"></i>
                 <span>Analytics</span>
             </a>
         </div>
+        
         <div class="sidebar-footer">
             <a href="logout.php" class="logout-button">
                 <i class="fas fa-sign-out-alt"></i>
@@ -1525,44 +1527,11 @@ while ($row = $bookings->fetch_assoc()) {
             }
         }
         
-        // Initialize responsive behavior
+        // Initial check
         handleResponsive();
         
-        // Update on window resize
+        // Listen for window resize
         window.addEventListener('resize', handleResponsive);
-        
-        // Handle mobile sidebar
-        function handleMobileSidebar() {
-            const menuButton = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            
-            if (!menuButton || !sidebar) return;
-            
-            // Create overlay for mobile sidebar
-            const overlay = document.createElement('div');
-            overlay.className = 'sidebar-overlay';
-            document.body.appendChild(overlay);
-            
-            // Toggle sidebar on menu button click
-            menuButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-            });
-            
-            // Close sidebar when clicking overlay
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        }
-        
-        // Initialize mobile sidebar
-        if (window.innerWidth <= 768) {
-            handleMobileSidebar();
-        }
-        
-        // Your existing calendar code...
     });
 </script>
 </body>
