@@ -44,24 +44,30 @@ $total_entries = $count_row['total'];
     <style>
         /* Additional styles for the logbook page */
         body {
-            overflow-y: auto;
+            overflow: hidden;
             background-color: #f5f7fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         
         .app-container {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
             position: relative;
+            overflow: hidden;
         }
         
         .main-content {
             flex: 1;
-            padding: 30px;
+            padding: 20px;
             margin-left: 250px;
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px);
-            overflow-y: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .sidebar-collapsed .main-content {
@@ -73,31 +79,35 @@ $total_entries = $count_row['total'];
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
         }
         
         .page-title h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+            margin-top: 0;
         }
         
         .page-title p {
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
+            margin: 0;
         }
         
         .search-container {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             gap: 10px;
             background-color: #fff;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
         
         .search-container form {
@@ -108,10 +118,10 @@ $total_entries = $count_row['total'];
         
         .search-container input {
             flex: 1;
-            padding: 12px 15px;
+            padding: 8px 12px;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.3s;
         }
         
@@ -122,7 +132,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container button {
-            padding: 12px 20px;
+            padding: 8px 15px;
             background-color: #4285f4;
             color: white;
             border: none;
@@ -133,6 +143,7 @@ $total_entries = $count_row['total'];
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 13px;
         }
         
         .search-container button:hover {
@@ -140,7 +151,7 @@ $total_entries = $count_row['total'];
         }
         
         .reset-search {
-            padding: 12px 20px;
+            padding: 8px 15px;
             background-color: #f1f3f4;
             color: #5f6368;
             border: none;
@@ -152,6 +163,7 @@ $total_entries = $count_row['total'];
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            font-size: 13px;
         }
         
         .reset-search:hover {
@@ -161,45 +173,46 @@ $total_entries = $count_row['total'];
         
         .result-count {
             margin-bottom: 15px;
-            font-size: 14px;
+            font-size: 13px;
             color: #5f6368;
             background-color: #fff;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
         
         .page-layout {
             display: flex;
-            gap: 30px;
-            height: calc(100vh - 200px);
-            min-height: 600px;
+            gap: 20px;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0; /* Important for flex children to respect parent height */
         }
         
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 25px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            overflow-y: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
             max-height: 100%;
         }
         
         .form-container h2 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
             gap: 10px;
-            position: sticky;
-            top: 0;
-            background-color: #fff;
-            z-index: 10;
+            flex-shrink: 0;
         }
         
         .form-container h2 i {
@@ -209,29 +222,25 @@ $total_entries = $count_row['total'];
         .data-container {
             flex: 2;
             background-color: #fff;
-            padding: 25px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            max-height: 100%;
             overflow: hidden;
         }
         
         .data-container h2 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
             gap: 10px;
-            position: sticky;
-            top: 0;
-            background-color: #fff;
-            z-index: 10;
+            flex-shrink: 0;
         }
         
         .data-container h2 i {
@@ -240,23 +249,23 @@ $total_entries = $count_row['total'];
         
         .data-table-wrapper {
             flex: 1;
-            overflow-x: auto;
-            overflow-y: auto;
+            overflow: hidden;
             border: 1px solid #f0f0f0;
             border-radius: 6px;
-            height: calc(100% - 60px);
+            min-height: 0; /* Important for flex children */
         }
         
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
         
         .data-table th {
             background-color: #f8f9fa;
             color: #5f6368;
             font-weight: 600;
-            padding: 15px;
+            padding: 10px;
             text-align: left;
             border-bottom: 2px solid #e0e0e0;
             position: sticky;
@@ -265,7 +274,7 @@ $total_entries = $count_row['total'];
         }
         
         .data-table td {
-            padding: 15px;
+            padding: 8px 10px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
             color: #333;
@@ -283,29 +292,29 @@ $total_entries = $count_row['total'];
             text-align: center;
             font-style: italic;
             color: #777;
-            padding: 30px;
+            padding: 20px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 500;
             color: #333;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 8px 12px;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.3s;
         }
         
@@ -319,15 +328,15 @@ $total_entries = $count_row['total'];
         
         .time-picker {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         
         .time-picker select {
             flex: 1;
-            padding: 12px 15px;
+            padding: 8px 12px;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.3s;
         }
         
@@ -338,18 +347,19 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            padding: 12px 24px;
+            padding: 8px 16px;
             background-color: #4285f4;
             color: #fff;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             transition: background-color 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            margin-top: 5px;
         }
         
         .submit-button:hover {
@@ -358,30 +368,60 @@ $total_entries = $count_row['total'];
         
         .success-message {
             color: #0f9d58;
-            padding: 15px;
+            padding: 10px;
             background-color: #e6f4ea;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 13px;
         }
         
         .error-message {
             color: #d93025;
-            padding: 15px;
+            padding: 10px;
             background-color: #fce8e6;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 13px;
+        }
+        
+        /* Scrollable areas when needed */
+        .logbook-form {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+            min-height: 0; /* Important for flex children */
+        }
+        
+        .data-table-container {
+            overflow-y: auto;
+            max-height: 100%;
+            min-height: 0; /* Important for flex children */
+        }
+        
+        /* Compact sidebar */
+        .sidebar {
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 15px;
+            min-height: 60px;
+        }
+        
+        .sidebar a {
+            padding: 10px 15px;
         }
         
         /* Mobile responsiveness */
         @media (max-width: 1200px) {
             .page-layout {
-                height: auto;
                 flex-direction: column;
             }
             
@@ -390,21 +430,13 @@ $total_entries = $count_row['total'];
             }
             
             .form-container {
-                margin-bottom: 30px;
-            }
-            
-            .data-container {
-                height: 600px;
+                margin-bottom: 15px;
             }
         }
         
         @media (max-width: 992px) {
             .main-content {
-                padding: 20px;
-            }
-            
-            .data-container {
-                height: 500px;
+                padding: 15px;
             }
         }
         
@@ -412,7 +444,7 @@ $total_entries = $count_row['total'];
             .main-content {
                 margin-left: 0;
                 width: 100%;
-                padding: 15px;
+                padding: 10px;
             }
             
             .sidebar-collapsed .main-content {
@@ -431,37 +463,27 @@ $total_entries = $count_row['total'];
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .data-container {
-                height: 400px;
+                gap: 10px;
             }
         }
         
         @media (max-width: 576px) {
             .main-content {
-                padding: 10px;
+                padding: 8px;
             }
             
             .form-container, .data-container {
-                padding: 15px;
+                padding: 10px;
             }
             
             .search-container {
-                padding: 10px;
+                padding: 8px;
             }
             
             .data-table th, .data-table td {
-                padding: 10px;
-                font-size: 13px;
+                padding: 6px 8px;
+                font-size: 12px;
             }
-        }
-        
-        /* Fix for sidebar height */
-        .sidebar {
-            height: 100vh;
-            overflow-y: auto;
         }
     </style>
 </head>
@@ -658,44 +680,46 @@ $total_entries = $count_row['total'];
                     
                     <!-- Fixed-height scrollable container -->
                     <div class="data-table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Purpose</th>
-                                    <th>Inquiry</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                if ($logbook_result->num_rows > 0) {
-                                    while ($row = $logbook_result->fetch_assoc()) {
-                                        // Convert time from 24-hour format to 12-hour format
-                                        $time_obj = new DateTime($row['time']);
-                                        $formatted_time = $time_obj->format('h:i A');
-                                        
-                                        // Format date
-                                        $date_obj = new DateTime($row['submission_date']);
-                                        $formatted_date = $date_obj->format('m/d/Y');
-                                        
-                                        echo "<tr>";
-                                        echo "<td>" . htmlspecialchars($row['name']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['position']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['purpose']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['inquiry'] ?: 'N/A') . "</td>";
-                                        echo "<td>" . $formatted_date . "</td>";
-                                        echo "<td>" . $formatted_time . "</td>";
-                                        echo "</tr>";
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Purpose</th>
+                                        <th>Inquiry</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    if ($logbook_result->num_rows > 0) {
+                                        while ($row = $logbook_result->fetch_assoc()) {
+                                            // Convert time from 24-hour format to 12-hour format
+                                            $time_obj = new DateTime($row['time']);
+                                            $formatted_time = $time_obj->format('h:i A');
+                                            
+                                            // Format date
+                                            $date_obj = new DateTime($row['submission_date']);
+                                            $formatted_date = $date_obj->format('m/d/Y');
+                                            
+                                            echo "<tr>";
+                                            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['position']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['purpose']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['inquiry'] ?: 'N/A') . "</td>";
+                                            echo "<td>" . $formatted_date . "</td>";
+                                            echo "<td>" . $formatted_time . "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='6' class='no-data'>No entries found</td></tr>";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='6' class='no-data'>No entries found</td></tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -739,27 +763,6 @@ $total_entries = $count_row['total'];
             
             // Listen for window resize
             window.addEventListener('resize', handleResponsive);
-            
-            // Adjust heights on window resize
-            function adjustHeights() {
-                if (window.innerWidth > 1200) {
-                    const topBarHeight = document.querySelector('.top-bar').offsetHeight;
-                    const searchContainerHeight = document.querySelector('.search-container').offsetHeight;
-                    const resultCountHeight = document.querySelector('.result-count') ? 
-                                             document.querySelector('.result-count').offsetHeight + 15 : 0;
-                    
-                    const totalHeight = topBarHeight + searchContainerHeight + resultCountHeight + 60; // 60px for padding
-                    document.querySelector('.page-layout').style.height = `calc(100vh - ${totalHeight}px)`;
-                } else {
-                    document.querySelector('.page-layout').style.height = 'auto';
-                }
-            }
-            
-            // Call once on load
-            setTimeout(adjustHeights, 100);
-            
-            // Call on resize
-            window.addEventListener('resize', adjustHeights);
         });
     </script>
 </body>
