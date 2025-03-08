@@ -478,18 +478,35 @@ while ($row = $bookings->fetch_assoc()) {
             }
         }
         
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
         .modal-content {
             position: relative;
             background-color: #fff;
-            margin: 50px auto;
+            margin: 20px auto;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 600px;
             animation: slideIn 0.3s;
-            max-height: 90vh;
             display: flex;
             flex-direction: column;
+            max-height: calc(100vh - 40px);
             overflow: hidden;
         }
         
@@ -499,9 +516,9 @@ while ($row = $bookings->fetch_assoc()) {
             align-items: center;
             padding: 15px 20px;
             border-bottom: 1px solid #f0f0f0;
+            background-color: #fff;
             position: sticky;
             top: 0;
-            background-color: #fff;
             z-index: 10;
         }
         
@@ -509,144 +526,41 @@ while ($row = $bookings->fetch_assoc()) {
             padding: 20px;
             overflow-y: auto;
             flex: 1;
-            max-height: calc(90vh - 120px);
+            position: relative;
         }
         
-        .close-button {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #777;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            transition: background-color 0.2s;
-        }
-        
-        .close-button:hover {
-            color: #333;
-            background-color: #f0f0f0;
-        }
-        
-        .appointment-item {
-            border-left: 4px solid;
-            background-color: #fff;
-            color: #333;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .appointment-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        .appointment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .appointment-header h3 {
-            font-size: 16px;
-            margin: 0;
-            font-weight: 600;
-        }
-        
-        .appointment-time {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .appointment-details {
-            margin-bottom: 10px;
-        }
-        
-        .appointment-details p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        
-        .appointment-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        
-        .appointment-actions button {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-        
-        .view-appointment {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        
-        .view-appointment:hover {
-            background-color: #e0e0e0;
-        }
-        
-        .edit-appointment {
-            background-color: #4285f4;
-            color: white;
-        }
-        
-        .edit-appointment:hover {
-            background-color: #3367d6;
-        }
-        
-        /* Fix for day view modal */
-        #dayViewModal .modal-content {
-            max-width: 700px;
-        }
-        
-        /* Fix for appointment list */
-        .appointment-list {
-            max-height: 60vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        /* Fix for mobile view */
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
+        /* Modal animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
             }
-            
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Ensure modal is centered when displayed as flex */
+        .modal.show {
+            display: flex;
+        }
+        
+        /* Prevent body scrolling when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        /* Responsive adjustments for modal */
+        @media (max-width: 768px) {
             .modal-content {
                 width: 95%;
-                margin: 10px auto;
+                margin: 10px;
             }
-        }
-        
-        /* Fix for modal animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            
+            .modal {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -1370,272 +1284,128 @@ while ($row = $bookings->fetch_assoc()) {
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
 <script defer src="js/script.js?<?= time() ?>"></script>
 
-<!-- Modal initialization script -->
-<script>
-    // This script ensures all modals are properly initialized when the page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Modal initialization script running');
+<!-- Modal initialization script
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Modal initialization script running');
+    
+    // Direct initialization of all modals
+    const modals = {
+        'bookingModal': 'openBookingModal',
+        'editModal': null,
+        'viewModal': null,
+        'addDepartmentModal': 'openAddDepartmentModal',
+        'addRoomModal': 'openAddRoomModal',
+        'dayViewModal': null,
+        'appointmentModal': null
+    };
+    
+    function showModal(modal) {
+        if (!modal) return;
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
         
-        // Direct initialization of all modals
-        const modals = {
-            'bookingModal': 'openBookingModal',
-            'editModal': null,
-            'viewModal': null,
-            'addDepartmentModal': 'openAddDepartmentModal',
-            'addRoomModal': 'openAddRoomModal',
-            'dayViewModal': null,
-            'appointmentModal': null
-        };
+        // Center the modal content
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            const windowHeight = window.innerHeight;
+            const contentHeight = modalContent.offsetHeight;
+            if (contentHeight < windowHeight) {
+                modal.style.alignItems = 'center';
+            } else {
+                modal.style.alignItems = 'flex-start';
+            }
+        }
+    }
+    
+    function hideModal(modal) {
+        if (!modal) return;
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+    }
+    
+    // Initialize each modal
+    for (const [modalId, openButtonId] of Object.entries(modals)) {
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            console.error(`Modal with ID ${modalId} not found`);
+            continue;
+        }
         
-        // Initialize each modal
-        for (const [modalId, openButtonId] of Object.entries(modals)) {
-            const modal = document.getElementById(modalId);
-            if (!modal) {
-                console.error(`Modal with ID ${modalId} not found`);
-                continue;
-            }
-            
-            // Setup open button if provided
-            if (openButtonId) {
-                const openButton = document.getElementById(openButtonId);
-                if (openButton) {
-                    openButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        modal.style.display = 'block';
-                        console.log(`Modal ${modalId} opened via direct initialization`);
-                    });
-                }
-            }
-            
-            // Setup close button
-            const closeButtonId = `close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`;
-            const closeButton = document.getElementById(closeButtonId);
-            if (closeButton) {
-                closeButton.addEventListener('click', function(e) {
+        // Setup open button if provided
+        if (openButtonId) {
+            const openButton = document.getElementById(openButtonId);
+            if (openButton) {
+                openButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    modal.style.display = 'none';
-                    console.log(`Modal ${modalId} closed via direct initialization`);
+                    showModal(modal);
+                    console.log(`Modal ${modalId} opened via direct initialization`);
                 });
             }
-            
-            // Close modal when clicking outside
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                    console.log(`Modal ${modalId} closed by clicking outside via direct initialization`);
-                }
+        }
+        
+        // Setup close button
+        const closeButtonId = `close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`;
+        const closeButton = document.getElementById(closeButtonId);
+        if (closeButton) {
+            closeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                hideModal(modal);
+                console.log(`Modal ${modalId} closed via direct initialization`);
             });
         }
         
-        // Add click handlers to all buttons with data-modal attribute
-        document.querySelectorAll('[data-modal]').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modalId = this.getAttribute('data-modal');
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.style.display = 'block';
-                    console.log(`Modal ${modalId} opened via data-modal attribute`);
-                }
-            });
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                hideModal(modal);
+                console.log(`Modal ${modalId} closed by clicking outside`);
+            }
         });
-        
-        // Add click handlers to all close buttons
-        document.querySelectorAll('.close-button').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modal = this.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    console.log(`Modal closed via close button`);
-                }
-            });
-        });
-    });
-</script>
-
-<!-- Add this right before the closing body tag -->
-<?php if ($searched_appointment): ?>
-<script>
-    // Data to pass to the view modal
-    const searchedAppointmentData = <?= json_encode($searched_appointment) ?>;
+    }
     
-    document.addEventListener('DOMContentLoaded', function() {
-        // Show the appointment details in the view modal
-        const viewContainer = document.getElementById('viewContainer');
-        if (viewContainer) {
-            const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            viewContainer.innerHTML = `
-                <div class="appointment-details">
-                    <p><strong>Research Adviser's Name:</strong> ${searchedAppointmentData.name}</p>
-                    <p><strong>Group Number:</strong> ${searchedAppointmentData.id_number}</p>
-                    <p><strong>Set:</strong> ${searchedAppointmentData.set}</p>
-                    <p><strong>Department:</strong> ${searchedAppointmentData.department_name}</p>
-                    <p><strong>Room:</strong> ${searchedAppointmentData.room_name}</p>
-                    <p><strong>Date:</strong> ${searchedAppointmentData.booking_date}</p>
-                    <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
-                    <p><strong>Agenda:</strong> ${searchedAppointmentData.reason}</p>
-                    <p><strong>Representative:</strong> ${searchedAppointmentData.representative_name}</p>
-                    <p><strong>Remarks:</strong> ${searchedAppointmentData.group_members || "None"}</p>
-                </div>
-                <div class="form-actions-right" style="margin-top: 20px;">
-                    <button type="button" class="edit-search-result" data-id="${searchedAppointmentData.id}">Edit Appointment</button>
-                </div>
-            `;
-            
-            // Function to show a modal
-            function showModal(modal) {
-                if (!modal) return;
-                
-                // Use flex display for centering
-                modal.style.display = 'flex';
-                modal.style.justifyContent = 'center';
-                modal.style.alignItems = 'center';
-                
-                // Center the modal
-                centerModal(modal);
-                
-                // Prevent body scrolling
-                document.body.style.overflow = 'hidden';
+    // Add click handlers to all buttons with data-modal attribute
+    document.querySelectorAll('[data-modal]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const modalId = this.getAttribute('data-modal');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                showModal(modal);
+                console.log(`Modal ${modalId} opened via data-modal attribute`);
             }
-            
-            // Function to hide a modal
-            function hideModal(modal) {
-                if (!modal) return;
-                
-                // Hide the modal
-                modal.style.display = 'none';
-                
-                // Restore body scrolling
-                document.body.style.overflow = '';
+        });
+    });
+    
+    // Add click handlers to all close buttons
+    document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const modal = this.closest('.modal');
+            if (modal) {
+                hideModal(modal);
+                console.log(`Modal closed via close button`);
             }
-            
-            // Function to center a modal
-            function centerModal(modal) {
-                const modalContent = modal.querySelector('.modal-content');
-                if (!modalContent) return;
-                
-                // Ensure the modal is using flex display
-                modal.style.display = 'flex';
-                modal.style.justifyContent = 'center';
-                modal.style.alignItems = 'center';
-                
-                // Reset any previous styles
-                modalContent.style.margin = 'auto';
-                
-                // Ensure the modal content doesn't exceed the viewport height
-                const viewportHeight = window.innerHeight;
-                const contentHeight = modalContent.scrollHeight;
-                
-                if (contentHeight > viewportHeight * 0.9) {
-                    modalContent.style.maxHeight = `${viewportHeight * 0.9}px`;
-                    modalContent.style.overflowY = 'auto';
+        });
+    });
+    
+    // Handle window resize for modal positioning
+    window.addEventListener('resize', function() {
+        const visibleModal = document.querySelector('.modal.show');
+        if (visibleModal) {
+            const modalContent = visibleModal.querySelector('.modal-content');
+            if (modalContent) {
+                const windowHeight = window.innerHeight;
+                const contentHeight = modalContent.offsetHeight;
+                if (contentHeight < windowHeight) {
+                    visibleModal.style.alignItems = 'center';
                 } else {
-                    modalContent.style.maxHeight = 'none';
+                    visibleModal.style.alignItems = 'flex-start';
                 }
             }
-            
-            // Show the view modal automatically
-            const viewModal = document.getElementById('viewModal');
-            
-            // Close any other open modals first
-            document.querySelectorAll('.modal').forEach(m => {
-                if (m.id !== 'viewModal' && m.style.display === 'flex') {
-                    hideModal(m);
-                }
-            });
-            
-            // Show the modal
-            showModal(viewModal);
-            
-            // Add event listener to the edit button
-            document.querySelector('.edit-search-result').addEventListener('click', function() {
-                // Fill the edit form with the appointment data
-                document.getElementById('appointment_id').value = searchedAppointmentData.id;
-                document.getElementById('edit_department').value = searchedAppointmentData.department_id;
-                document.getElementById('edit_name').value = searchedAppointmentData.name;
-                document.getElementById('edit_id_number').value = searchedAppointmentData.id_number;
-                document.getElementById('edit_set').value = searchedAppointmentData.set;
-                document.getElementById('edit_date').value = searchedAppointmentData.booking_date;
-                document.getElementById('edit_reason').value = searchedAppointmentData.reason;
-                document.getElementById('edit_room').value = searchedAppointmentData.room_id;
-                document.getElementById('edit_representative_name').value = searchedAppointmentData.representative_name;
-                document.getElementById('edit_group_members').value = searchedAppointmentData.group_members;
-                
-                // Time handling - parse the time into components
-                const timeFrom = new Date(`2000-01-01T${searchedAppointmentData.booking_time_from}`);
-                const timeTo = new Date(`2000-01-01T${searchedAppointmentData.booking_time_to}`);
-                
-                const fromHour = timeFrom.getHours() % 12 || 12;
-                const fromMinute = timeFrom.getMinutes();
-                const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
-                
-                const toHour = timeTo.getHours() % 12 || 12;
-                const toMinute = timeTo.getMinutes();
-                const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
-                
-                document.getElementById('edit_time_from_hour').value = fromHour;
-                document.getElementById('edit_time_from_minute').value = fromMinute.toString().padStart(2, '0');
-                document.getElementById('edit_time_from_ampm').value = fromAMPM;
-                
-                document.getElementById('edit_time_to_hour').value = toHour;
-                document.getElementById('edit_time_to_minute').value = toMinute.toString().padStart(2, '0');
-                document.getElementById('edit_time_to_ampm').value = toAMPM;
-                
-                // Close the view modal and open the edit modal
-                hideModal(viewModal);
-                
-                const editModal = document.getElementById('editModal');
-                showModal(editModal);
-            });
         }
     });
-</script>
-<?php endif; ?>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle sidebar
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const appContainer = document.querySelector('.app-container');
-        const mainContent = document.querySelector('.main-content');
-        
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                appContainer.classList.toggle('sidebar-collapsed');
-            });
-        }
-        
-        // Handle responsive behavior
-        function handleResponsive() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('collapsed');
-                appContainer.classList.add('sidebar-collapsed');
-                
-                // On mobile, clicking outside sidebar should close it
-                mainContent.addEventListener('click', function() {
-                    if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.add('collapsed');
-                        appContainer.classList.add('sidebar-collapsed');
-                    }
-                });
-            }
-        }
-        
-        // Initial check
-        handleResponsive();
-        
-        // Listen for window resize
-        window.addEventListener('resize', handleResponsive);
-    });
-</script>
-</body>
-</html>
+});
