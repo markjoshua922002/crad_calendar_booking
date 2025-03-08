@@ -171,9 +171,7 @@ while ($row = $bookings->fetch_assoc()) {
     <style>
         /* Remove scrollbar */
         body {
-            overflow: hidden;
             background-color: #f5f7fa;
-            height: 100vh;
             margin: 0;
             padding: 0;
             font-size: 12px;
@@ -186,9 +184,8 @@ while ($row = $bookings->fetch_assoc()) {
         /* App container for proper layout */
         .app-container {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
-            overflow: hidden;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
         }
@@ -201,11 +198,9 @@ while ($row = $bookings->fetch_assoc()) {
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px); /* Match sidebar width */
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 978px;
-            max-height: 100vh;
+            min-height: 100vh;
         }
         
         /* When sidebar is collapsed */
