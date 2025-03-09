@@ -1693,27 +1693,40 @@ function checkForConflicts() {
                     updateConflictUI(analysis);
                     resolve(analysis.has_conflicts);
                 }).catch(error => {
-                    console.error("Error using conflict service, falling back to local resolver:", error);
+                    console.error("Error using conflict service:", error);
                     
-                    // Fall back to local resolver if available
+                    // Clear loading state and show error
+                    if (conflictContainer) {
+                        conflictContainer.innerHTML = `<div class="error">Error checking conflicts: ${error.message}</div>`;
+                    }
+                    
+                    // Try falling back to local resolver
                     if (conflictResolver) {
-                        const localAnalysis = conflictResolver.analyzeBooking(
-                            dateInput.value,
-                            roomSelect.value,
-                            departmentSelect.value,
-                            timeFrom,
-                            timeTo,
-                            durationMinutes
-                        );
-                        console.log("Conflict analysis result from local resolver:", localAnalysis);
-                        updateConflictUI(localAnalysis);
-                        resolve(localAnalysis.hasConflicts);
+                        console.log("Falling back to local resolver");
+                        try {
+                            const localAnalysis = conflictResolver.analyzeBooking(
+                                dateInput.value,
+                                roomSelect.value,
+                                departmentSelect.value,
+                                timeFrom,
+                                timeTo,
+                                durationMinutes
+                            );
+                            console.log("Conflict analysis result from local resolver:", localAnalysis);
+                            updateConflictUI(localAnalysis);
+                            resolve(localAnalysis.hasConflicts);
+                        } catch (localError) {
+                            console.error("Local resolver also failed:", localError);
+                            if (conflictContainer) {
+                                conflictContainer.innerHTML = `<div class="error">Error checking conflicts: ${localError.message}</div>`;
+                            }
+                            resolve(false);
+                        }
                     } else {
                         // No fallback available
-                        updateConflictUI({
-                            has_conflicts: false,
-                            message: "Unable to check for conflicts. Please proceed with caution."
-                        });
+                        if (conflictContainer) {
+                            conflictContainer.innerHTML = `<div class="error">Unable to check for conflicts. Please try again later.</div>`;
+                        }
                         resolve(false);
                     }
                 });

@@ -89,15 +89,22 @@ class ConflictService {
      */
     async makeRequest(endpoint, data) {
         const url = this.baseUrl + endpoint;
+        const timeout = 10000; // 10 second timeout
         
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -107,6 +114,9 @@ class ConflictService {
             return await response.json();
         } catch (error) {
             console.error('Request failed:', error);
+            if (error.name === 'AbortError') {
+                throw new Error('Request timed out after ' + (timeout/1000) + ' seconds');
+            }
             throw error;
         }
     }

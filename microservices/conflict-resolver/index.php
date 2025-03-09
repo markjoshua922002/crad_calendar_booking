@@ -24,29 +24,37 @@ require_once 'ConflictResolver.php';
 require_once 'Database.php';
 
 // Initialize database connection
-$database = new Database();
-$db = $database->getConnection();
+try {
+    $database = new Database();
+    $db = $database->getConnection();
 
-// Initialize the conflict resolver
-$resolver = new ConflictResolver($db);
+    // Initialize the conflict resolver
+    $resolver = new ConflictResolver($db);
 
-// Process the request
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$endpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : 'check';
+    // Process the request
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
+    $endpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : 'check';
 
-// Route the request to the appropriate handler
-switch ($endpoint) {
-    case 'check':
-        handleCheckConflicts($resolver, $requestMethod);
-        break;
-    case 'alternatives':
-        handleFindAlternatives($resolver, $requestMethod);
-        break;
-    case 'analyze':
-        handleAnalyzeBooking($resolver, $requestMethod);
-        break;
-    default:
-        sendResponse(404, ['error' => 'Endpoint not found']);
+    // Route the request to the appropriate handler
+    switch ($endpoint) {
+        case 'check':
+            handleCheckConflicts($resolver, $requestMethod);
+            break;
+        case 'alternatives':
+            handleFindAlternatives($resolver, $requestMethod);
+            break;
+        case 'analyze':
+            handleAnalyzeBooking($resolver, $requestMethod);
+            break;
+        default:
+            sendResponse(404, ['error' => 'Endpoint not found']);
+    }
+} catch (Exception $e) {
+    logMessage("Critical error: " . $e->getMessage(), "ERROR");
+    sendResponse(500, [
+        'error' => 'Internal server error',
+        'message' => $e->getMessage()
+    ]);
 }
 
 /**
