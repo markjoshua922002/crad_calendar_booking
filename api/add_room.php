@@ -30,19 +30,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     
+    $room_capacity = isset($_POST['room_capacity']) ? (int)$_POST['room_capacity'] : 0;
+    
+    // Check if room already exists
+    $check = $conn->prepare("SELECT * FROM rooms WHERE room_name = ?");
+    if (!$check) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    
+    $check->bind_param("s", $room_name);
+    $check->execute();
+    $result = $check->get_result();
+    
+    if ($result->num_rows > 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Room already exists']);
+        exit();
+    }
+    
     // Insert the room
-    $stmt = $conn->prepare("INSERT INTO rooms (name) VALUES (?)");
+    $stmt = $conn->prepare("INSERT INTO rooms (room_name, capacity) VALUES (?, ?)");
     if (!$stmt) {
         http_response_code(500);
         echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
         exit();
     }
     
-    $stmt->bind_param("s", $room_name);
+    $stmt->bind_param("si", $room_name, $room_capacity);
     
     if ($stmt->execute()) {
-        // Success - redirect back to the calendar
-        header('Location: ../index.php');
+        // Success - return JSON response
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Room added successfully']);
         exit();
     } else {
         http_response_code(500);

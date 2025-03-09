@@ -22,28 +22,46 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
     $department_name = $_POST['department_name'];
-    $color = $_POST['color'];
     
     // Validate input
-    if (empty($department_name) || empty($color)) {
+    if (empty($department_name)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Department name and color are required']);
+        echo json_encode(['error' => 'Department name is required']);
+        exit();
+    }
+    
+    // Check if department already exists
+    $check = $conn->prepare("SELECT * FROM departments WHERE department_name = ?");
+    if (!$check) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    
+    $check->bind_param("s", $department_name);
+    $check->execute();
+    $result = $check->get_result();
+    
+    if ($result->num_rows > 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Department already exists']);
         exit();
     }
     
     // Insert the department
-    $stmt = $conn->prepare("INSERT INTO departments (name, color) VALUES (?, ?)");
+    $stmt = $conn->prepare("INSERT INTO departments (department_name) VALUES (?)");
     if (!$stmt) {
         http_response_code(500);
         echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
         exit();
     }
     
-    $stmt->bind_param("ss", $department_name, $color);
+    $stmt->bind_param("s", $department_name);
     
     if ($stmt->execute()) {
-        // Success - redirect back to the calendar
-        header('Location: ../index.php');
+        // Success - return JSON response
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Department added successfully']);
         exit();
     } else {
         http_response_code(500);

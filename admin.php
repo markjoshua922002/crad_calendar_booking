@@ -17,55 +17,6 @@ if ($conn->connect_error) {
 $success_message = '';
 $error_message = '';
 
-// Add Room
-if (isset($_POST['add_room'])) {
-    $room_name = $_POST['room_name'];
-    $room_capacity = $_POST['room_capacity'];
-    
-    // Check if room already exists
-    $check = $conn->prepare("SELECT * FROM rooms WHERE room_name = ?");
-    $check->bind_param("s", $room_name);
-    $check->execute();
-    $result = $check->get_result();
-    
-    if ($result->num_rows > 0) {
-        $error_message = "Room already exists!";
-    } else {
-        $stmt = $conn->prepare("INSERT INTO rooms (room_name, capacity) VALUES (?, ?)");
-        $stmt->bind_param("si", $room_name, $room_capacity);
-        
-        if ($stmt->execute()) {
-            $success_message = "Room added successfully!";
-        } else {
-            $error_message = "Error adding room: " . $conn->error;
-        }
-    }
-}
-
-// Add Department
-if (isset($_POST['add_department'])) {
-    $department_name = $_POST['department_name'];
-    
-    // Check if department already exists
-    $check = $conn->prepare("SELECT * FROM departments WHERE department_name = ?");
-    $check->bind_param("s", $department_name);
-    $check->execute();
-    $result = $check->get_result();
-    
-    if ($result->num_rows > 0) {
-        $error_message = "Department already exists!";
-    } else {
-        $stmt = $conn->prepare("INSERT INTO departments (department_name) VALUES (?)");
-        $stmt->bind_param("s", $department_name);
-        
-        if ($stmt->execute()) {
-            $success_message = "Department added successfully!";
-        } else {
-            $error_message = "Error adding department: " . $conn->error;
-        }
-    }
-}
-
 // Add Group
 if (isset($_POST['add_group'])) {
     $group_name = $_POST['group_name'];
@@ -411,7 +362,7 @@ foreach ($create_tables as $sql) {
                 <h2><i class="fas fa-door-open"></i> Add Room</h2>
                 <span class="close" onclick="closeModal('roomModal')">&times;</span>
             </div>
-            <form method="post" action="">
+            <form method="post" action="api/add_room.php">
                 <div class="form-group">
                     <label for="room_name">Room Name</label>
                     <input type="text" id="room_name" name="room_name" required>
@@ -420,7 +371,7 @@ foreach ($create_tables as $sql) {
                     <label for="room_capacity">Capacity</label>
                     <input type="number" id="room_capacity" name="room_capacity" min="1" required>
                 </div>
-                <button type="submit" name="add_room" class="submit-btn">Add Room</button>
+                <button type="submit" class="submit-btn">Add Room</button>
             </form>
         </div>
     </div>
@@ -432,12 +383,12 @@ foreach ($create_tables as $sql) {
                 <h2><i class="fas fa-building"></i> Add Department</h2>
                 <span class="close" onclick="closeModal('departmentModal')">&times;</span>
             </div>
-            <form method="post" action="">
+            <form method="post" action="api/add_department.php">
                 <div class="form-group">
                     <label for="department_name">Department Name</label>
                     <input type="text" id="department_name" name="department_name" required>
                 </div>
-                <button type="submit" name="add_department" class="submit-btn">Add Department</button>
+                <button type="submit" class="submit-btn">Add Department</button>
             </form>
         </div>
     </div>
@@ -507,5 +458,65 @@ foreach ($create_tables as $sql) {
 
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script src="js/admin.js?v=<?= time() ?>"></script>
+    <script>
+        // Handle form submissions via AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Room form submission
+            const roomForm = document.querySelector('#roomModal form');
+            roomForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch('api/add_room.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Unknown error occurred');
+                        });
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    // Success - reload the page to show the new room
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+            });
+            
+            // Department form submission
+            const departmentForm = document.querySelector('#departmentModal form');
+            departmentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch('api/add_department.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Unknown error occurred');
+                        });
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    // Success - reload the page to show the new department
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
