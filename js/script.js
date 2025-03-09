@@ -1,6 +1,5 @@
 // Initialize conflict resolver
 let conflictResolver = null;
-let conflictService = null;
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed - v15");
@@ -1378,42 +1377,20 @@ function initializeConflictResolver() {
     try {
         console.log("Initializing Conflict Resolver...");
         
-        // Initialize the conflict service client
-        conflictService = new ConflictService();
-        console.log("Conflict Service initialized successfully");
-        
         // Get data from JSON elements
         const appointmentsDataElement = document.getElementById('appointmentsData');
         const roomsDataElement = document.getElementById('roomsData');
         const departmentsDataElement = document.getElementById('departmentsData');
         
         if (!appointmentsDataElement || !roomsDataElement || !departmentsDataElement) {
-            console.error("Missing data elements for Conflict Resolver", {
-                appointmentsDataElement: !!appointmentsDataElement,
-                roomsDataElement: !!roomsDataElement,
-                departmentAvailability: !!departmentsDataElement
-            });
+            console.error("Missing data elements for Conflict Resolver");
             return;
         }
         
         // Parse the JSON data
-        let appointments, rooms, departments;
-        try {
-            appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
-            console.log("Parsed appointments data:", Object.keys(appointments).length, "days");
-            
-            rooms = JSON.parse(roomsDataElement.textContent || '[]');
-            console.log("Parsed rooms data:", rooms.length, "rooms");
-            
-            departments = JSON.parse(departmentsDataElement.textContent || '[]');
-            console.log("Parsed departments data:", departments.length, "departments");
-        } catch (parseError) {
-            console.error("Error parsing data for Conflict Resolver:", parseError);
-            console.log("Raw appointments data:", appointmentsDataElement.textContent);
-            console.log("Raw rooms data:", roomsDataElement.textContent);
-            console.log("Raw departments data:", departmentsDataElement.textContent);
-            return;
-        }
+        const appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
+        const rooms = JSON.parse(roomsDataElement.textContent || '[]');
+        const departments = JSON.parse(departmentsDataElement.textContent || '[]');
         
         // Flatten appointments into an array
         const flatAppointments = [];
@@ -1424,13 +1401,10 @@ function initializeConflictResolver() {
                 });
             }
         }
-        console.log("Flattened appointments:", flatAppointments.length, "total appointments");
         
-        // Create the ConflictResolver instance (as fallback)
-        if (typeof ConflictResolver === 'function') {
-            conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
-            console.log("Local Conflict Resolver initialized successfully (fallback)");
-        }
+        // Create the ConflictResolver instance
+        conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
+        console.log("Conflict Resolver initialized successfully");
         
         // Setup form submission handling for conflict detection
         setupConflictDetection();
@@ -1601,29 +1575,53 @@ function parseTimeString(timeStr) {
     return [parseInt(hour), minute, ampm];
 }
 
-// Check for conflicts
+// Check for conflicts and update the UI
 function checkForConflicts() {
+    if (!conflictResolver) {
+        console.error("Conflict resolver not initialized");
+        return false;
+    }
+    
+    console.log("Running conflict check...");
+    
+    // Get form values
     const dateInput = document.getElementById('date');
     const roomSelect = document.getElementById('room');
+    const departmentSelect = document.getElementById('department');
     const timeFromHour = document.getElementById('time_from_hour');
     const timeFromMinute = document.getElementById('time_from_minute');
     const timeFromAmpm = document.getElementById('time_from_ampm');
     const timeToHour = document.getElementById('time_to_hour');
     const timeToMinute = document.getElementById('time_to_minute');
     const timeToAmpm = document.getElementById('time_to_ampm');
-
-    // Check if all required fields are filled
-    if (!dateInput.value || !roomSelect.value || 
-        !timeFromHour.value || !timeFromMinute.value || !timeFromAmpm.value ||
-        !timeToHour.value || !timeToMinute.value || !timeToAmpm.value) {
+    
+    // Ensure all required fields have values
+    if (!dateInput?.value || !roomSelect?.value || !departmentSelect?.value ||
+        !timeFromHour?.value || !timeFromMinute?.value || !timeFromAmpm?.value ||
+        !timeToHour?.value || !timeToMinute?.value || !timeToAmpm?.value) {
+        console.log("Missing required fields for conflict check");
         return false;
     }
-
-    // Format times for comparison
-    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value} ${timeFromAmpm.value}`;
-    const timeTo = `${timeToHour.value}:${timeToMinute.value} ${timeToAmpm.value}`;
-
-    // Simple validation
+    
+    console.log("Form values for conflict check:", {
+        date: dateInput.value,
+        roomId: roomSelect.value,
+        departmentId: departmentSelect.value,
+        timeFromHour: timeFromHour.value,
+        timeFromMinute: timeFromMinute.value,
+        timeFromAmpm: timeFromAmpm.value,
+        timeToHour: timeToHour.value,
+        timeToMinute: timeToMinute.value,
+        timeToAmpm: timeToAmpm.value
+    });
+    
+    // Format the time values
+    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value.padStart(2, '0')} ${timeFromAmpm.value}`;
+    const timeTo = `${timeToHour.value}:${timeToMinute.value.padStart(2, '0')} ${timeToAmpm.value}`;
+    
+    console.log("Formatted times:", { timeFrom, timeTo });
+    
+    // Calculate duration in minutes
     const fromMinutes = (parseInt(timeFromHour.value) % 12) * 60 + parseInt(timeFromMinute.value);
     const toMinutes = (parseInt(timeToHour.value) % 12) * 60 + parseInt(timeToMinute.value);
     let durationMinutes = toMinutes - fromMinutes;
@@ -1634,6 +1632,7 @@ function checkForConflicts() {
     } else if (timeFromAmpm.value === 'PM' && timeToAmpm.value === 'AM') {
         durationMinutes += 24 * 60;
     } else if (timeFromAmpm.value === timeToAmpm.value && toMinutes < fromMinutes) {
+        // Same AM/PM but end time is earlier than start time (next day)
         durationMinutes += 12 * 60;
     }
     
@@ -1641,14 +1640,30 @@ function checkForConflicts() {
     if (durationMinutes <= 0) {
         durationMinutes += 24 * 60;
     }
-
-    // Basic validation
-    if (durationMinutes <= 0) {
-        alert('End time must be after start time');
+    
+    console.log("Calculated duration:", { durationMinutes });
+    
+    try {
+        // Analyze the booking for conflicts
+        const analysis = conflictResolver.analyzeBooking(
+            dateInput.value,
+            roomSelect.value,
+            departmentSelect.value,
+            timeFrom,
+            timeTo,
+            durationMinutes
+        );
+        
+        console.log("Conflict analysis result:", analysis);
+        
+        // Update the UI based on the analysis
+        updateConflictUI(analysis);
+        
+        return analysis.hasConflicts;
+    } catch (error) {
+        console.error("Error during conflict analysis:", error);
         return false;
     }
-
-    return true;
 }
 
 // Update the conflict resolution UI
@@ -1666,7 +1681,7 @@ function updateConflictUI(analysis) {
     }
     
     // If no conflicts, hide the container and return
-    if (!analysis.has_conflicts && !analysis.hasConflicts) {
+    if (!analysis.hasConflicts) {
         conflictContainer.style.display = 'none';
         return;
     }
@@ -1682,108 +1697,72 @@ function updateConflictUI(analysis) {
     alternativeRoomsContainer.innerHTML = '';
     
     // Add alternative times
-    const alternativeTimes = analysis.alternative_times || analysis.alternativeTimes || [];
-    if (alternativeTimes && alternativeTimes.length > 0) {
-        alternativeTimes.forEach(alt => {
-            const altCard = document.createElement('div');
-            altCard.className = 'alternative-card';
-            altCard.dataset.timeFrom = alt.time_from;
-            altCard.dataset.timeTo = alt.time_to;
+    if (analysis.alternativeTimes && analysis.alternativeTimes.length > 0) {
+        analysis.alternativeTimes.forEach(alt => {
+            const card = document.createElement('div');
+            card.className = 'alternative-card';
+            card.dataset.timeFrom = alt.timeFrom;
+            card.dataset.timeTo = alt.timeTo;
             
-            altCard.innerHTML = `
-                <h6><i class="fas fa-clock"></i> ${alt.time_from} - ${alt.time_to}</h6>
-                <p>Recommended time slot <span class="score">${alt.score}%</span></p>
+            card.innerHTML = `
+                <h6><i class="fas fa-clock"></i> Alternative Time <span class="score">${alt.score}</span></h6>
+                <p>${alt.timeFrom} - ${alt.timeTo}</p>
             `;
             
-            altCard.addEventListener('click', function() {
-                // Remove selected class from all cards
-                document.querySelectorAll('.alternative-card').forEach(card => {
-                    card.classList.remove('selected');
+            // Add click handler to select this alternative
+            card.addEventListener('click', function() {
+                // Remove selected class from all time cards
+                document.querySelectorAll('#alternative-times .alternative-card').forEach(c => {
+                    c.classList.remove('selected');
                 });
                 
                 // Add selected class to this card
-                this.classList.add('selected');
+                card.classList.add('selected');
                 
-                // Enable apply button
+                // Enable the apply button
                 applyAlternativeBtn.disabled = false;
             });
             
-            alternativeTimesContainer.appendChild(altCard);
+            alternativeTimesContainer.appendChild(card);
         });
     } else {
-        alternativeTimesContainer.innerHTML = '<p class="no-alternatives">No alternative times available</p>';
+        alternativeTimesContainer.innerHTML = '<p>No alternative times available.</p>';
     }
     
     // Add alternative rooms
-    const alternativeRooms = analysis.alternative_rooms || analysis.alternativeRooms || [];
-    if (alternativeRooms && alternativeRooms.length > 0) {
-        alternativeRooms.forEach(alt => {
-            const altCard = document.createElement('div');
-            altCard.className = 'alternative-card';
-            altCard.dataset.roomId = alt.id;
-            altCard.dataset.roomName = alt.name;
+    if (analysis.alternativeRooms && analysis.alternativeRooms.length > 0) {
+        analysis.alternativeRooms.forEach(alt => {
+            const card = document.createElement('div');
+            card.className = 'alternative-card';
+            card.dataset.roomId = alt.roomId;
             
-            altCard.innerHTML = `
-                <h6><i class="fas fa-door-open"></i> ${alt.name}</h6>
-                <p>Available room <span class="score">${alt.score}%</span></p>
+            card.innerHTML = `
+                <h6><i class="fas fa-door-open"></i> Alternative Room <span class="score">${alt.score}</span></h6>
+                <p>${alt.roomName}</p>
             `;
             
-            altCard.addEventListener('click', function() {
-                // Remove selected class from all cards
-                document.querySelectorAll('.alternative-card').forEach(card => {
-                    card.classList.remove('selected');
+            // Add click handler to select this alternative
+            card.addEventListener('click', function() {
+                // Remove selected class from all room cards
+                document.querySelectorAll('#alternative-rooms .alternative-card').forEach(c => {
+                    c.classList.remove('selected');
                 });
                 
                 // Add selected class to this card
-                this.classList.add('selected');
+                card.classList.add('selected');
                 
-                // Enable apply button
+                // Enable the apply button
                 applyAlternativeBtn.disabled = false;
             });
             
-            alternativeRoomsContainer.appendChild(altCard);
+            alternativeRoomsContainer.appendChild(card);
         });
     } else {
-        alternativeRoomsContainer.innerHTML = '<p class="no-alternatives">No alternative rooms available</p>';
+        alternativeRoomsContainer.innerHTML = '<p>No alternative rooms available.</p>';
     }
     
-    // Setup apply button
+    // Disable the apply button initially
     applyAlternativeBtn.disabled = true;
-    applyAlternativeBtn.addEventListener('click', function() {
-        const selectedCard = document.querySelector('.alternative-card.selected');
-        
-        if (selectedCard) {
-            // Check if it's a time alternative
-            if (selectedCard.dataset.timeFrom && selectedCard.dataset.timeTo) {
-                const [fromHour, fromMinute, fromAmpm] = parseTimeString(selectedCard.dataset.timeFrom);
-                const [toHour, toMinute, toAmpm] = parseTimeString(selectedCard.dataset.timeTo);
-                
-                // Update form fields
-                document.getElementById('time_from_hour').value = fromHour;
-                document.getElementById('time_from_minute').value = fromMinute;
-                document.getElementById('time_from_ampm').value = fromAmpm;
-                document.getElementById('time_to_hour').value = toHour;
-                document.getElementById('time_to_minute').value = toMinute;
-                document.getElementById('time_to_ampm').value = toAmpm;
-            }
-            
-            // Check if it's a room alternative
-            if (selectedCard.dataset.roomId) {
-                document.getElementById('room').value = selectedCard.dataset.roomId;
-            }
-            
-            // Hide the conflict container
-            conflictContainer.style.display = 'none';
-        }
-    });
-    
-    // Setup ignore button
-    const ignoreBtn = document.querySelector('.ignore-conflicts');
-    if (ignoreBtn) {
-        ignoreBtn.addEventListener('click', function() {
-            conflictContainer.style.display = 'none';
-        });
-    }
 }
 
 function setupUpcomingAppointmentClicks() {
