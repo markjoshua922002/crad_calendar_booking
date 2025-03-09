@@ -46,10 +46,8 @@ if (isset($_POST['add_booking'])) {
     $set = $set_row['set_name'];
     $set_stmt->close();
     
-    // Validate set name was retrieved successfully
-    if (empty($set)) {
-        die('Error: Could not retrieve set name');
-    }
+    // Debug: Log the set value
+    error_log("Set ID: $set_id, Set Name: $set");
     
     $department = $_POST['department'];
     $room = $_POST['room'];
@@ -84,20 +82,21 @@ if (isset($_POST['add_booking'])) {
         if ($result->num_rows > 0) {
             $warning = "Double booking detected for the specified time, date, and room.";
         } else {
+            // Modified the INSERT statement to use set_id instead of set name
             $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if (!$stmt) {
                 die('Prepare failed: ' . $conn->error);
             }
-            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            $stmt->bind_param("sssssssssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
                 // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . ", Set=$set");
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . ", Set ID=$set_id");
                 // Redirect to avoid form resubmission
                 header('Location: index.php');
                 exit();
             } else {
                 // Debug: Log error
-                error_log("Error inserting booking: " . $stmt->error . ", Set=$set");
+                error_log("Error inserting booking: " . $stmt->error . ", Set ID=$set_id");
                 echo "Error: " . $stmt->error;
             }
             $stmt->close();
