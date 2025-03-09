@@ -199,6 +199,7 @@ $total_entries = $count_row['total'];
             width: 28%;
             height: fit-content;
             min-height: 0;
+            margin-right: 10px;
         }
         
         .form-container h2 {
