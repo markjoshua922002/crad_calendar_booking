@@ -1,8 +1,0 @@
-# Enable RewriteEngine
-RewriteEngine On
-
-# Set the default index file
-DirectoryIndex calendar.php index.html
-
-# Handle 404 errors
-ErrorDocument 404 /404.html
