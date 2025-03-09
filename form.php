@@ -211,6 +211,7 @@ $total_entries = $count_row['total'];
             width: 28%;
             height: 750px; /* Reduced height */
             overflow-y: auto; /* Allow scrolling */
+            position: relative; /* Ensure proper positioning context */
         }
         
         .form-container h2 {
@@ -467,6 +468,7 @@ $total_entries = $count_row['total'];
             gap: 8px;
             transition: background-color 0.3s;
             margin: 0 auto;
+            z-index: 10; /* Ensure button is above other content */
         }
         
         .submit-button:hover {
@@ -503,7 +505,7 @@ $total_entries = $count_row['total'];
             flex-direction: column;
             gap: 8px;
             height: auto; /* Let it take natural height */
-            margin-bottom: 60px; /* Space for submit button */
+            padding-bottom: 60px; /* Space for submit button instead of margin */
         }
         
         /* Specific for 1920x978 resolution with zoom out */
