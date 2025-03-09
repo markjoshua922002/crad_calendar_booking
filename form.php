@@ -313,11 +313,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 10px; /* Reduced spacing */
         }
         
         .form-group:last-child {
-            margin-bottom: 20px;
+            margin-bottom: 60px; /* Add space for submit button */
         }
         
         .form-group label {
@@ -353,7 +353,8 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 6px;
             align-items: center;
-            flex-wrap: wrap; /* Allow wrapping for better visibility */
+            flex-wrap: wrap;
+            margin-bottom: 10px; /* Add space after time picker */
         }
         
         .time-picker input[type="time"] {
@@ -374,7 +375,10 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            margin-top: auto; /* Push button to bottom */
+            position: absolute; /* Position at bottom of form */
+            bottom: 20px;
+            left: 0;
+            right: 0;
             height: 40px;
             width: 100%;
             background-color: #4285f4;
@@ -389,7 +393,6 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
-            margin-bottom: 10px; /* Add space at the bottom */
         }
         
         .submit-button:hover {
@@ -425,8 +428,9 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             gap: 12px;
-            height: calc(100% - 50px); /* Subtract header height */
-            padding-bottom: 20px; /* Add padding at the bottom */
+            height: calc(100% - 80px); /* Increased space for form content */
+            padding-bottom: 20px;
+            position: relative; /* For absolute positioning of submit button */
         }
         
         /* Specific for 1920x978 resolution with zoom out */
