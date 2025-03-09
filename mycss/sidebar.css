@@ -1,5 +1,5 @@
 /* Sidebar layout */
-.sidebar {
+.app-container .sidebar {
     position: fixed;
     left: 0;
     top: 0;
@@ -17,7 +17,7 @@
 }
 
 /* Collapsed sidebar */
-.sidebar.collapsed {
+.app-container .sidebar.collapsed {
     width: 70px;
     overflow: visible; /* Allow dropdown menus to be visible */
 }
@@ -125,33 +125,33 @@
 }
 
 /* Collapsed sidebar styles */
-.sidebar.collapsed .sidebar-header h2,
-.sidebar.collapsed a span {
+.app-container .sidebar.collapsed .sidebar-header h2,
+.app-container .sidebar.collapsed a span {
     opacity: 0;
     width: 0;
     height: 0;
     overflow: hidden;
 }
 
-.sidebar.collapsed a {
+.app-container .sidebar.collapsed a {
     justify-content: center;
     padding: 12px 0;
 }
 
-.sidebar.collapsed a i {
+.app-container .sidebar.collapsed a i {
     margin-right: 0;
     font-size: 20px;
 }
 
 /* Mobile sidebar styles */
 @media screen and (max-width: 768px) {
-    .sidebar {
+    .app-container .sidebar {
         transform: translateX(-100%);
         width: 250px;
         box-shadow: none;
     }
     
-    .sidebar.active {
+    .app-container .sidebar.active {
         transform: translateX(0);
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
@@ -175,37 +175,37 @@
     }
     
     /* Ensure collapsed sidebar is hidden on mobile */
-    .sidebar.collapsed {
+    .app-container .sidebar.collapsed {
         transform: translateX(-100%);
     }
     
     /* Show full sidebar when active, even if it was collapsed */
-    .sidebar.collapsed.active {
+    .app-container .sidebar.collapsed.active {
         width: 250px;
         transform: translateX(0);
     }
     
     /* Show text in sidebar when active on mobile, even if it was collapsed */
-    .sidebar.collapsed.active .sidebar-header h2,
-    .sidebar.collapsed.active a span {
+    .app-container .sidebar.collapsed.active .sidebar-header h2,
+    .app-container .sidebar.collapsed.active a span {
         opacity: 1;
         width: auto;
         height: auto;
     }
     
-    .sidebar.collapsed.active a {
+    .app-container .sidebar.collapsed.active a {
         justify-content: flex-start;
         padding: 12px 20px;
     }
     
-    .sidebar.collapsed.active a i {
+    .app-container .sidebar.collapsed.active a i {
         margin-right: 15px;
         font-size: 18px;
     }
 }
 
 /* Main content adjustment */
-.main-content {
+.app-container .main-content {
     margin-left: 250px;
     padding: 20px;
     transition: all 0.3s ease;
@@ -218,18 +218,18 @@
 }
 
 @media screen and (max-width: 768px) {
-    .sidebar {
+    .app-container .sidebar {
         transform: translateX(-100%);
         width: 250px;
         box-shadow: none;
     }
     
-    .sidebar.active {
+    .app-container .sidebar.active {
         transform: translateX(0);
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
     
-    .main-content {
+    .app-container .main-content {
         margin-left: 0;
         width: 100%;
         padding: 15px;
