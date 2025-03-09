@@ -44,23 +44,24 @@ $total_entries = $count_row['total'];
     <style>
         /* Additional styles for the logbook page - maximum zoom out */
         body {
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             background-color: #f5f7fa;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
             font-size: 12px;
             transform: scale(0.9);
             transform-origin: top left;
             width: 111.11%;
-            height: 111.11%;
+            height: auto;
         }
         
         .app-container {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
         }
@@ -73,11 +74,12 @@ $total_entries = $count_row['total'];
             transition: margin-left 0.3s ease;
             position: relative;
             width: calc(100% - 250px); /* Match sidebar width from sidebar.css */
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            height: 978px;
-            max-height: 100vh;
+            min-height: 100vh;
+            height: auto;
         }
         
         /* When sidebar is collapsed */
@@ -182,10 +184,11 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 0px;
             flex: 1;
-            overflow: hidden;
+            overflow: visible;
             min-height: 0;
-            height: calc(100vh - 180px); /* Adjust for top bar + search + padding */
+            height: auto;
             align-items: stretch; /* Make children stretch to fill the container */
+            padding-bottom: 20px; /* Add padding at the bottom */
         }
         
         .form-container {
@@ -425,23 +428,26 @@ $total_entries = $count_row['total'];
                 transform: scale(0.9);
                 transform-origin: top left;
                 width: 111.11%;
-                height: 111.11%;
+                height: auto;
             }
             
             .main-content {
-                height: 978px;
+                min-height: 100vh;
+                height: auto;
             }
             
             .page-layout {
-                height: 848px; /* 978px - (top-bar + search + result-count) with reduced sizes */
+                height: auto;
+                min-height: 0;
             }
             
             .data-table-wrapper {
-                height: 778px; /* 848px - (padding + header) with reduced sizes */
+                height: auto;
+                min-height: 500px;
             }
             
             .logbook-form {
-                max-height: 778px; /* Same as data-table-wrapper */
+                max-height: none;
             }
         }
         
@@ -777,7 +783,13 @@ $total_entries = $count_row['total'];
             const formHeight = formContainer.offsetHeight;
             
             // Set the data table wrapper height to match the form container
-            dataTableWrapper.style.height = formHeight - 45 + 'px'; // Subtract header height
+            dataTableWrapper.style.minHeight = formHeight - 45 + 'px'; // Subtract header height
+            
+            // Ensure the app container has enough height
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) {
+                appContainer.style.minHeight = (formHeight + 150) + 'px'; // Add extra space for padding and margins
+            }
         }
     }
 
