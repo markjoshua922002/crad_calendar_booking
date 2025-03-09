@@ -51,40 +51,51 @@ if (isset($_POST['add_booking'])) {
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
     if ($date < $current_date) {
-        $warning = "You cannot book a date that has already passed.";
-    } else {
-        // Check for double booking
-        $stmt = $conn->prepare("SELECT * FROM bookings WHERE booking_date = ? AND room_id = ? AND ((booking_time_from < ? AND booking_time_to > ?) OR (booking_time_from < ? AND booking_time_to > ?))");
-        if (!$stmt) {
-            die('Prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param("sissss", $date, $room, $time_to, $time_from, $time_from, $time_to);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $warning = "Double booking detected for the specified time, date, and room.";
-        } else {
-            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, set_id, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            if (!$stmt) {
-                die('Prepare failed: ' . $conn->error);
-            }
-            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
-            if ($stmt->execute()) {
-                // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
-                // Redirect to avoid form resubmission
-                header('Location: index.php');
-                exit();
-            } else {
-                // Debug: Log error
-                error_log("Error inserting booking: " . $stmt->error);
-                echo "Error: " . $stmt->error;
-            }
-            $stmt->close();
-        }
-        $stmt->close();
+        $_SESSION['error'] = "You cannot book a date that has already passed.";
+        header('Location: index.php');
+        exit();
     }
+
+    // Check for double booking
+    $stmt = $conn->prepare("SELECT b.*, r.name as room_name FROM bookings b 
+                          JOIN rooms r ON b.room_id = r.id 
+                          WHERE b.booking_date = ? AND b.room_id = ? 
+                          AND ((b.booking_time_from <= ? AND b.booking_time_to >= ?) 
+                          OR (b.booking_time_from <= ? AND b.booking_time_to >= ?) 
+                          OR (? <= b.booking_time_from AND ? >= b.booking_time_to))");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("sissssss", $date, $room, $time_to, $time_from, $time_from, $time_to, $time_from, $time_to);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $conflicting_booking = $result->fetch_assoc();
+        $_SESSION['error'] = "Double booking detected! The room {$conflicting_booking['room_name']} is already booked from " . 
+                            date('g:i A', strtotime($conflicting_booking['booking_time_from'])) . " to " . 
+                            date('g:i A', strtotime($conflicting_booking['booking_time_to'])) . " on this date.";
+        header('Location: index.php');
+        exit();
+    }
+
+    // If no double booking, proceed with insertion
+    $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, set_id, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    if (!$stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Booking successfully created!";
+        header('Location: index.php');
+        exit();
+    } else {
+        error_log("Error inserting booking: " . $stmt->error);
+        $_SESSION['error'] = "Error creating booking: " . $stmt->error;
+        header('Location: index.php');
+        exit();
+    }
+    $stmt->close();
 }
 
 // Handle department addition
@@ -626,6 +637,44 @@ while ($row = $bookings->fetch_assoc()) {
                 max-height: none;
             }
         }
+
+        /* Alert styles */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -690,6 +739,23 @@ while ($row = $bookings->fetch_assoc()) {
                 </div>
             </div>
         </div>
+
+        <!-- Display Session Messages -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <?= $_SESSION['error'] ?>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?= $_SESSION['success'] ?>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
 
         <div class="dashboard-layout">
             <!-- Calendar Section -->
