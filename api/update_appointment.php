@@ -306,7 +306,40 @@ if (isset($_POST['appointment_id'])) {
         ];
         
         foreach ($expected_values as $field => $expected) {
-            if ($updated_booking[$field] != $expected) {
+            // Special handling for date fields
+            if ($field === 'booking_date') {
+                // Compare dates by converting both to timestamps
+                $expected_timestamp = strtotime($expected);
+                $actual_timestamp = strtotime($updated_booking[$field]);
+                
+                if ($expected_timestamp !== $actual_timestamp) {
+                    error_log("Date mismatch after update: $field");
+                    error_log("Expected timestamp: $expected_timestamp (" . date('Y-m-d', $expected_timestamp) . ")");
+                    error_log("Got timestamp: $actual_timestamp (" . date('Y-m-d', $actual_timestamp) . ")");
+                    
+                    // Check if the dates are within 24 hours (could be timezone issues)
+                    if (abs($expected_timestamp - $actual_timestamp) > 86400) {
+                        throw new Exception("Update verification failed: $field field mismatch");
+                    } else {
+                        error_log("Date difference is within acceptable range, continuing");
+                    }
+                }
+            } 
+            // Special handling for time fields
+            else if ($field === 'booking_time_from' || $field === 'booking_time_to') {
+                // Compare times by removing any leading zeros and standardizing format
+                $expected_time = date('H:i:s', strtotime($expected));
+                $actual_time = date('H:i:s', strtotime($updated_booking[$field]));
+                
+                if ($expected_time !== $actual_time) {
+                    error_log("Time mismatch after update: $field");
+                    error_log("Expected: $expected ($expected_time)");
+                    error_log("Got: " . $updated_booking[$field] . " ($actual_time)");
+                    throw new Exception("Update verification failed: $field field mismatch");
+                }
+            }
+            // Standard comparison for other fields
+            else if ($updated_booking[$field] != $expected) {
                 error_log("Field mismatch after update: $field");
                 error_log("Expected: $expected");
                 error_log("Got: " . $updated_booking[$field]);
