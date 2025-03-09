@@ -113,7 +113,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container {
-            margin-bottom: 15px;
+            margin-bottom: 0px;
             background-color: #fff;
             padding: 12px;
             border-radius: 6px;
@@ -180,7 +180,7 @@ $total_entries = $count_row['total'];
         
         .page-layout {
             display: flex;
-            gap: 15px;
+            gap: 0px;
             flex: 1;
             overflow: hidden;
             min-height: 0;
