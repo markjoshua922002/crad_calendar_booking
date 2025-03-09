@@ -222,7 +222,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: auto;
+            height: 700px; /* Match data container height */
             overflow: visible;
         }
         
@@ -252,7 +252,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 72%;
-            height: 700px; /* Fixed height for data container */
+            height: 700px;
         }
         
         .data-container h2 {
@@ -326,11 +326,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Increased spacing between form groups */
         }
         
         .form-group:last-child {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .form-group label {
@@ -396,7 +396,8 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            margin-top: 10px;
+            margin-top: 20px; /* Increased spacing before submit button */
+            height: 36px; /* Slightly taller submit button */
         }
         
         .success-message {
