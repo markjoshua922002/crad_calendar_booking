@@ -547,12 +547,14 @@ $total_entries = $count_row['total'];
         <div class="main-content">
             <div class="top-bar">
                 <div class="page-title">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div>
-                        <h1>Logbook</h1>
-                        <p><?= date('l, F j, Y') ?></p>
+                    <div style="display: flex; align-items: center;">
+                        <button class="menu-toggle" id="menuToggle" style="margin-right: 15px;">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div>
+                            <h1>Logbook</h1>
+                            <p><?= date('l, F j, Y') ?></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -573,15 +575,6 @@ $total_entries = $count_row['total'];
                     </div>
                 </form>
             </div>
-            
-            <!-- Results Count -->
-            <?php if (!empty($search_term) || $logbook_result->num_rows > 0): ?>
-                <div class="result-count">
-                    <i class="fas fa-info-circle"></i> 
-                    Showing <?= $logbook_result->num_rows ?> <?= !empty($search_term) ? 'matched' : 'total' ?> entries
-                    <?= !empty($search_term) ? "for \"" . htmlspecialchars($search_term) . "\"" : "" ?>
-                </div>
-            <?php endif; ?>
             
             <!-- Main Layout -->
             <div class="page-layout">
