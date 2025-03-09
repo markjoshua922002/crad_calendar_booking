@@ -303,7 +303,7 @@ foreach ($create_tables as $sql) {
                         <tbody>
                             <?php while ($set = $sets->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($set['set_name']) ?></td>
+                                <td><?= htmlspecialchars($set['name']) ?></td>
                             </tr>
                             <?php endwhile; ?>
                         </tbody>
