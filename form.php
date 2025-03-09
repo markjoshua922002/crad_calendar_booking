@@ -182,9 +182,9 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 15px;
             flex: 1;
-            overflow: auto;
+            overflow: visible;
+            height: auto;
             min-height: 0;
-            height: calc(100vh - 180px);
         }
         
         .form-container {
@@ -196,9 +196,8 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 100%;
-            min-height: 700px; /* Set minimum height to accommodate all form fields */
-            overflow-y: visible; /* Remove scrollbar */
+            height: auto;
+            overflow: visible;
         }
         
         .form-container h2 {
@@ -226,9 +225,8 @@ $total_entries = $count_row['total'];
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             width: 72%;
-            height: 100%;
+            height: 700px; /* Fixed height for data container */
         }
         
         .data-container h2 {
@@ -253,14 +251,12 @@ $total_entries = $count_row['total'];
             overflow: hidden;
             border: 1px solid #f0f0f0;
             border-radius: 4px;
-            min-height: 0; /* Important for flex children */
-            height: calc(978px - 200px); /* Adjusted for more compact layout */
+            height: calc(100% - 50px); /* Subtract header height */
         }
         
         .data-table-container {
             overflow-y: auto;
-            max-height: 100%;
-            min-height: 0; /* Important for flex children */
+            height: 100%;
         }
         
         .data-table {
@@ -418,23 +414,20 @@ $total_entries = $count_row['total'];
             }
             
             .main-content {
-                height: 978px;
-                overflow-y: auto;
+                height: auto;
+                overflow: visible;
             }
             
             .page-layout {
                 height: auto;
-                min-height: 848px;
             }
             
-            .data-table-wrapper {
-                height: auto;
-                min-height: 778px;
+            .data-container {
+                height: 700px;
             }
             
             .logbook-form {
                 height: auto;
-                min-height: 778px;
             }
         }
         
