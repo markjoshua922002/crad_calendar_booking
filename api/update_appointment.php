@@ -274,10 +274,23 @@ if (isset($_POST['appointment_id'])) {
         }
         $verify_update->close();
         
-        $stmt->close();
+        // Close connection before redirecting
+        $conn->close();
+        
         header('Location: ../index.php');
         exit();
     } catch (Exception $e) {
+        // Close any open statements
+        if (isset($stmt)) {
+            $stmt->close();
+        }
+        if (isset($verify_update)) {
+            $verify_update->close();
+        }
+        
+        // Close connection
+        $conn->close();
+        
         error_log("Error in update process: " . $e->getMessage());
         echo '<script>
             alert("Error updating booking: ' . addslashes($e->getMessage()) . '");
@@ -286,9 +299,9 @@ if (isset($_POST['appointment_id'])) {
         exit();
     }
 } else {
+    // Close connection before redirecting
+    $conn->close();
     header('Location: ../index.php');
     exit();
 }
-
-$conn->close();
 ?>

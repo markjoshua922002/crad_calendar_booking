@@ -87,15 +87,16 @@ if (isset($_POST['add_booking'])) {
     $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
     if ($stmt->execute()) {
         $_SESSION['success'] = "Booking successfully created!";
+        $stmt->close();
         header('Location: index.php');
         exit();
     } else {
         error_log("Error inserting booking: " . $stmt->error);
         $_SESSION['error'] = "Error creating booking: " . $stmt->error;
+        $stmt->close();
         header('Location: index.php');
         exit();
     }
-    $stmt->close();
 }
 
 // Handle department addition
