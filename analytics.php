@@ -73,48 +73,30 @@ $conn->close();
         .main-content {
             flex: 1;
             padding: 20px;
-            margin-left: 250px; /* Match sidebar width */
-            transition: margin-left 0.3s ease;
+            margin-left: 250px;
+            transition: all 0.3s ease;
             position: relative;
             width: calc(100% - 250px);
             overflow: auto;
-        }
-        
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 10px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .menu-toggle:hover {
-            color: #007bff;
         }
 
         .page-title {
             display: flex;
             align-items: center;
-        }
-        
-        /* When sidebar is collapsed */
-        .sidebar.collapsed {
-            width: 70px;
+            gap: 15px;
         }
 
-        .sidebar.collapsed .sidebar-menu span,
-        .sidebar.collapsed .sidebar-header h2,
-        .sidebar.collapsed .sidebar-footer span {
-            display: none;
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
         }
 
-        .sidebar-collapsed .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px);
+        .page-title p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
         }
         
         .analytics-container {
@@ -145,13 +127,17 @@ $conn->close();
         }
         
         @media screen and (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            
             .main-content {
                 margin-left: 0;
                 width: 100%;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
             }
         }
     </style>
@@ -196,7 +182,7 @@ $conn->close();
         <div class="main-content">
             <div class="top-bar">
                 <div class="page-title">
-                    <button id="sidebarToggle" class="sidebar-toggle">
+                    <button id="menuButton" class="menu-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div>
@@ -223,12 +209,43 @@ $conn->close();
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
 
     <script>
-        // Initialize sidebar functionality
-        $(document).ready(function() {
-            $('#sidebarToggle').on('click', function() {
-                $('.sidebar').toggleClass('collapsed');
-                $('.main-content').toggleClass('sidebar-collapsed');
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('menuButton');
+            const sidebar = document.getElementById('sidebar');
+            const appContainer = document.querySelector('.app-container');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Check localStorage for sidebar state on page load
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                appContainer.classList.add('sidebar-collapsed');
+            }
+            
+            if (menuButton && sidebar) {
+                menuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    appContainer.classList.toggle('sidebar-collapsed');
+                    
+                    // Store sidebar state in localStorage
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                });
+            }
+            
+            // Handle responsive behavior
+            function handleResponsive() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('collapsed');
+                    appContainer.classList.add('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                }
+            }
+            
+            // Initial check
+            handleResponsive();
+            
+            // Listen for window resize
+            window.addEventListener('resize', handleResponsive);
         });
 
         var ctx = document.getElementById('bookingChart').getContext('2d');
