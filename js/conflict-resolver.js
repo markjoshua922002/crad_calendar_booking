@@ -364,28 +364,54 @@ class ConflictResolver {
      * Analyze a proposed booking and provide recommendations
      */
     analyzeBooking(date, roomId, departmentId, timeFrom, timeTo, duration) {
-        const conflicts = this.checkConflicts(date, roomId, timeFrom, timeTo);
-        
-        // If no conflicts, return success
+        console.log("Analyzing booking:", { date, roomId, departmentId, timeFrom, timeTo, duration });
+
+        // Convert timeFrom and timeTo to 24-hour format for comparison
+        const bookingTimeFrom = this.convertTo24Hour(timeFrom);
+        const bookingTimeTo = this.convertTo24Hour(timeTo);
+
+        // Find conflicts
+        const conflicts = this.appointments.filter(appointment => {
+            // Skip if not the same date
+            if (appointment.booking_date !== date) return false;
+
+            // Skip if not the same room
+            if (appointment.room_id != roomId) return false;
+
+            const appointmentTimeFrom = appointment.booking_time_from;
+            const appointmentTimeTo = appointment.booking_time_to;
+
+            return this.isTimeOverlap(
+                bookingTimeFrom,
+                bookingTimeTo,
+                appointmentTimeFrom,
+                appointmentTimeTo
+            );
+        });
+
+        console.log("Found conflicts:", conflicts);
+
+        // If no conflicts, return early
         if (conflicts.length === 0) {
             return {
                 hasConflicts: false,
-                message: "No conflicts detected. This booking can be scheduled as requested."
+                message: "No scheduling conflicts found.",
+                alternativeTimes: [],
+                alternativeRooms: []
             };
         }
-        
-        // Find alternative times
-        const alternativeTimes = this.findAlternatives(date, roomId, departmentId, duration, timeFrom, timeTo);
-        
-        // Find alternative rooms
-        const alternativeRooms = this.suggestAlternativeRooms(date, timeFrom, timeTo, roomId);
-        
+
+        // Generate alternative times
+        const alternativeTimes = this.generateAlternativeTimes(date, roomId, duration);
+
+        // Generate alternative rooms
+        const alternativeRooms = this.generateAlternativeRooms(date, timeFrom, timeTo);
+
         return {
             hasConflicts: true,
-            conflicts,
-            alternativeTimes: alternativeTimes.slice(0, 5), // Top 5 alternative times
-            alternativeRooms: alternativeRooms.slice(0, 3), // Top 3 alternative rooms
-            message: "Conflicts detected. Please consider the suggested alternatives."
+            message: `Found ${conflicts.length} scheduling conflict(s). Please review the suggested alternatives.`,
+            alternativeTimes,
+            alternativeRooms
         };
     }
 
@@ -590,6 +616,111 @@ class ConflictResolver {
             conflictModal.querySelector('.modal-content').style.top = 'auto';
             conflictModal.querySelector('.modal-content').style.bottom = '20px';
         }
+    }
+
+    convertTo24Hour(time) {
+        const [timeStr, period] = time.split(' ');
+        let [hours, minutes] = timeStr.split(':');
+        hours = parseInt(hours);
+        
+        if (period === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (period === 'AM' && hours === 12) {
+            hours = 0;
+        }
+
+        return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+    }
+
+    generateAlternativeTimes(date, roomId, duration) {
+        const alternatives = [];
+        const busyTimes = this.appointments
+            .filter(app => app.booking_date === date && app.room_id == roomId)
+            .map(app => ({
+                from: this.timeToMinutes(app.booking_time_from),
+                to: this.timeToMinutes(app.booking_time_to)
+            }))
+            .sort((a, b) => a.from - b.from);
+
+        // Define working hours (8 AM to 5 PM)
+        const workStart = 8 * 60; // 8:00 AM in minutes
+        const workEnd = 17 * 60; // 5:00 PM in minutes
+
+        // Find available time slots
+        let currentTime = workStart;
+        busyTimes.forEach(busy => {
+            if (currentTime + duration <= busy.from) {
+                alternatives.push({
+                    timeFrom: this.minutesToTime12Hour(currentTime),
+                    timeTo: this.minutesToTime12Hour(currentTime + duration),
+                    score: this.calculateTimeScore(currentTime)
+                });
+            }
+            currentTime = busy.to;
+        });
+
+        // Check for available time after last busy period
+        if (currentTime + duration <= workEnd) {
+            alternatives.push({
+                timeFrom: this.minutesToTime12Hour(currentTime),
+                timeTo: this.minutesToTime12Hour(currentTime + duration),
+                score: this.calculateTimeScore(currentTime)
+            });
+        }
+
+        // Sort alternatives by score
+        return alternatives.sort((a, b) => b.score - a.score).slice(0, 3);
+    }
+
+    generateAlternativeRooms(date, timeFrom, timeTo) {
+        const bookingTimeFrom = this.convertTo24Hour(timeFrom);
+        const bookingTimeTo = this.convertTo24Hour(timeTo);
+
+        return this.rooms
+            .filter(room => {
+                // Check if room is available during the requested time
+                const conflicts = this.appointments.filter(app => 
+                    app.booking_date === date &&
+                    app.room_id == room.id &&
+                    this.isTimeOverlap(
+                        bookingTimeFrom,
+                        bookingTimeTo,
+                        app.booking_time_from,
+                        app.booking_time_to
+                    )
+                );
+                return conflicts.length === 0;
+            })
+            .map(room => ({
+                roomId: room.id,
+                roomName: room.name,
+                score: this.calculateRoomScore(room)
+            }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3);
+    }
+
+    minutesToTime12Hour(minutes) {
+        let hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        const period = hours >= 12 ? 'PM' : 'AM';
+        
+        if (hours > 12) hours -= 12;
+        if (hours === 0) hours = 12;
+
+        return `${hours}:${mins.toString().padStart(2, '0')} ${period}`;
+    }
+
+    calculateTimeScore(minutes) {
+        // Prefer times closer to 9 AM (540 minutes)
+        const idealTime = 540;
+        const score = 100 - Math.abs(minutes - idealTime) / 10;
+        return Math.round(score);
+    }
+
+    calculateRoomScore(room) {
+        // Simple scoring based on room ID (can be enhanced based on room features)
+        return 100 - room.id;
     }
 }
 

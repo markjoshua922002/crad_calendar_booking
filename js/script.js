@@ -1480,19 +1480,37 @@ function initializeConflictResolver() {
         const rooms = JSON.parse(roomsDataElement.textContent || '[]');
         const departments = JSON.parse(departmentsDataElement.textContent || '[]');
         
-        // Flatten appointments into an array
+        // Flatten appointments into an array and filter out any null or undefined entries
         const flatAppointments = [];
         for (const day in appointments) {
-            if (appointments.hasOwnProperty(day)) {
+            if (appointments.hasOwnProperty(day) && Array.isArray(appointments[day])) {
                 appointments[day].forEach(appointment => {
-                    flatAppointments.push(appointment);
+                    if (appointment && appointment.id && appointment.booking_date) {
+                        flatAppointments.push(appointment);
+                    }
                 });
             }
         }
         
-        // Create the ConflictResolver instance
+        console.log("Flattened appointments:", flatAppointments);
+        
+        // Create the ConflictResolver instance with clean data
+        if (conflictResolver) {
+            // Clean up old instance
+            conflictResolver = null;
+        }
+        
         conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
-        console.log("Conflict Resolver initialized successfully");
+        console.log("Conflict Resolver initialized with appointments count:", flatAppointments.length);
+        
+        // Clear any existing conflict containers
+        const conflictContainer = document.getElementById('conflict-resolution-container');
+        if (conflictContainer) {
+            conflictContainer.style.display = 'none';
+        }
+        
+        // Clear any existing conflict messages
+        document.querySelectorAll('.conflict-alert').forEach(el => el.remove());
         
         // Setup form submission handling for conflict detection
         setupConflictDetection();
