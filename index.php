@@ -515,7 +515,6 @@ while ($row = $bookings->fetch_assoc()) {
             left: 0;
             right: 0;
             bottom: 0;
-            width: 100vw; /* Use viewport width instead of percentage */
             height: 100vh; /* Use viewport height instead of percentage */
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 9999;
