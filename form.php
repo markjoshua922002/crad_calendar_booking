@@ -185,6 +185,7 @@ $total_entries = $count_row['total'];
             overflow: hidden;
             min-height: 0;
             height: calc(100vh - 180px); /* Adjust for top bar + search + padding */
+            align-items: stretch; /* Make children stretch to fill the container */
         }
         
         .form-container {
@@ -254,8 +255,8 @@ $total_entries = $count_row['total'];
             border: 1px solid #f0f0f0;
             border-radius: 4px;
             min-height: 0; /* Important for flex children */
-            height: 500px; /* Fixed height */
-            max-height: calc(100vh - 250px); /* Maximum height */
+            height: auto; /* Auto height to match form container */
+            max-height: calc(100% - 45px); /* Adjust for header */
         }
         
         .data-table-container {
@@ -765,5 +766,26 @@ $total_entries = $count_row['total'];
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
+    <script>
+    // Function to align the data table height with the form container
+    function alignDataTableWithForm() {
+        const formContainer = document.querySelector('.form-container');
+        const dataTableWrapper = document.querySelector('.data-table-wrapper');
+        
+        if (formContainer && dataTableWrapper) {
+            // Get the height of the form container
+            const formHeight = formContainer.offsetHeight;
+            
+            // Set the data table wrapper height to match the form container
+            dataTableWrapper.style.height = formHeight - 45 + 'px'; // Subtract header height
+        }
+    }
+
+    // Run the function when the page loads
+    document.addEventListener('DOMContentLoaded', alignDataTableWithForm);
+
+    // Run the function when the window is resized
+    window.addEventListener('resize', alignDataTableWithForm);
+    </script>
 </body>
 </html>
