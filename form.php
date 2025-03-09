@@ -222,7 +222,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 700px; /* Match data container height */
+            height: 800px; /* Increased height */
             overflow: visible;
         }
         
@@ -252,7 +252,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 72%;
-            height: 700px;
+            height: 800px; /* Match form container height */
         }
         
         .data-container h2 {
@@ -326,7 +326,7 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 20px; /* Increased spacing between form groups */
+            margin-bottom: 15px; /* Reduced spacing between form groups */
         }
         
         .form-group:last-child {
@@ -366,26 +366,17 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 6px;
             align-items: center;
+            flex-wrap: wrap; /* Allow wrapping for better visibility */
         }
         
         .time-picker input[type="time"] {
-            flex: 2;
-            padding: 6px 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.3s;
-            height: 30px;
+            flex: 1;
+            min-width: 120px;
         }
-
+        
         .time-picker select {
             flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.3s;
-            height: 30px;
+            min-width: 70px;
         }
         
         .time-picker input[type="time"]:focus,
@@ -396,8 +387,25 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            margin-top: 20px; /* Increased spacing before submit button */
-            height: 36px; /* Slightly taller submit button */
+            margin-top: 25px;
+            height: 40px;
+            width: 100%;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-button:hover {
+            background-color: #3367d6;
         }
         
         .success-message {
