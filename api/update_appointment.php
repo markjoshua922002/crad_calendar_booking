@@ -92,6 +92,13 @@ if (isset($_POST['appointment_id'])) {
     $input_date = $_POST['edit_date'];
     error_log("Raw input date: " . $input_date);
     
+    // Check if the input is just a year
+    if (is_numeric($input_date) && strlen($input_date) == 4) {
+        // If it's just a year, add month and day
+        $input_date = $input_date . '-01-01';
+        error_log("Converted year-only input to: " . $input_date);
+    }
+    
     // Convert date to DateTime object for validation
     try {
         $dateObj = new DateTime($input_date);
@@ -101,13 +108,8 @@ if (isset($_POST['appointment_id'])) {
         // Additional validation to ensure date is properly formatted
         $dateParts = explode('-', $date);
         if (count($dateParts) !== 3 || 
-            !checkdate($dateParts[1], $dateParts[2], $dateParts[0])) {
+            !checkdate(intval($dateParts[1]), intval($dateParts[2]), intval($dateParts[0]))) {
             throw new Exception("Invalid date components");
-        }
-        
-        // Verify the date is a valid MySQL date
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            throw new Exception("Date format is not valid for MySQL");
         }
     } catch (Exception $e) {
         error_log("Date parsing error: " . $e->getMessage());
@@ -167,7 +169,7 @@ if (isset($_POST['appointment_id'])) {
     error_log("set: " . $set);
     error_log("department: " . $department);
     
-    // Update the booking
+    // Update the booking with explicit date formatting
     $stmt = $conn->prepare("UPDATE bookings SET 
         `name` = ?, 
         `id_number` = ?, 
@@ -176,7 +178,7 @@ if (isset($_POST['appointment_id'])) {
         `set_id` = ?, 
         `department_id` = ?, 
         `room_id` = ?, 
-        `booking_date` = ?, 
+        `booking_date` = STR_TO_DATE(?, '%Y-%m-%d'), 
         `booking_time_from` = ?, 
         `booking_time_to` = ?, 
         `reason` = ? 
@@ -240,9 +242,18 @@ if (isset($_POST['appointment_id'])) {
         error_log("Old appointment data: " . print_r($old_appointment, true));
         $check_appointment->close();
 
-        // Format date for MySQL
-        $mysql_date = date('Y-m-d', strtotime($date));
-        error_log("Formatted MySQL date: " . $mysql_date);
+        // Format date for MySQL - ensure it's in YYYY-MM-DD format
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            // Try to convert to proper format if it's not already
+            $timestamp = strtotime($date);
+            if ($timestamp === false) {
+                throw new Exception("Cannot convert date to proper format: " . $date);
+            }
+            $mysql_date = date('Y-m-d', $timestamp);
+        } else {
+            $mysql_date = $date;
+        }
+        error_log("Final MySQL date for binding: " . $mysql_date);
 
         $stmt->bind_param("ssssiiiisssi", 
             $name, 
@@ -288,7 +299,7 @@ if (isset($_POST['appointment_id'])) {
             'set_id' => $set,
             'department_id' => $department,
             'room_id' => $room,
-            'booking_date' => $date,
+            'booking_date' => $mysql_date,  // Use the MySQL formatted date
             'booking_time_from' => $time_from,
             'booking_time_to' => $time_to,
             'reason' => $reason
