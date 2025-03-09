@@ -201,7 +201,6 @@ while ($row = $bookings->fetch_assoc()) {
             padding: 0;
             font-size: 12px;
             transform: scale(0.9);
-            transform-origin: top left;
             width: 111.11%;
             height: 111.11%;
         }

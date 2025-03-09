@@ -4,8 +4,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #D1F8EF;
-    color: #3c4043;
-    transform-origin: top left; /* Ensure scaling starts from the top left corner */
+    color: #3c4043; /* Ensure scaling starts from the top left corner */
 }
 
 .container {
