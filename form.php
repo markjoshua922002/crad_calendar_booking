@@ -226,9 +226,9 @@ $total_entries = $count_row['total'];
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            overflow: visible;
+            overflow: hidden;
             width: 72%;
-            height: auto;
+            height: 600px; /* Fixed height */
         }
         
         .data-container h2 {
@@ -250,15 +250,16 @@ $total_entries = $count_row['total'];
         
         .data-table-wrapper {
             flex: 1;
-            overflow: visible;
+            overflow: hidden;
             border: 1px solid #f0f0f0;
             border-radius: 4px;
-            height: auto;
+            height: calc(100% - 45px); /* Subtract header height */
         }
         
         .data-table-container {
             overflow-y: auto;
-            height: auto;
+            height: 100%;
+            max-height: 100%;
             scrollbar-width: thin;
             scrollbar-color: #c1c1c1 #f1f1f1;
         }
@@ -431,8 +432,12 @@ $total_entries = $count_row['total'];
                 height: auto;
             }
             
+            .data-container {
+                height: 600px;
+            }
+            
             .data-table-wrapper {
-                height: auto;
+                height: calc(100% - 45px);
             }
             
             .logbook-form {
@@ -453,8 +458,11 @@ $total_entries = $count_row['total'];
             }
             
             .form-container, .data-container {
-                max-height: none;
                 width: 100%;
+            }
+            
+            .data-container {
+                height: 500px; /* Slightly smaller on smaller screens */
             }
             
             .form-container {
@@ -765,17 +773,14 @@ $total_entries = $count_row['total'];
     // Function to ensure the page displays properly
     function adjustPageLayout() {
         // Remove any fixed height constraints that might be added by other scripts
-        const elements = [
+        const elementsToAdjust = [
             '.app-container',
             '.main-content',
             '.page-layout',
-            '.form-container',
-            '.data-container',
-            '.data-table-wrapper',
-            '.data-table-container'
+            '.form-container'
         ];
         
-        elements.forEach(selector => {
+        elementsToAdjust.forEach(selector => {
             const element = document.querySelector(selector);
             if (element) {
                 element.style.height = 'auto';
@@ -783,6 +788,25 @@ $total_entries = $count_row['total'];
                 element.style.maxHeight = '';
             }
         });
+        
+        // Ensure data container has fixed height for scrolling
+        const dataContainer = document.querySelector('.data-container');
+        if (dataContainer) {
+            dataContainer.style.height = '600px';
+        }
+        
+        // Ensure data table wrapper has proper height
+        const dataTableWrapper = document.querySelector('.data-table-wrapper');
+        if (dataTableWrapper) {
+            dataTableWrapper.style.height = 'calc(100% - 45px)';
+        }
+        
+        // Ensure data table container has proper height and scroll
+        const dataTableContainer = document.querySelector('.data-table-container');
+        if (dataTableContainer) {
+            dataTableContainer.style.height = '100%';
+            dataTableContainer.style.overflowY = 'auto';
+        }
     }
 
     // Run the function when the page loads
