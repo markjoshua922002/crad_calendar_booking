@@ -226,7 +226,7 @@ foreach ($create_tables as $sql) {
                         <tbody>
                             <?php while ($room = $rooms->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($room['room_name']) ?></td>
+                                <td><?= htmlspecialchars($room['name']) ?></td>
                                 <td><?= htmlspecialchars($room['capacity']) ?></td>
                             </tr>
                             <?php endwhile; ?>
@@ -255,7 +255,7 @@ foreach ($create_tables as $sql) {
                         <tbody>
                             <?php while ($department = $departments->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($department['department_name']) ?></td>
+                                <td><?= htmlspecialchars($department['name']) ?></td>
                             </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -449,10 +449,10 @@ foreach ($create_tables as $sql) {
                     <select id="adviser_department" name="adviser_department" required>
                         <option value="">Select Department</option>
                         <?php 
-                        $dept_list = $conn->query("SELECT * FROM departments ORDER BY department_name");
+                        $dept_list = $conn->query("SELECT * FROM departments ORDER BY name");
                         while ($dept = $dept_list->fetch_assoc()): 
                         ?>
-                        <option value="<?= $dept['id'] ?>"><?= htmlspecialchars($dept['department_name']) ?></option>
+                        <option value="<?= $dept['id'] ?>"><?= htmlspecialchars($dept['name']) ?></option>
                         <?php endwhile; ?>
                     </select>
                 </div>
