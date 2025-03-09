@@ -432,6 +432,10 @@ function showModal(modal) {
         modal.style.display = 'flex';
         modal.classList.add('show');
         
+        // Ensure the modal covers the entire viewport
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        
         // Ensure the modal content is visible and centered
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
@@ -1935,6 +1939,10 @@ function openModal(modalId) {
         modal.style.display = 'flex';
         document.body.classList.add('modal-open');
         modal.classList.add('show');
+        
+        // Ensure the modal covers the entire viewport
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
         
         // Focus first input if exists
         const firstInput = modal.querySelector('input, select, textarea');

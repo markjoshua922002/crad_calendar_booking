@@ -503,6 +503,20 @@ while ($row = $bookings->fetch_assoc()) {
             }
         }
         
+        /* Prevent body scrolling when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        /* Fix for modal overlay to ensure it covers the entire viewport */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
         /* Modal styling */
         .modal {
             display: none;
@@ -511,8 +525,8 @@ while ($row = $bookings->fetch_assoc()) {
             left: 0;
             right: 0;
             bottom: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw; /* Use viewport width instead of percentage */
+            height: 100vh; /* Use viewport height instead of percentage */
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 9999;
             overflow-y: auto;
@@ -551,12 +565,6 @@ while ($row = $bookings->fetch_assoc()) {
                 transform: translateY(0);
                 opacity: 1;
             }
-        }
-        
-        /* Prevent body scrolling when modal is open */
-        body.modal-open {
-            overflow: hidden;
-            padding-right: 17px; /* Width of scrollbar to prevent layout shift */
         }
         
         /* Modal header */
