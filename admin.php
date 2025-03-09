@@ -210,6 +210,7 @@ foreach ($create_tables as $sql) {
                     <button class="btn" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Add Room</button>
                     
                     <?php if ($rooms->num_rows > 0): ?>
+                    <div class="data-table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -224,6 +225,7 @@ foreach ($create_tables as $sql) {
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
                     <?php else: ?>
                     <div class="empty-state">
                         <p>No rooms added yet</p>
@@ -238,6 +240,7 @@ foreach ($create_tables as $sql) {
                     <button class="btn" onclick="openModal('departmentModal')"><i class="fas fa-plus"></i> Add Department</button>
                     
                     <?php if ($departments->num_rows > 0): ?>
+                    <div class="data-table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -252,6 +255,7 @@ foreach ($create_tables as $sql) {
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
                     <?php else: ?>
                     <div class="empty-state">
                         <p>No departments added yet</p>
@@ -266,6 +270,7 @@ foreach ($create_tables as $sql) {
                     <button class="btn" onclick="openModal('groupModal')"><i class="fas fa-plus"></i> Add Group</button>
                     
                     <?php if ($groups->num_rows > 0): ?>
+                    <div class="data-table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -280,6 +285,7 @@ foreach ($create_tables as $sql) {
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
                     <?php else: ?>
                     <div class="empty-state">
                         <p>No groups added yet</p>
@@ -294,6 +300,7 @@ foreach ($create_tables as $sql) {
                     <button class="btn" onclick="openModal('setModal')"><i class="fas fa-plus"></i> Add Set</button>
                     
                     <?php if ($sets->num_rows > 0): ?>
+                    <div class="data-table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -308,6 +315,7 @@ foreach ($create_tables as $sql) {
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
                     <?php else: ?>
                     <div class="empty-state">
                         <p>No sets added yet</p>
@@ -322,6 +330,7 @@ foreach ($create_tables as $sql) {
                     <button class="btn" onclick="openModal('adviserModal')"><i class="fas fa-plus"></i> Add Adviser</button>
                     
                     <?php if ($advisers->num_rows > 0): ?>
+                    <div class="data-table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -338,6 +347,7 @@ foreach ($create_tables as $sql) {
                             <?php endwhile; ?>
                         </tbody>
                     </table>
+                    </div>
                     <?php else: ?>
                     <div class="empty-state">
                         <p>No advisers added yet</p>

@@ -4,7 +4,7 @@
 
 .admin-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -15,6 +15,9 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     transition: transform 0.3s ease;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
 .admin-card:hover {
@@ -29,6 +32,10 @@
     color: #4a6cf7;
 }
 
+.admin-card p {
+    margin-bottom: 15px;
+}
+
 .admin-card .btn {
     background: #4a6cf7;
     color: white;
@@ -36,7 +43,7 @@
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-bottom: 15px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -46,10 +53,15 @@
     background: #3a5ce5;
 }
 
+.admin-card .data-table-container {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
     font-size: 14px;
 }
 
