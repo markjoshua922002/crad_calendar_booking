@@ -80,10 +80,40 @@ $conn->close();
             overflow: auto;
         }
         
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle:hover {
+            color: #007bff;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+        }
+        
         /* When sidebar is collapsed */
-        .sidebar.collapsed + .main-content,
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .sidebar-menu span,
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .sidebar-footer span {
+            display: none;
+        }
+
         .sidebar-collapsed .main-content {
-            margin-left: 70px; /* Match collapsed sidebar width */
+            margin-left: 70px;
             width: calc(100% - 70px);
         }
         
@@ -112,15 +142,6 @@ $conn->close();
         .chart-container {
             height: 400px;
             position: relative;
-        }
-        
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 20px;
-            cursor: pointer;
-            display: none;
         }
         
         @media screen and (max-width: 768px) {
@@ -175,7 +196,7 @@ $conn->close();
         <div class="main-content">
             <div class="top-bar">
                 <div class="page-title">
-                    <button class="menu-toggle" id="menuToggle">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div>
@@ -202,6 +223,14 @@ $conn->close();
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
 
     <script>
+        // Add sidebar toggle functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed');
+        }
+
         var ctx = document.getElementById('bookingChart').getContext('2d');
         var bookingChart = new Chart(ctx, {
             type: 'bar',
