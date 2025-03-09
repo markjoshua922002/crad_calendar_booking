@@ -971,10 +971,10 @@ while ($row = $bookings->fetch_assoc()) {
                         <select name="edit_set" id="edit_set" required>
                             <option value="">Select Set</option>
                             <?php 
-                            $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
+                            $sets = $conn->query("SELECT * FROM sets ORDER BY name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['name']) ?>"><?= htmlspecialchars($set['name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -1137,10 +1137,10 @@ while ($row = $bookings->fetch_assoc()) {
                         <select name="set" id="set" required>
                             <option value="">Select Set</option>
                             <?php 
-                            $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
+                            $sets = $conn->query("SELECT * FROM sets ORDER BY name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['name']) ?>"><?= htmlspecialchars($set['name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
