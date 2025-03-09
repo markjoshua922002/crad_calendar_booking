@@ -17,7 +17,7 @@ body {
 .app-container {
     display: flex;
     min-height: 100vh;
-    position: relative; /* Added for proper positioning */
+    position: relative;
 }
 
 .main-content {
@@ -30,33 +30,17 @@ body {
 }
 
 /* When sidebar is collapsed */
-.sidebar-collapsed .main-content {
+.main-content.shifted {
     margin-left: 70px;
-    width: calc(100% - 70px); /* Adjust width when sidebar is collapsed */
+    width: calc(100% - 70px);
 }
 
-/* Top navigation bar */
-.top-bar {
+/* Content header */
+.content-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 15px; /* Add gap between wrapped elements */
-}
-
-.page-title h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.page-title p {
-    color: #666;
-    font-size: 14px;
+    gap: 15px;
 }
 
 .menu-toggle {
@@ -820,10 +804,15 @@ body.modal-open {
     .main-content {
         margin-left: 0;
         width: 100%;
-        padding: 20px 15px;
+        padding: 20px;
     }
     
-    .top-bar {
+    .main-content.shifted {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .content-header {
         flex-direction: column;
         align-items: flex-start;
     }
