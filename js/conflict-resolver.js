@@ -424,92 +424,167 @@ class ConflictResolver {
     }
 
     setupEventListeners() {
-        // Listen for changes in date and time inputs
-        document.getElementById('date')?.addEventListener('change', () => this.checkConflicts());
-        document.getElementById('room')?.addEventListener('change', () => this.checkConflicts());
+        console.log('Setting up conflict resolver event listeners');
         
-        // Time inputs
+        // Get all the form inputs we need to monitor
+        const dateInput = document.getElementById('date');
+        const roomInput = document.getElementById('room');
         const timeInputs = [
             'time_from_hour', 'time_from_minute', 'time_from_ampm',
             'time_to_hour', 'time_to_minute', 'time_to_ampm'
-        ];
-        
-        timeInputs.forEach(id => {
-            document.getElementById(id)?.addEventListener('change', () => this.checkConflicts());
-        });
+        ].map(id => document.getElementById(id));
 
-        // Handle alternative selection
-        document.querySelector('.apply-alternative')?.addEventListener('click', () => this.applySelectedAlternative());
-    }
-
-    async checkConflicts() {
-        // Clear any existing timeout
-        if (this.debounceTimeout) {
-            clearTimeout(this.debounceTimeout);
+        // Add change event listeners
+        if (dateInput) {
+            dateInput.addEventListener('change', () => this.checkConflicts());
+            console.log('Added date input listener');
         }
 
-        // Debounce the check to prevent too many requests
-        this.debounceTimeout = setTimeout(async () => {
-            const date = document.getElementById('date')?.value;
-            const room_id = document.getElementById('room')?.value;
-            
-            // Get time values
-            const time_from = this.formatTime(
-                document.getElementById('time_from_hour')?.value,
-                document.getElementById('time_from_minute')?.value,
-                document.getElementById('time_from_ampm')?.value
-            );
-            
-            const time_to = this.formatTime(
-                document.getElementById('time_to_hour')?.value,
-                document.getElementById('time_to_minute')?.value,
-                document.getElementById('time_to_ampm')?.value
-            );
+        if (roomInput) {
+            roomInput.addEventListener('change', () => this.checkConflicts());
+            console.log('Added room input listener');
+        }
 
-            // Check if we have all required values
-            if (!date || !room_id || !time_from || !time_to) {
-                return;
+        timeInputs.forEach(input => {
+            if (input) {
+                input.addEventListener('change', () => this.checkConflicts());
+                console.log(`Added listener for ${input.id}`);
             }
+        });
 
-            try {
-                const response = await fetch('api/check_conflicts.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        date,
-                        room_id,
-                        time_from,
-                        time_to
-                    })
-                });
+        // Add listener for the apply alternative button
+        const applyBtn = document.querySelector('.apply-alternative');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => this.applySelectedAlternative());
+            console.log('Added apply button listener');
+        }
 
-                const data = await response.json();
-                
-                if (data.has_conflicts) {
-                    this.showConflictAlert(data);
-                } else {
-                    this.hideConflictAlert();
-                }
-            } catch (error) {
-                console.error('Error checking conflicts:', error);
-            }
-        }, 500); // Wait 500ms after last change before checking
+        // Add listener for ignore conflicts button
+        const ignoreBtn = document.querySelector('.ignore-conflicts');
+        if (ignoreBtn) {
+            ignoreBtn.addEventListener('click', () => this.hideConflictAlert());
+            console.log('Added ignore button listener');
+        }
+    }
+
+    checkConflicts() {
+        console.log('Checking for conflicts...');
+
+        // Get all required values
+        const date = document.getElementById('date')?.value;
+        const roomId = document.getElementById('room')?.value;
+        
+        // Get time values and format them
+        const timeFrom = this.formatTime(
+            document.getElementById('time_from_hour')?.value,
+            document.getElementById('time_from_minute')?.value,
+            document.getElementById('time_from_ampm')?.value
+        );
+        
+        const timeTo = this.formatTime(
+            document.getElementById('time_to_hour')?.value,
+            document.getElementById('time_to_minute')?.value,
+            document.getElementById('time_to_ampm')?.value
+        );
+
+        // Log the values we're checking
+        console.log('Checking with values:', { date, roomId, timeFrom, timeTo });
+
+        // Only proceed if we have all required values
+        if (!date || !roomId || !timeFrom || !timeTo) {
+            console.log('Missing required values, skipping conflict check');
+            return;
+        }
+
+        // Analyze the booking
+        const analysis = this.analyzeBooking(date, roomId, null, timeFrom, timeTo, this.calculateDuration(timeFrom, timeTo));
+        console.log('Conflict analysis result:', analysis);
+
+        // Update the UI based on the analysis
+        this.updateConflictUI(analysis);
     }
 
     formatTime(hour, minute, ampm) {
-        if (!hour || !minute || !ampm) return null;
+        if (!hour || !minute || !ampm) {
+            console.log('Missing time components:', { hour, minute, ampm });
+            return null;
+        }
         
-        // Convert hour to number and handle 12-hour format
-        hour = parseInt(hour, 10);
+        // Remove leading zeros and ensure proper format
+        hour = parseInt(hour, 10).toString();
         minute = minute.toString().padStart(2, '0');
         
-        // Remove leading zero from hour if present
-        hour = hour.toString().replace(/^0/, '');
-        
-        // Format in 12-hour format
         return `${hour}:${minute} ${ampm}`;
+    }
+
+    calculateDuration(timeFrom, timeTo) {
+        if (!timeFrom || !timeTo) return 60; // Default duration
+        
+        const fromMinutes = this.timeToMinutes(timeFrom);
+        const toMinutes = this.timeToMinutes(timeTo);
+        return toMinutes - fromMinutes;
+    }
+
+    updateConflictUI(analysis) {
+        console.log('Updating conflict UI with analysis:', analysis);
+        
+        const container = document.getElementById('conflict-resolution-container');
+        if (!container) {
+            console.log('Conflict container not found');
+            return;
+        }
+
+        if (!analysis.hasConflicts) {
+            container.style.display = 'none';
+            return;
+        }
+
+        // Show the conflict container
+        container.style.display = 'block';
+
+        // Update conflict message
+        const messageEl = document.getElementById('conflict-message');
+        if (messageEl) {
+            messageEl.textContent = analysis.message;
+        }
+
+        // Update alternative times
+        const altTimesContainer = document.getElementById('alternative-times');
+        if (altTimesContainer && analysis.alternativeTimes) {
+            altTimesContainer.innerHTML = analysis.alternativeTimes.map(time => `
+                <div class="alternative-option" data-type="time" data-from="${time.timeFrom}" data-to="${time.timeTo}">
+                    <input type="radio" name="alternative" id="time_${time.timeFrom.replace(/[:\s]/g, '_')}">
+                    <label for="time_${time.timeFrom.replace(/[:\s]/g, '_')}">
+                        ${time.timeFrom} - ${time.timeTo}
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        // Update alternative rooms
+        const altRoomsContainer = document.getElementById('alternative-rooms');
+        if (altRoomsContainer && analysis.alternativeRooms) {
+            altRoomsContainer.innerHTML = analysis.alternativeRooms.map(room => `
+                <div class="alternative-option" data-type="room" data-id="${room.roomId}">
+                    <input type="radio" name="alternative" id="room_${room.roomId}">
+                    <label for="room_${room.roomId}">
+                        ${room.roomName}
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        // Add click handlers to new alternatives
+        document.querySelectorAll('.alternative-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.alternative-option').forEach(opt => 
+                    opt.classList.remove('selected'));
+                option.classList.add('selected');
+                document.querySelector('.apply-alternative').disabled = false;
+            });
+        });
     }
 
     showConflictAlert(data) {
