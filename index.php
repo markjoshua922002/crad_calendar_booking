@@ -22,39 +22,10 @@ if (isset($_POST['add_booking'])) {
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
-    $set_id = $_POST['set'];
-    
-    // Validate set_id is not empty
-    if (empty($set_id)) {
-        die('Error: Set selection is required');
-    }
-    
-    // Get set name from database with error handling
-    $set_stmt = $conn->prepare("SELECT set_name FROM sets WHERE id = ?");
-    if (!$set_stmt) {
-        die('Prepare failed: ' . $conn->error);
-    }
-    $set_stmt->bind_param("i", $set_id);
-    if (!$set_stmt->execute()) {
-        die('Execute failed: ' . $set_stmt->error);
-    }
-    $set_result = $set_stmt->get_result();
-    if ($set_result->num_rows === 0) {
-        die('Error: Invalid set selected');
-    }
-    $set_row = $set_result->fetch_assoc();
-    $set = $set_row['set_name'];
-    $set_stmt->close();
-    
-    // Debug: Log the set value
-    error_log("Set ID: $set_id, Set Name: $set");
-    
+    $set = $_POST['set'];
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
-    
-    // Debug: Log the values being processed
-    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set ID=$set_id, Set Name=$set, Department=$department, Room=$room, Date=$date");
     
     // Combine time fields
     $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
@@ -62,8 +33,8 @@ if (isset($_POST['add_booking'])) {
     
     $reason = $_POST['reason'];
 
-    // Debug: Log the final values before database insertion
-    error_log("Final Booking Values: Set=$set, Time From=$time_from, Time To=$time_to, Reason=$reason");
+    // Debug: Log the values being processed
+    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
 
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
@@ -82,21 +53,20 @@ if (isset($_POST['add_booking'])) {
         if ($result->num_rows > 0) {
             $warning = "Double booking detected for the specified time, date, and room.";
         } else {
-            // Modified the INSERT statement to use set_id instead of set name
             $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if (!$stmt) {
                 die('Prepare failed: ' . $conn->error);
             }
-            $stmt->bind_param("sssssssssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
+            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
                 // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . ", Set ID=$set_id");
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
                 // Redirect to avoid form resubmission
                 header('Location: index.php');
                 exit();
             } else {
                 // Debug: Log error
-                error_log("Error inserting booking: " . $stmt->error . ", Set ID=$set_id");
+                error_log("Error inserting booking: " . $stmt->error);
                 echo "Error: " . $stmt->error;
             }
             $stmt->close();
@@ -1004,7 +974,7 @@ while ($row = $bookings->fetch_assoc()) {
                             $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['id']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -1107,7 +1077,7 @@ while ($row = $bookings->fetch_assoc()) {
             <button class="close-button" id="closeBookingModal"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="index.php" class="booking-form">
+            <form method="POST" class="booking-form">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="department">Department</label>
@@ -1170,7 +1140,7 @@ while ($row = $bookings->fetch_assoc()) {
                             $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['id']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -1374,7 +1344,7 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Data for conflict resolver -->
+<!-- Add this element to hold the appointments data -->
 <script id="appointmentsData" type="application/json">
     <?= json_encode($appointments) ?>
 </script>
