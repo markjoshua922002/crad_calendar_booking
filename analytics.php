@@ -196,7 +196,7 @@ $conn->close();
         <div class="main-content">
             <div class="top-bar">
                 <div class="page-title">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
+                    <button id="sidebarToggle" class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div>
@@ -223,13 +223,13 @@ $conn->close();
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
 
     <script>
-        // Add sidebar toggle functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-content');
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('sidebar-collapsed');
-        }
+        // Initialize sidebar functionality
+        $(document).ready(function() {
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('collapsed');
+                $('.main-content').toggleClass('sidebar-collapsed');
+            });
+        });
 
         var ctx = document.getElementById('bookingChart').getContext('2d');
         var bookingChart = new Chart(ctx, {
