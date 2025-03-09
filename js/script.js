@@ -1471,9 +1471,9 @@ function initializeConflictResolver() {
     
     if (!appointmentsData || !roomsData || !departmentsData) {
         console.error('Missing required data elements');
-            return;
-        }
-        
+        return;
+    }
+
     try {
         // Parse the JSON data
         const appointments = JSON.parse(appointmentsData.textContent);
@@ -1483,7 +1483,7 @@ function initializeConflictResolver() {
         // Convert appointments object to array and flatten it
         const flatAppointments = [];
         Object.keys(appointments).forEach(day => {
-                appointments[day].forEach(appointment => {
+            appointments[day].forEach(appointment => {
                 if (appointment && appointment.booking_date) {
                     flatAppointments.push(appointment);
                 }
@@ -1495,7 +1495,7 @@ function initializeConflictResolver() {
         console.log('Departments loaded:', departments.length);
 
         // Create new instance of ConflictResolver
-        window.conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
+        conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
         
         // Set up the event listeners for real-time checking
         setupConflictDetection();
@@ -1509,24 +1509,31 @@ function initializeConflictResolver() {
 function setupConflictDetection() {
     console.log('Setting up conflict detection...');
     
+    const bookingForm = document.querySelector('#bookingModal form');
+    if (!bookingForm) {
+        console.error('Booking form not found');
+        return;
+    }
+
     const inputs = [
-        'date',
-        'room',
-        'time_from_hour',
-        'time_from_minute',
-        'time_from_ampm',
-        'time_to_hour',
-        'time_to_minute',
-        'time_to_ampm'
+        { id: 'date', events: ['input', 'change'] },
+        { id: 'room', events: ['input', 'change'] },
+        { id: 'time_from_hour', events: ['input', 'change', 'keyup'] },
+        { id: 'time_from_minute', events: ['input', 'change', 'keyup'] },
+        { id: 'time_from_ampm', events: ['input', 'change'] },
+        { id: 'time_to_hour', events: ['input', 'change', 'keyup'] },
+        { id: 'time_to_minute', events: ['input', 'change', 'keyup'] },
+        { id: 'time_to_ampm', events: ['input', 'change'] }
     ];
 
-    inputs.forEach(id => {
+    inputs.forEach(({ id, events }) => {
         const element = document.getElementById(id);
         if (element) {
-            ['input', 'change', 'keyup', 'blur', 'focus'].forEach(eventType => {
+            events.forEach(eventType => {
                 element.addEventListener(eventType, () => {
-                    if (window.conflictResolver) {
-                        window.conflictResolver.debouncedCheckConflicts();
+                    console.log(`Input changed: ${id}`);
+                    if (conflictResolver) {
+                        conflictResolver.checkConflictsRealTime();
                     }
                 });
             });
@@ -1534,17 +1541,60 @@ function setupConflictDetection() {
         }
     });
 
-    // Also check for conflicts when the booking modal is opened
+    // Add immediate check when opening the booking modal
     const openBookingButton = document.getElementById('openBookingModal');
     if (openBookingButton) {
         openBookingButton.addEventListener('click', () => {
+            console.log('Booking modal opened');
+            // Short delay to ensure modal is fully opened
             setTimeout(() => {
-                if (window.conflictResolver) {
-                    window.conflictResolver.checkConflicts();
+                if (conflictResolver) {
+                    conflictResolver.checkConflictsRealTime();
                 }
             }, 100);
         });
     }
+
+    // Add check when selecting a date from calendar
+    document.querySelectorAll('.day').forEach(day => {
+        day.addEventListener('click', () => {
+            setTimeout(() => {
+                if (conflictResolver) {
+                    conflictResolver.checkConflictsRealTime();
+                }
+            }, 100);
+        });
+    });
+
+    // Add form submission handler
+    bookingForm.addEventListener('submit', (e) => {
+        if (conflictResolver) {
+            const date = document.getElementById('date')?.value;
+            const roomId = document.getElementById('room')?.value;
+            const timeFrom = conflictResolver.formatTime(
+                document.getElementById('time_from_hour')?.value,
+                document.getElementById('time_from_minute')?.value,
+                document.getElementById('time_from_ampm')?.value
+            );
+            const timeTo = conflictResolver.formatTime(
+                document.getElementById('time_to_hour')?.value,
+                document.getElementById('time_to_minute')?.value,
+                document.getElementById('time_to_ampm')?.value
+            );
+
+            const conflicts = conflictResolver.checkConflicts(date, roomId, timeFrom, timeTo);
+            if (conflicts.length > 0 && !bookingForm.dataset.ignoreConflicts) {
+                e.preventDefault();
+                conflictResolver.showConflictAlert({
+                    hasConflicts: true,
+                    conflicts: conflicts,
+                    message: 'This time slot is already booked. Please choose another time or room.',
+                    alternativeTimes: conflictResolver.generateAlternativeTimes(date, roomId),
+                    alternativeRooms: conflictResolver.generateAlternativeRooms(date, timeFrom, timeTo)
+                });
+            }
+        }
+    });
 }
 
 function setupUpcomingAppointmentClicks() {
