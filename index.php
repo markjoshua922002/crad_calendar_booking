@@ -160,14 +160,14 @@ $departments = $conn->query("SELECT * FROM departments");
 $rooms = $conn->query("SELECT * FROM rooms");
 
 // Fetch current month and year
-$month = isset($_GET['month']) ? $_GET['month'] : date('m');
-$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
+$month = isset($_GET['month']) ? intval($_GET['month']) : intval(date('m'));
+$year = isset($_GET['year']) ? intval($_GET['year']) : intval(date('Y'));
 
 $firstDayOfMonth = date('w', strtotime("$year-$month-01"));
 $totalDaysInMonth = date('t', strtotime("$year-$month-01"));
 
-// Fetch bookings for the current month
-$bookings = $conn->query("SELECT bookings.*, 
+// Fetch bookings for the current month using prepared statement
+$bookings_stmt = $conn->prepare("SELECT bookings.*, 
     departments.name as department_name, 
     departments.color, 
     rooms.name as room_name,
@@ -176,13 +176,32 @@ $bookings = $conn->query("SELECT bookings.*,
     JOIN departments ON bookings.department_id = departments.id 
     JOIN rooms ON bookings.room_id = rooms.id 
     JOIN sets ON bookings.set_id = sets.id 
-    WHERE MONTH(booking_date) = '$month' AND YEAR(booking_date) = '$year'");
+    WHERE MONTH(booking_date) = ? AND YEAR(booking_date) = ?
+    ORDER BY booking_time_from ASC");
+
+if (!$bookings_stmt) {
+    error_log("Failed to prepare bookings query: " . $conn->error);
+    die("Failed to prepare bookings query");
+}
+
+$bookings_stmt->bind_param("ii", $month, $year);
+$bookings_stmt->execute();
+$bookings_result = $bookings_stmt->get_result();
 
 $appointments = [];
-while ($row = $bookings->fetch_assoc()) {
-    $date = date('j', strtotime($row['booking_date']));
-    $appointments[$date][] = $row;
+while ($row = $bookings_result->fetch_assoc()) {
+    $day = intval(date('j', strtotime($row['booking_date'])));
+    if (!isset($appointments[$day])) {
+        $appointments[$day] = [];
+    }
+    $appointments[$day][] = $row;
 }
+
+$bookings_stmt->close();
+
+// Debug log the appointments array
+error_log("Appointments array for month $month, year $year:");
+error_log(print_r($appointments, true));
 ?>
 
 <!DOCTYPE html>
@@ -800,24 +819,33 @@ while ($row = $bookings->fetch_assoc()) {
                                 <?php
                                 $currentDate = "$year-$month-" . str_pad($day, 2, '0', STR_PAD_LEFT);
                                 $isCurrentDay = ($currentDate === date('Y-m-d'));
+                                $hasAppointments = isset($appointments[$day]) && count($appointments[$day]) > 0;
                                 ?>
-                                <div class="day <?= $isCurrentDay ? 'current-day' : '' ?>">
+                                <div class="day <?= $isCurrentDay ? 'current-day' : '' ?> <?= $hasAppointments ? 'has-appointments' : '' ?>">
                                     <div class="day-header">
                                         <span class="day-number"><?= $day ?></span>
-                                        <?php if (isset($appointments[$day]) && count($appointments[$day]) > 0): ?>
+                                        <?php if ($hasAppointments): ?>
                                             <span class="appointment-badge" data-count="<?= count($appointments[$day]) ?>"><?= count($appointments[$day]) ?></span>
                                         <?php endif; ?>
                                     </div>
-                                    <?php if (isset($appointments[$day]) && count($appointments[$day]) > 0): ?>
+                                    <?php if ($hasAppointments): ?>
                                         <div class="day-content">
                                             <?php
+                                            // Sort appointments by time
+                                            usort($appointments[$day], function($a, $b) {
+                                                return strtotime($a['booking_time_from']) - strtotime($b['booking_time_from']);
+                                            });
+                                            
                                             $count = 0;
                                             foreach ($appointments[$day] as $appointment):
                                                 if ($count < 2):
                                                     $timeFrom = date('g:i A', strtotime($appointment['booking_time_from']));
                                                     ?>
-                                                    <div class="day-event" style="background-color: <?= $appointment['color'] ?>" data-id="<?= $appointment['id'] ?>">
-                                                        <span class="event-time"><?= $timeFrom ?></span>
+                                                    <div class="day-event" 
+                                                         style="background-color: <?= htmlspecialchars($appointment['color']) ?>" 
+                                                         data-id="<?= htmlspecialchars($appointment['id']) ?>"
+                                                         data-appointment='<?= htmlspecialchars(json_encode($appointment), ENT_QUOTES, 'UTF-8') ?>'>
+                                                        <span class="event-time"><?= htmlspecialchars($timeFrom) ?></span>
                                                         <span class="event-title"><?= htmlspecialchars($appointment['representative_name']) ?></span>
                                                     </div>
                                                 <?php endif;
