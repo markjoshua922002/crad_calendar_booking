@@ -227,6 +227,8 @@ $total_entries = $count_row['total'];
             flex-direction: column;
             overflow: hidden;
             width: 72%;
+            height: fit-content;
+            max-height: calc(100vh - 180px);
         }
         
         .data-container h2 {
@@ -252,13 +254,36 @@ $total_entries = $count_row['total'];
             border: 1px solid #f0f0f0;
             border-radius: 4px;
             min-height: 0; /* Important for flex children */
-            height: calc(978px - 200px); /* Adjusted for more compact layout */
+            height: 500px; /* Fixed height */
+            max-height: calc(100vh - 250px); /* Maximum height */
         }
         
         .data-table-container {
             overflow-y: auto;
             max-height: 100%;
             min-height: 0; /* Important for flex children */
+            height: 100%;
+            scrollbar-width: thin;
+            scrollbar-color: #c1c1c1 #f1f1f1;
+        }
+        
+        /* Custom scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+        .data-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .data-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .data-table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .data-table-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
         
         .data-table {
