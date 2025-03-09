@@ -178,8 +178,24 @@ class ConflictResolver {
         const t2Start = this.timeToMinutes(start2);
         const t2End = this.timeToMinutes(end2);
         
-        const result = (t1Start < t2End && t1End > t2Start);
-        console.log(`Time overlap check: ${start1}(${t1Start}) < ${end2}(${t2End}) && ${end1}(${t1End}) > ${start2}(${t2Start}) = ${result}`);
+        // Check for overlap including exact matches
+        const result = (
+            // Check if one time range starts during another
+            (t1Start >= t2Start && t1Start < t2End) ||
+            (t2Start >= t1Start && t2Start < t1End) ||
+            // Check for exact matches
+            (t1Start === t2Start || t1End === t2End) ||
+            // Check if one time range completely contains another
+            (t1Start <= t2Start && t1End >= t2End) ||
+            (t2Start <= t1Start && t2End >= t1End)
+        );
+        
+        console.log(`Time overlap check:
+            Time 1: ${start1}(${t1Start}) - ${end1}(${t1End})
+            Time 2: ${start2}(${t2Start}) - ${end2}(${t2End})
+            Overlap: ${result}`
+        );
+        
         return result;
     }
     

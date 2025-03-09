@@ -46,7 +46,7 @@ if (isset($_POST['appointment_id'])) {
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
-    $stmt->bind_param("sissss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
+    $stmt->bind_param("sisssss", $date, $room, $appointment_id, $time_to, $time_from, $time_from, $time_to);
     $stmt->execute();
     $result = $stmt->get_result();
     
