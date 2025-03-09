@@ -142,8 +142,17 @@ foreach ($create_tables as $sql) {
     <link rel="stylesheet" href="mycss/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/sidebar.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/form.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
     <link rel="stylesheet" href="css/admin.css?v=<?= time() ?>">
+    <style>
+        body {
+            transform: none !important;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
