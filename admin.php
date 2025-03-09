@@ -355,12 +355,16 @@ foreach ($create_tables as $sql) {
                 <h2><i class="fas fa-door-open"></i> Add Room</h2>
                 <span class="close" onclick="closeModal('roomModal')">&times;</span>
             </div>
-            <form method="post" action="api/add_room.php">
+            <form id="addRoomForm" method="POST">
                 <div class="form-group">
-                    <label for="room_name">Room Name</label>
-                    <input type="text" id="room_name" name="room_name" required>
+                    <label for="name">Room Name</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
-                <button type="submit" class="submit-btn">Add Room</button>
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">
+                        <i class="fas fa-plus"></i> Add Room
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -372,16 +376,20 @@ foreach ($create_tables as $sql) {
                 <h2><i class="fas fa-building"></i> Add Department</h2>
                 <span class="close" onclick="closeModal('departmentModal')">&times;</span>
             </div>
-            <form method="post" action="api/add_department.php">
+            <form id="addDepartmentForm" method="POST">
                 <div class="form-group">
                     <label for="department_name">Department Name</label>
                     <input type="text" id="department_name" name="department_name" required>
                 </div>
                 <div class="form-group">
-                    <label for="color">Department Color</label>
+                    <label for="color">Color</label>
                     <input type="color" id="color" name="color" value="#3788d8" required>
                 </div>
-                <button type="submit" class="submit-btn">Add Department</button>
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">
+                        <i class="fas fa-plus"></i> Add Department
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -449,66 +457,121 @@ foreach ($create_tables as $sql) {
         </div>
     </div>
 
+    <!-- Add Department Modal -->
+    <div id="addDepartmentModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>Add Department</h2>
+                <button class="close-button" id="closeAddDepartmentModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="addDepartmentForm" method="POST">
+                    <div class="form-group">
+                        <label for="department_name">Department Name</label>
+                        <input type="text" name="department_name" id="department_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input type="color" name="color" id="color" value="#3788d8" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">
+                            <i class="fas fa-plus"></i> Add Department
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div id="addRoomModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>Add Room</h2>
+                <button class="close-button" id="closeAddRoomModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="addRoomForm" method="POST">
+                    <div class="form-group">
+                        <label for="name">Room Name</label>
+                        <input type="text" name="name" id="name" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">
+                            <i class="fas fa-plus"></i> Add Room
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script src="js/admin.js?v=<?= time() ?>"></script>
     <script>
-        // Handle form submissions via AJAX
-        document.addEventListener('DOMContentLoaded', function() {
-            // Room form submission
-            const roomForm = document.querySelector('#roomModal form');
-            roomForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                
-                fetch('api/add_room.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Unknown error occurred');
-                        });
-                    }
-                    return response.text();
-                })
-                .then(() => {
-                    // Success - reload the page to show the new room
-                    window.location.reload();
-                })
-                .catch(error => {
-                    alert('Error: ' + error.message);
-                });
-            });
+        // Handle room form submission
+        document.getElementById('addRoomForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Department form submission
-            const departmentForm = document.querySelector('#departmentModal form');
-            departmentForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                
-                fetch('api/add_department.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Unknown error occurred');
-                        });
-                    }
-                    return response.text();
-                })
-                .then(() => {
-                    // Success - reload the page to show the new department
+            const formData = new FormData(this);
+            
+            fetch('api/add_room.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Room added successfully!');
                     window.location.reload();
-                })
-                .catch(error => {
-                    alert('Error: ' + error.message);
-                });
+                } else {
+                    alert('Error: ' + (data.message || data.error));
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
             });
+        });
+
+        // Handle department form submission
+        document.getElementById('addDepartmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('api/add_department.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Department added successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (data.message || data.error));
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
+        });
+
+        // Close modal functions
+        document.getElementById('closeAddRoomModal').addEventListener('click', function() {
+            document.getElementById('addRoomModal').style.display = 'none';
+        });
+
+        document.getElementById('closeAddDepartmentModal').addEventListener('click', function() {
+            document.getElementById('addDepartmentModal').style.display = 'none';
+        });
+
+        // When clicking outside of the modal, close it
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
         });
     </script>
 </body>
