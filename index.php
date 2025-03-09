@@ -200,6 +200,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/day.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/reminder.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="mycss/modal.css?v=<?= time() ?>">
     <link rel="stylesheet" href="css/conflict-resolver.css?v=<?= time() ?>">
     <style>
         /* Remove scrollbar */

@@ -354,8 +354,6 @@ function setupModal(modalId, openButtonId, closeButtonId) {
         
         // Ensure the modal has the correct initial styles
         modal.style.display = 'none';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
         
         // Setup open button if provided
         if (openButtonId) {
@@ -364,13 +362,9 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                 console.log(`Adding click listener to open button: ${openButtonId}`);
                 openButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    e.stopPropagation(); // Prevent event bubbling
-                    
-                    // Show the modal
+                    e.stopPropagation();
                     showModal(modal);
                 });
-            } else {
-                console.error(`Open button with ID ${openButtonId} not found`);
             }
         }
         
@@ -381,11 +375,9 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                 console.log(`Adding click listener to close button: ${closeButtonId}`);
                 closeButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    e.stopPropagation(); // Prevent event bubbling
+                    e.stopPropagation();
                     hideModal(modal);
                 });
-            } else {
-                console.error(`Close button with ID ${closeButtonId} not found`);
             }
         }
         
@@ -395,13 +387,6 @@ function setupModal(modalId, openButtonId, closeButtonId) {
                 hideModal(modal);
             }
         });
-        
-        // Handle window resize to keep modal centered
-        window.addEventListener('resize', function() {
-            if (modal.style.display === 'flex') {
-                centerModal(modal);
-            }
-        });
     } catch (error) {
         console.error(`Error setting up modal ${modalId}:`, error);
     }
@@ -409,18 +394,12 @@ function setupModal(modalId, openButtonId, closeButtonId) {
 
 // Function to show a modal
 function showModal(modal) {
-    if (!modal) {
-        console.error("Cannot show modal: modal is null or undefined");
-        return;
-    }
-    
-    console.log(`Showing modal: ${modal.id}`);
+    if (!modal) return;
     
     try {
         // Close any other open modals first
         document.querySelectorAll('.modal').forEach(m => {
             if (m !== modal && m.style.display === 'flex') {
-                console.log(`Closing other modal: ${m.id}`);
                 hideModal(m);
             }
         });
@@ -428,60 +407,15 @@ function showModal(modal) {
         // Add class to body to prevent scrolling
         document.body.classList.add('modal-open');
         
-        // Reset any previous styles
-        modal.style.cssText = '';
+        // Show modal
+        modal.style.display = 'flex';
+        modal.classList.add('show');
         
-        // Show modal with flex display and ensure full coverage
-        modal.style.cssText = `
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            overflow: hidden;
-        `;
-        
-        // Ensure the modal content is visible and centered
+        // Ensure the modal content is visible
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
-            modalContent.style.cssText = `
-                opacity: 1;
-                transform: translateY(0);
-                margin: 20px auto;
-                max-height: 85vh;
-                width: 90%;
-                position: relative;
-            `;
-            
-            // Log modal dimensions for debugging
-            console.log(`Modal content dimensions: ${modalContent.offsetWidth}x${modalContent.offsetHeight}`);
-        }
-        
-        // Special handling for booking modal
-        if (modal.id === 'bookingModal') {
-            // Reset the ignore conflicts flag
-            const bookingForm = modal.querySelector('form');
-            if (bookingForm) {
-                delete bookingForm.dataset.ignoreConflicts;
-            }
-            
-            // Hide the conflict container initially
-            const conflictContainer = document.getElementById('conflict-resolution-container');
-            if (conflictContainer) {
-                conflictContainer.style.display = 'none';
-            }
-            
-            // Check for conflicts after a short delay to allow form to initialize
-            setTimeout(function() {
-                checkForConflicts();
-            }, 500);
+            modalContent.style.opacity = '1';
+            modalContent.style.transform = 'translateY(0)';
         }
     } catch (error) {
         console.error(`Error showing modal ${modal.id}:`, error);
@@ -492,64 +426,18 @@ function showModal(modal) {
 function hideModal(modal) {
     if (!modal) return;
     
-    console.log(`Hiding modal: ${modal.id}`);
-    
     try {
-        // Reset all modal styles
-        modal.style.cssText = 'display: none;';
+        // Hide the modal
+        modal.style.display = 'none';
+        modal.classList.remove('show');
         
         // Remove body scroll lock only if no other modals are visible
         const visibleModals = document.querySelectorAll('.modal[style*="flex"]');
         if (visibleModals.length === 0) {
             document.body.classList.remove('modal-open');
-            document.body.style.position = '';
-        }
-        
-        // Reset modal content styles
-        const modalContent = modal.querySelector('.modal-content');
-        if (modalContent) {
-            modalContent.style.cssText = '';
         }
     } catch (error) {
         console.error(`Error hiding modal ${modal.id}:`, error);
-    }
-}
-
-// Function to center a modal in the viewport
-function centerModal(modal) {
-    try {
-        if (!modal) return;
-        
-        console.log("Centering modal:", modal.id);
-        
-        // Get the modal content
-        const modalContent = modal.querySelector('.modal-content');
-        if (!modalContent) {
-            console.error("Modal content not found");
-            return;
-        }
-        
-        // Reset positioning styles
-        modalContent.style.margin = 'auto';
-        
-        // Calculate viewport dimensions
-        const viewportHeight = window.innerHeight;
-        const contentHeight = modalContent.scrollHeight;
-        
-        console.log(`Modal ${modal.id} - Content height: ${contentHeight}px, Viewport height: ${viewportHeight}px`);
-        
-        // Adjust max-height if content is too tall
-        if (contentHeight > viewportHeight * 0.9) {
-            modalContent.style.maxHeight = `${viewportHeight * 0.9}px`;
-            modalContent.style.overflowY = 'auto';
-            console.log(`Modal ${modal.id} - Content exceeds 90% of viewport, enabling scrolling`);
-        } else {
-            modalContent.style.maxHeight = '';
-            modalContent.style.overflowY = '';
-            console.log(`Modal ${modal.id} - Content fits within viewport`);
-        }
-    } catch (error) {
-        console.error('Error centering modal:', error);
     }
 }
 
