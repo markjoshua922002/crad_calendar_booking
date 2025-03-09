@@ -360,23 +360,37 @@ $total_entries = $count_row['total'];
         
         .time-picker input[type="time"] {
             width: 100%;
-            padding: 6px 10px;
+            padding: 6px 32px 6px 10px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             font-size: 12px;
             height: 30px;
             box-sizing: border-box;
             cursor: pointer;
+            background: white;
         }
         
         .time-picker input[type="time"]::-webkit-calendar-picker-indicator {
-            background: none;
+            opacity: 0;
             cursor: pointer;
-            padding: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .time-picker::after {
+            content: '\f017';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 400;
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+            font-size: 14px;
         }
         
         .time-picker input[type="time"]:focus {
