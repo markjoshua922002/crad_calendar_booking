@@ -508,6 +508,9 @@ class ConflictResolver {
         hour = parseInt(hour, 10);
         minute = minute.toString().padStart(2, '0');
         
+        // Remove leading zero from hour if present
+        hour = hour.toString().replace(/^0/, '');
+        
         // Format in 12-hour format
         return `${hour}:${minute} ${ampm}`;
     }
@@ -591,13 +594,14 @@ class ConflictResolver {
         if (!selected) return;
 
         if (selected.dataset.type === 'time') {
-            // Parse the time strings
+            // Parse the time strings (e.g., "9:00 AM" format)
             const [fromTime, fromAMPM] = selected.dataset.from.split(' ');
             const [fromHour, fromMinute] = fromTime.split(':');
             const [toTime, toAMPM] = selected.dataset.to.split(' ');
             const [toHour, toMinute] = toTime.split(':');
             
             // Update the form fields with 12-hour format values
+            // Note: parseInt removes leading zeros automatically
             document.getElementById('time_from_hour').value = parseInt(fromHour, 10);
             document.getElementById('time_from_minute').value = fromMinute;
             document.getElementById('time_from_ampm').value = fromAMPM;
@@ -606,7 +610,6 @@ class ConflictResolver {
             document.getElementById('time_to_minute').value = toMinute;
             document.getElementById('time_to_ampm').value = toAMPM;
         } else if (selected.dataset.type === 'room') {
-            // Apply alternative room
             document.getElementById('room').value = selected.dataset.id;
         }
 
