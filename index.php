@@ -955,21 +955,27 @@ while ($row = $bookings->fetch_assoc()) {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="edit_id_number">Group Number</label>
+                        <label for="edit_id_number">Group</label>
                         <select name="edit_id_number" id="edit_id_number" required>
-                            <option value="">Select Group Number</option>
-                            <?php for ($i = 1; $i <= 200; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
+                            <option value="">Select Group</option>
+                            <?php 
+                            $groups = $conn->query("SELECT * FROM groups ORDER BY group_name");
+                            while ($group = $groups->fetch_assoc()): 
+                            ?>
+                            <option value="<?= htmlspecialchars($group['id']) ?>"><?= htmlspecialchars($group['group_name']) ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_set">Set</label>
-                        <select name="edit_set" id="edit_set">
+                        <select name="edit_set" id="edit_set" required>
                             <option value="">Select Set</option>
-                            <?php foreach (range('A', 'F') as $set): ?>
-                                <option value="<?= $set ?>"><?= $set ?></option>
-                            <?php endforeach; ?>
+                            <?php 
+                            $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
+                            while ($set = $sets->fetch_assoc()): 
+                            ?>
+                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                 </div>
@@ -1115,21 +1121,27 @@ while ($row = $bookings->fetch_assoc()) {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="id_number">Group Number</label>
+                        <label for="id_number">Group</label>
                         <select name="id_number" id="id_number" required>
-                            <option value="">Select Group Number</option>
-                            <?php for ($i = 1; $i <= 200; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
+                            <option value="">Select Group</option>
+                            <?php 
+                            $groups = $conn->query("SELECT * FROM groups ORDER BY group_name");
+                            while ($group = $groups->fetch_assoc()): 
+                            ?>
+                            <option value="<?= htmlspecialchars($group['id']) ?>"><?= htmlspecialchars($group['group_name']) ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="set">Set</label>
                         <select name="set" id="set" required>
                             <option value="">Select Set</option>
-                            <?php foreach (range('A', 'F') as $set): ?>
-                                <option value="<?= $set ?>"><?= $set ?></option>
-                            <?php endforeach; ?>
+                            <?php 
+                            $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
+                            while ($set = $sets->fetch_assoc()): 
+                            ?>
+                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                 </div>
