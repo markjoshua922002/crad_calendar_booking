@@ -209,7 +209,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 800px; /* Increased height */
+            height: 900px; /* Increased height */
             overflow: visible;
         }
         
@@ -239,7 +239,7 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 72%;
-            height: 800px; /* Match form container height */
+            height: 900px; /* Match form container height */
         }
         
         .data-container h2 {
@@ -313,11 +313,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 15px; /* Reduced spacing between form groups */
+            margin-bottom: 12px;
         }
         
         .form-group:last-child {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
@@ -374,7 +374,7 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            margin-top: 25px;
+            margin-top: auto; /* Push button to bottom */
             height: 40px;
             width: 100%;
             background-color: #4285f4;
@@ -389,6 +389,7 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
+            margin-bottom: 10px; /* Add space at the bottom */
         }
         
         .submit-button:hover {
@@ -423,7 +424,9 @@ $total_entries = $count_row['total'];
         .logbook-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            height: calc(100% - 50px); /* Subtract header height */
+            padding-bottom: 20px; /* Add padding at the bottom */
         }
         
         /* Specific for 1920x978 resolution with zoom out */
