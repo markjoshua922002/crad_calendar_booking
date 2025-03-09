@@ -139,7 +139,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container {
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Increased margin to add some spacing */
             background-color: #fff;
             padding: 12px;
             border-radius: 6px;
@@ -190,20 +190,6 @@ $total_entries = $count_row['total'];
             text-decoration: none;
         }
         
-        .result-count {
-            margin-bottom: 10px;
-            font-size: 12px;
-            color: #5f6368;
-            background-color: #fff;
-            padding: 6px 10px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
-            height: 16px;
-            display: flex;
-            align-items: center;
-        }
-        
         .page-layout {
             display: flex;
             gap: 15px;
@@ -211,6 +197,7 @@ $total_entries = $count_row['total'];
             overflow: visible;
             height: auto;
             min-height: 0;
+            margin-top: 5px; /* Add small margin to compensate for removed result count */
         }
         
         .form-container {
@@ -619,15 +606,6 @@ $total_entries = $count_row['total'];
                     </div>
                 </form>
             </div>
-            
-            <!-- Results Count -->
-            <?php if (!empty($search_term) || $logbook_result->num_rows > 0): ?>
-                <div class="result-count">
-                    <i class="fas fa-info-circle"></i> 
-                    Showing <?= $logbook_result->num_rows ?> <?= !empty($search_term) ? 'matched' : 'total' ?> entries
-                    <?= !empty($search_term) ? "for \"" . htmlspecialchars($search_term) . "\"" : "" ?>
-                </div>
-            <?php endif; ?>
             
             <!-- Main Layout -->
             <div class="page-layout">
