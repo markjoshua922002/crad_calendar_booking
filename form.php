@@ -350,115 +350,101 @@ $total_entries = $count_row['total'];
         }
         
         .time-picker {
-            position: relative;
-            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        .time-input {
-            width: 100%;
-            padding: 6px 10px;
+        .time-input-container {
+            position: relative;
+            display: inline-block;
+            width: 70px;
+        }
+        
+        .time-picker input[type="number"] {
+            padding: 8px 25px 8px 8px; /* Add padding on the right for the dropdown button */
             border: 1px solid #e0e0e0;
             border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.3s;
+            width: 100%;
             height: 30px;
             box-sizing: border-box;
-            padding-right: 30px; /* Space for the clock icon */
-            cursor: text;
+            font-size: 12px;
+            -moz-appearance: textfield; /* Firefox */
         }
         
-        .time-input:focus {
+        /* Remove spinner buttons in Chrome, Safari, Edge, Opera */
+        .time-picker input[type="number"]::-webkit-outer-spin-button,
+        .time-picker input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .time-picker input[type="number"]:focus {
             outline: none;
             border-color: #4285f4;
             box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
         }
         
-        .time-dropdown-menu {
+        .toggle-time-input {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4285f4;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            z-index: 2; /* Ensure button is above input */
+        }
+        
+        .toggle-time-input:hover {
+            color: #2b5797;
+        }
+        
+        .time-dropdown {
             display: none;
             position: absolute;
             top: 100%;
             left: 0;
             width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
             background-color: white;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            padding: 8px;
-            margin-top: 4px;
+            z-index: 1000; /* Higher z-index to ensure it appears above other elements */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        .time-dropdown-menu.show {
+        .show-dropdown .time-dropdown {
             display: block;
         }
         
-        .time-select-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-        
-        .time-select-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .time-select-arrows {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .time-select-arrows button {
-            border: none;
-            background: none;
-            padding: 2px;
+        .dropdown-item {
+            padding: 8px 12px;
             cursor: pointer;
-            color: #666;
-            width: 100%;
-        }
-        
-        .time-select-arrows button:hover {
-            color: #4285f4;
-        }
-        
-        .time-select-value {
-            font-size: 14px;
-            padding: 4px;
-            min-width: 30px;
             text-align: center;
-            border: none;
-            background: none;
+            font-size: 12px;
         }
         
-        .time-select-value:focus {
-            outline: none;
-            background-color: #f8f9fa;
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .time-picker select {
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
             border-radius: 4px;
+            height: 30px;
+            font-size: 12px;
         }
         
-        input.time-select-value {
-            width: 30px;
-            cursor: text;
-        }
-        
-        .time-select-separator {
-            font-size: 14px;
-            padding: 4px;
-            color: #666;
-        }
-        
-        .time-clock-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            pointer-events: auto;
-            cursor: pointer;
+        .time-picker select:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
         }
         
         .submit-button {
@@ -789,43 +775,29 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <input type="text" id="time_display" class="time-input" value="02:30 PM">
-                                <i class="fas fa-clock time-clock-icon"></i>
-                                <div class="time-dropdown-menu">
-                                    <div class="time-select-row">
-                                        <div class="time-select-col">
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="hour-up"><i class="fas fa-chevron-up"></i></button>
-                                            </div>
-                                            <input type="text" class="time-select-value hour-value" value="02" maxlength="2">
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="hour-down"><i class="fas fa-chevron-down"></i></button>
-                                            </div>
-                                        </div>
-                                        <div class="time-select-separator">:</div>
-                                        <div class="time-select-col">
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="minute-up"><i class="fas fa-chevron-up"></i></button>
-                                            </div>
-                                            <input type="text" class="time-select-value minute-value" value="30" maxlength="2">
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="minute-down"><i class="fas fa-chevron-down"></i></button>
-                                            </div>
-                                        </div>
-                                        <div class="time-select-col">
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="ampm-toggle"><i class="fas fa-chevron-up"></i></button>
-                                            </div>
-                                            <div class="time-select-value ampm-value">PM</div>
-                                            <div class="time-select-arrows">
-                                                <button type="button" class="ampm-toggle"><i class="fas fa-chevron-down"></i></button>
-                                            </div>
-                                        </div>
+                                <div class="time-input-container">
+                                    <input type="number" id="time_hour" name="time_hour" min="1" max="12" placeholder="Hour" required>
+                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown"><i class="fas fa-caret-down"></i></button>
+                                    <div class="time-dropdown" id="time_hour_dropdown">
+                                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                                            <div class="dropdown-item" data-value="<?= $i ?>"><?= $i ?></div>
+                                        <?php endfor; ?>
                                     </div>
                                 </div>
-                                <input type="hidden" id="time_hour" name="time_hour" value="2">
-                                <input type="hidden" id="time_minute" name="time_minute" value="30">
-                                <input type="hidden" id="time_ampm" name="time_ampm" value="PM">
+                                <span>:</span>
+                                <div class="time-input-container">
+                                    <input type="number" id="time_minute" name="time_minute" min="0" max="59" step="5" placeholder="Min" required>
+                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown"><i class="fas fa-caret-down"></i></button>
+                                    <div class="time-dropdown" id="time_minute_dropdown">
+                                        <?php for ($i = 0; $i < 60; $i += 5): ?>
+                                            <div class="dropdown-item" data-value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></div>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                                <select id="time_ampm" name="time_ampm" required>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
                             </div>
                         </div>
                         
@@ -891,15 +863,8 @@ $total_entries = $count_row['total'];
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const timeDisplay = document.getElementById('time_display');
-            const timeHourInput = document.getElementById('time_hour');
-            const timeMinuteInput = document.getElementById('time_minute');
-            const timeAmPmInput = document.getElementById('time_ampm');
-            const timeDropdown = document.querySelector('.time-dropdown-menu');
-            const hourValue = document.querySelector('.hour-value');
-            const minuteValue = document.querySelector('.minute-value');
-            const ampmValue = document.querySelector('.ampm-value');
-            const clockIcon = document.querySelector('.time-clock-icon');
+            // Set up time picker functionality
+            setupTimePicker('time_hour', 'time_minute', 'time_ampm');
             
             // Set default value to current time
             const now = new Date();
@@ -911,149 +876,112 @@ $total_entries = $count_row['total'];
             hours = hours % 12;
             hours = hours ? hours : 12;
             
-            // Update all time values
-            updateTimeValues(hours, minutes, ampm);
+            // Set initial values
+            document.getElementById('time_hour').value = hours;
+            document.getElementById('time_minute').value = String(minutes).padStart(2, '0');
+            document.getElementById('time_ampm').value = ampm;
+        });
+        
+        function setupTimePicker(hourInputId, minuteInputId, ampmSelectId) {
+            const hourInput = document.getElementById(hourInputId);
+            const minuteInput = document.getElementById(minuteInputId);
+            const ampmSelect = document.getElementById(ampmSelectId);
             
-            // Handle direct input in the main time field
-            timeDisplay.addEventListener('input', function(e) {
-                const timePattern = /^(0?[1-9]|1[0-2]):([0-5][0-9]) (AM|PM)$/i;
-                let value = this.value.toUpperCase();
-                
-                // Auto-format the input as user types
-                if (value.length === 2 && !value.includes(':')) {
-                    value += ':';
-                    this.value = value;
-                }
-                if (value.length === 5 && !value.includes('AM') && !value.includes('PM')) {
-                    value += ' ';
-                    this.value = value;
-                }
-            });
-
-            timeDisplay.addEventListener('blur', function() {
-                const timePattern = /^(0?[1-9]|1[0-2]):([0-5][0-9]) (AM|PM)$/i;
-                const value = this.value.toUpperCase();
-                
-                if (timePattern.test(value)) {
-                    const [_, hours, minutes, ampm] = value.match(timePattern);
-                    updateTimeValues(parseInt(hours), parseInt(minutes), ampm);
-                } else {
-                    // If invalid format, revert to previous valid value
-                    updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), timeAmPmInput.value);
-                }
-            });
+            if (!hourInput || !minuteInput || !ampmSelect) {
+                console.error(`Time picker elements not found: ${hourInputId}, ${minuteInputId}, ${ampmSelectId}`);
+                return;
+            }
             
-            // Toggle dropdown when clicking on the clock icon
-            clockIcon.addEventListener('click', function(e) {
+            // Setup dropdown functionality
+            setupTimeDropdown(hourInputId);
+            setupTimeDropdown(minuteInputId);
+            
+            const updateTimeInput = () => {
+                if (hourInput.value && minuteInput.value && ampmSelect.value) {
+                    let hour = parseInt(hourInput.value);
+                    const minute = parseInt(minuteInput.value);
+                    const ampm = ampmSelect.value;
+                    
+                    // Validate input ranges
+                    if (hour < 1) hour = 1;
+                    if (hour > 12) hour = 12;
+                    hourInput.value = hour;
+                    
+                    let validMinute = minute;
+                    if (validMinute < 0) validMinute = 0;
+                    if (validMinute > 59) validMinute = 59;
+                    // Round to nearest 5
+                    validMinute = Math.round(validMinute / 5) * 5;
+                    minuteInput.value = String(validMinute).padStart(2, '0');
+                }
+            };
+            
+            // Add event listeners to update the time input
+            hourInput.addEventListener('input', updateTimeInput);
+            minuteInput.addEventListener('input', updateTimeInput);
+            ampmSelect.addEventListener('change', updateTimeInput);
+            
+            // Set initial values if needed
+            hourInput.value = hourInput.value || "9";
+            minuteInput.value = minuteInput.value || "00";
+        }
+        
+        // Function to setup the time dropdown functionality
+        function setupTimeDropdown(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) {
+                console.error(`Input element not found: ${inputId}`);
+                return;
+            }
+            
+            const dropdownId = `${inputId}_dropdown`;
+            const dropdown = document.getElementById(dropdownId);
+            if (!dropdown) {
+                console.error(`Dropdown element not found: ${dropdownId}`);
+                return;
+            }
+            
+            const toggleBtn = document.querySelector(`[data-target="${dropdownId}"]`);
+            if (!toggleBtn) {
+                console.error(`Toggle button not found for: ${dropdownId}`);
+                return;
+            }
+            
+            // Toggle dropdown when button is clicked
+            toggleBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                timeDropdown.classList.toggle('show');
+                
+                // Close all other dropdowns first
+                document.querySelectorAll('.time-input-container').forEach(container => {
+                    if (container !== input.parentElement) {
+                        container.classList.remove('show-dropdown');
+                    }
+                });
+                
+                // Toggle this dropdown
+                input.parentElement.classList.toggle('show-dropdown');
+            });
+            
+            // Handle dropdown item selection
+            dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    input.value = item.dataset.value;
+                    input.parentElement.classList.remove('show-dropdown');
+                    
+                    // Trigger input event to update any dependent values
+                    const event = new Event('input', { bubbles: true });
+                    input.dispatchEvent(event);
+                });
             });
             
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.time-picker') || e.target === timeDisplay) {
-                    timeDropdown.classList.remove('show');
+                if (!input.parentElement.contains(e.target)) {
+                    input.parentElement.classList.remove('show-dropdown');
                 }
             });
-            
-            // Hour up button
-            document.querySelector('.hour-up').addEventListener('click', function() {
-                let hour = parseInt(timeHourInput.value);
-                hour = hour % 12 + 1; // Cycle 1-12
-                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
-            });
-            
-            // Hour down button
-            document.querySelector('.hour-down').addEventListener('click', function() {
-                let hour = parseInt(timeHourInput.value);
-                hour = hour === 1 ? 12 : hour - 1; // Cycle 12-1
-                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
-            });
-            
-            // Minute up button
-            document.querySelector('.minute-up').addEventListener('click', function() {
-                let minute = parseInt(timeMinuteInput.value);
-                minute = (minute + 5) % 60; // Increment by 5, cycle 0-55
-                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
-            });
-            
-            // Minute down button
-            document.querySelector('.minute-down').addEventListener('click', function() {
-                let minute = parseInt(timeMinuteInput.value);
-                minute = (minute - 5 + 60) % 60; // Decrement by 5, cycle 55-0
-                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
-            });
-            
-            // AM/PM toggle
-            document.querySelectorAll('.ampm-toggle').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
-                    updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), newAmPm);
-                });
-            });
-            
-            // Direct input in dropdown
-            hourValue.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value)) {
-                    this.value = '';
-                } else if (value < 1) {
-                    this.value = '1';
-                } else if (value > 12) {
-                    this.value = '12';
-                }
-            });
-            
-            hourValue.addEventListener('blur', function() {
-                let value = parseInt(this.value) || 12;
-                updateTimeValues(value, parseInt(timeMinuteInput.value), timeAmPmInput.value);
-            });
-            
-            minuteValue.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value)) {
-                    this.value = '';
-                } else if (value < 0) {
-                    this.value = '00';
-                } else if (value > 59) {
-                    this.value = '59';
-                }
-            });
-            
-            minuteValue.addEventListener('blur', function() {
-                let value = parseInt(this.value) || 0;
-                value = Math.round(value / 5) * 5;
-                updateTimeValues(parseInt(timeHourInput.value), value, timeAmPmInput.value);
-            });
-            
-            // AM/PM value click
-            ampmValue.addEventListener('click', function() {
-                const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
-                updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), newAmPm);
-            });
-            
-            // Function to update all time values
-            function updateTimeValues(hour, minute, ampm) {
-                // Ensure valid values
-                hour = hour || 12;
-                minute = minute || 0;
-                minute = Math.round(minute / 5) * 5;
-                
-                // Update hidden inputs
-                timeHourInput.value = hour;
-                timeMinuteInput.value = minute;
-                timeAmPmInput.value = ampm;
-                
-                // Update display values
-                hourValue.value = String(hour).padStart(2, '0');
-                minuteValue.value = String(minute).padStart(2, '0');
-                ampmValue.textContent = ampm;
-                
-                // Update main display
-                timeDisplay.value = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${ampm}`;
-            }
-        });
+        }
     </script>
 </body>
 </html>
