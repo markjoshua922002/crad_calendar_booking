@@ -91,8 +91,8 @@ $total_entries = $count_row['total'];
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #e0e0e0;
             flex-shrink: 0;
             min-height: 40px;
@@ -139,7 +139,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container {
-            margin-bottom: 20px; /* Increased margin to add some spacing */
+            margin-bottom: 10px;
             background-color: #fff;
             padding: 12px;
             border-radius: 6px;
@@ -197,19 +197,19 @@ $total_entries = $count_row['total'];
             overflow: visible;
             height: auto;
             min-height: 0;
-            margin-top: 5px; /* Add small margin to compensate for removed result count */
+            margin-top: 0;
         }
         
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 900px; /* Increased height */
+            height: 900px;
             overflow: visible;
         }
         
@@ -217,8 +217,8 @@ $total_entries = $count_row['total'];
             font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin: 0 0 12px 0;
-            padding-bottom: 8px;
+            margin: 0 0 10px 0;
+            padding-bottom: 6px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
