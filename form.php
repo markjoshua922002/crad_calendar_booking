@@ -209,8 +209,8 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 900px;
-            overflow: visible;
+            height: 800px;
+            overflow: hidden;
         }
         
         .form-container h2 {
@@ -313,11 +313,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 8px; /* Reduced from 10px */
+            margin-bottom: 8px;
         }
         
         .form-group:last-child {
-            margin-bottom: 0; /* Remove extra space after last form group */
+            margin-bottom: 50px;
         }
         
         .form-group label {
@@ -375,12 +375,12 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            position: absolute;
-            bottom: 15px; /* Reduced from 20px */
-            left: 0;
-            right: 0;
+            position: fixed;
+            bottom: auto;
+            left: auto;
+            right: auto;
             height: 40px;
-            width: 100%;
+            width: calc(100% - 30px);
             background-color: #4285f4;
             color: white;
             border: none;
@@ -393,8 +393,7 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
-            margin: 0 auto; /* Center the button */
-            max-width: calc(100% - 30px); /* Add some padding on sides */
+            margin: 10px 15px;
         }
         
         .submit-button:hover {
@@ -429,11 +428,11 @@ $total_entries = $count_row['total'];
         .logbook-form {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Reduced from 12px */
-            height: calc(100% - 50px); /* Reduced from 80px to give more space */
-            padding-bottom: 70px; /* Increased to make room for submit button */
+            gap: 8px;
+            height: calc(100% - 100px);
+            padding-bottom: 0;
             position: relative;
-            overflow-y: auto; /* Add scroll if content is too long */
+            overflow-y: auto;
         }
         
         /* Specific for 1920x978 resolution with zoom out */
