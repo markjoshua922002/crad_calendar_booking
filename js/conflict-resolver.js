@@ -167,13 +167,13 @@ class ConflictResolver {
      */
     isTimeOverlap(start1, end1, start2, end2) {
         // Convert times to comparable format (timestamp)
-        const t1Start = new Date(`2000/01/01 ${start1}`).getTime();
-        const t1End = new Date(`2000/01/01 ${end1}`).getTime();
-        const t2Start = new Date(`2000/01/01 ${start2}`).getTime();
-        const t2End = new Date(`2000/01/01 ${end2}`).getTime();
+        const t1Start = this.timeToMinutes(start1);
+        const t1End = this.timeToMinutes(end1);
+        const t2Start = this.timeToMinutes(start2);
+        const t2End = this.timeToMinutes(end2);
         
         const result = (t1Start < t2End && t1End > t2Start);
-        console.log(`Time overlap check: ${start1} < ${end2} && ${end1} > ${start2} = ${result}`);
+        console.log(`Time overlap check: ${start1}(${t1Start}) < ${end2}(${t2End}) && ${end1}(${t1End}) > ${start2}(${t2Start}) = ${result}`);
         return result;
     }
     
@@ -249,7 +249,7 @@ class ConflictResolver {
         const [time, modifier] = timeStr.split(' ');
         let [hours, minutes] = time.split(':').map(Number);
         
-        // Convert to 24-hour format for calculation
+        // Convert to minutes since midnight while respecting AM/PM
         if (hours === 12) {
             hours = modifier.toUpperCase() === 'AM' ? 0 : 12;
         } else if (modifier.toUpperCase() === 'PM' && hours !== 12) {
@@ -290,13 +290,6 @@ class ConflictResolver {
         // Parse the time slot
         const [time, modifier] = timeSlot.split(' ');
         let hour = parseInt(time.split(':')[0], 10);
-        
-        // Convert to 24-hour for scoring
-        if (modifier === 'PM' && hour !== 12) {
-            hour += 12;
-        } else if (modifier === 'AM' && hour === 12) {
-            hour = 0;
-        }
         
         // Prefer business hours (9 AM - 4 PM)
         if (hour >= 9 && hour <= 16) {
@@ -366,33 +359,47 @@ class ConflictResolver {
     analyzeBooking(date, roomId, departmentId, timeFrom, timeTo, duration) {
         console.log("Analyzing booking:", { date, roomId, departmentId, timeFrom, timeTo, duration });
 
-        // Convert timeFrom and timeTo to 24-hour format for comparison
-        const bookingTimeFrom = this.convertTo24Hour(timeFrom);
-        const bookingTimeTo = this.convertTo24Hour(timeTo);
+        // If any required field is missing or invalid, return no conflicts
+        if (!date || !roomId || !timeFrom || !timeTo) {
+            console.log("Missing required fields, skipping conflict check");
+            return {
+                hasConflicts: false,
+                message: "Please fill in all required fields.",
+                alternativeTimes: [],
+                alternativeRooms: []
+            };
+        }
 
         // Find conflicts
         const conflicts = this.appointments.filter(appointment => {
-            // Skip if not the same date
-            if (appointment.booking_date !== date) return false;
+            // Skip if not the same date or room
+            if (appointment.booking_date !== date || appointment.room_id != roomId) {
+                return false;
+            }
 
-            // Skip if not the same room
-            if (appointment.room_id != roomId) return false;
-
-            const appointmentTimeFrom = appointment.booking_time_from;
-            const appointmentTimeTo = appointment.booking_time_to;
-
-            return this.isTimeOverlap(
-                bookingTimeFrom,
-                bookingTimeTo,
-                appointmentTimeFrom,
-                appointmentTimeTo
+            // Check for time overlap using the timeToMinutes conversion
+            const hasOverlap = this.isTimeOverlap(
+                timeFrom,
+                timeTo,
+                appointment.booking_time_from,
+                appointment.booking_time_to
             );
+
+            console.log("Checking overlap:", {
+                timeFrom,
+                timeTo,
+                appointmentTimeFrom: appointment.booking_time_from,
+                appointmentTimeTo: appointment.booking_time_to,
+                hasOverlap
+            });
+
+            return hasOverlap;
         });
 
         console.log("Found conflicts:", conflicts);
 
         // If no conflicts, return early
-        if (conflicts.length === 0) {
+        if (!conflicts || conflicts.length === 0) {
             return {
                 hasConflicts: false,
                 message: "No scheduling conflicts found.",
@@ -410,6 +417,7 @@ class ConflictResolver {
         return {
             hasConflicts: true,
             message: `Found ${conflicts.length} scheduling conflict(s). Please review the suggested alternatives.`,
+            conflicts: conflicts,
             alternativeTimes,
             alternativeRooms
         };
@@ -618,20 +626,6 @@ class ConflictResolver {
         }
     }
 
-    convertTo24Hour(time) {
-        const [timeStr, period] = time.split(' ');
-        let [hours, minutes] = timeStr.split(':');
-        hours = parseInt(hours);
-        
-        if (period === 'PM' && hours !== 12) {
-            hours += 12;
-        } else if (period === 'AM' && hours === 12) {
-            hours = 0;
-        }
-
-        return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
-    }
-
     generateAlternativeTimes(date, roomId, duration) {
         const alternatives = [];
         const busyTimes = this.appointments
@@ -673,9 +667,6 @@ class ConflictResolver {
     }
 
     generateAlternativeRooms(date, timeFrom, timeTo) {
-        const bookingTimeFrom = this.convertTo24Hour(timeFrom);
-        const bookingTimeTo = this.convertTo24Hour(timeTo);
-
         return this.rooms
             .filter(room => {
                 // Check if room is available during the requested time
@@ -683,8 +674,8 @@ class ConflictResolver {
                     app.booking_date === date &&
                     app.room_id == room.id &&
                     this.isTimeOverlap(
-                        bookingTimeFrom,
-                        bookingTimeTo,
+                        timeFrom,
+                        timeTo,
                         app.booking_time_from,
                         app.booking_time_to
                     )

@@ -1796,7 +1796,12 @@ function updateConflictUI(analysis) {
     conflictContainer.style.display = 'block';
     
     // Update the message
-    conflictMessage.textContent = analysis.message;
+    if (analysis.conflicts && analysis.conflicts.length > 0) {
+        const conflict = analysis.conflicts[0];
+        conflictMessage.innerHTML = `This room is already booked from ${conflict.booking_time_from} to ${conflict.booking_time_to}`;
+    } else {
+        conflictMessage.textContent = analysis.message;
+    }
     
     // Clear previous alternatives
     alternativeTimesContainer.innerHTML = '';
@@ -1804,71 +1809,58 @@ function updateConflictUI(analysis) {
     
     // Add alternative times
     if (analysis.alternativeTimes && analysis.alternativeTimes.length > 0) {
-        analysis.alternativeTimes.forEach(alt => {
-            const card = document.createElement('div');
-            card.className = 'alternative-card';
-            card.dataset.timeFrom = alt.timeFrom;
-            card.dataset.timeTo = alt.timeTo;
-            
-            card.innerHTML = `
-                <h6><i class="fas fa-clock"></i> Alternative Time <span class="score">${alt.score}</span></h6>
-                <p>${alt.timeFrom} - ${alt.timeTo}</p>
+        analysis.alternativeTimes.forEach(time => {
+            const timeElement = document.createElement('div');
+            timeElement.className = 'alternative-option';
+            timeElement.innerHTML = `
+                <input type="radio" name="alternative_time" id="time_${time.timeFrom.replace(/[:\s]/g, '_')}">
+                <label for="time_${time.timeFrom.replace(/[:\s]/g, '_')}">
+                    ${time.timeFrom} - ${time.timeTo}
+                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                </label>
             `;
-            
-            // Add click handler to select this alternative
-            card.addEventListener('click', function() {
-                // Remove selected class from all time cards
-                document.querySelectorAll('#alternative-times .alternative-card').forEach(c => {
-                    c.classList.remove('selected');
-                });
-                
-                // Add selected class to this card
-                card.classList.add('selected');
-                
-                // Enable the apply button
-                applyAlternativeBtn.disabled = false;
-            });
-            
-            alternativeTimesContainer.appendChild(card);
+            alternativeTimesContainer.appendChild(timeElement);
         });
     } else {
-        alternativeTimesContainer.innerHTML = '<p>No alternative times available.</p>';
+        alternativeTimesContainer.innerHTML = '<p>No alternative times available</p>';
     }
     
     // Add alternative rooms
     if (analysis.alternativeRooms && analysis.alternativeRooms.length > 0) {
-        analysis.alternativeRooms.forEach(alt => {
-            const card = document.createElement('div');
-            card.className = 'alternative-card';
-            card.dataset.roomId = alt.roomId;
-            
-            card.innerHTML = `
-                <h6><i class="fas fa-door-open"></i> Alternative Room <span class="score">${alt.score}</span></h6>
-                <p>${alt.roomName}</p>
+        analysis.alternativeRooms.forEach(room => {
+            const roomElement = document.createElement('div');
+            roomElement.className = 'alternative-option';
+            roomElement.innerHTML = `
+                <input type="radio" name="alternative_room" id="room_${room.roomId}">
+                <label for="room_${room.roomId}">
+                    ${room.roomName}
+                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                </label>
             `;
-            
-            // Add click handler to select this alternative
-            card.addEventListener('click', function() {
-                // Remove selected class from all room cards
-                document.querySelectorAll('#alternative-rooms .alternative-card').forEach(c => {
-                    c.classList.remove('selected');
-                });
-                
-                // Add selected class to this card
-                card.classList.add('selected');
-                
-                // Enable the apply button
-                applyAlternativeBtn.disabled = false;
-            });
-            
-            alternativeRoomsContainer.appendChild(card);
+            alternativeRoomsContainer.appendChild(roomElement);
         });
     } else {
-        alternativeRoomsContainer.innerHTML = '<p>No alternative rooms available.</p>';
+        alternativeRoomsContainer.innerHTML = '<p>No alternative rooms available</p>';
     }
     
-    // Disable the apply button initially
-    applyAlternativeBtn.disabled = true;
+    // Enable/disable apply button based on selection
+    const enableApplyButton = () => {
+        const hasSelectedTime = alternativeTimesContainer.querySelector('input[type="radio"]:checked');
+        const hasSelectedRoom = alternativeRoomsContainer.querySelector('input[type="radio"]:checked');
+        applyAlternativeBtn.disabled = !hasSelectedTime && !hasSelectedRoom;
+    };
+    
+    // Add change listeners to radio buttons
+    alternativeTimesContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', enableApplyButton);
+    });
+    
+    alternativeRoomsContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', enableApplyButton);
+    });
+    
+    // Initial button state
+    enableApplyButton();
 }
 
 function setupUpcomingAppointmentClicks() {
