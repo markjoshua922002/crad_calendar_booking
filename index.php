@@ -479,7 +479,7 @@ while ($row = $bookings->fetch_assoc()) {
         
         .search-input-container button {
             position: absolute;
-            left: 10px;
+            left: 1px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
