@@ -184,7 +184,7 @@ foreach ($create_tables as $sql) {
         <!-- Main Content -->
         <div class="main-content" id="main-content">
             <div class="content-header">
-                <button id="menu-toggle" class="menu-toggle">
+                <button class="menu-toggle" id="menuToggle">
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>

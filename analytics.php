@@ -187,9 +187,6 @@ $conn->close();
             
             <div class="analytics-container">
                 <div class="analytics-header">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
                     <h1>Bookings by Department - <?php echo date('F Y'); ?></h1>
                 </div>
                 <div class="chart-container">
