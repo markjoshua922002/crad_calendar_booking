@@ -154,30 +154,22 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $firstDayOfMonth = date('w', strtotime("$year-$month-01"));
 $totalDaysInMonth = date('t', strtotime("$year-$month-01"));
 
-// Fetch all bookings for the current month with complete information
-$appointmentsQuery = "SELECT b.*, 
-                     d.name as department_name, 
-                     d.color as department_color,
-                     r.name as room_name
-                     FROM bookings b
-                     JOIN departments d ON b.department_id = d.id
-                     JOIN rooms r ON b.room_id = r.id
-                     WHERE MONTH(b.booking_date) = ? AND YEAR(b.booking_date) = ?
-                     ORDER BY b.booking_date, b.booking_time_from";
+// Fetch bookings for the current month
+$bookings = $conn->query("SELECT bookings.*, 
+    departments.name as department_name, 
+    departments.color, 
+    rooms.name as room_name,
+    sets.name as set_name 
+    FROM bookings 
+    JOIN departments ON bookings.department_id = departments.id 
+    JOIN rooms ON bookings.room_id = rooms.id 
+    JOIN sets ON bookings.set_id = sets.id 
+    WHERE MONTH(booking_date) = '$month' AND YEAR(booking_date) = '$year'");
 
-$stmt = $conn->prepare($appointmentsQuery);
-$stmt->bind_param("ii", $month, $year);
-$stmt->execute();
-$appointmentsResult = $stmt->get_result();
-
-// Organize appointments by day
 $appointments = [];
-while ($appointment = $appointmentsResult->fetch_assoc()) {
-    $day = date('j', strtotime($appointment['booking_date']));
-    if (!isset($appointments[$day])) {
-        $appointments[$day] = [];
-    }
-    $appointments[$day][] = $appointment;
+while ($row = $bookings->fetch_assoc()) {
+    $date = date('j', strtotime($row['booking_date']));
+    $appointments[$date][] = $row;
 }
 ?>
 
@@ -1382,16 +1374,7 @@ while ($appointment = $appointmentsResult->fetch_assoc()) {
     <?= json_encode($departments->fetch_all(MYSQLI_ASSOC)) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Load conflict resolver first -->
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
-<!-- Verify conflict resolver is loaded -->
-<script>
-    if (typeof ConflictResolver !== 'function') {
-        console.error('ConflictResolver class not loaded properly. Check the conflict-resolver.js file.');
-    } else {
-        console.log('ConflictResolver class loaded successfully.');
-    }
-</script>
 <script src="js/script.js?v=<?= time() ?>"></script>
 <script src="js/sidebar.js?v=<?= time() ?>"></script>
 <script>
@@ -1418,70 +1401,6 @@ document.getElementById('addRoomForm').addEventListener('submit', function(e) {
         alert('Error: ' + error.message);
     });
 });
-</script>
-<script>
-    // Add debug button for conflict resolver testing
-    document.addEventListener('DOMContentLoaded', function() {
-        // Create debug button
-        const debugButton = document.createElement('button');
-        debugButton.textContent = 'Test Conflict Resolver';
-        debugButton.style.position = 'fixed';
-        debugButton.style.bottom = '20px';
-        debugButton.style.right = '20px';
-        debugButton.style.zIndex = '9999';
-        debugButton.style.padding = '10px';
-        debugButton.style.backgroundColor = '#f44336';
-        debugButton.style.color = 'white';
-        debugButton.style.border = 'none';
-        debugButton.style.borderRadius = '4px';
-        debugButton.style.cursor = 'pointer';
-        
-        // Add click handler
-        debugButton.addEventListener('click', function() {
-            console.log('Testing conflict resolver...');
-            
-            // Check if conflict resolver is initialized
-            if (!window.conflictResolver) {
-                console.error('Conflict resolver not initialized');
-                alert('Conflict resolver not initialized. Check console for details.');
-                return;
-            }
-            
-            // Log conflict resolver state
-            console.log('Conflict resolver state:', {
-                appointments: window.conflictResolver.appointments.length,
-                rooms: window.conflictResolver.rooms.length,
-                departments: window.conflictResolver.departments.length,
-                roomAvailability: Object.keys(window.conflictResolver.roomAvailability).length,
-                departmentAvailability: Object.keys(window.conflictResolver.departmentAvailability).length
-            });
-            
-            // Test conflict detection with sample data
-            try {
-                const today = new Date().toISOString().split('T')[0];
-                const roomId = window.conflictResolver.rooms.length > 0 ? window.conflictResolver.rooms[0].id : '1';
-                const departmentId = window.conflictResolver.departments.length > 0 ? window.conflictResolver.departments[0].id : '1';
-                
-                const analysis = window.conflictResolver.analyzeBooking(
-                    today,
-                    roomId,
-                    departmentId,
-                    '10:00 AM',
-                    '11:00 AM',
-                    60
-                );
-                
-                console.log('Conflict analysis result:', analysis);
-                alert('Conflict resolver test completed. Check console for details.');
-            } catch (error) {
-                console.error('Error testing conflict resolver:', error);
-                alert('Error testing conflict resolver: ' + error.message);
-            }
-        });
-        
-        // Add button to page
-        document.body.appendChild(debugButton);
-    });
 </script>
 </body>
 </html>
