@@ -1968,7 +1968,6 @@ function openModal(modalId) {
         // Prevent the background from shifting
         document.body.style.position = 'fixed';
         document.body.style.top = `-${scrollY}px`;
-        document.body.style.width = '100%';
         
         // Store the scroll position for later
         document.body.dataset.scrollY = scrollY;
