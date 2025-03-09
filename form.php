@@ -209,8 +209,8 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 800px;
-            overflow: hidden;
+            height: 750px; /* Reduced height */
+            overflow-y: auto; /* Allow scrolling */
         }
         
         .form-container h2 {
@@ -375,12 +375,11 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            position: fixed;
-            bottom: auto;
-            left: auto;
-            right: auto;
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
             height: 40px;
-            width: calc(100% - 30px);
             background-color: #4285f4;
             color: white;
             border: none;
@@ -393,7 +392,6 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
-            margin: 10px 15px;
         }
         
         .submit-button:hover {
@@ -424,14 +422,13 @@ $total_entries = $count_row['total'];
             font-size: 12px;
         }
         
+        /* Scrollable areas when needed */
         .logbook-form {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            height: calc(100% - 100px);
-            padding-bottom: 0;
-            position: relative;
-            overflow-y: auto;
+            height: auto; /* Let it take natural height */
+            margin-bottom: 60px; /* Space for submit button */
         }
         
         /* Specific for 1920x978 resolution with zoom out */
