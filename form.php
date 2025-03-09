@@ -407,7 +407,7 @@ $total_entries = $count_row['total'];
         .time-dropdown {
             display: none;
             position: absolute;
-            top: 100%;
+            bottom: 100%; /* Position above the input instead of below */
             left: 0;
             width: 100%;
             max-height: 200px;
@@ -416,7 +416,8 @@ $total_entries = $count_row['total'];
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             z-index: 1000; /* Higher z-index to ensure it appears above other elements */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Shadow adjusted for upward display */
+            margin-bottom: 4px; /* Add space between dropdown and input */
         }
         
         .show-dropdown .time-dropdown {
@@ -779,9 +780,9 @@ $total_entries = $count_row['total'];
                             <div class="time-picker">
                                 <div class="time-input-container">
                                     <input type="number" id="time_hour" name="time_hour" min="1" max="12" placeholder="Hour" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown"><i class="fas fa-caret-down"></i></button>
+                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown"><i class="fas fa-caret-up"></i></button>
                                     <div class="time-dropdown" id="time_hour_dropdown">
-                                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                                        <?php for ($i = 12; $i >= 1; $i--): ?>
                                             <div class="dropdown-item" data-value="<?= $i ?>"><?= $i ?></div>
                                         <?php endfor; ?>
                                     </div>
@@ -789,9 +790,9 @@ $total_entries = $count_row['total'];
                                 <span>:</span>
                                 <div class="time-input-container">
                                     <input type="number" id="time_minute" name="time_minute" min="0" max="59" step="5" placeholder="Min" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown"><i class="fas fa-caret-down"></i></button>
+                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown"><i class="fas fa-caret-up"></i></button>
                                     <div class="time-dropdown" id="time_minute_dropdown">
-                                        <?php for ($i = 0; $i < 60; $i += 5): ?>
+                                        <?php for ($i = 55; $i >= 0; $i -= 5): ?>
                                             <div class="dropdown-item" data-value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></div>
                                         <?php endfor; ?>
                                     </div>
