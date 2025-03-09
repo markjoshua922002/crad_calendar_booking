@@ -4,7 +4,7 @@
     left: 0;
     top: 0;
     width: 250px;
-    height: 125vh;
+    height: 100vh; /* Changed from 125vh to 100vh to match viewport height */
     background-color: #2c3e50;
     color: #fff;
     display: flex;
@@ -57,6 +57,25 @@
     padding: 20px 0;
     flex: 1;
     overflow-y: auto; /* Allow scrolling for long menus */
+    max-height: calc(100vh - 160px); /* Subtract header and footer heights to limit scrollable area */
+}
+
+/* Custom scrollbar for sidebar menu */
+.sidebar-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .sidebar a {
