@@ -98,12 +98,38 @@ $total_entries = $count_row['total'];
             min-height: 40px;
         }
         
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-toggle:hover {
+            color: #4285f4;
+        }
+
+        .title-content {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        
         .page-title h1 {
             font-size: 18px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 2px;
-            margin-top: 0;
+            margin: 0;
         }
         
         .page-title p {
@@ -561,7 +587,7 @@ $total_entries = $count_row['total'];
                     <button class="menu-toggle" id="menuToggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div>
+                    <div class="title-content">
                         <h1>Logbook</h1>
                         <p><?= date('l, F j, Y') ?></p>
                     </div>
