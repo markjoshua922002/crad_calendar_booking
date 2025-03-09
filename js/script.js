@@ -428,25 +428,9 @@ function showModal(modal) {
         // Add class to body to prevent scrolling
         document.body.classList.add('modal-open');
         
-        // Reset any previous styles
-        modal.style.cssText = '';
-        
-        // Show modal with flex display and ensure full coverage
-        modal.style.cssText = `
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            overflow: hidden;
-        `;
+        // Show modal with flex display
+        modal.style.display = 'flex';
+        modal.classList.add('show');
         
         // Ensure the modal content is visible and centered
         const modalContent = modal.querySelector('.modal-content');
@@ -495,20 +479,24 @@ function hideModal(modal) {
     console.log(`Hiding modal: ${modal.id}`);
     
     try {
-        // Reset all modal styles
-        modal.style.cssText = 'display: none;';
+        // Hide the modal
+        modal.style.display = 'none';
+        modal.classList.remove('show');
         
-        // Remove body scroll lock only if no other modals are visible
-        const visibleModals = document.querySelectorAll('.modal[style*="flex"]');
+        // Check if there are any other visible modals
+        const visibleModals = document.querySelectorAll('.modal[style*="display: flex"]');
         if (visibleModals.length === 0) {
+            // Remove body class only if no other modals are visible
             document.body.classList.remove('modal-open');
-            document.body.style.position = '';
         }
         
-        // Reset modal content styles
-        const modalContent = modal.querySelector('.modal-content');
-        if (modalContent) {
-            modalContent.style.cssText = '';
+        // Special handling for booking modal
+        if (modal.id === 'bookingModal') {
+            // Reset the conflict container
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.style.display = 'none';
+            }
         }
     } catch (error) {
         console.error(`Error hiding modal ${modal.id}:`, error);
@@ -1935,6 +1923,15 @@ function setupSearch() {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
+        // Close any other open modals first
+        document.querySelectorAll('.modal').forEach(m => {
+            if (m.id !== modalId && m.style.display === 'flex') {
+                m.style.display = 'none';
+                m.classList.remove('show');
+            }
+        });
+        
+        // Show the modal
         modal.style.display = 'flex';
         document.body.classList.add('modal-open');
         modal.classList.add('show');
@@ -1958,33 +1955,32 @@ function closeModal(modalId) {
 
 // Setup modal handlers
 document.addEventListener('DOMContentLoaded', function() {
-    // Close modal when clicking outside
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal(this.id);
-            }
-        });
+    // Close modal when clicking outside of the modal content
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            const modalId = event.target.id;
+            closeModal(modalId);
+        }
+    });
+    
+    // Close modals with escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                closeModal(modal.id);
+            });
+        }
     });
 
-    // Close modal when clicking close button
-    document.querySelectorAll('.close-button').forEach(button => {
+    // Setup close buttons for all modals
+    document.querySelectorAll('.modal .close-button').forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.modal');
             if (modal) {
                 closeModal(modal.id);
             }
         });
-    });
-
-    // Close modal on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const visibleModal = document.querySelector('.modal.show');
-            if (visibleModal) {
-                closeModal(visibleModal.id);
-            }
-        }
     });
 
     // Setup modal triggers
