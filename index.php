@@ -196,7 +196,7 @@ while ($row = $bookings->fetch_assoc()) {
     <style>
         /* Remove scrollbar */
         body {
-            background-color: #f5f7fa;
+            background-color: #C9E6F0;
             margin: 0;
             padding: 0;
             font-size: 12px;

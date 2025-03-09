@@ -153,7 +153,7 @@ foreach ($create_tables as $sql) {
             width: 111.11%;
             height: 111.11%;
             font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
+            background-color: #C9E6F0;
         }
     </style>
 </head>

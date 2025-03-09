@@ -50,7 +50,7 @@ $conn->close();
     <style>
         body {
             overflow: hidden;
-            background-color: #f5f7fa;
+            background-color: #C9E6F0;
             height: 100vh;
             margin: 0;
             padding: 0;
