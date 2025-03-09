@@ -91,7 +91,7 @@ if (isset($_POST['add_adviser'])) {
 }
 
 // Fetch data for display
-$rooms = $conn->query("SELECT * FROM rooms ORDER BY name");
+$rooms = $conn->query("SELECT id, name FROM rooms ORDER BY name");
 $departments = $conn->query("SELECT * FROM departments ORDER BY name");
 $groups = $conn->query("SELECT * FROM groups ORDER BY group_name");
 $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
@@ -101,31 +101,25 @@ $advisers = $conn->query("SELECT a.*, d.name as department_name FROM advisers a 
 $create_tables = [
     "CREATE TABLE IF NOT EXISTS rooms (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        capacity INT(11) DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        name VARCHAR(100) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS departments (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
-        color VARCHAR(20) DEFAULT '#3788d8',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        color VARCHAR(20) DEFAULT '#3788d8'
     )",
     "CREATE TABLE IF NOT EXISTS groups (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        group_name VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        group_name VARCHAR(100) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS sets (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        set_name VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        set_name VARCHAR(100) NOT NULL
     )",
     "CREATE TABLE IF NOT EXISTS advisers (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
         adviser_name VARCHAR(100) NOT NULL,
         department_id INT(11),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (department_id) REFERENCES departments(id)
     )"
 ];
@@ -220,14 +214,12 @@ foreach ($create_tables as $sql) {
                         <thead>
                             <tr>
                                 <th>Room Name</th>
-                                <th>Capacity</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($room = $rooms->fetch_assoc()): ?>
                             <tr>
                                 <td><?= htmlspecialchars($room['name']) ?></td>
-                                <td><?= htmlspecialchars($room['capacity']) ?></td>
                             </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -367,10 +359,6 @@ foreach ($create_tables as $sql) {
                 <div class="form-group">
                     <label for="room_name">Room Name</label>
                     <input type="text" id="room_name" name="room_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="room_capacity">Capacity</label>
-                    <input type="number" id="room_capacity" name="room_capacity" min="1" required>
                 </div>
                 <button type="submit" class="submit-btn">Add Room</button>
             </form>
