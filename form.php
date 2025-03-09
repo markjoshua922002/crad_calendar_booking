@@ -209,8 +209,9 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 750px; /* Reduced height */
-            overflow-y: auto; /* Allow scrolling */
+            height: 750px;
+            overflow-y: auto;
+            position: relative;
         }
         
         .form-container h2 {
@@ -378,7 +379,7 @@ $total_entries = $count_row['total'];
             position: absolute;
             bottom: 15px;
             left: 15px;
-            right: 15px;
+            width: calc(100% - 30px);
             height: 40px;
             background-color: #4285f4;
             color: white;
@@ -392,6 +393,7 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
+            margin: 0;
         }
         
         .submit-button:hover {
