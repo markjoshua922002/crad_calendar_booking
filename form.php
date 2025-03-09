@@ -47,7 +47,6 @@ $total_entries = $count_row['total'];
             overflow-x: hidden;
             overflow-y: auto;
             background-color: #f5f7fa;
-            min-height: 100vh;
             margin: 0;
             padding: 0;
             font-size: 12px;
@@ -59,11 +58,11 @@ $total_entries = $count_row['total'];
         
         .app-container {
             display: flex;
-            min-height: 100vh;
             position: relative;
             overflow: visible;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
+            height: auto;
         }
         
         /* Main content styles - adjusted for sidebar from sidebar.css */
@@ -78,7 +77,6 @@ $total_entries = $count_row['total'];
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
             height: auto;
         }
         
@@ -185,7 +183,6 @@ $total_entries = $count_row['total'];
             gap: 0px;
             flex: 1;
             overflow: visible;
-            min-height: 0;
             height: auto;
             align-items: stretch; /* Make children stretch to fill the container */
             padding-bottom: 20px; /* Add padding at the bottom */
@@ -229,10 +226,9 @@ $total_entries = $count_row['total'];
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
             width: 72%;
-            height: fit-content;
-            max-height: calc(100vh - 180px);
+            height: auto;
         }
         
         .data-container h2 {
@@ -254,19 +250,15 @@ $total_entries = $count_row['total'];
         
         .data-table-wrapper {
             flex: 1;
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid #f0f0f0;
             border-radius: 4px;
-            min-height: 0; /* Important for flex children */
-            height: auto; /* Auto height to match form container */
-            max-height: calc(100% - 45px); /* Adjust for header */
+            height: auto;
         }
         
         .data-table-container {
             overflow-y: auto;
-            max-height: 100%;
-            min-height: 0; /* Important for flex children */
-            height: 100%;
+            height: auto;
             scrollbar-width: thin;
             scrollbar-color: #c1c1c1 #f1f1f1;
         }
@@ -432,22 +424,19 @@ $total_entries = $count_row['total'];
             }
             
             .main-content {
-                min-height: 100vh;
                 height: auto;
             }
             
             .page-layout {
                 height: auto;
-                min-height: 0;
             }
             
             .data-table-wrapper {
                 height: auto;
-                min-height: 500px;
             }
             
             .logbook-form {
-                max-height: none;
+                height: auto;
             }
         }
         
@@ -773,31 +762,34 @@ $total_entries = $count_row['total'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script>
-    // Function to align the data table height with the form container
-    function alignDataTableWithForm() {
-        const formContainer = document.querySelector('.form-container');
-        const dataTableWrapper = document.querySelector('.data-table-wrapper');
+    // Function to ensure the page displays properly
+    function adjustPageLayout() {
+        // Remove any fixed height constraints that might be added by other scripts
+        const elements = [
+            '.app-container',
+            '.main-content',
+            '.page-layout',
+            '.form-container',
+            '.data-container',
+            '.data-table-wrapper',
+            '.data-table-container'
+        ];
         
-        if (formContainer && dataTableWrapper) {
-            // Get the height of the form container
-            const formHeight = formContainer.offsetHeight;
-            
-            // Set the data table wrapper height to match the form container
-            dataTableWrapper.style.minHeight = formHeight - 45 + 'px'; // Subtract header height
-            
-            // Ensure the app container has enough height
-            const appContainer = document.querySelector('.app-container');
-            if (appContainer) {
-                appContainer.style.minHeight = (formHeight + 150) + 'px'; // Add extra space for padding and margins
+        elements.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.style.height = 'auto';
+                element.style.minHeight = '';
+                element.style.maxHeight = '';
             }
-        }
+        });
     }
 
     // Run the function when the page loads
-    document.addEventListener('DOMContentLoaded', alignDataTableWithForm);
+    document.addEventListener('DOMContentLoaded', adjustPageLayout);
 
     // Run the function when the window is resized
-    window.addEventListener('resize', alignDataTableWithForm);
+    window.addEventListener('resize', adjustPageLayout);
     </script>
 </body>
 </html>
