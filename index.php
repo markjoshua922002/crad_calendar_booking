@@ -27,14 +27,17 @@ if (isset($_POST['add_booking'])) {
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
     
+    // Debug: Log the values being processed
+    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date");
+    
     // Combine time fields
     $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
     $time_to = date('H:i:s', strtotime($_POST['time_to_hour'] . ':' . $_POST['time_to_minute'] . ' ' . $_POST['time_to_ampm']));
     
     $reason = $_POST['reason'];
 
-    // Debug: Log the values being processed
-    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date, Time From=$time_from, Time To=$time_to, Reason=$reason");
+    // Debug: Log the final values before database insertion
+    error_log("Final Booking Values: Set=$set, Time From=$time_from, Time To=$time_to, Reason=$reason");
 
     // Check if the booking date is in the past
     $current_date = date('Y-m-d');
@@ -60,13 +63,13 @@ if (isset($_POST['add_booking'])) {
             $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
                 // Debug: Log successful insertion
-                error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
+                error_log("Booking successfully inserted: ID=" . $stmt->insert_id . ", Set=$set");
                 // Redirect to avoid form resubmission
                 header('Location: index.php');
                 exit();
             } else {
                 // Debug: Log error
-                error_log("Error inserting booking: " . $stmt->error);
+                error_log("Error inserting booking: " . $stmt->error . ", Set=$set");
                 echo "Error: " . $stmt->error;
             }
             $stmt->close();
@@ -1077,7 +1080,7 @@ while ($row = $bookings->fetch_assoc()) {
             <button class="close-button" id="closeBookingModal"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <form method="POST" class="booking-form">
+            <form method="POST" action="index.php" class="booking-form">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="department">Department</label>
@@ -1344,7 +1347,7 @@ while ($row = $bookings->fetch_assoc()) {
     </div>
 </div>
 
-<!-- Add this element to hold the appointments data -->
+<!-- Data for conflict resolver -->
 <script id="appointmentsData" type="application/json">
     <?= json_encode($appointments) ?>
 </script>

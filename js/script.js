@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     try {
+        // Initialize conflict resolver first
+        initializeConflictResolver();
+        
         // Debug element existence
         console.log("Menu button exists:", !!document.getElementById('menuButton'));
         console.log("Sidebar exists:", !!document.getElementById('sidebar'));
@@ -108,9 +111,6 @@ document.addEventListener("DOMContentLoaded", function() {
         setupTimePicker('time_to_hour', 'time_to_minute', 'time_to_ampm');
         setupTimePicker('edit_time_from_hour', 'edit_time_from_minute', 'edit_time_from_ampm');
         setupTimePicker('edit_time_to_hour', 'edit_time_to_minute', 'edit_time_to_ampm');
-
-        // Initialize Conflict Resolver
-        initializeConflictResolver();
 
         // Direct event listeners for Add Department and Add Room buttons
         const openAddDepartmentBtn = document.getElementById('openAddDepartmentModal');
@@ -1442,14 +1442,30 @@ function initializeConflictResolver() {
         const departmentsDataElement = document.getElementById('departmentsData');
         
         if (!appointmentsDataElement || !roomsDataElement || !departmentsDataElement) {
-            console.error("Missing data elements for Conflict Resolver");
+            console.error("Missing data elements for Conflict Resolver:", {
+                appointments: !!appointmentsDataElement,
+                rooms: !!roomsDataElement,
+                departments: !!departmentsDataElement
+            });
             return;
         }
         
         // Parse the JSON data
-        const appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
-        const rooms = JSON.parse(roomsDataElement.textContent || '[]');
-        const departments = JSON.parse(departmentsDataElement.textContent || '[]');
+        let appointments, rooms, departments;
+        try {
+            appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
+            rooms = JSON.parse(roomsDataElement.textContent || '[]');
+            departments = JSON.parse(departmentsDataElement.textContent || '[]');
+            
+            console.log("Parsed data:", {
+                appointments: Object.keys(appointments).length,
+                rooms: rooms.length,
+                departments: departments.length
+            });
+        } catch (parseError) {
+            console.error("Error parsing JSON data:", parseError);
+            return;
+        }
         
         // Flatten appointments into an array
         const flatAppointments = [];
@@ -1461,12 +1477,18 @@ function initializeConflictResolver() {
             }
         }
         
-        // Create the ConflictResolver instance
-        conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
-        console.log("Conflict Resolver initialized successfully");
+        console.log("Flattened appointments:", flatAppointments.length);
         
-        // Setup form submission handling for conflict detection
-        setupConflictDetection();
+        // Create the ConflictResolver instance
+        try {
+            conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
+            console.log("Conflict Resolver initialized successfully");
+            
+            // Setup form submission handling for conflict detection
+            setupConflictDetection();
+        } catch (resolverError) {
+            console.error("Error creating ConflictResolver instance:", resolverError);
+        }
     } catch (error) {
         console.error("Error initializing Conflict Resolver:", error);
     }
@@ -1535,28 +1557,57 @@ function setupConflictDetection() {
     
     // Add form submission handler
     bookingForm.addEventListener('submit', function(e) {
-        // Only check if we have a conflict resolver
-        if (!conflictResolver) return;
+        // Log form data before submission
+        const formData = new FormData(bookingForm);
+        console.log("Form data before submission:", {
+            name: formData.get('name'),
+            id_number: formData.get('id_number'),
+            group_members: formData.get('group_members'),
+            representative_name: formData.get('representative_name'),
+            set: formData.get('set'),
+            department: formData.get('department'),
+            room: formData.get('room'),
+            date: formData.get('date'),
+            time_from_hour: formData.get('time_from_hour'),
+            time_from_minute: formData.get('time_from_minute'),
+            time_from_ampm: formData.get('time_from_ampm'),
+            time_to_hour: formData.get('time_to_hour'),
+            time_to_minute: formData.get('time_to_minute'),
+            time_to_ampm: formData.get('time_to_ampm'),
+            reason: formData.get('reason')
+        });
+
+        // If we don't have a conflict resolver, allow the form to submit normally
+        if (!conflictResolver) {
+            console.log("No conflict resolver available, allowing form submission");
+            return true;
+        }
         
         // Force a conflict check before submission
-        const hasConflicts = checkForConflicts();
-        
-        // If there are conflicts and the user hasn't explicitly chosen to ignore them,
-        // prevent form submission
-        if (hasConflicts && !bookingForm.dataset.ignoreConflicts) {
-            e.preventDefault();
+        try {
+            const hasConflicts = checkForConflicts();
             
-            // Show the conflict resolution container
-            const conflictContainer = document.getElementById('conflict-resolution-container');
-            if (conflictContainer) {
-                conflictContainer.style.display = 'block';
+            // If there are conflicts and the user hasn't explicitly chosen to ignore them,
+            // prevent form submission
+            if (hasConflicts && !bookingForm.dataset.ignoreConflicts) {
+                e.preventDefault();
                 
-                // Scroll to the conflict container
-                conflictContainer.scrollIntoView({ behavior: 'smooth' });
-                
-                // Show an alert to make it more obvious
-                alert("Scheduling conflict detected! Please review the suggested alternatives or click 'Keep Original Time' to proceed anyway.");
+                // Show the conflict resolution container
+                const conflictContainer = document.getElementById('conflict-resolution-container');
+                if (conflictContainer) {
+                    conflictContainer.style.display = 'block';
+                    
+                    // Scroll to the conflict container
+                    conflictContainer.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Show an alert to make it more obvious
+                    alert("Scheduling conflict detected! Please review the suggested alternatives or click 'Keep Original Time' to proceed anyway.");
+                }
             }
+        } catch (error) {
+            console.error("Error checking for conflicts:", error);
+            // Allow the form to submit if there's an error checking for conflicts
+            return true;
         }
     });
     
@@ -1637,90 +1688,93 @@ function parseTimeString(timeStr) {
 // Check for conflicts and update the UI
 function checkForConflicts() {
     if (!conflictResolver) {
-        console.error("Conflict resolver not initialized");
+        console.log("Conflict resolver not initialized, allowing submission");
         return false;
     }
     
     console.log("Running conflict check...");
     
-    // Get form values
-    const dateInput = document.getElementById('date');
-    const roomSelect = document.getElementById('room');
-    const departmentSelect = document.getElementById('department');
-    const timeFromHour = document.getElementById('time_from_hour');
-    const timeFromMinute = document.getElementById('time_from_minute');
-    const timeFromAmpm = document.getElementById('time_from_ampm');
-    const timeToHour = document.getElementById('time_to_hour');
-    const timeToMinute = document.getElementById('time_to_minute');
-    const timeToAmpm = document.getElementById('time_to_ampm');
-    
-    // Ensure all required fields have values
-    if (!dateInput?.value || !roomSelect?.value || !departmentSelect?.value ||
-        !timeFromHour?.value || !timeFromMinute?.value || !timeFromAmpm?.value ||
-        !timeToHour?.value || !timeToMinute?.value || !timeToAmpm?.value) {
-        console.log("Missing required fields for conflict check");
-        return false;
-    }
-    
-    console.log("Form values for conflict check:", {
-        date: dateInput.value,
-        roomId: roomSelect.value,
-        departmentId: departmentSelect.value,
-        timeFromHour: timeFromHour.value,
-        timeFromMinute: timeFromMinute.value,
-        timeFromAmpm: timeFromAmpm.value,
-        timeToHour: timeToHour.value,
-        timeToMinute: timeToMinute.value,
-        timeToAmpm: timeToAmpm.value
-    });
-    
-    // Format the time values
-    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value.padStart(2, '0')} ${timeFromAmpm.value}`;
-    const timeTo = `${timeToHour.value}:${timeToMinute.value.padStart(2, '0')} ${timeToAmpm.value}`;
-    
-    console.log("Formatted times:", { timeFrom, timeTo });
-    
-    // Calculate duration in minutes
-    const fromMinutes = (parseInt(timeFromHour.value) % 12) * 60 + parseInt(timeFromMinute.value);
-    const toMinutes = (parseInt(timeToHour.value) % 12) * 60 + parseInt(timeToMinute.value);
-    let durationMinutes = toMinutes - fromMinutes;
-    
-    // Adjust for AM/PM
-    if (timeFromAmpm.value === 'AM' && timeToAmpm.value === 'PM') {
-        durationMinutes += 12 * 60;
-    } else if (timeFromAmpm.value === 'PM' && timeToAmpm.value === 'AM') {
-        durationMinutes += 24 * 60;
-    } else if (timeFromAmpm.value === timeToAmpm.value && toMinutes < fromMinutes) {
-        // Same AM/PM but end time is earlier than start time (next day)
-        durationMinutes += 12 * 60;
-    }
-    
-    // Handle negative duration (crossing midnight)
-    if (durationMinutes <= 0) {
-        durationMinutes += 24 * 60;
-    }
-    
-    console.log("Calculated duration:", { durationMinutes });
-    
     try {
-        // Analyze the booking for conflicts
-        const analysis = conflictResolver.analyzeBooking(
-            dateInput.value,
-            roomSelect.value,
-            departmentSelect.value,
-            timeFrom,
-            timeTo,
-            durationMinutes
-        );
+        // Get form values
+        const dateInput = document.getElementById('date');
+        const roomSelect = document.getElementById('room');
+        const departmentSelect = document.getElementById('department');
+        const timeFromHour = document.getElementById('time_from_hour');
+        const timeFromMinute = document.getElementById('time_from_minute');
+        const timeFromAmpm = document.getElementById('time_from_ampm');
+        const timeToHour = document.getElementById('time_to_hour');
+        const timeToMinute = document.getElementById('time_to_minute');
+        const timeToAmpm = document.getElementById('time_to_ampm');
         
-        console.log("Conflict analysis result:", analysis);
+        // Ensure all required fields have values
+        if (!dateInput?.value || !roomSelect?.value || !departmentSelect?.value ||
+            !timeFromHour?.value || !timeFromMinute?.value || !timeFromAmpm?.value ||
+            !timeToHour?.value || !timeToMinute?.value || !timeToAmpm?.value) {
+            console.log("Missing required fields for conflict check");
+            return false;
+        }
         
-        // Update the UI based on the analysis
-        updateConflictUI(analysis);
+        console.log("Form values for conflict check:", {
+            date: dateInput.value,
+            roomId: roomSelect.value,
+            departmentId: departmentSelect.value,
+            timeFromHour: timeFromHour.value,
+            timeFromMinute: timeFromMinute.value,
+            timeFromAmpm: timeFromAmpm.value,
+            timeToHour: timeToHour.value,
+            timeToMinute: timeToMinute.value,
+            timeToAmpm: timeToAmpm.value
+        });
         
-        return analysis.hasConflicts;
+        // Construct time strings
+        const timeFrom = `${timeFromHour.value}:${timeFromMinute.value} ${timeFromAmpm.value}`;
+        const timeTo = `${timeToHour.value}:${timeToMinute.value} ${timeToAmpm.value}`;
+        
+        // Calculate duration in minutes
+        const fromMinutes = (parseInt(timeFromHour.value) % 12) * 60 + parseInt(timeFromMinute.value);
+        const toMinutes = (parseInt(timeToHour.value) % 12) * 60 + parseInt(timeToMinute.value);
+        let durationMinutes = toMinutes - fromMinutes;
+        
+        // Adjust for AM/PM
+        if (timeFromAmpm.value === 'AM' && timeToAmpm.value === 'PM') {
+            durationMinutes += 12 * 60;
+        } else if (timeFromAmpm.value === 'PM' && timeToAmpm.value === 'AM') {
+            durationMinutes += 24 * 60;
+        } else if (timeFromAmpm.value === timeToAmpm.value && toMinutes < fromMinutes) {
+            // Same AM/PM but end time is earlier than start time (next day)
+            durationMinutes += 12 * 60;
+        }
+        
+        // Handle negative duration (crossing midnight)
+        if (durationMinutes <= 0) {
+            durationMinutes += 24 * 60;
+        }
+        
+        console.log("Calculated duration:", { durationMinutes });
+        
+        try {
+            // Analyze the booking for conflicts
+            const analysis = conflictResolver.analyzeBooking(
+                dateInput.value,
+                roomSelect.value,
+                departmentSelect.value,
+                timeFrom,
+                timeTo,
+                durationMinutes
+            );
+            
+            console.log("Conflict analysis result:", analysis);
+            
+            // Update the UI based on the analysis
+            updateConflictUI(analysis);
+            
+            return analysis.hasConflicts;
+        } catch (error) {
+            console.error("Error during conflict analysis:", error);
+            return false;
+        }
     } catch (error) {
-        console.error("Error during conflict analysis:", error);
+        console.error("Error in checkForConflicts:", error);
         return false;
     }
 }
