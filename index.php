@@ -23,6 +23,18 @@ if (isset($_POST['add_booking'])) {
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
     $set = $_POST['set'];
+    
+    // Get the set ID from the sets table
+    $stmt_set = $conn->prepare("SELECT id FROM sets WHERE name = ?");
+    $stmt_set->bind_param("s", $set);
+    $stmt_set->execute();
+    $set_result = $stmt_set->get_result();
+    if ($set_result->num_rows === 0) {
+        die("Error: Selected set does not exist");
+    }
+    $set_id = $set_result->fetch_assoc()['id'];
+    $stmt_set->close();
+    
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
@@ -57,7 +69,7 @@ if (isset($_POST['add_booking'])) {
             if (!$stmt) {
                 die('Prepare failed: ' . $conn->error);
             }
-            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set, $department, $room, $date, $time_from, $time_to, $reason);
+            $stmt->bind_param("ssssissssss", $name, $id_number, $group_members, $representative_name, $set_id, $department, $room, $date, $time_from, $time_to, $reason);
             if ($stmt->execute()) {
                 // Debug: Log successful insertion
                 error_log("Booking successfully inserted: ID=" . $stmt->insert_id);
