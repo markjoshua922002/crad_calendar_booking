@@ -6,6 +6,10 @@
  * providing intelligent suggestions for alternative times and rooms.
  */
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Enable CORS for API access
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -19,14 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Include required files
-require_once 'config.php';
-require_once 'ConflictResolver.php';
-require_once 'Database.php';
-
-// Initialize database connection
 try {
+    if (!file_exists('config.php')) {
+        throw new Exception('Configuration file not found');
+    }
+    require_once 'config.php';
+    
+    if (!file_exists('ConflictResolver.php')) {
+        throw new Exception('ConflictResolver class file not found');
+    }
+    require_once 'ConflictResolver.php';
+    
+    if (!file_exists('Database.php')) {
+        throw new Exception('Database class file not found');
+    }
+    require_once 'Database.php';
+    
+    // Initialize database connection
     $database = new Database();
     $db = $database->getConnection();
+    
+    if (!$db) {
+        throw new Exception('Failed to establish database connection');
+    }
 
     // Initialize the conflict resolver
     $resolver = new ConflictResolver($db);
@@ -34,6 +53,10 @@ try {
     // Process the request
     $requestMethod = $_SERVER['REQUEST_METHOD'];
     $endpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : 'check';
+    
+    // Log request details
+    logMessage("Processing {$requestMethod} request to endpoint: {$endpoint}");
+    logMessage("Request data: " . print_r(getRequestData(), true));
 
     // Route the request to the appropriate handler
     switch ($endpoint) {
@@ -50,10 +73,11 @@ try {
             sendResponse(404, ['error' => 'Endpoint not found']);
     }
 } catch (Exception $e) {
-    logMessage("Critical error: " . $e->getMessage(), "ERROR");
+    logMessage("Critical error: " . $e->getMessage() . "\nStack trace: " . $e->getTraceAsString(), "ERROR");
     sendResponse(500, [
         'error' => 'Internal server error',
-        'message' => $e->getMessage()
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
     ]);
 }
 

@@ -13,8 +13,10 @@ Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
 # Prevent directory listing
 Options -Indexes
 
-# Protect configuration files
+# Protect configuration files from direct access
 <FilesMatch "^(config\.php|Database\.php|\.htaccess)$">
+    # Allow internal access but deny external
+    RewriteCond %{REQUEST_URI} !^/microservices/conflict-resolver/index\.php
     Order Allow,Deny
     Deny from all
 </FilesMatch>
