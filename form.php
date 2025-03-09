@@ -91,45 +91,19 @@ $total_entries = $count_row['total'];
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #e0e0e0;
             flex-shrink: 0;
             min-height: 40px;
-        }
-        
-        .page-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-toggle:hover {
-            color: #4285f4;
-        }
-
-        .title-content {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
         }
         
         .page-title h1 {
             font-size: 18px;
             font-weight: 600;
             color: #333;
-            margin: 0;
+            margin-bottom: 2px;
+            margin-top: 0;
         }
         
         .page-title p {
@@ -139,7 +113,7 @@ $total_entries = $count_row['total'];
         }
         
         .search-container {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             background-color: #fff;
             padding: 12px;
             border-radius: 6px;
@@ -190,36 +164,48 @@ $total_entries = $count_row['total'];
             text-decoration: none;
         }
         
+        .result-count {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #5f6368;
+            background-color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+            height: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
         .page-layout {
             display: flex;
             gap: 15px;
             flex: 1;
-            overflow: visible;
-            height: auto;
+            overflow: hidden;
             min-height: 0;
-            margin-top: 0;
+            height: calc(100vh - 180px); /* Adjust for top bar + search + padding */
         }
         
         .form-container {
             flex: 1;
             background-color: #fff;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: 750px; /* Reduced height */
-            overflow-y: auto; /* Allow scrolling */
-            position: relative; /* Ensure proper positioning context */
+            height: fit-content;
+            min-height: 0;
         }
         
         .form-container h2 {
             font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin: 0 0 10px 0;
-            padding-bottom: 6px;
+            margin: 0 0 12px 0;
+            padding-bottom: 8px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
@@ -239,8 +225,8 @@ $total_entries = $count_row['total'];
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
             width: 72%;
-            height: 900px; /* Match form container height */
         }
         
         .data-container h2 {
@@ -265,12 +251,14 @@ $total_entries = $count_row['total'];
             overflow: hidden;
             border: 1px solid #f0f0f0;
             border-radius: 4px;
-            height: calc(100% - 50px); /* Subtract header height */
+            min-height: 0; /* Important for flex children */
+            height: calc(978px - 200px); /* Adjusted for more compact layout */
         }
         
         .data-table-container {
             overflow-y: auto;
-            height: 100%;
+            max-height: 100%;
+            min-height: 0; /* Important for flex children */
         }
         
         .data-table {
@@ -314,11 +302,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 8px;
+            margin-bottom: 15px;
         }
         
         .form-group:last-child {
-            margin-bottom: 0; /* Remove extra space */
+            margin-bottom: 10px;
         }
         
         .form-group label {
@@ -352,95 +340,17 @@ $total_entries = $count_row['total'];
         
         .time-picker {
             display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .time-input-container {
-            position: relative;
-            display: inline-block;
-            width: 70px;
-        }
-        
-        .time-picker input[type="number"] {
-            padding: 8px 25px 8px 8px; /* Add padding on the right for the dropdown button */
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            width: 100%;
-            height: 30px;
-            box-sizing: border-box;
-            font-size: 12px;
-            -moz-appearance: textfield; /* Firefox */
-        }
-        
-        /* Remove spinner buttons in Chrome, Safari, Edge, Opera */
-        .time-picker input[type="number"]::-webkit-outer-spin-button,
-        .time-picker input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        
-        .time-picker input[type="number"]:focus {
-            outline: none;
-            border-color: #4285f4;
-            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-        }
-        
-        .toggle-time-input {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #4285f4;
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-            z-index: 2; /* Ensure button is above input */
-        }
-        
-        .toggle-time-input:hover {
-            color: #2b5797;
-        }
-        
-        .time-dropdown {
-            display: none;
-            position: absolute;
-            bottom: 100%; /* Position above the input instead of below */
-            left: 0;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            z-index: 1000; /* Higher z-index to ensure it appears above other elements */
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Shadow adjusted for upward display */
-            margin-bottom: 4px; /* Add space between dropdown and input */
-        }
-        
-        .show-dropdown .time-dropdown {
-            display: block;
-        }
-        
-        .dropdown-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 12px;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #f5f5f5;
+            gap: 6px;
         }
         
         .time-picker select {
+            flex: 1;
             padding: 6px 10px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
-            height: 30px;
             font-size: 12px;
+            transition: all 0.3s;
+            height: 30px;
         }
         
         .time-picker select:focus {
@@ -450,30 +360,7 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            width: calc(100% - 30px);
-            height: 36px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background-color 0.3s;
-            margin: 0 auto;
-            z-index: 10; /* Ensure button is above other content */
-        }
-        
-        .submit-button:hover {
-            background-color: #3367d6;
+            margin-top: 10px;
         }
         
         .success-message {
@@ -504,9 +391,7 @@ $total_entries = $count_row['total'];
         .logbook-form {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            height: auto; /* Let it take natural height */
-            padding-bottom: 60px; /* Space for submit button instead of margin */
+            gap: 10px;
         }
         
         /* Specific for 1920x978 resolution with zoom out */
@@ -519,20 +404,19 @@ $total_entries = $count_row['total'];
             }
             
             .main-content {
-                height: auto;
-                overflow: visible;
+                height: 978px;
             }
             
             .page-layout {
-                height: auto;
+                height: 848px; /* 978px - (top-bar + search + result-count) with reduced sizes */
             }
             
-            .data-container {
-                height: 700px;
+            .data-table-wrapper {
+                height: 778px; /* 848px - (padding + header) with reduced sizes */
             }
             
             .logbook-form {
-                height: auto;
+                max-height: 778px; /* Same as data-table-wrapper */
             }
         }
         
@@ -625,10 +509,6 @@ $total_entries = $count_row['total'];
                 font-size: 11px;
             }
         }
-        
-        .ampm-value {
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -670,7 +550,7 @@ $total_entries = $count_row['total'];
                     <button class="menu-toggle" id="menuToggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="title-content">
+                    <div>
                         <h1>Logbook</h1>
                         <p><?= date('l, F j, Y') ?></p>
                     </div>
@@ -694,6 +574,15 @@ $total_entries = $count_row['total'];
                 </form>
             </div>
             
+            <!-- Results Count -->
+            <?php if (!empty($search_term) || $logbook_result->num_rows > 0): ?>
+                <div class="result-count">
+                    <i class="fas fa-info-circle"></i> 
+                    Showing <?= $logbook_result->num_rows ?> <?= !empty($search_term) ? 'matched' : 'total' ?> entries
+                    <?= !empty($search_term) ? "for \"" . htmlspecialchars($search_term) . "\"" : "" ?>
+                </div>
+            <?php endif; ?>
+            
             <!-- Main Layout -->
             <div class="page-layout">
                 <!-- Left side - Form container -->
@@ -708,21 +597,21 @@ $total_entries = $count_row['total'];
                         $inquiry = $conn->real_escape_string($_POST['inquiry']);
                         $submission_date = $conn->real_escape_string($_POST['submission_date']);
                         
-                        // Get time components
+                        // Get time components and build the time string
                         $hour = intval($_POST['time_hour']);
                         $minute = intval($_POST['time_minute']);
                         $ampm = $_POST['time_ampm'];
                         
-                        // Convert to 24-hour format
+                        // Convert to 24-hour format for database
                         if ($ampm === 'PM' && $hour < 12) {
                             $hour += 12;
                         } else if ($ampm === 'AM' && $hour === 12) {
                             $hour = 0;
                         }
                         
-                        // Format time as HH:MM:00
+                        // Format time as HH:MM:SS
                         $time = sprintf("%02d:%02d:00", $hour, $minute);
-                        
+
                         // Check if the submission date is in the past
                         $current_date = date('Y-m-d');
                         if ($submission_date < $current_date) {
@@ -778,25 +667,20 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <div class="time-input-container">
-                                    <input type="number" id="time_hour" name="time_hour" min="1" max="12" placeholder="Hour" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown"><i class="fas fa-caret-up"></i></button>
-                                    <div class="time-dropdown" id="time_hour_dropdown">
-                                        <?php for ($i = 12; $i >= 1; $i--): ?>
-                                            <div class="dropdown-item" data-value="<?= $i ?>"><?= $i ?></div>
-                                        <?php endfor; ?>
-                                    </div>
-                                </div>
-                                <span>:</span>
-                                <div class="time-input-container">
-                                    <input type="number" id="time_minute" name="time_minute" min="0" max="59" step="5" placeholder="Min" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown"><i class="fas fa-caret-up"></i></button>
-                                    <div class="time-dropdown" id="time_minute_dropdown">
-                                        <?php for ($i = 55; $i >= 0; $i -= 5): ?>
-                                            <div class="dropdown-item" data-value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></div>
-                                        <?php endfor; ?>
-                                    </div>
-                                </div>
+                                <select id="time_hour" name="time_hour" required>
+                                    <option value="" disabled selected>Hour</option>
+                                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                                
+                                <select id="time_minute" name="time_minute" required>
+                                    <option value="" disabled selected>Minute</option>
+                                    <?php for ($i = 0; $i < 60; $i += 5): ?>
+                                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                                
                                 <select id="time_ampm" name="time_ampm" required>
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
@@ -864,127 +748,5 @@ $total_entries = $count_row['total'];
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set up time picker functionality
-            setupTimePicker('time_hour', 'time_minute', 'time_ampm');
-            
-            // Set default value to current time
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = Math.round(now.getMinutes() / 5) * 5;
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            
-            // Convert to 12-hour format
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            
-            // Set initial values
-            document.getElementById('time_hour').value = hours;
-            document.getElementById('time_minute').value = String(minutes).padStart(2, '0');
-            document.getElementById('time_ampm').value = ampm;
-        });
-        
-        function setupTimePicker(hourInputId, minuteInputId, ampmSelectId) {
-            const hourInput = document.getElementById(hourInputId);
-            const minuteInput = document.getElementById(minuteInputId);
-            const ampmSelect = document.getElementById(ampmSelectId);
-            
-            if (!hourInput || !minuteInput || !ampmSelect) {
-                console.error(`Time picker elements not found: ${hourInputId}, ${minuteInputId}, ${ampmSelectId}`);
-                return;
-            }
-            
-            // Setup dropdown functionality
-            setupTimeDropdown(hourInputId);
-            setupTimeDropdown(minuteInputId);
-            
-            const updateTimeInput = () => {
-                if (hourInput.value && minuteInput.value && ampmSelect.value) {
-                    let hour = parseInt(hourInput.value);
-                    const minute = parseInt(minuteInput.value);
-                    const ampm = ampmSelect.value;
-                    
-                    // Validate input ranges
-                    if (hour < 1) hour = 1;
-                    if (hour > 12) hour = 12;
-                    hourInput.value = hour;
-                    
-                    let validMinute = minute;
-                    if (validMinute < 0) validMinute = 0;
-                    if (validMinute > 59) validMinute = 59;
-                    // Round to nearest 5
-                    validMinute = Math.round(validMinute / 5) * 5;
-                    minuteInput.value = String(validMinute).padStart(2, '0');
-                }
-            };
-            
-            // Add event listeners to update the time input
-            hourInput.addEventListener('input', updateTimeInput);
-            minuteInput.addEventListener('input', updateTimeInput);
-            ampmSelect.addEventListener('change', updateTimeInput);
-            
-            // Set initial values if needed
-            hourInput.value = hourInput.value || "9";
-            minuteInput.value = minuteInput.value || "00";
-        }
-        
-        // Function to setup the time dropdown functionality
-        function setupTimeDropdown(inputId) {
-            const input = document.getElementById(inputId);
-            if (!input) {
-                console.error(`Input element not found: ${inputId}`);
-                return;
-            }
-            
-            const dropdownId = `${inputId}_dropdown`;
-            const dropdown = document.getElementById(dropdownId);
-            if (!dropdown) {
-                console.error(`Dropdown element not found: ${dropdownId}`);
-                return;
-            }
-            
-            const toggleBtn = document.querySelector(`[data-target="${dropdownId}"]`);
-            if (!toggleBtn) {
-                console.error(`Toggle button not found for: ${dropdownId}`);
-                return;
-            }
-            
-            // Toggle dropdown when button is clicked
-            toggleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Close all other dropdowns first
-                document.querySelectorAll('.time-input-container').forEach(container => {
-                    if (container !== input.parentElement) {
-                        container.classList.remove('show-dropdown');
-                    }
-                });
-                
-                // Toggle this dropdown
-                input.parentElement.classList.toggle('show-dropdown');
-            });
-            
-            // Handle dropdown item selection
-            dropdown.querySelectorAll('.dropdown-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    input.value = item.dataset.value;
-                    input.parentElement.classList.remove('show-dropdown');
-                    
-                    // Trigger input event to update any dependent values
-                    const event = new Event('input', { bubbles: true });
-                    input.dispatchEvent(event);
-                });
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!input.parentElement.contains(e.target)) {
-                    input.parentElement.classList.remove('show-dropdown');
-                }
-            });
-        }
-    </script>
 </body>
 </html>
