@@ -1,11 +1,27 @@
 /* Conflict Resolution AI Styles */
+.modal.conflict-modal {
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.modal.conflict-modal .modal-content {
+    position: fixed;
+    left: calc(50% + 320px); /* Position to the right of the booking modal */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    pointer-events: auto;
+    margin: 0;
+    max-height: 90vh;
+}
+
 .conflict-alert {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
-    margin: 20px 0;
-    animation: slideIn 0.3s ease-out;
+    margin: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .conflict-alert h4 {
@@ -148,6 +164,26 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+    .modal.conflict-modal .modal-content {
+        left: calc(50% + 280px);
+        width: 350px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .modal.conflict-modal .modal-content {
+        position: fixed;
+        left: 50%;
+        top: auto;
+        bottom: 20px;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 500px;
     }
 }
 

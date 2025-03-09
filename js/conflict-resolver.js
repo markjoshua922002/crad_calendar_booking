@@ -19,6 +19,12 @@ class ConflictResolver {
         this.initializeAvailabilityMaps();
         this.setupEventListeners();
         this.debounceTimeout = null;
+
+        // Add resize handler
+        window.addEventListener('resize', () => this.handleResize());
+        
+        // Initial check for screen size
+        this.handleResize();
     }
     
     /**
@@ -501,10 +507,11 @@ class ConflictResolver {
     }
 
     showConflictAlert(data) {
-        const container = document.getElementById('conflict-resolution-container');
-        if (!container) return;
+        const conflictModal = document.getElementById('conflictModal');
+        if (!conflictModal) return;
 
-        container.style.display = 'block';
+        // Show the conflict modal
+        conflictModal.style.display = 'block';
         
         // Update conflict message
         const conflictMsg = document.getElementById('conflict-message');
@@ -556,12 +563,17 @@ class ConflictResolver {
                 if (applyBtn) applyBtn.disabled = false;
             });
         });
+
+        // Add click handler to ignore conflicts button
+        document.querySelector('.ignore-conflicts')?.addEventListener('click', () => {
+            this.hideConflictAlert();
+        });
     }
 
     hideConflictAlert() {
-        const container = document.getElementById('conflict-resolution-container');
-        if (container) {
-            container.style.display = 'none';
+        const conflictModal = document.getElementById('conflictModal');
+        if (conflictModal) {
+            conflictModal.style.display = 'none';
         }
     }
 
@@ -588,6 +600,18 @@ class ConflictResolver {
 
         this.hideConflictAlert();
         this.checkConflicts(); // Recheck with new values
+    }
+
+    // Add this new method to handle window resize
+    handleResize() {
+        const bookingModal = document.getElementById('bookingModal');
+        const conflictModal = document.getElementById('conflictModal');
+        
+        if (bookingModal && conflictModal && window.innerWidth <= 1200) {
+            // On smaller screens, position the conflict modal at the bottom
+            conflictModal.querySelector('.modal-content').style.top = 'auto';
+            conflictModal.querySelector('.modal-content').style.bottom = '20px';
+        }
     }
 }
 
