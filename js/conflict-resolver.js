@@ -17,6 +17,8 @@ class ConflictResolver {
         
         // Initialize availability maps
         this.initializeAvailabilityMaps();
+        this.setupEventListeners();
+        this.debounceTimeout = null;
     }
     
     /**
@@ -417,7 +419,182 @@ class ConflictResolver {
             message: "Conflicts detected. Please consider the suggested alternatives."
         };
     }
+
+    setupEventListeners() {
+        // Listen for changes in date and time inputs
+        document.getElementById('date')?.addEventListener('change', () => this.checkConflicts());
+        document.getElementById('room')?.addEventListener('change', () => this.checkConflicts());
+        
+        // Time inputs
+        const timeInputs = [
+            'time_from_hour', 'time_from_minute', 'time_from_ampm',
+            'time_to_hour', 'time_to_minute', 'time_to_ampm'
+        ];
+        
+        timeInputs.forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => this.checkConflicts());
+        });
+
+        // Handle alternative selection
+        document.querySelector('.apply-alternative')?.addEventListener('click', () => this.applySelectedAlternative());
+    }
+
+    async checkConflicts() {
+        // Clear any existing timeout
+        if (this.debounceTimeout) {
+            clearTimeout(this.debounceTimeout);
+        }
+
+        // Debounce the check to prevent too many requests
+        this.debounceTimeout = setTimeout(async () => {
+            const date = document.getElementById('date')?.value;
+            const room_id = document.getElementById('room')?.value;
+            
+            // Get time values
+            const time_from = this.formatTime(
+                document.getElementById('time_from_hour')?.value,
+                document.getElementById('time_from_minute')?.value,
+                document.getElementById('time_from_ampm')?.value
+            );
+            
+            const time_to = this.formatTime(
+                document.getElementById('time_to_hour')?.value,
+                document.getElementById('time_to_minute')?.value,
+                document.getElementById('time_to_ampm')?.value
+            );
+
+            // Check if we have all required values
+            if (!date || !room_id || !time_from || !time_to) {
+                return;
+            }
+
+            try {
+                const response = await fetch('api/check_conflicts.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        date,
+                        room_id,
+                        time_from,
+                        time_to
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.has_conflicts) {
+                    this.showConflictAlert(data);
+                } else {
+                    this.hideConflictAlert();
+                }
+            } catch (error) {
+                console.error('Error checking conflicts:', error);
+            }
+        }, 500); // Wait 500ms after last change before checking
+    }
+
+    formatTime(hour, minute, ampm) {
+        if (!hour || !minute || !ampm) return null;
+        return `${hour}:${minute} ${ampm}`;
+    }
+
+    showConflictAlert(data) {
+        const container = document.getElementById('conflict-resolution-container');
+        if (!container) return;
+
+        container.style.display = 'block';
+        
+        // Update conflict message
+        const conflictMsg = document.getElementById('conflict-message');
+        if (conflictMsg) {
+            const conflict = data.conflicts[0];
+            conflictMsg.innerHTML = `This room is already booked by ${conflict.department} from ${conflict.time_from} to ${conflict.time_to}`;
+        }
+
+        // Update alternative times
+        const altTimesContainer = document.getElementById('alternative-times');
+        if (altTimesContainer) {
+            altTimesContainer.innerHTML = data.alternative_times.map(time => `
+                <div class="alternative-option" data-type="time" data-from="${time.time_from}" data-to="${time.time_to}">
+                    <input type="radio" name="alternative" id="time_${time.time_from}">
+                    <label for="time_${time.time_from}">
+                        ${time.time_from} - ${time.time_to}
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        // Update alternative rooms
+        const altRoomsContainer = document.getElementById('alternative-rooms');
+        if (altRoomsContainer) {
+            altRoomsContainer.innerHTML = data.alternative_rooms.map(room => `
+                <div class="alternative-option" data-type="room" data-id="${room.id}">
+                    <input type="radio" name="alternative" id="room_${room.id}">
+                    <label for="room_${room.id}">
+                        ${room.name}
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        // Enable/disable apply button based on selection
+        const applyBtn = document.querySelector('.apply-alternative');
+        if (applyBtn) {
+            applyBtn.disabled = true;
+        }
+
+        // Add click handlers to alternatives
+        document.querySelectorAll('.alternative-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.alternative-option').forEach(opt => 
+                    opt.classList.remove('selected'));
+                option.classList.add('selected');
+                if (applyBtn) applyBtn.disabled = false;
+            });
+        });
+    }
+
+    hideConflictAlert() {
+        const container = document.getElementById('conflict-resolution-container');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    applySelectedAlternative() {
+        const selected = document.querySelector('.alternative-option.selected');
+        if (!selected) return;
+
+        if (selected.dataset.type === 'time') {
+            // Apply alternative time
+            const [fromHour, fromMinute, fromAMPM] = selected.dataset.from.split(/[:\s]/);
+            const [toHour, toMinute, toAMPM] = selected.dataset.to.split(/[:\s]/);
+            
+            document.getElementById('time_from_hour').value = parseInt(fromHour);
+            document.getElementById('time_from_minute').value = fromMinute;
+            document.getElementById('time_from_ampm').value = fromAMPM;
+            
+            document.getElementById('time_to_hour').value = parseInt(toHour);
+            document.getElementById('time_to_minute').value = toMinute;
+            document.getElementById('time_to_ampm').value = toAMPM;
+        } else if (selected.dataset.type === 'room') {
+            // Apply alternative room
+            document.getElementById('room').value = selected.dataset.id;
+        }
+
+        this.hideConflictAlert();
+        this.checkConflicts(); // Recheck with new values
+    }
 }
 
 // Export the ConflictResolver class
-window.ConflictResolver = ConflictResolver; 
+window.ConflictResolver = ConflictResolver;
+
+// Initialize the conflict resolver when the document is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new ConflictResolver();
+}); 
