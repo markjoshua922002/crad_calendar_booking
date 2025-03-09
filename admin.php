@@ -145,12 +145,15 @@ foreach ($create_tables as $sql) {
     <link rel="stylesheet" href="css/admin.css?v=<?= time() ?>">
     <style>
         body {
-            transform: none !important;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            font-size: 12px;
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
         }
     </style>
 </head>
