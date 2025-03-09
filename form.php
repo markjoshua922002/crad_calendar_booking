@@ -229,7 +229,7 @@ $total_entries = $count_row['total'];
             flex-direction: column;
             overflow: hidden;
             width: 72%;
-            height: 600px; /* Fixed height */
+            height: 610px; /* Fixed height */
         }
         
         .data-container h2 {
@@ -434,7 +434,7 @@ $total_entries = $count_row['total'];
             }
             
             .data-container {
-                height: 600px;
+                height: 610px;
             }
             
             .data-table-wrapper {
