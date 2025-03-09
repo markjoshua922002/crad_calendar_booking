@@ -7,9 +7,17 @@
 
 class ConflictResolver {
     constructor(appointments, rooms, departments) {
-        this.appointments = appointments || [];
-        this.rooms = rooms || [];
-        this.departments = departments || [];
+        console.log("ConflictResolver constructor called with:", {
+            appointments: Array.isArray(appointments) ? appointments.length : "not an array",
+            rooms: Array.isArray(rooms) ? rooms.length : "not an array",
+            departments: Array.isArray(departments) ? departments.length : "not an array"
+        });
+        
+        // Ensure inputs are arrays
+        this.appointments = Array.isArray(appointments) ? appointments : [];
+        this.rooms = Array.isArray(rooms) ? rooms : [];
+        this.departments = Array.isArray(departments) ? departments : [];
+        
         this.conflictThreshold = 15; // Minutes threshold to consider as conflict
         this.timeSlots = this.generateTimeSlots();
         this.roomAvailability = {};
@@ -45,21 +53,45 @@ class ConflictResolver {
         
         // Initialize room availability
         this.rooms.forEach(room => {
-            this.roomAvailability[room.id] = {};
+            if (room && room.id) {
+                this.roomAvailability[room.id] = {};
+            } else {
+                console.warn("Invalid room object:", room);
+            }
         });
         
         // Initialize department availability
         this.departments.forEach(dept => {
-            this.departmentAvailability[dept.id] = {};
+            if (dept && dept.id) {
+                this.departmentAvailability[dept.id] = {};
+            } else {
+                console.warn("Invalid department object:", dept);
+            }
         });
         
         // Populate with existing appointments
         console.log(`Processing ${this.appointments.length} appointments`);
+        
+        // Check if we have any appointments to process
+        if (this.appointments.length === 0) {
+            console.warn("No appointments to process for availability maps");
+            return;
+        }
+        
+        // Log a sample appointment to help with debugging
+        if (this.appointments.length > 0) {
+            console.log("Sample appointment:", this.appointments[0]);
+        }
+        
         this.appointments.forEach((appointment, index) => {
-            if (index < 5) {
-                console.log(`Processing appointment: ${JSON.stringify(appointment)}`);
+            try {
+                if (index < 5) {
+                    console.log(`Processing appointment: ${JSON.stringify(appointment)}`);
+                }
+                this.updateAvailabilityMaps(appointment);
+            } catch (error) {
+                console.error(`Error processing appointment at index ${index}:`, error);
             }
-            this.updateAvailabilityMaps(appointment);
         });
         
         // Log the first few entries in the availability maps for debugging

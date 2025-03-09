@@ -1383,14 +1383,32 @@ function initializeConflictResolver() {
         const departmentsDataElement = document.getElementById('departmentsData');
         
         if (!appointmentsDataElement || !roomsDataElement || !departmentsDataElement) {
-            console.error("Missing data elements for Conflict Resolver");
+            console.error("Missing data elements for Conflict Resolver", {
+                appointmentsDataElement: !!appointmentsDataElement,
+                roomsDataElement: !!roomsDataElement,
+                departmentsDataElement: !!departmentsDataElement
+            });
             return;
         }
         
         // Parse the JSON data
-        const appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
-        const rooms = JSON.parse(roomsDataElement.textContent || '[]');
-        const departments = JSON.parse(departmentsDataElement.textContent || '[]');
+        let appointments, rooms, departments;
+        try {
+            appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
+            console.log("Parsed appointments data:", Object.keys(appointments).length, "days");
+            
+            rooms = JSON.parse(roomsDataElement.textContent || '[]');
+            console.log("Parsed rooms data:", rooms.length, "rooms");
+            
+            departments = JSON.parse(departmentsDataElement.textContent || '[]');
+            console.log("Parsed departments data:", departments.length, "departments");
+        } catch (parseError) {
+            console.error("Error parsing data for Conflict Resolver:", parseError);
+            console.log("Raw appointments data:", appointmentsDataElement.textContent);
+            console.log("Raw rooms data:", roomsDataElement.textContent);
+            console.log("Raw departments data:", departmentsDataElement.textContent);
+            return;
+        }
         
         // Flatten appointments into an array
         const flatAppointments = [];
@@ -1401,8 +1419,14 @@ function initializeConflictResolver() {
                 });
             }
         }
+        console.log("Flattened appointments:", flatAppointments.length, "total appointments");
         
         // Create the ConflictResolver instance
+        if (typeof ConflictResolver !== 'function') {
+            console.error("ConflictResolver class is not defined. Check if conflict-resolver.js is loaded properly.");
+            return;
+        }
+        
         conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
         console.log("Conflict Resolver initialized successfully");
         
