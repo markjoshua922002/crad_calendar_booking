@@ -23,7 +23,25 @@ if (isset($_POST['appointment_id'])) {
     $set = $_POST['edit_set'];
     $department = $_POST['edit_department'];
     $room = $_POST['edit_room'];
-    $date = date('Y-m-d', strtotime($_POST['edit_date']));
+    
+    // Validate and format the date
+    $input_date = $_POST['edit_date'];
+    error_log("Input date: " . $input_date);
+    
+    if (!strtotime($input_date)) {
+        error_log("Invalid date format received: " . $input_date);
+        echo '<script>alert("Invalid date format."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    $date = date('Y-m-d', strtotime($input_date));
+    error_log("Formatted date: " . $date);
+    
+    // Validate the date format
+    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date)) {
+        error_log("Date format validation failed: " . $date);
+        echo '<script>alert("Invalid date format. Please use YYYY-MM-DD format."); window.location.href = "../index.php";</script>';
+        exit();
+    }
     
     // Combine time fields
     $time_from = date('H:i:s', strtotime($_POST['edit_time_from_hour'] . ':' . $_POST['edit_time_from_minute'] . ' ' . $_POST['edit_time_from_ampm']));
@@ -57,6 +75,17 @@ if (isset($_POST['appointment_id'])) {
         exit();
     }
     $stmt->close();
+    
+    // Debug log all variables before update
+    error_log("Debug values before update:");
+    error_log("appointment_id: " . $appointment_id);
+    error_log("name: " . $name);
+    error_log("date: " . $date);
+    error_log("time_from: " . $time_from);
+    error_log("time_to: " . $time_to);
+    error_log("room: " . $room);
+    error_log("set: " . $set);
+    error_log("department: " . $department);
     
     // Update the booking
     $stmt = $conn->prepare("UPDATE bookings SET `name` = ?, `id_number` = ?, `group_members` = ?, 
