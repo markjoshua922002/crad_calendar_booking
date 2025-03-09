@@ -425,6 +425,9 @@ function showModal(modal) {
             }
         });
         
+        // Get the current scroll position
+        const scrollY = window.scrollY;
+        
         // Add class to body to prevent scrolling
         document.body.classList.add('modal-open');
         
@@ -435,6 +438,14 @@ function showModal(modal) {
         // Ensure the modal covers the entire viewport
         modal.style.width = '100vw';
         modal.style.height = '100vh';
+        
+        // Prevent the background from shifting
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+        
+        // Store the scroll position for later
+        document.body.dataset.scrollY = scrollY;
         
         // Ensure the modal content is visible and centered
         const modalContent = modal.querySelector('.modal-content');
@@ -492,6 +503,13 @@ function hideModal(modal) {
         if (visibleModals.length === 0) {
             // Remove body class only if no other modals are visible
             document.body.classList.remove('modal-open');
+            
+            // Restore the page position
+            const scrollY = parseInt(document.body.dataset.scrollY || '0');
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            window.scrollTo(0, scrollY);
         }
         
         // Special handling for booking modal
@@ -1935,6 +1953,9 @@ function openModal(modalId) {
             }
         });
         
+        // Get the current scroll position
+        const scrollY = window.scrollY;
+        
         // Show the modal
         modal.style.display = 'flex';
         document.body.classList.add('modal-open');
@@ -1943,6 +1964,14 @@ function openModal(modalId) {
         // Ensure the modal covers the entire viewport
         modal.style.width = '100vw';
         modal.style.height = '100vh';
+        
+        // Prevent the background from shifting
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+        
+        // Store the scroll position for later
+        document.body.dataset.scrollY = scrollY;
         
         // Focus first input if exists
         const firstInput = modal.querySelector('input, select, textarea');
@@ -1958,6 +1987,13 @@ function closeModal(modalId) {
         modal.style.display = 'none';
         document.body.classList.remove('modal-open');
         modal.classList.remove('show');
+        
+        // Restore the page position
+        const scrollY = parseInt(document.body.dataset.scrollY || '0');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
     }
 }
 
