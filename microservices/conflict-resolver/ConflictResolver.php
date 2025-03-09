@@ -243,25 +243,76 @@ class ConflictResolver {
     public function analyzeBooking($date, $roomId, $departmentId, $timeFrom, $timeTo, $duration) {
         logMessage("Analyzing booking for date: $date, room: $roomId, department: $departmentId, time: $timeFrom - $timeTo");
         
+        // Initialize AI components
+        $aiScheduler = new AIScheduler($this->conn);
+        $roomRecommender = new RoomRecommender($this->conn);
+        
         // Check for conflicts
         $conflicts = $this->checkConflicts($date, $roomId, $timeFrom, $timeTo);
         $hasConflicts = !empty($conflicts);
         
+        // Get AI-powered suggestions
+        $alternativeTimes = $hasConflicts ? $aiScheduler->suggestOptimalTimeSlots($date, $roomId, $departmentId, $duration) : [];
+        $alternativeRooms = $hasConflicts ? $roomRecommender->recommendRooms($departmentId, $duration, $date, $timeFrom, $timeTo) : [];
+        
+        // Predict optimal duration if none provided
+        if (!$duration) {
+            $duration = $aiScheduler->predictDuration($departmentId, $roomId);
+        }
+        
         $result = [
             'has_conflicts' => $hasConflicts,
             'conflicts' => $conflicts,
-            'message' => $hasConflicts 
-                ? 'There are scheduling conflicts with your requested time. Please review the suggestions below.' 
-                : 'No conflicts detected. Your booking can be scheduled as requested.'
+            'alternative_times' => $alternativeTimes,
+            'alternative_rooms' => $alternativeRooms,
+            'suggested_duration' => $duration,
+            'ai_insights' => [
+                'optimal_time_slots' => array_slice($alternativeTimes, 0, 3),
+                'recommended_rooms' => array_slice($alternativeRooms, 0, 3),
+                'booking_patterns' => $this->getBookingPatterns($departmentId, $roomId)
+            ]
         ];
         
-        // If there are conflicts, find alternatives
-        if ($hasConflicts) {
-            $result['alternative_times'] = $this->findAlternatives($date, $roomId, $departmentId, $duration, $timeFrom, $timeTo);
-            $result['alternative_rooms'] = $this->suggestAlternativeRooms($date, $timeFrom, $timeTo, $roomId);
-        }
+        logMessage("Analysis complete. Found " . count($conflicts) . " conflicts, " . 
+                  count($alternativeTimes) . " alternative times, and " . 
+                  count($alternativeRooms) . " alternative rooms");
         
         return $result;
+    }
+    
+    /**
+     * Get booking patterns for insights
+     */
+    private function getBookingPatterns($departmentId, $roomId) {
+        $sql = "SELECT 
+                    DAYOFWEEK(booking_date) as day_of_week,
+                    HOUR(booking_time_from) as hour,
+                    COUNT(*) as booking_count
+                FROM bookings
+                WHERE department_id = ? AND room_id = ?
+                AND booking_date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+                GROUP BY DAYOFWEEK(booking_date), HOUR(booking_time_from)
+                ORDER BY booking_count DESC
+                LIMIT 5";
+        
+        $result = $this->conn->executeQuery($sql, [$departmentId, $roomId], "ii");
+        $patterns = [];
+        
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $dayName = date('l', strtotime("Sunday +{$row['day_of_week']} days"));
+                $timeSlot = date('g A', strtotime("{$row['hour']}:00"));
+                
+                $patterns[] = [
+                    'day' => $dayName,
+                    'time' => $timeSlot,
+                    'frequency' => $row['booking_count'],
+                    'message' => "Popular time slot: $dayName at $timeSlot ({$row['booking_count']} bookings)"
+                ];
+            }
+        }
+        
+        return $patterns;
     }
     
     /**
