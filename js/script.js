@@ -1603,51 +1603,27 @@ function parseTimeString(timeStr) {
 
 // Check for conflicts
 function checkForConflicts() {
-    if (!conflictService && !conflictResolver) {
-        console.error("Neither Conflict Service nor Conflict Resolver is initialized");
-        return false;
-    }
-    
-    console.log("Running conflict check...");
-    
-    // Get form values
     const dateInput = document.getElementById('date');
     const roomSelect = document.getElementById('room');
-    const departmentSelect = document.getElementById('department');
     const timeFromHour = document.getElementById('time_from_hour');
     const timeFromMinute = document.getElementById('time_from_minute');
     const timeFromAmpm = document.getElementById('time_from_ampm');
     const timeToHour = document.getElementById('time_to_hour');
     const timeToMinute = document.getElementById('time_to_minute');
     const timeToAmpm = document.getElementById('time_to_ampm');
-    
-    // Ensure all required fields have values
-    if (!dateInput?.value || !roomSelect?.value || !departmentSelect?.value ||
-        !timeFromHour?.value || !timeFromMinute?.value || !timeFromAmpm?.value ||
-        !timeToHour?.value || !timeToMinute?.value || !timeToAmpm?.value) {
-        console.log("Missing required fields for conflict check");
+
+    // Check if all required fields are filled
+    if (!dateInput.value || !roomSelect.value || 
+        !timeFromHour.value || !timeFromMinute.value || !timeFromAmpm.value ||
+        !timeToHour.value || !timeToMinute.value || !timeToAmpm.value) {
         return false;
     }
-    
-    console.log("Form values for conflict check:", {
-        date: dateInput.value,
-        roomId: roomSelect.value,
-        departmentId: departmentSelect.value,
-        timeFromHour: timeFromHour.value,
-        timeFromMinute: timeFromMinute.value,
-        timeFromAmpm: timeFromAmpm.value,
-        timeToHour: timeToHour.value,
-        timeToMinute: timeToMinute.value,
-        timeToAmpm: timeToAmpm.value
-    });
-    
-    // Format the time values
-    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value.padStart(2, '0')} ${timeFromAmpm.value}`;
-    const timeTo = `${timeToHour.value}:${timeToMinute.value.padStart(2, '0')} ${timeToAmpm.value}`;
-    
-    console.log("Formatted times:", { timeFrom, timeTo });
-    
-    // Calculate duration in minutes
+
+    // Format times for comparison
+    const timeFrom = `${timeFromHour.value}:${timeFromMinute.value} ${timeFromAmpm.value}`;
+    const timeTo = `${timeToHour.value}:${timeToMinute.value} ${timeToAmpm.value}`;
+
+    // Simple validation
     const fromMinutes = (parseInt(timeFromHour.value) % 12) * 60 + parseInt(timeFromMinute.value);
     const toMinutes = (parseInt(timeToHour.value) % 12) * 60 + parseInt(timeToMinute.value);
     let durationMinutes = toMinutes - fromMinutes;
@@ -1658,7 +1634,6 @@ function checkForConflicts() {
     } else if (timeFromAmpm.value === 'PM' && timeToAmpm.value === 'AM') {
         durationMinutes += 24 * 60;
     } else if (timeFromAmpm.value === timeToAmpm.value && toMinutes < fromMinutes) {
-        // Same AM/PM but end time is earlier than start time (next day)
         durationMinutes += 12 * 60;
     }
     
@@ -1666,90 +1641,14 @@ function checkForConflicts() {
     if (durationMinutes <= 0) {
         durationMinutes += 24 * 60;
     }
-    
-    console.log("Calculated duration:", { durationMinutes });
-    
-    try {
-        // Use the microservice if available, otherwise fall back to local resolver
-        if (conflictService) {
-            // Show loading indicator
-            const conflictContainer = document.getElementById('conflict-resolution-container');
-            if (conflictContainer) {
-                conflictContainer.innerHTML = '<div class="loading">Checking for conflicts...</div>';
-                conflictContainer.style.display = 'block';
-            }
-            
-            // Use async/await with a promise to handle the asynchronous call
-            return new Promise((resolve) => {
-                conflictService.analyzeBooking(
-                    dateInput.value,
-                    roomSelect.value,
-                    departmentSelect.value,
-                    timeFrom,
-                    timeTo,
-                    durationMinutes
-                ).then(analysis => {
-                    console.log("Conflict analysis result from microservice:", analysis);
-                    updateConflictUI(analysis);
-                    resolve(analysis.has_conflicts);
-                }).catch(error => {
-                    console.error("Error using conflict service:", error);
-                    
-                    // Clear loading state and show error
-                    if (conflictContainer) {
-                        conflictContainer.innerHTML = `<div class="error">Error checking conflicts: ${error.message}</div>`;
-                    }
-                    
-                    // Try falling back to local resolver
-                    if (conflictResolver) {
-                        console.log("Falling back to local resolver");
-                        try {
-                            const localAnalysis = conflictResolver.analyzeBooking(
-                                dateInput.value,
-                                roomSelect.value,
-                                departmentSelect.value,
-                                timeFrom,
-                                timeTo,
-                                durationMinutes
-                            );
-                            console.log("Conflict analysis result from local resolver:", localAnalysis);
-                            updateConflictUI(localAnalysis);
-                            resolve(localAnalysis.hasConflicts);
-                        } catch (localError) {
-                            console.error("Local resolver also failed:", localError);
-                            if (conflictContainer) {
-                                conflictContainer.innerHTML = `<div class="error">Error checking conflicts: ${localError.message}</div>`;
-                            }
-                            resolve(false);
-                        }
-                    } else {
-                        // No fallback available
-                        if (conflictContainer) {
-                            conflictContainer.innerHTML = `<div class="error">Unable to check for conflicts. Please try again later.</div>`;
-                        }
-                        resolve(false);
-                    }
-                });
-            });
-        } else if (conflictResolver) {
-            // Use local resolver
-            const analysis = conflictResolver.analyzeBooking(
-                dateInput.value,
-                roomSelect.value,
-                departmentSelect.value,
-                timeFrom,
-                timeTo,
-                durationMinutes
-            );
-            
-            console.log("Conflict analysis result from local resolver:", analysis);
-            updateConflictUI(analysis);
-            return analysis.hasConflicts;
-        }
-    } catch (error) {
-        console.error("Error during conflict analysis:", error);
+
+    // Basic validation
+    if (durationMinutes <= 0) {
+        alert('End time must be after start time');
         return false;
     }
+
+    return true;
 }
 
 // Update the conflict resolution UI

@@ -63,7 +63,7 @@ if (isset($_POST['add_booking'])) {
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $warning = "Double booking detected for the specified time, date, and room.";
+            $warning = "This time slot is already booked. Please choose another time.";
         } else {
             $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, set_id, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if (!$stmt) {
@@ -1241,35 +1241,6 @@ while ($row = $bookings->fetch_assoc()) {
                     <textarea name="group_members" id="group_members" rows="3"></textarea>
                 </div>
 
-                <!-- Conflict Resolution AI Component -->
-                <div id="conflict-resolution-container" style="display: none;">
-                    <div class="conflict-alert">
-                        <h4>
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Scheduling Conflict Detected
-                            <span class="ai-badge"><i class="fas fa-robot"></i> AI Assistant</span>
-                        </h4>
-                        <p id="conflict-message">There are scheduling conflicts with your requested time. Please review the suggestions below.</p>
-                        
-                        <div class="conflict-details">
-                            <h5>Alternative Times</h5>
-                            <div id="alternative-times" class="alternatives-container">
-                                <!-- Alternative time slots will be inserted here -->
-                            </div>
-                            
-                            <h5>Alternative Rooms</h5>
-                            <div id="alternative-rooms" class="alternatives-container">
-                                <!-- Alternative rooms will be inserted here -->
-                            </div>
-                        </div>
-                        
-                        <div class="conflict-actions">
-                            <button type="button" class="ignore-conflicts">Keep Original Time</button>
-                            <button type="button" class="apply-alternative" disabled>Apply Selected Alternative</button>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="form-actions">
                     <button type="submit" name="add_booking" class="primary-button">
                         <i class="fas fa-calendar-plus"></i> Book Schedule
@@ -1374,23 +1345,6 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($departments->fetch_all(MYSQLI_ASSOC)) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Load conflict resolver first -->
-<script src="js/conflict-service.js?v=<?= time() ?>"></script>
-<script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
-<!-- Verify conflict resolver is loaded -->
-<script>
-    if (typeof ConflictResolver !== 'function') {
-        console.error('ConflictResolver class not loaded properly. Check the conflict-resolver.js file.');
-    } else {
-        console.log('ConflictResolver class loaded successfully.');
-    }
-    
-    if (typeof ConflictService !== 'function') {
-        console.error('ConflictService class not loaded properly. Check the conflict-service.js file.');
-    } else {
-        console.log('ConflictService class loaded successfully.');
-    }
-</script>
 <script src="js/script.js?v=<?= time() ?>"></script>
 <script src="js/sidebar.js?v=<?= time() ?>"></script>
 <script>
