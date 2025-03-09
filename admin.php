@@ -91,23 +91,24 @@ if (isset($_POST['add_adviser'])) {
 }
 
 // Fetch data for display
-$rooms = $conn->query("SELECT * FROM rooms ORDER BY room_name");
-$departments = $conn->query("SELECT * FROM departments ORDER BY department_name");
+$rooms = $conn->query("SELECT * FROM rooms ORDER BY name");
+$departments = $conn->query("SELECT * FROM departments ORDER BY name");
 $groups = $conn->query("SELECT * FROM groups ORDER BY group_name");
 $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
-$advisers = $conn->query("SELECT a.*, d.department_name FROM advisers a LEFT JOIN departments d ON a.department_id = d.id ORDER BY a.adviser_name");
+$advisers = $conn->query("SELECT a.*, d.name as department_name FROM advisers a LEFT JOIN departments d ON a.department_id = d.id ORDER BY a.adviser_name");
 
 // Create tables if they don't exist
 $create_tables = [
     "CREATE TABLE IF NOT EXISTS rooms (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        room_name VARCHAR(100) NOT NULL,
+        name VARCHAR(100) NOT NULL,
         capacity INT(11) DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )",
     "CREATE TABLE IF NOT EXISTS departments (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        department_name VARCHAR(100) NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        color VARCHAR(20) DEFAULT '#3788d8',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )",
     "CREATE TABLE IF NOT EXISTS groups (
@@ -387,6 +388,10 @@ foreach ($create_tables as $sql) {
                 <div class="form-group">
                     <label for="department_name">Department Name</label>
                     <input type="text" id="department_name" name="department_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="color">Department Color</label>
+                    <input type="color" id="color" name="color" value="#3788d8" required>
                 </div>
                 <button type="submit" class="submit-btn">Add Department</button>
             </form>

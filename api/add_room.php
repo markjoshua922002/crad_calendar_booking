@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $room_capacity = isset($_POST['room_capacity']) ? (int)$_POST['room_capacity'] : 0;
     
     // Check if room already exists
-    $check = $conn->prepare("SELECT * FROM rooms WHERE room_name = ?");
+    $check = $conn->prepare("SELECT * FROM rooms WHERE name = ?");
     if (!$check) {
         http_response_code(500);
         echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Insert the room
-    $stmt = $conn->prepare("INSERT INTO rooms (room_name, capacity) VALUES (?, ?)");
+    $stmt = $conn->prepare("INSERT INTO rooms (name, capacity) VALUES (?, ?)");
     if (!$stmt) {
         http_response_code(500);
         echo json_encode(['error' => 'Prepare failed: ' . $conn->error]);
