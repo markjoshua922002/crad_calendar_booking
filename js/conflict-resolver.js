@@ -404,6 +404,17 @@ class ConflictResolver {
             document.getElementById(id)?.addEventListener('change', () => this.checkConflicts());
         });
 
+        // Notification inputs
+        document.getElementById('user_email')?.addEventListener('change', () => this.checkConflicts());
+        document.getElementById('user_phone')?.addEventListener('change', () => this.checkConflicts());
+        document.getElementById('notify_by_sms')?.addEventListener('change', () => {
+            const phoneInput = document.getElementById('user_phone');
+            if (phoneInput) {
+                phoneInput.required = this.checked;
+            }
+            this.checkConflicts();
+        });
+
         // Handle alternative selection
         document.querySelector('.apply-alternative')?.addEventListener('click', () => this.applySelectedAlternative());
     }
@@ -418,6 +429,9 @@ class ConflictResolver {
         this.debounceTimeout = setTimeout(async () => {
             const date = document.getElementById('date')?.value;
             const room_id = document.getElementById('room')?.value;
+            const userEmail = document.getElementById('user_email')?.value;
+            const userPhone = document.getElementById('user_phone')?.value;
+            const notifyBySMS = document.getElementById('notify_by_sms')?.checked;
             
             // Get time values
             const time_from = this.formatTime(
@@ -447,7 +461,14 @@ class ConflictResolver {
                         date,
                         room_id,
                         time_from,
-                        time_to
+                        time_to,
+                        user_email: userEmail,
+                        user_phone: userPhone,
+                        notification_preferences: {
+                            email: !!userEmail,
+                            sms: notifyBySMS && !!userPhone,
+                            reminderTiming: 15 // 15 minutes before by default
+                        }
                     })
                 });
 
@@ -590,6 +611,31 @@ class ConflictResolver {
             conflictModal.querySelector('.modal-content').style.top = 'auto';
             conflictModal.querySelector('.modal-content').style.bottom = '20px';
         }
+    }
+
+    // Add this method to validate notification inputs
+    validateNotificationInputs() {
+        const emailInput = document.getElementById('user_email');
+        const phoneInput = document.getElementById('user_phone');
+        const smsCheckbox = document.getElementById('notify_by_sms');
+        
+        let isValid = true;
+        
+        if (emailInput && !emailInput.value) {
+            emailInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (emailInput) {
+            emailInput.classList.remove('is-invalid');
+        }
+        
+        if (smsCheckbox?.checked && phoneInput && !phoneInput.value) {
+            phoneInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (phoneInput) {
+            phoneInput.classList.remove('is-invalid');
+        }
+        
+        return isValid;
     }
 }
 
