@@ -13,6 +13,9 @@ if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
 }
 
+// Fetch advisers for dropdown
+$advisers = $conn->query("SELECT * FROM advisers ORDER BY adviser_name");
+
 // Handle form submissions
 if (isset($_POST['add_booking'])) {
     $name = $_POST['name'];
@@ -934,7 +937,15 @@ while ($row = $bookings->fetch_assoc()) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit_name">Research Adviser's Name</label>
-                        <input type="text" name="edit_name" id="edit_name" required>
+                        <select name="edit_name" id="edit_name" required>
+                            <option value="">Select Research Adviser</option>
+                            <?php 
+                            $edit_advisers = $conn->query("SELECT * FROM advisers ORDER BY adviser_name");
+                            while ($adviser = $edit_advisers->fetch_assoc()): 
+                            ?>
+                            <option value="<?= htmlspecialchars($adviser['adviser_name']) ?>"><?= htmlspecialchars($adviser['adviser_name']) ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_representative_name">Representative Name</label>
@@ -1089,7 +1100,12 @@ while ($row = $bookings->fetch_assoc()) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Research Adviser's Name</label>
-                        <input type="text" name="name" id="name" required>
+                        <select name="name" id="name" required>
+                            <option value="">Select Research Adviser</option>
+                            <?php while ($adviser = $advisers->fetch_assoc()): ?>
+                            <option value="<?= htmlspecialchars($adviser['adviser_name']) ?>"><?= htmlspecialchars($adviser['adviser_name']) ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="representative_name">Representative Name</label>
