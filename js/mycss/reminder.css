@@ -1,0 +1,193 @@
+/* Main content styles */
+.main-content {
+    display: flex;
+    gap: 20px; /* Space between calendar and reminder container */
+}
+
+/* Reminder container */
+.reminder-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* Reminder header */
+.reminder-container h2 {
+    padding: 15px 20px;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reminder-container h2 i {
+    color: #4285f4;
+}
+
+/* Reminder list */
+#reminderList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Styled scrollbar for the reminder list */
+#reminderList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#reminderList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#reminderList::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+    border-radius: 10px;
+}
+
+#reminderList::-webkit-scrollbar-thumb:hover {
+    background: #b1b1b1;
+}
+
+/* Individual reminder item */
+.appointment-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.appointment-item:hover {
+    background-color: #f9f9f9;
+}
+
+.appointment-item:last-child {
+    border-bottom: none;
+}
+
+.appointment-item .text-container {
+    flex: 1;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.appointment-item strong {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
+    display: block;
+}
+
+/* Hover effects for appointment items */
+.appointment-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -20px;
+    width: 20px;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s;
+    transform: skewX(-15deg);
+}
+
+.appointment-item:hover::after {
+    transform: translateX(-100%) skewX(-15deg);
+}
+
+/* Empty state for no reminders */
+.no-reminders {
+    text-align: center;
+    padding: 30px 20px;
+    color: #757575;
+    font-style: italic;
+}
+
+/* Appointment color indicators */
+.appointment-color-indicator {
+    width: 5px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* Date badge in reminders */
+.appointment-date {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 2px;
+}
+
+/* Time badge in reminders */
+.appointment-time {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* Department label in reminders */
+.appointment-department {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 3px;
+}
+
+.appointment-department i {
+    font-size: 10px;
+}
+
+/* Reminder actions */
+.reminder-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.reminder-action-btn {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+.reminder-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .reminder-container {
+        margin-top: 20px;
+    }
+}
