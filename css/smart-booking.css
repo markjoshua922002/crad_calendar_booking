@@ -1,0 +1,105 @@
+.availability-timeline {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.time-window {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.time-window:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.window-time {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.window-score {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.availability-summary {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.recommendation-link {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.recommendation-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+#double-booking-warning {
+    margin-top: 20px;
+}
+
+#double-booking-warning .alert {
+    border-left: 4px solid;
+}
+
+#double-booking-warning .alert-danger {
+    border-left-color: #dc3545;
+}
+
+#double-booking-warning .alert-warning {
+    border-left-color: #ffc107;
+}
+
+#double-booking-warning .alert-success {
+    border-left-color: #28a745;
+}
+
+#smart-booking-loading {
+    background: rgba(255,255,255,0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.time-window ul {
+    margin: 10px 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.time-window li {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .availability-timeline {
+        padding: 10px;
+    }
+    
+    .time-window {
+        margin: 3px 0;
+        padding: 8px;
+    }
+    
+    .window-time {
+        font-size: 0.9em;
+    }
+    
+    .window-score {
+        font-size: 0.8em;
+    }
+} 

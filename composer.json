@@ -1,6 +1,7 @@
 {
     "require": {
-        "firebase/php-jwt": "^6.10"
+        "firebase/php-jwt": "^6.10",
+        "php-ai/php-ml": "*"
     },
     "config": {
         "platform": {
