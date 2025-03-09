@@ -421,6 +421,20 @@ $total_entries = $count_row['total'];
             font-size: 14px;
             padding: 4px;
             min-width: 30px;
+            text-align: center;
+            border: none;
+            background: none;
+        }
+        
+        .time-select-value:focus {
+            outline: none;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        input.time-select-value {
+            width: 30px;
+            cursor: text;
         }
         
         .time-select-separator {
@@ -613,6 +627,10 @@ $total_entries = $count_row['total'];
                 font-size: 11px;
             }
         }
+        
+        .ampm-value {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -770,7 +788,7 @@ $total_entries = $count_row['total'];
                                             <div class="time-select-arrows">
                                                 <button type="button" class="hour-up"><i class="fas fa-chevron-up"></i></button>
                                             </div>
-                                            <div class="time-select-value hour-value">02</div>
+                                            <input type="text" class="time-select-value hour-value" value="02" maxlength="2">
                                             <div class="time-select-arrows">
                                                 <button type="button" class="hour-down"><i class="fas fa-chevron-down"></i></button>
                                             </div>
@@ -780,7 +798,7 @@ $total_entries = $count_row['total'];
                                             <div class="time-select-arrows">
                                                 <button type="button" class="minute-up"><i class="fas fa-chevron-up"></i></button>
                                             </div>
-                                            <div class="time-select-value minute-value">30</div>
+                                            <input type="text" class="time-select-value minute-value" value="30" maxlength="2">
                                             <div class="time-select-arrows">
                                                 <button type="button" class="minute-down"><i class="fas fa-chevron-down"></i></button>
                                             </div>
@@ -901,48 +919,109 @@ $total_entries = $count_row['total'];
             
             // Handle hour up/down
             document.querySelector('.hour-up').addEventListener('click', function() {
-                let hour = parseInt(timeHourInput.value);
+                let hour = parseInt(hourValue.value) || 12;
                 hour = hour === 12 ? 1 : hour + 1;
-                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
+                updateTimeValues(hour, parseInt(minuteValue.value), timeAmPmInput.value);
             });
             
             document.querySelector('.hour-down').addEventListener('click', function() {
-                let hour = parseInt(timeHourInput.value);
+                let hour = parseInt(hourValue.value) || 12;
                 hour = hour === 1 ? 12 : hour - 1;
-                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
+                updateTimeValues(hour, parseInt(minuteValue.value), timeAmPmInput.value);
             });
             
             // Handle minute up/down
             document.querySelector('.minute-up').addEventListener('click', function() {
-                let minute = parseInt(timeMinuteInput.value);
+                let minute = parseInt(minuteValue.value) || 0;
                 minute = minute === 55 ? 0 : minute + 5;
-                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
+                updateTimeValues(parseInt(hourValue.value), minute, timeAmPmInput.value);
             });
             
             document.querySelector('.minute-down').addEventListener('click', function() {
-                let minute = parseInt(timeMinuteInput.value);
+                let minute = parseInt(minuteValue.value) || 0;
                 minute = minute === 0 ? 55 : minute - 5;
-                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
+                updateTimeValues(parseInt(hourValue.value), minute, timeAmPmInput.value);
             });
             
             // Handle AM/PM toggle
             document.querySelectorAll('.ampm-toggle').forEach(button => {
                 button.addEventListener('click', function() {
                     const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
-                    updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), newAmPm);
+                    updateTimeValues(parseInt(hourValue.value), parseInt(minuteValue.value), newAmPm);
                 });
+            });
+
+            // Handle direct input for hours
+            hourValue.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value)) {
+                    this.value = '';
+                } else if (value < 1) {
+                    this.value = '1';
+                } else if (value > 12) {
+                    this.value = '12';
+                }
+            });
+
+            hourValue.addEventListener('blur', function() {
+                let value = parseInt(this.value) || 12;
+                updateTimeValues(value, parseInt(minuteValue.value), timeAmPmInput.value);
+            });
+
+            // Handle direct input for minutes
+            minuteValue.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value)) {
+                    this.value = '';
+                } else if (value < 0) {
+                    this.value = '00';
+                } else if (value > 59) {
+                    this.value = '59';
+                }
+            });
+
+            minuteValue.addEventListener('blur', function() {
+                let value = parseInt(this.value) || 0;
+                value = Math.round(value / 5) * 5;
+                updateTimeValues(parseInt(hourValue.value), value, timeAmPmInput.value);
+            });
+
+            // Handle keyboard navigation
+            hourValue.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    document.querySelector('.hour-up').click();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    document.querySelector('.hour-down').click();
+                }
+            });
+
+            minuteValue.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    document.querySelector('.minute-up').click();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    document.querySelector('.minute-down').click();
+                }
             });
             
             // Function to update all time values
             function updateTimeValues(hour, minute, ampm) {
+                // Ensure valid values
+                hour = hour || 12;
+                minute = minute || 0;
+                minute = Math.round(minute / 5) * 5;
+                
                 // Update hidden inputs
                 timeHourInput.value = hour;
                 timeMinuteInput.value = minute;
                 timeAmPmInput.value = ampm;
                 
                 // Update display values
-                hourValue.textContent = String(hour).padStart(2, '0');
-                minuteValue.textContent = String(minute).padStart(2, '0');
+                hourValue.value = String(hour).padStart(2, '0');
+                minuteValue.value = String(minute).padStart(2, '0');
                 ampmValue.textContent = ampm;
                 
                 // Update main display
