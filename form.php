@@ -797,7 +797,7 @@ $total_entries = $count_row['total'];
         // Ensure data container has fixed height for scrolling
         const dataContainer = document.querySelector('.data-container');
         if (dataContainer) {
-            dataContainer.style.height = '600px';
+            dataContainer.style.height = '610px';
         }
         
         // Ensure data table wrapper has proper height
