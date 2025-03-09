@@ -196,9 +196,9 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: auto;
-            min-height: 0;
-            overflow-y: auto;
+            height: 100%;
+            min-height: 700px; /* Set minimum height to accommodate all form fields */
+            overflow-y: visible; /* Remove scrollbar */
         }
         
         .form-container h2 {
@@ -228,6 +228,7 @@ $total_entries = $count_row['total'];
             flex-direction: column;
             overflow: hidden;
             width: 72%;
+            height: 100%;
         }
         
         .data-container h2 {
@@ -342,8 +343,19 @@ $total_entries = $count_row['total'];
         .time-picker {
             display: flex;
             gap: 6px;
+            align-items: center;
         }
         
+        .time-picker input[type="time"] {
+            flex: 2;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: all 0.3s;
+            height: 30px;
+        }
+
         .time-picker select {
             flex: 1;
             padding: 6px 10px;
@@ -354,6 +366,7 @@ $total_entries = $count_row['total'];
             height: 30px;
         }
         
+        .time-picker input[type="time"]:focus,
         .time-picker select:focus {
             outline: none;
             border-color: #4285f4;
@@ -672,21 +685,23 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <select id="time_hour" name="time_hour" required>
+                                <input type="time" id="time_manual" name="time_manual" required>
+                                <span style="color: #666;">or select:</span>
+                                <select id="time_hour" name="time_hour">
                                     <option value="" disabled selected>Hour</option>
                                     <?php for ($i = 1; $i <= 12; $i++): ?>
-                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                        <option value="<?= $i ?>"><?= sprintf("%02d", $i) ?></option>
                                     <?php endfor; ?>
                                 </select>
                                 
-                                <select id="time_minute" name="time_minute" required>
-                                    <option value="" disabled selected>Minute</option>
+                                <select id="time_minute" name="time_minute">
+                                    <option value="" disabled selected>Min</option>
                                     <?php for ($i = 0; $i < 60; $i += 5): ?>
                                         <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
                                     <?php endfor; ?>
                                 </select>
                                 
-                                <select id="time_ampm" name="time_ampm" required>
+                                <select id="time_ampm" name="time_ampm">
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
                                 </select>
@@ -753,5 +768,46 @@ $total_entries = $count_row['total'];
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
+    <script>
+        // Time picker synchronization
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeManual = document.getElementById('time_manual');
+            const timeHour = document.getElementById('time_hour');
+            const timeMinute = document.getElementById('time_minute');
+            const timeAmPm = document.getElementById('time_ampm');
+
+            // Update dropdowns when manual time changes
+            timeManual.addEventListener('change', function() {
+                if (this.value) {
+                    const time = new Date(`2000-01-01T${this.value}`);
+                    let hours = time.getHours();
+                    const minutes = time.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    
+                    // Convert to 12-hour format
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+
+                    timeHour.value = hours;
+                    timeMinute.value = minutes - (minutes % 5); // Round to nearest 5
+                    timeAmPm.value = ampm;
+                }
+            });
+
+            // Update manual time when dropdowns change
+            [timeHour, timeMinute, timeAmPm].forEach(el => {
+                el.addEventListener('change', function() {
+                    if (timeHour.value && timeMinute.value && timeAmPm.value) {
+                        let hours = parseInt(timeHour.value);
+                        if (timeAmPm.value === 'PM' && hours !== 12) hours += 12;
+                        if (timeAmPm.value === 'AM' && hours === 12) hours = 0;
+                        
+                        const timeString = `${String(hours).padStart(2, '0')}:${timeMinute.value}`;
+                        timeManual.value = timeString;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
