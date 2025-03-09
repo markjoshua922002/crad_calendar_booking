@@ -12,12 +12,55 @@ if (!isset($data['date']) || !isset($data['room_id']) || !isset($data['time_from
 
 $date = date('Y-m-d', strtotime($data['date']));
 $room_id = $data['room_id'];
+
+// Convert input times to 24-hour format for database operations
 $time_from = date('H:i:s', strtotime($data['time_from']));
 $time_to = date('H:i:s', strtotime($data['time_to']));
 
 // Function to convert 24-hour time to 12-hour format with AM/PM
 function format12Hour($time) {
+    if (is_numeric($time)) {
+        // If timestamp is provided
+        return date('g:i A', $time);
+    }
+    // If time string is provided
     return date('g:i A', strtotime($time));
+}
+
+// Function to generate time slots before and after a given time
+function generateTimeSlots($baseTime, $duration, $count = 2) {
+    $slots = [];
+    $interval = 30 * 60; // 30 minutes in seconds
+    
+    // Generate slots before
+    for ($i = $count; $i > 0; $i--) {
+        $startTime = strtotime("-" . ($i * 30) . " minutes", $baseTime);
+        $endTime = $startTime + $duration;
+        
+        // Only add if it's not before 8 AM or after 5 PM
+        if (date('H', $startTime) >= 8 && date('H', $endTime) <= 17) {
+            $slots[] = [
+                'time_from' => format12Hour($startTime),
+                'time_to' => format12Hour($endTime)
+            ];
+        }
+    }
+    
+    // Generate slots after
+    for ($i = 1; $i <= $count; $i++) {
+        $startTime = strtotime("+" . ($i * 30) . " minutes", $baseTime);
+        $endTime = $startTime + $duration;
+        
+        // Only add if it's not before 8 AM or after 5 PM
+        if (date('H', $startTime) >= 8 && date('H', $endTime) <= 17) {
+            $slots[] = [
+                'time_from' => format12Hour($startTime),
+                'time_to' => format12Hour($endTime)
+            ];
+        }
+    }
+    
+    return $slots;
 }
 
 // Check for conflicts
@@ -70,47 +113,34 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-// Get alternative times (30 min before and after, in 30 min increments)
-$base_time_from = strtotime($time_from);
-$base_time_to = strtotime($time_to);
-$duration = $base_time_to - $base_time_from;
-$alternative_times = [];
+// Generate alternative times
+$base_time = strtotime($time_from);
+$duration = strtotime($time_to) - $base_time;
+$alternative_times = generateTimeSlots($base_time, $duration);
 
-for ($i = -2; $i <= 2; $i++) {
-    if ($i == 0) continue; // Skip the current time
+// Filter out times that have conflicts
+$alternative_times = array_filter($alternative_times, function($time) use ($conn, $date, $room_id) {
+    $time_from = date('H:i:s', strtotime($time['time_from']));
+    $time_to = date('H:i:s', strtotime($time['time_to']));
     
-    $alt_time_from = strtotime(($i * 30) . ' minutes', $base_time_from);
-    $alt_time_to = $alt_time_from + $duration;
-    
-    // Check if this alternative time has conflicts
     $stmt = $conn->prepare("SELECT 1 FROM bookings 
                            WHERE booking_date = ? AND room_id = ?
                            AND ((booking_time_from <= ? AND booking_time_to >= ?) 
                            OR (booking_time_from <= ? AND booking_time_to >= ?) 
                            OR (? <= booking_time_from AND ? >= booking_time_to))");
-                           
-    $alt_time_from_sql = date('H:i:s', $alt_time_from);
-    $alt_time_to_sql = date('H:i:s', $alt_time_to);
     
     $stmt->bind_param("sissssss", $date, $room_id, 
-                      $alt_time_to_sql, $alt_time_from_sql, 
-                      $alt_time_from_sql, $alt_time_to_sql,
-                      $alt_time_from_sql, $alt_time_to_sql);
+                      $time_to, $time_from, 
+                      $time_from, $time_to,
+                      $time_from, $time_to);
     $stmt->execute();
-    $conflict_check = $stmt->get_result();
+    $result = $stmt->get_result();
     
-    if ($conflict_check->num_rows === 0) {
-        $alternative_times[] = [
-            'time_from' => format12Hour($alt_time_from_sql),
-            'time_to' => format12Hour($alt_time_to_sql)
-        ];
-    }
-}
-
-// Sort alternative times chronologically
-usort($alternative_times, function($a, $b) {
-    return strtotime($a['time_from']) - strtotime($b['time_from']);
+    return $result->num_rows === 0;
 });
+
+// Reindex array after filtering
+$alternative_times = array_values($alternative_times);
 
 echo json_encode([
     'has_conflicts' => count($conflicts) > 0,
