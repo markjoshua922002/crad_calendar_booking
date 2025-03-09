@@ -350,18 +350,19 @@ $total_entries = $count_row['total'];
         }
         
         .time-picker {
-            position: relative;
-            width: 100%;
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
         
-        .time-input {
+        .time-input-container {
             position: relative;
-            width: 100%;
+            flex: 1;
         }
         
-        .time-input input[type="text"] {
+        .time-input-container input {
             width: 100%;
-            padding: 6px 32px 6px 10px;
+            padding: 6px 30px 6px 10px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             font-size: 12px;
@@ -371,16 +372,52 @@ $total_entries = $count_row['total'];
             background: white;
         }
         
-        .time-input i {
+        .toggle-time-input {
             position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 30px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #666;
-            pointer-events: none;
+            padding: 0;
         }
         
-        .time-input input:focus {
+        .time-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .time-dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .time-input-container input:focus {
             outline: none;
             border-color: #4285f4;
             box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
@@ -638,16 +675,20 @@ $total_entries = $count_row['total'];
                         $inquiry = $conn->real_escape_string($_POST['inquiry']);
                         $submission_date = $conn->real_escape_string($_POST['submission_date']);
                         
-                        // Get time from the manual input
-                        $time = $conn->real_escape_string($_POST['time_manual']);
+                        // Get time components
+                        $hour = intval($_POST['time_hour']);
+                        $minute = intval($_POST['time_minute']);
+                        $ampm = $_POST['time_ampm'];
                         
-                        // Ensure time is in proper format (HH:MM:00)
-                        if (preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/', $time)) {
-                            $time .= ':00';
-                        } else {
-                            echo "<div class='error-message'><i class='fas fa-exclamation-circle'></i> Invalid time format.</div>";
-                            exit;
+                        // Convert to 24-hour format
+                        if ($ampm === 'PM' && $hour < 12) {
+                            $hour += 12;
+                        } else if ($ampm === 'AM' && $hour === 12) {
+                            $hour = 0;
                         }
+                        
+                        // Format time as HH:MM:00
+                        $time = sprintf("%02d:%02d:00", $hour, $minute);
                         
                         // Check if the submission date is in the past
                         $current_date = date('Y-m-d');
@@ -704,9 +745,37 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <div class="time-input">
-                                    <input type="time" id="time_manual" name="time_manual" required>
-                                    <i class="fas fa-clock"></i>
+                                <div class="time-input-container">
+                                    <input type="number" id="time_hour" name="time_hour" min="1" max="12" placeholder="Hour" required>
+                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown">
+                                        <i class="fas fa-caret-down"></i>
+                                    </button>
+                                    <div class="time-dropdown" id="time_hour_dropdown">
+                                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                                            <div class="dropdown-item" data-value="<?= $i ?>"><?= $i ?></div>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                                <div class="time-input-container">
+                                    <input type="number" id="time_minute" name="time_minute" min="0" max="59" placeholder="Min" required>
+                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown">
+                                        <i class="fas fa-caret-down"></i>
+                                    </button>
+                                    <div class="time-dropdown" id="time_minute_dropdown">
+                                        <?php for ($i = 0; $i < 60; $i += 5): ?>
+                                            <div class="dropdown-item" data-value="<?= sprintf("%02d", $i) ?>"><?= sprintf("%02d", $i) ?></div>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                                <div class="time-input-container">
+                                    <input type="text" id="time_ampm" name="time_ampm" value="AM" readonly required>
+                                    <button type="button" class="toggle-time-input" data-target="time_ampm_dropdown">
+                                        <i class="fas fa-caret-down"></i>
+                                    </button>
+                                    <div class="time-dropdown" id="time_ampm_dropdown">
+                                        <div class="dropdown-item" data-value="AM">AM</div>
+                                        <div class="dropdown-item" data-value="PM">PM</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -773,25 +842,78 @@ $total_entries = $count_row['total'];
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const timeInput = document.getElementById('time_manual');
+            const timeHourInput = document.getElementById('time_hour');
+            const timeMinuteInput = document.getElementById('time_minute');
+            const timeAmPmInput = document.getElementById('time_ampm');
             
             // Set default value to current time
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes() - (now.getMinutes() % 5)).padStart(2, '0');
-            timeInput.value = `${hours}:${minutes}`;
+            let hours = now.getHours();
+            const minutes = Math.floor(now.getMinutes() / 5) * 5;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
             
-            // Format time when input loses focus
-            timeInput.addEventListener('blur', function() {
-                if (this.value) {
-                    const [hours, minutes] = this.value.split(':');
-                    const h = parseInt(hours);
-                    const m = parseInt(minutes);
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            timeHourInput.value = hours;
+            timeMinuteInput.value = String(minutes).padStart(2, '0');
+            timeAmPmInput.value = ampm;
+            
+            // Handle dropdown toggles
+            document.querySelectorAll('.toggle-time-input').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const dropdown = document.getElementById(targetId);
                     
-                    if (h >= 0 && h < 24 && m >= 0 && m < 60) {
-                        this.value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-                    }
+                    // Close all other dropdowns
+                    document.querySelectorAll('.time-dropdown').forEach(d => {
+                        if (d.id !== targetId) d.classList.remove('show');
+                    });
+                    
+                    dropdown.classList.toggle('show');
+                });
+            });
+            
+            // Handle dropdown item selection
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const dropdown = this.closest('.time-dropdown');
+                    const input = dropdown.parentElement.querySelector('input');
+                    
+                    input.value = value;
+                    dropdown.classList.remove('show');
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.time-input-container')) {
+                    document.querySelectorAll('.time-dropdown').forEach(d => d.classList.remove('show'));
                 }
+            });
+            
+            // Handle manual input
+            [timeHourInput, timeMinuteInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    let value = parseInt(this.value);
+                    if (this === timeHourInput) {
+                        if (value < 1) this.value = '1';
+                        if (value > 12) this.value = '12';
+                    } else {
+                        if (value < 0) this.value = '00';
+                        if (value > 59) this.value = '59';
+                        this.value = String(value).padStart(2, '0');
+                    }
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (this === timeMinuteInput && this.value) {
+                        this.value = String(Math.floor(parseInt(this.value) / 5) * 5).padStart(2, '0');
+                    }
+                });
             });
         });
     </script>
