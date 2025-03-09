@@ -675,36 +675,6 @@ while ($row = $bookings->fetch_assoc()) {
                 opacity: 1;
             }
         }
-
-        /* Add these styles to your CSS */
-        .notification-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .notification-section h5 {
-            color: #495057;
-            margin-bottom: 15px;
-        }
-
-        #phone_input_group {
-            transition: all 0.3s ease;
-        }
-
-        .custom-control-input:not(:checked) ~ #phone_input_group {
-            opacity: 0.7;
-        }
-
-        .form-control.is-invalid {
-            border-color: #dc3545;
-            padding-right: calc(1.5em + 0.75rem);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right calc(0.375em + 0.1875rem) center;
-            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-        }
     </style>
 </head>
 <body>
@@ -1337,40 +1307,6 @@ while ($row = $bookings->fetch_assoc()) {
                     <textarea name="group_members" id="group_members" rows="3"></textarea>
                 </div>
 
-                <!-- Add this section in your booking modal form, before the submit button -->
-                <div class="notification-section mt-4">
-                    <h5>Notification Preferences</h5>
-                    <div class="form-group mb-3">
-                        <label for="user_email">Email Address *</label>
-                        <input type="email" class="form-control" id="user_email" name="user_email" required
-                               placeholder="Enter your email address">
-                        <div class="invalid-feedback">
-                            Please provide a valid email address.
-                        </div>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="notify_by_sms" name="notify_by_sms">
-                            <label class="custom-control-label" for="notify_by_sms">
-                                Receive SMS notifications
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group mb-3" id="phone_input_group">
-                        <label for="user_phone">Phone Number</label>
-                        <input type="tel" class="form-control" id="user_phone" name="user_phone" 
-                               placeholder="Enter your phone number">
-                        <div class="invalid-feedback">
-                            Please provide a valid phone number if you want SMS notifications.
-                        </div>
-                        <small class="form-text text-muted">
-                            Required only if SMS notifications are enabled.
-                        </small>
-                    </div>
-                </div>
-
                 <!-- Conflict Resolution AI Component -->
                 <div id="conflict-resolution-container" style="display: none;">
                     <div class="conflict-alert">
@@ -1564,25 +1500,6 @@ document.getElementById('addRoomForm').addEventListener('submit', function(e) {
     .catch(error => {
         alert('Error: ' + error.message);
     });
-});
-
-// Add this to your existing JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const smsCheckbox = document.getElementById('notify_by_sms');
-    const phoneInput = document.getElementById('user_phone');
-    const phoneInputGroup = document.getElementById('phone_input_group');
-
-    if (smsCheckbox && phoneInput && phoneInputGroup) {
-        smsCheckbox.addEventListener('change', function() {
-            phoneInput.required = this.checked;
-            if (this.checked) {
-                phoneInputGroup.style.opacity = '1';
-            } else {
-                phoneInputGroup.style.opacity = '0.7';
-                phoneInput.classList.remove('is-invalid');
-            }
-        });
-    }
 });
 </script>
 </body>
