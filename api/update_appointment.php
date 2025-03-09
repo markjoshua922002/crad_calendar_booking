@@ -97,16 +97,24 @@ if (isset($_POST['appointment_id'])) {
         $dateObj = new DateTime($input_date);
         $date = $dateObj->format('Y-m-d');
         error_log("Formatted date using DateTime: " . $date);
+        
+        // Additional validation to ensure date is properly formatted
+        $dateParts = explode('-', $date);
+        if (count($dateParts) !== 3 || 
+            !checkdate($dateParts[1], $dateParts[2], $dateParts[0])) {
+            throw new Exception("Invalid date components");
+        }
     } catch (Exception $e) {
         error_log("Date parsing error: " . $e->getMessage());
-        echo '<script>alert("Invalid date format provided."); window.location.href = "../index.php";</script>';
+        error_log("Input date was: " . $input_date);
+        echo '<script>alert("Invalid date format provided. Please use YYYY-MM-DD format."); window.location.href = "../index.php";</script>';
         exit();
     }
     
     // Additional date validation
     if (!$date || $date === '1970-01-01' || $date === '0000-00-00') {
         error_log("Invalid date after formatting: " . $date);
-        echo '<script>alert("Invalid date format."); window.location.href = "../index.php";</script>';
+        echo '<script>alert("Invalid date format. Please use YYYY-MM-DD format."); window.location.href = "../index.php";</script>';
         exit();
     }
     
@@ -163,7 +171,7 @@ if (isset($_POST['appointment_id'])) {
         `set_id` = ?, 
         `department_id` = ?, 
         `room_id` = ?, 
-        `booking_date` = ?, 
+        `booking_date` = STR_TO_DATE(?, '%Y-%m-%d'), 
         `booking_time_from` = ?, 
         `booking_time_to` = ?, 
         `reason` = ? 
@@ -183,6 +191,11 @@ if (isset($_POST['appointment_id'])) {
     error_log("Room ID: " . $room);
     
     try {
+        // Ensure date is in correct format
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            throw new Exception("Invalid date format. Expected YYYY-MM-DD, got: " . $date);
+        }
+
         // Log all values before binding
         error_log("Attempting to bind parameters with values:");
         error_log("name: " . $name);
