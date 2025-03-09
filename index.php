@@ -1296,13 +1296,13 @@ while ($row = $bookings->fetch_assoc()) {
             <button class="close-button" id="closeAddRoomModal"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="api/add_room.php">
+            <form id="addRoomForm" method="POST">
                 <div class="form-group">
-                    <label for="room_name">Room Name</label>
-                    <input type="text" name="room_name" id="room_name" required>
+                    <label for="name">Room Name</label>
+                    <input type="text" name="name" id="name" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" name="add_room" class="primary-button">
+                    <button type="submit" class="primary-button">
                         <i class="fas fa-plus"></i> Add Room
                     </button>
                 </div>
@@ -1358,5 +1358,30 @@ while ($row = $bookings->fetch_assoc()) {
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
 <script src="js/script.js?v=<?= time() ?>"></script>
 <script src="js/sidebar.js?v=<?= time() ?>"></script>
+<script>
+// Handle room form submission
+document.getElementById('addRoomForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('api/add_room.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Room added successfully!');
+            window.location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error.message);
+    });
+});
+</script>
 </body>
 </html>
