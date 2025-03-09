@@ -32,12 +32,13 @@ class ConflictResolver {
      */
     generateTimeSlots() {
         const slots = [];
-        const hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+        const hours = [8, 9, 10, 11, 12, 1, 2, 3, 4, 5];
         const minutes = ['00', '30'];
+        const ampm = ['AM', 'AM', 'AM', 'AM', 'PM', 'PM', 'PM', 'PM', 'PM', 'PM'];
         
-        hours.forEach(hour => {
+        hours.forEach((hour, index) => {
             minutes.forEach(minute => {
-                slots.push(`${hour}:${minute}`);
+                slots.push(`${hour}:${minute} ${ampm[index]}`);
             });
         });
         
@@ -91,16 +92,8 @@ class ConflictResolver {
         }
         
         const date = appointment.booking_date;
-        let timeFrom, timeTo;
-        
-        try {
-            timeFrom = this.convertTo24Hour(appointment.booking_time_from);
-            timeTo = this.convertTo24Hour(appointment.booking_time_to);
-        } catch (error) {
-            console.error("Error converting appointment times:", error);
-            console.error("Problematic appointment:", appointment);
-            return;
-        }
+        const timeFrom = appointment.booking_time_from; // Keep in 12-hour format
+        const timeTo = appointment.booking_time_to; // Keep in 12-hour format
         
         // Update room availability
         if (!this.roomAvailability[appointment.room_id]) {
@@ -134,82 +127,11 @@ class ConflictResolver {
     }
     
     /**
-     * Convert time string to 24-hour format
-     */
-    convertTo24Hour(timeStr) {
-        console.log(`Converting time to 24-hour format: ${timeStr}`);
-        
-        // Handle SQL time format (HH:MM:SS)
-        if (timeStr.includes(':') && !timeStr.includes(' ')) {
-            // Check if it's already in 24-hour format
-            const parts = timeStr.split(':');
-            if (parts.length >= 2) {
-                // It's already in 24-hour format, just return the HH:MM part
-                return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
-            }
-        }
-        
-        // Handle 12-hour format with AM/PM
-        try {
-            const [timePart, modifier] = timeStr.split(' ');
-            if (!timePart || !modifier) {
-                throw new Error(`Invalid time format: ${timeStr}`);
-            }
-            
-            let [hours, minutes] = timePart.split(':');
-            hours = parseInt(hours, 10);
-            minutes = parseInt(minutes, 10);
-            
-            if (isNaN(hours) || isNaN(minutes)) {
-                throw new Error(`Invalid time components: hours=${hours}, minutes=${minutes}`);
-            }
-            
-            // Convert to 24-hour format
-            if (hours === 12) {
-                hours = modifier.toUpperCase() === 'AM' ? 0 : 12;
-            } else if (modifier.toUpperCase() === 'PM') {
-                hours += 12;
-            }
-            
-            const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-            console.log(`Converted time: ${timeStr} -> ${result}`);
-            return result;
-        } catch (error) {
-            console.error(`Error converting time: ${timeStr}`, error);
-            throw new Error(`Failed to convert time: ${timeStr}`);
-        }
-    }
-    
-    /**
-     * Convert 24-hour format to 12-hour format
-     */
-    convertTo12Hour(timeStr) {
-        const [hours, minutes] = timeStr.split(':');
-        const hour = parseInt(hours, 10);
-        
-        if (hour === 0) {
-            return `12:${minutes} AM`;
-        } else if (hour < 12) {
-            return `${hour}:${minutes} AM`;
-        } else if (hour === 12) {
-            return `12:${minutes} PM`;
-        } else {
-            return `${hour - 12}:${minutes} PM`;
-        }
-    }
-    
-    /**
      * Check if a proposed booking conflicts with existing bookings
      */
     checkConflicts(date, roomId, timeFrom, timeTo) {
         console.log(`Checking conflicts for date: ${date}, room: ${roomId}, time: ${timeFrom} - ${timeTo}`);
         const conflicts = [];
-        
-        // Convert times to 24-hour format if they aren't already
-        const startTime = timeFrom.includes(' ') ? this.convertTo24Hour(timeFrom) : timeFrom;
-        const endTime = timeTo.includes(' ') ? this.convertTo24Hour(timeTo) : timeTo;
-        
-        console.log(`Converted times for conflict check: ${startTime} - ${endTime}`);
         
         // Check room availability
         if (this.roomAvailability[roomId] && this.roomAvailability[roomId][date]) {
@@ -218,7 +140,7 @@ class ConflictResolver {
             this.roomAvailability[roomId][date].forEach(booking => {
                 console.log(`Checking against booking: ${booking.timeFrom} - ${booking.timeTo}`);
                 
-                if (this.isTimeOverlap(startTime, endTime, booking.timeFrom, booking.timeTo)) {
+                if (this.isTimeOverlap(timeFrom, timeTo, booking.timeFrom, booking.timeTo)) {
                     console.log(`Conflict detected with booking ID: ${booking.appointmentId}`);
                     
                     conflicts.push({
@@ -242,7 +164,13 @@ class ConflictResolver {
      * Check if two time ranges overlap
      */
     isTimeOverlap(start1, end1, start2, end2) {
-        const result = (start1 < end2 && end1 > start2);
+        // Convert times to comparable format (timestamp)
+        const t1Start = new Date(`2000/01/01 ${start1}`).getTime();
+        const t1End = new Date(`2000/01/01 ${end1}`).getTime();
+        const t2Start = new Date(`2000/01/01 ${start2}`).getTime();
+        const t2End = new Date(`2000/01/01 ${end2}`).getTime();
+        
+        const result = (t1Start < t2End && t1End > t2Start);
         console.log(`Time overlap check: ${start1} < ${end2} && ${end1} > ${start2} = ${result}`);
         return result;
     }
@@ -314,7 +242,15 @@ class ConflictResolver {
      * Convert time string to minutes since midnight
      */
     timeToMinutes(timeStr) {
-        const [hours, minutes] = timeStr.split(':').map(Number);
+        const [time, modifier] = timeStr.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+        
+        if (hours === 12) {
+            hours = modifier === 'AM' ? 0 : 12;
+        } else if (modifier === 'PM') {
+            hours += 12;
+        }
+        
         return (hours * 60) + minutes;
     }
     
@@ -322,9 +258,17 @@ class ConflictResolver {
      * Convert minutes since midnight to time string
      */
     minutesToTime(minutes) {
-        const hours = Math.floor(minutes / 60);
+        let hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
-        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+        const modifier = hours >= 12 ? 'PM' : 'AM';
+        
+        if (hours > 12) {
+            hours -= 12;
+        } else if (hours === 0) {
+            hours = 12;
+        }
+        
+        return `${hours}:${mins.toString().padStart(2, '0')} ${modifier}`;
     }
     
     /**
