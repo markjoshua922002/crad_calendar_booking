@@ -7,9 +7,15 @@
 
 class ConflictResolver {
     constructor(appointments, rooms, departments) {
-        this.appointments = appointments || [];
-        this.rooms = rooms || [];
-        this.departments = departments || [];
+        console.log('Initializing ConflictResolver with:', {
+            appointmentsCount: appointments.length,
+            roomsCount: rooms.length,
+            departmentsCount: departments.length
+        });
+        
+        this.appointments = appointments;
+        this.rooms = rooms;
+        this.departments = departments;
         this.conflictThreshold = 15; // Minutes threshold to consider as conflict
         this.timeSlots = this.generateTimeSlots();
         this.roomAvailability = {};
@@ -437,24 +443,21 @@ class ConflictResolver {
         // Add real-time event listeners
         if (dateInput) {
             ['input', 'change'].forEach(eventType => {
-                dateInput.addEventListener(eventType, () => this.debouncedCheckConflicts());
+                dateInput.addEventListener(eventType, () => this.checkConflictsRealTime());
             });
-            console.log('Added date input listeners');
         }
 
         if (roomInput) {
             ['input', 'change'].forEach(eventType => {
-                roomInput.addEventListener(eventType, () => this.debouncedCheckConflicts());
+                roomInput.addEventListener(eventType, () => this.checkConflictsRealTime());
             });
-            console.log('Added room input listeners');
         }
 
         timeInputs.forEach(input => {
             if (input) {
-                ['input', 'change', 'keyup', 'blur'].forEach(eventType => {
-                    input.addEventListener(eventType, () => this.debouncedCheckConflicts());
+                ['input', 'change', 'keyup'].forEach(eventType => {
+                    input.addEventListener(eventType, () => this.checkConflictsRealTime());
                 });
-                console.log(`Added real-time listeners for ${input.id}`);
             }
         });
 
@@ -476,26 +479,14 @@ class ConflictResolver {
         this.debounceTimer = null;
     }
 
-    debouncedCheckConflicts() {
-        // Clear any existing timeout
-        if (this.debounceTimer) {
-            clearTimeout(this.debounceTimer);
-        }
+    checkConflictsRealTime() {
+        console.log('Checking conflicts in real-time...');
 
-        // Set a new timeout
-        this.debounceTimer = setTimeout(() => {
-            this.checkConflicts();
-        }, 300); // Wait 300ms after last input before checking
-    }
-
-    checkConflicts() {
-        console.log('Checking for conflicts...');
-
-        // Get all required values
+        // Get current form values
         const date = document.getElementById('date')?.value;
         const roomId = document.getElementById('room')?.value;
         
-        // Get time values and format them
+        // Get time values
         const timeFrom = this.formatTime(
             document.getElementById('time_from_hour')?.value,
             document.getElementById('time_from_minute')?.value,
@@ -508,34 +499,78 @@ class ConflictResolver {
             document.getElementById('time_to_ampm')?.value
         );
 
-        // Log the values we're checking
-        console.log('Checking with values:', { date, roomId, timeFrom, timeTo });
+        // Log current values being checked
+        console.log('Current booking values:', { date, roomId, timeFrom, timeTo });
 
         // Only proceed if we have all required values
         if (!date || !roomId || !timeFrom || !timeTo) {
-            console.log('Missing required values, skipping conflict check');
+            console.log('Missing required values, hiding conflict UI');
+            this.hideConflictAlert();
             return;
         }
 
-        // Analyze the booking
-        const analysis = this.analyzeBooking(date, roomId, null, timeFrom, timeTo, this.calculateDuration(timeFrom, timeTo));
-        console.log('Conflict analysis result:', analysis);
+        // Find conflicts for the current date and room only
+        const conflicts = this.appointments.filter(appointment => {
+            // Only check appointments for the same date and room
+            if (appointment.booking_date !== date || appointment.room_id != roomId) {
+                return false;
+            }
 
-        // Update the UI based on the analysis
-        this.updateConflictUI(analysis);
+            // Check for time overlap
+            const hasOverlap = this.isTimeOverlap(
+                timeFrom,
+                timeTo,
+                this.formatTimeFromDB(appointment.booking_time_from),
+                this.formatTimeFromDB(appointment.booking_time_to)
+            );
+
+            if (hasOverlap) {
+                console.log('Found conflict:', appointment);
+            }
+
+            return hasOverlap;
+        });
+
+        // Update UI based on conflicts
+        if (conflicts.length > 0) {
+            console.log(`Found ${conflicts.length} conflicts`);
+            this.showConflictAlert({
+                hasConflicts: true,
+                conflicts: conflicts,
+                message: `This room is already booked at this time. Found ${conflicts.length} conflict(s).`,
+                alternativeTimes: this.generateAlternativeTimes(date, roomId),
+                alternativeRooms: this.generateAlternativeRooms(date, timeFrom, timeTo)
+            });
+        } else {
+            console.log('No conflicts found');
+            this.hideConflictAlert();
+        }
+    }
+
+    formatTimeFromDB(dbTime) {
+        // Convert database time format (HH:mm:ss) to 12-hour format (HH:mm AM/PM)
+        const time = new Date(`2000-01-01 ${dbTime}`);
+        return time.toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit', 
+            hour12: true 
+        });
     }
 
     formatTime(hour, minute, ampm) {
         if (!hour || !minute || !ampm) {
-            console.log('Missing time components:', { hour, minute, ampm });
             return null;
         }
         
-        // Remove leading zeros and ensure proper format
-        hour = parseInt(hour, 10).toString();
-        minute = minute.toString().padStart(2, '0');
+        hour = parseInt(hour);
+        minute = parseInt(minute);
         
-        return `${hour}:${minute} ${ampm}`;
+        // Ensure valid hour and minute
+        if (isNaN(hour) || isNaN(minute) || hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+            return null;
+        }
+        
+        return `${hour}:${minute.toString().padStart(2, '0')} ${ampm}`;
     }
 
     calculateDuration(timeFrom, timeTo) {
@@ -707,7 +742,7 @@ class ConflictResolver {
         }
 
         this.hideConflictAlert();
-        this.checkConflicts(); // Recheck with new values
+        this.checkConflictsRealTime(); // Recheck with new values
     }
 
     // Add this new method to handle window resize
@@ -722,92 +757,54 @@ class ConflictResolver {
         }
     }
 
-    generateAlternativeTimes(date, roomId, duration) {
-        const alternatives = [];
-        const busyTimes = this.appointments
-            .filter(app => app.booking_date === date && app.room_id == roomId)
-            .map(app => ({
-                from: this.timeToMinutes(app.booking_time_from),
-                to: this.timeToMinutes(app.booking_time_to)
-            }))
-            .sort((a, b) => a.from - b.from);
-
-        // Define working hours (8 AM to 5 PM)
-        const workStart = 8 * 60; // 8:00 AM in minutes
-        const workEnd = 17 * 60; // 5:00 PM in minutes
-
-        // Find available time slots
-        let currentTime = workStart;
-        busyTimes.forEach(busy => {
-            if (currentTime + duration <= busy.from) {
-                alternatives.push({
-                    timeFrom: this.minutesToTime12Hour(currentTime),
-                    timeTo: this.minutesToTime12Hour(currentTime + duration),
-                    score: this.calculateTimeScore(currentTime)
-                });
+    generateAlternativeTimes(date, roomId) {
+        // Generate time slots in 30-minute intervals
+        const times = [];
+        for (let hour = 7; hour <= 17; hour++) {
+            for (let minute of [0, 30]) {
+                const timeFrom = `${hour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}`;
+                const nextHour = minute === 30 ? hour + 1 : hour;
+                const nextMinute = minute === 30 ? 0 : 30;
+                const timeTo = `${nextHour}:${nextMinute.toString().padStart(2, '0')} ${nextHour >= 12 ? 'PM' : 'AM'}`;
+                
+                // Check if this time slot is available
+                const hasConflict = this.appointments.some(app => 
+                    app.booking_date === date &&
+                    app.room_id == roomId &&
+                    this.isTimeOverlap(timeFrom, timeTo, 
+                        this.formatTimeFromDB(app.booking_time_from),
+                        this.formatTimeFromDB(app.booking_time_to))
+                );
+                
+                if (!hasConflict) {
+                    times.push({ timeFrom, timeTo });
+                }
             }
-            currentTime = busy.to;
-        });
-
-        // Check for available time after last busy period
-        if (currentTime + duration <= workEnd) {
-            alternatives.push({
-                timeFrom: this.minutesToTime12Hour(currentTime),
-                timeTo: this.minutesToTime12Hour(currentTime + duration),
-                score: this.calculateTimeScore(currentTime)
-            });
         }
-
-        // Sort alternatives by score
-        return alternatives.sort((a, b) => b.score - a.score).slice(0, 3);
+        
+        return times.slice(0, 5); // Return top 5 alternative times
     }
 
     generateAlternativeRooms(date, timeFrom, timeTo) {
         return this.rooms
             .filter(room => {
                 // Check if room is available during the requested time
-                const conflicts = this.appointments.filter(app => 
+                return !this.appointments.some(app => 
                     app.booking_date === date &&
                     app.room_id == room.id &&
                     this.isTimeOverlap(
                         timeFrom,
                         timeTo,
-                        app.booking_time_from,
-                        app.booking_time_to
+                        this.formatTimeFromDB(app.booking_time_from),
+                        this.formatTimeFromDB(app.booking_time_to)
                     )
                 );
-                return conflicts.length === 0;
             })
             .map(room => ({
                 roomId: room.id,
-                roomName: room.name,
-                score: this.calculateRoomScore(room)
+                roomName: room.name
             }))
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 3);
-    }
-
-    minutesToTime12Hour(minutes) {
-        let hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        const period = hours >= 12 ? 'PM' : 'AM';
-        
-        if (hours > 12) hours -= 12;
-        if (hours === 0) hours = 12;
-
-        return `${hours}:${mins.toString().padStart(2, '0')} ${period}`;
-    }
-
-    calculateTimeScore(minutes) {
-        // Prefer times closer to 9 AM (540 minutes)
-        const idealTime = 540;
-        const score = 100 - Math.abs(minutes - idealTime) / 10;
-        return Math.round(score);
-    }
-
-    calculateRoomScore(room) {
-        // Simple scoring based on room ID (can be enhanced based on room features)
-        return 100 - room.id;
+            .slice(0, 5); // Return top 5 alternative rooms
     }
 }
 
