@@ -25,18 +25,6 @@ if (isset($_POST['appointment_id'])) {
     $room = $_POST['edit_room'];
     $date = date('Y-m-d', strtotime($_POST['edit_date']));
     
-    // Debug log the received values
-    error_log("Update Appointment - Received values:");
-    error_log("ID: $appointment_id");
-    error_log("Name: $name");
-    error_log("ID Number: $id_number");
-    error_log("Group Members: $group_members");
-    error_log("Representative Name: $representative_name");
-    error_log("Set ID: $set");
-    error_log("Department ID: $department");
-    error_log("Room ID: $room");
-    error_log("Date: $date");
-    
     // Combine time fields
     $time_from = date('H:i:s', strtotime($_POST['edit_time_from_hour'] . ':' . $_POST['edit_time_from_minute'] . ' ' . $_POST['edit_time_from_ampm']));
     $time_to = date('H:i:s', strtotime($_POST['edit_time_to_hour'] . ':' . $_POST['edit_time_to_minute'] . ' ' . $_POST['edit_time_to_ampm']));
@@ -72,7 +60,7 @@ if (isset($_POST['appointment_id'])) {
     
     // Update the booking
     $stmt = $conn->prepare("UPDATE bookings SET name = ?, id_number = ?, group_members = ?, 
-                          representative_name = ?, set_id = ?, department_id = ?, 
+                          representative_name = ?, `set` = ?, department_id = ?, 
                           room_id = ?, booking_date = ?, booking_time_from = ?, 
                           booking_time_to = ?, reason = ? WHERE id = ?");
     if (!$stmt) {
