@@ -780,7 +780,7 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <input type="text" id="time_display" class="time-input" readonly value="02:30 PM">
+                                <input type="text" id="time_display" class="time-input" value="02:30 PM">
                                 <i class="fas fa-clock time-clock-icon"></i>
                                 <div class="time-dropdown-menu">
                                     <div class="time-select-row">
@@ -904,15 +904,47 @@ $total_entries = $count_row['total'];
             // Update all time values
             updateTimeValues(hours, minutes, ampm);
             
-            // Toggle dropdown
+            // Handle direct input in the main time field
+            timeDisplay.addEventListener('input', function(e) {
+                const timePattern = /^(0?[1-9]|1[0-2]):([0-5][0-9]) (AM|PM)$/i;
+                let value = this.value.toUpperCase();
+                
+                // Auto-format the input as user types
+                if (value.length === 2 && !value.includes(':')) {
+                    value += ':';
+                    this.value = value;
+                }
+                if (value.length === 5 && !value.includes('AM') && !value.includes('PM')) {
+                    value += ' ';
+                    this.value = value;
+                }
+            });
+
+            timeDisplay.addEventListener('blur', function() {
+                const timePattern = /^(0?[1-9]|1[0-2]):([0-5][0-9]) (AM|PM)$/i;
+                const value = this.value.toUpperCase();
+                
+                if (timePattern.test(value)) {
+                    const [_, hours, minutes, ampm] = value.match(timePattern);
+                    updateTimeValues(parseInt(hours), parseInt(minutes), ampm);
+                } else {
+                    // If invalid format, revert to previous valid value
+                    updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), timeAmPmInput.value);
+                }
+            });
+            
+            // Toggle dropdown on clock icon click
             timeDisplay.addEventListener('click', function(e) {
-                e.preventDefault();
+                if (e.target === this) {
+                    e.stopPropagation();
+                    return;
+                }
                 timeDropdown.classList.toggle('show');
             });
             
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.time-picker')) {
+                if (!e.target.closest('.time-picker') || e.target === timeDisplay) {
                     timeDropdown.classList.remove('show');
                 }
             });
@@ -949,41 +981,6 @@ $total_entries = $count_row['total'];
                     const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
                     updateTimeValues(parseInt(hourValue.value), parseInt(minuteValue.value), newAmPm);
                 });
-            });
-
-            // Handle direct input for hours
-            hourValue.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value)) {
-                    this.value = '';
-                } else if (value < 1) {
-                    this.value = '1';
-                } else if (value > 12) {
-                    this.value = '12';
-                }
-            });
-
-            hourValue.addEventListener('blur', function() {
-                let value = parseInt(this.value) || 12;
-                updateTimeValues(value, parseInt(minuteValue.value), timeAmPmInput.value);
-            });
-
-            // Handle direct input for minutes
-            minuteValue.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value)) {
-                    this.value = '';
-                } else if (value < 0) {
-                    this.value = '00';
-                } else if (value > 59) {
-                    this.value = '59';
-                }
-            });
-
-            minuteValue.addEventListener('blur', function() {
-                let value = parseInt(this.value) || 0;
-                value = Math.round(value / 5) * 5;
-                updateTimeValues(parseInt(hourValue.value), value, timeAmPmInput.value);
             });
 
             // Handle keyboard navigation
