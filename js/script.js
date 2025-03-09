@@ -1,5 +1,6 @@
 // Initialize conflict resolver
 let conflictResolver = null;
+let conflictService = null;
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed - v15");
@@ -1377,20 +1378,42 @@ function initializeConflictResolver() {
     try {
         console.log("Initializing Conflict Resolver...");
         
+        // Initialize the conflict service client
+        conflictService = new ConflictService();
+        console.log("Conflict Service initialized successfully");
+        
         // Get data from JSON elements
         const appointmentsDataElement = document.getElementById('appointmentsData');
         const roomsDataElement = document.getElementById('roomsData');
         const departmentsDataElement = document.getElementById('departmentsData');
         
         if (!appointmentsDataElement || !roomsDataElement || !departmentsDataElement) {
-            console.error("Missing data elements for Conflict Resolver");
+            console.error("Missing data elements for Conflict Resolver", {
+                appointmentsDataElement: !!appointmentsDataElement,
+                roomsDataElement: !!roomsDataElement,
+                departmentAvailability: !!departmentsDataElement
+            });
             return;
         }
         
         // Parse the JSON data
-        const appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
-        const rooms = JSON.parse(roomsDataElement.textContent || '[]');
-        const departments = JSON.parse(departmentsDataElement.textContent || '[]');
+        let appointments, rooms, departments;
+        try {
+            appointments = JSON.parse(appointmentsDataElement.textContent || '{}');
+            console.log("Parsed appointments data:", Object.keys(appointments).length, "days");
+            
+            rooms = JSON.parse(roomsDataElement.textContent || '[]');
+            console.log("Parsed rooms data:", rooms.length, "rooms");
+            
+            departments = JSON.parse(departmentsDataElement.textContent || '[]');
+            console.log("Parsed departments data:", departments.length, "departments");
+        } catch (parseError) {
+            console.error("Error parsing data for Conflict Resolver:", parseError);
+            console.log("Raw appointments data:", appointmentsDataElement.textContent);
+            console.log("Raw rooms data:", roomsDataElement.textContent);
+            console.log("Raw departments data:", departmentsDataElement.textContent);
+            return;
+        }
         
         // Flatten appointments into an array
         const flatAppointments = [];
@@ -1401,10 +1424,13 @@ function initializeConflictResolver() {
                 });
             }
         }
+        console.log("Flattened appointments:", flatAppointments.length, "total appointments");
         
-        // Create the ConflictResolver instance
-        conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
-        console.log("Conflict Resolver initialized successfully");
+        // Create the ConflictResolver instance (as fallback)
+        if (typeof ConflictResolver === 'function') {
+            conflictResolver = new ConflictResolver(flatAppointments, rooms, departments);
+            console.log("Local Conflict Resolver initialized successfully (fallback)");
+        }
         
         // Setup form submission handling for conflict detection
         setupConflictDetection();
@@ -1575,10 +1601,10 @@ function parseTimeString(timeStr) {
     return [parseInt(hour), minute, ampm];
 }
 
-// Check for conflicts and update the UI
+// Check for conflicts
 function checkForConflicts() {
-    if (!conflictResolver) {
-        console.error("Conflict resolver not initialized");
+    if (!conflictService && !conflictResolver) {
+        console.error("Neither Conflict Service nor Conflict Resolver is initialized");
         return false;
     }
     
@@ -1644,22 +1670,69 @@ function checkForConflicts() {
     console.log("Calculated duration:", { durationMinutes });
     
     try {
-        // Analyze the booking for conflicts
-        const analysis = conflictResolver.analyzeBooking(
-            dateInput.value,
-            roomSelect.value,
-            departmentSelect.value,
-            timeFrom,
-            timeTo,
-            durationMinutes
-        );
-        
-        console.log("Conflict analysis result:", analysis);
-        
-        // Update the UI based on the analysis
-        updateConflictUI(analysis);
-        
-        return analysis.hasConflicts;
+        // Use the microservice if available, otherwise fall back to local resolver
+        if (conflictService) {
+            // Show loading indicator
+            const conflictContainer = document.getElementById('conflict-resolution-container');
+            if (conflictContainer) {
+                conflictContainer.innerHTML = '<div class="loading">Checking for conflicts...</div>';
+                conflictContainer.style.display = 'block';
+            }
+            
+            // Use async/await with a promise to handle the asynchronous call
+            return new Promise((resolve) => {
+                conflictService.analyzeBooking(
+                    dateInput.value,
+                    roomSelect.value,
+                    departmentSelect.value,
+                    timeFrom,
+                    timeTo,
+                    durationMinutes
+                ).then(analysis => {
+                    console.log("Conflict analysis result from microservice:", analysis);
+                    updateConflictUI(analysis);
+                    resolve(analysis.has_conflicts);
+                }).catch(error => {
+                    console.error("Error using conflict service, falling back to local resolver:", error);
+                    
+                    // Fall back to local resolver if available
+                    if (conflictResolver) {
+                        const localAnalysis = conflictResolver.analyzeBooking(
+                            dateInput.value,
+                            roomSelect.value,
+                            departmentSelect.value,
+                            timeFrom,
+                            timeTo,
+                            durationMinutes
+                        );
+                        console.log("Conflict analysis result from local resolver:", localAnalysis);
+                        updateConflictUI(localAnalysis);
+                        resolve(localAnalysis.hasConflicts);
+                    } else {
+                        // No fallback available
+                        updateConflictUI({
+                            has_conflicts: false,
+                            message: "Unable to check for conflicts. Please proceed with caution."
+                        });
+                        resolve(false);
+                    }
+                });
+            });
+        } else if (conflictResolver) {
+            // Use local resolver
+            const analysis = conflictResolver.analyzeBooking(
+                dateInput.value,
+                roomSelect.value,
+                departmentSelect.value,
+                timeFrom,
+                timeTo,
+                durationMinutes
+            );
+            
+            console.log("Conflict analysis result from local resolver:", analysis);
+            updateConflictUI(analysis);
+            return analysis.hasConflicts;
+        }
     } catch (error) {
         console.error("Error during conflict analysis:", error);
         return false;
@@ -1681,7 +1754,7 @@ function updateConflictUI(analysis) {
     }
     
     // If no conflicts, hide the container and return
-    if (!analysis.hasConflicts) {
+    if (!analysis.has_conflicts && !analysis.hasConflicts) {
         conflictContainer.style.display = 'none';
         return;
     }
@@ -1697,72 +1770,108 @@ function updateConflictUI(analysis) {
     alternativeRoomsContainer.innerHTML = '';
     
     // Add alternative times
-    if (analysis.alternativeTimes && analysis.alternativeTimes.length > 0) {
-        analysis.alternativeTimes.forEach(alt => {
-            const card = document.createElement('div');
-            card.className = 'alternative-card';
-            card.dataset.timeFrom = alt.timeFrom;
-            card.dataset.timeTo = alt.timeTo;
+    const alternativeTimes = analysis.alternative_times || analysis.alternativeTimes || [];
+    if (alternativeTimes && alternativeTimes.length > 0) {
+        alternativeTimes.forEach(alt => {
+            const altCard = document.createElement('div');
+            altCard.className = 'alternative-card';
+            altCard.dataset.timeFrom = alt.time_from;
+            altCard.dataset.timeTo = alt.time_to;
             
-            card.innerHTML = `
-                <h6><i class="fas fa-clock"></i> Alternative Time <span class="score">${alt.score}</span></h6>
-                <p>${alt.timeFrom} - ${alt.timeTo}</p>
+            altCard.innerHTML = `
+                <h6><i class="fas fa-clock"></i> ${alt.time_from} - ${alt.time_to}</h6>
+                <p>Recommended time slot <span class="score">${alt.score}%</span></p>
             `;
             
-            // Add click handler to select this alternative
-            card.addEventListener('click', function() {
-                // Remove selected class from all time cards
-                document.querySelectorAll('#alternative-times .alternative-card').forEach(c => {
-                    c.classList.remove('selected');
+            altCard.addEventListener('click', function() {
+                // Remove selected class from all cards
+                document.querySelectorAll('.alternative-card').forEach(card => {
+                    card.classList.remove('selected');
                 });
                 
                 // Add selected class to this card
-                card.classList.add('selected');
+                this.classList.add('selected');
                 
-                // Enable the apply button
+                // Enable apply button
                 applyAlternativeBtn.disabled = false;
             });
             
-            alternativeTimesContainer.appendChild(card);
+            alternativeTimesContainer.appendChild(altCard);
         });
     } else {
-        alternativeTimesContainer.innerHTML = '<p>No alternative times available.</p>';
+        alternativeTimesContainer.innerHTML = '<p class="no-alternatives">No alternative times available</p>';
     }
     
     // Add alternative rooms
-    if (analysis.alternativeRooms && analysis.alternativeRooms.length > 0) {
-        analysis.alternativeRooms.forEach(alt => {
-            const card = document.createElement('div');
-            card.className = 'alternative-card';
-            card.dataset.roomId = alt.roomId;
+    const alternativeRooms = analysis.alternative_rooms || analysis.alternativeRooms || [];
+    if (alternativeRooms && alternativeRooms.length > 0) {
+        alternativeRooms.forEach(alt => {
+            const altCard = document.createElement('div');
+            altCard.className = 'alternative-card';
+            altCard.dataset.roomId = alt.id;
+            altCard.dataset.roomName = alt.name;
             
-            card.innerHTML = `
-                <h6><i class="fas fa-door-open"></i> Alternative Room <span class="score">${alt.score}</span></h6>
-                <p>${alt.roomName}</p>
+            altCard.innerHTML = `
+                <h6><i class="fas fa-door-open"></i> ${alt.name}</h6>
+                <p>Available room <span class="score">${alt.score}%</span></p>
             `;
             
-            // Add click handler to select this alternative
-            card.addEventListener('click', function() {
-                // Remove selected class from all room cards
-                document.querySelectorAll('#alternative-rooms .alternative-card').forEach(c => {
-                    c.classList.remove('selected');
+            altCard.addEventListener('click', function() {
+                // Remove selected class from all cards
+                document.querySelectorAll('.alternative-card').forEach(card => {
+                    card.classList.remove('selected');
                 });
                 
                 // Add selected class to this card
-                card.classList.add('selected');
+                this.classList.add('selected');
                 
-                // Enable the apply button
+                // Enable apply button
                 applyAlternativeBtn.disabled = false;
             });
             
-            alternativeRoomsContainer.appendChild(card);
+            alternativeRoomsContainer.appendChild(altCard);
         });
     } else {
-        alternativeRoomsContainer.innerHTML = '<p>No alternative rooms available.</p>';
+        alternativeRoomsContainer.innerHTML = '<p class="no-alternatives">No alternative rooms available</p>';
     }
     
-    // Disable the apply button initially
+    // Setup apply button
     applyAlternativeBtn.disabled = true;
+    applyAlternativeBtn.addEventListener('click', function() {
+        const selectedCard = document.querySelector('.alternative-card.selected');
+        
+        if (selectedCard) {
+            // Check if it's a time alternative
+            if (selectedCard.dataset.timeFrom && selectedCard.dataset.timeTo) {
+                const [fromHour, fromMinute, fromAmpm] = parseTimeString(selectedCard.dataset.timeFrom);
+                const [toHour, toMinute, toAmpm] = parseTimeString(selectedCard.dataset.timeTo);
+                
+                // Update form fields
+                document.getElementById('time_from_hour').value = fromHour;
+                document.getElementById('time_from_minute').value = fromMinute;
+                document.getElementById('time_from_ampm').value = fromAmpm;
+                document.getElementById('time_to_hour').value = toHour;
+                document.getElementById('time_to_minute').value = toMinute;
+                document.getElementById('time_to_ampm').value = toAmpm;
+            }
+            
+            // Check if it's a room alternative
+            if (selectedCard.dataset.roomId) {
+                document.getElementById('room').value = selectedCard.dataset.roomId;
+            }
+            
+            // Hide the conflict container
+            conflictContainer.style.display = 'none';
+        }
+    });
+    
+    // Setup ignore button
+    const ignoreBtn = document.querySelector('.ignore-conflicts');
+    if (ignoreBtn) {
+        ignoreBtn.addEventListener('click', function() {
+            conflictContainer.style.display = 'none';
+        });
+    }
 }
 
 function setupUpcomingAppointmentClicks() {

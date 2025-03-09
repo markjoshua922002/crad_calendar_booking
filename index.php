@@ -1374,7 +1374,23 @@ while ($row = $bookings->fetch_assoc()) {
     <?= json_encode($departments->fetch_all(MYSQLI_ASSOC)) ?>
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Load conflict resolver first -->
+<script src="js/conflict-service.js?v=<?= time() ?>"></script>
 <script src="js/conflict-resolver.js?v=<?= time() ?>"></script>
+<!-- Verify conflict resolver is loaded -->
+<script>
+    if (typeof ConflictResolver !== 'function') {
+        console.error('ConflictResolver class not loaded properly. Check the conflict-resolver.js file.');
+    } else {
+        console.log('ConflictResolver class loaded successfully.');
+    }
+    
+    if (typeof ConflictService !== 'function') {
+        console.error('ConflictService class not loaded properly. Check the conflict-service.js file.');
+    } else {
+        console.log('ConflictService class loaded successfully.');
+    }
+</script>
 <script src="js/script.js?v=<?= time() ?>"></script>
 <script src="js/sidebar.js?v=<?= time() ?>"></script>
 <script>
