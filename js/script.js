@@ -757,158 +757,184 @@ function openBookingModalWithDate(day) {
 function setupAppointmentClicks() {
     console.log("Setting up appointment clicks");
     
-    // Add click event to all appointment items in the calendar
-    document.querySelectorAll('.day-event').forEach(appointment => {
-        appointment.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent triggering the day click event
-            
-            const appointmentId = this.dataset.id;
-            console.log(`Appointment clicked: ${appointmentId}`);
-            
-            // Get appointment data from the hidden JSON element
-            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
-            
-            // Find the appointment in the data
-            let foundAppointment = null;
-            Object.values(appointmentsData).forEach(dayAppointments => {
-                dayAppointments.forEach(appointment => {
-                    if (appointment.id == appointmentId) {
-                        foundAppointment = appointment;
+    try {
+        // Add click event to all appointment items in the calendar
+        const dayEvents = document.querySelectorAll('.day-event');
+        console.log(`Found ${dayEvents.length} day events`);
+        
+        dayEvents.forEach(appointment => {
+            appointment.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent triggering the day click event
+                
+                const appointmentId = this.dataset.id;
+                console.log(`Day event clicked: ${appointmentId}`);
+                
+                // Get appointment data from the hidden JSON element
+                const appointmentsDataElement = document.getElementById('appointmentsData');
+                if (!appointmentsDataElement) {
+                    console.error("Appointments data element not found");
+                    return;
+                }
+                
+                try {
+                    const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
+                    console.log("Parsed appointments data:", appointmentsData);
+                    
+                    // Find the appointment in the data
+                    let foundAppointment = null;
+                    Object.values(appointmentsData).forEach(dayAppointments => {
+                        dayAppointments.forEach(appointment => {
+                            if (appointment.id == appointmentId) {
+                                foundAppointment = appointment;
+                            }
+                        });
+                    });
+                    
+                    if (foundAppointment) {
+                        console.log("Found appointment:", foundAppointment);
+                        showAppointmentDetails(foundAppointment);
+                    } else {
+                        console.error(`Appointment with ID ${appointmentId} not found`);
+                        console.log("Available appointments:", appointmentsData);
                     }
-                });
+                } catch (error) {
+                    console.error("Error parsing appointments data:", error);
+                }
             });
-            
-            if (foundAppointment) {
-                showAppointmentDetails(foundAppointment);
-            } else {
-                console.error(`Appointment with ID ${appointmentId} not found`);
-            }
         });
-    });
-    
-    // Add click event to view appointment buttons
-    document.querySelectorAll('.view-appointment').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent triggering the day click event
-            
-            const appointmentId = this.dataset.id;
-            console.log(`View appointment button clicked: ${appointmentId}`);
-            
-            // Get appointment data from the hidden JSON element
-            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
-            
-            // Find the appointment in the data
-            let foundAppointment = null;
-            Object.values(appointmentsData).forEach(dayAppointments => {
-                dayAppointments.forEach(appointment => {
-                    if (appointment.id == appointmentId) {
-                        foundAppointment = appointment;
+        
+        // Add click event to view appointment buttons
+        const viewButtons = document.querySelectorAll('.view-appointment');
+        console.log(`Found ${viewButtons.length} view buttons`);
+        
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const appointmentId = this.dataset.id;
+                console.log(`View button clicked: ${appointmentId}`);
+                
+                const appointmentsDataElement = document.getElementById('appointmentsData');
+                if (!appointmentsDataElement) {
+                    console.error("Appointments data element not found");
+                    return;
+                }
+                
+                try {
+                    const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
+                    let foundAppointment = null;
+                    
+                    Object.values(appointmentsData).forEach(dayAppointments => {
+                        dayAppointments.forEach(appointment => {
+                            if (appointment.id == appointmentId) {
+                                foundAppointment = appointment;
+                            }
+                        });
+                    });
+                    
+                    if (foundAppointment) {
+                        console.log("Found appointment:", foundAppointment);
+                        showAppointmentDetails(foundAppointment);
+                    } else {
+                        console.error(`Appointment with ID ${appointmentId} not found`);
                     }
-                });
+                } catch (error) {
+                    console.error("Error parsing appointments data:", error);
+                }
             });
-            
-            if (foundAppointment) {
-                showAppointmentDetails(foundAppointment);
-            } else {
-                console.error(`Appointment with ID ${appointmentId} not found`);
-            }
         });
-    });
-    
-    // Add click event to edit appointment buttons
-    document.querySelectorAll('.edit-appointment').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent triggering the day click event
-            
-            const appointmentId = this.dataset.id;
-            console.log(`Edit appointment button clicked: ${appointmentId}`);
-            
-            // Get appointment data from the hidden JSON element
-            const appointmentsData = JSON.parse(document.getElementById('appointmentsData')?.textContent || '{}');
-            
-            // Find the appointment in the data
-            let foundAppointment = null;
-            Object.values(appointmentsData).forEach(dayAppointments => {
-                dayAppointments.forEach(appointment => {
-                    if (appointment.id == appointmentId) {
-                        foundAppointment = appointment;
-                    }
-                });
-            });
-            
-            if (foundAppointment) {
-                fillEditForm(foundAppointment);
-            } else {
-                console.error(`Appointment with ID ${appointmentId} not found`);
-            }
-        });
-    });
+    } catch (error) {
+        console.error("Error in setupAppointmentClicks:", error);
+    }
+}
+
+// Add formatTime function
+function formatTime(timeString) {
+    try {
+        const time = new Date(`2000-01-01T${timeString}`);
+        return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (error) {
+        console.error("Error formatting time:", error);
+        return timeString;
+    }
 }
 
 function showAppointmentDetails(appointment) {
-    console.log("Showing appointment details:", appointment);
-    const viewContainer = document.getElementById('viewContainer');
-    if (!viewContainer) return;
+    try {
+        console.log("Showing appointment details:", appointment);
+        const viewContainer = document.getElementById('viewContainer');
+        if (!viewContainer) {
+            console.error("View container not found");
+            return;
+        }
 
-    const timeFrom = formatTime(appointment.booking_time_from);
-    const timeTo = formatTime(appointment.booking_time_to);
-    const date = new Date(appointment.booking_date).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+        const timeFrom = formatTime(appointment.booking_time_from);
+        const timeTo = formatTime(appointment.booking_time_to);
+        const date = new Date(appointment.booking_date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
 
-    viewContainer.innerHTML = `
-        <div class="appointment-details">
-            <div class="detail-group">
-                <label>Research Adviser:</label>
-                <span>${appointment.name}</span>
+        viewContainer.innerHTML = `
+            <div class="appointment-details">
+                <div class="detail-group">
+                    <label>Research Adviser:</label>
+                    <span>${appointment.name || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Representative:</label>
+                    <span>${appointment.representative_name || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Set:</label>
+                    <span>${appointment.set_name || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Department:</label>
+                    <span>${appointment.department_name || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Room:</label>
+                    <span>${appointment.room_name || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Date:</label>
+                    <span>${date}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Time:</label>
+                    <span>${timeFrom} - ${timeTo}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Agenda:</label>
+                    <span>${appointment.reason || 'N/A'}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Remarks:</label>
+                    <span>${appointment.group_members || 'N/A'}</span>
+                </div>
             </div>
-            <div class="detail-group">
-                <label>Representative:</label>
-                <span>${appointment.representative_name}</span>
+            <div class="appointment-actions">
+                <button onclick="fillEditForm(${JSON.stringify(appointment).replace(/"/g, '&quot;')})" class="edit-button">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
             </div>
-            <div class="detail-group">
-                <label>Set:</label>
-                <span>${appointment.set_name || 'N/A'}</span>
-            </div>
-            <div class="detail-group">
-                <label>Department:</label>
-                <span>${appointment.department_name}</span>
-            </div>
-            <div class="detail-group">
-                <label>Room:</label>
-                <span>${appointment.room_name}</span>
-            </div>
-            <div class="detail-group">
-                <label>Date:</label>
-                <span>${date}</span>
-            </div>
-            <div class="detail-group">
-                <label>Time:</label>
-                <span>${timeFrom} - ${timeTo}</span>
-            </div>
-            <div class="detail-group">
-                <label>Agenda:</label>
-                <span>${appointment.reason}</span>
-            </div>
-            <div class="detail-group">
-                <label>Remarks:</label>
-                <span>${appointment.group_members || 'N/A'}</span>
-            </div>
-        </div>
-        <div class="appointment-actions">
-            <button onclick="fillEditForm(${JSON.stringify(appointment).replace(/"/g, '&quot;')})" class="edit-button">
-                <i class="fas fa-edit"></i> Edit
-            </button>
-        </div>
-    `;
+        `;
 
-    showModal(document.getElementById('viewModal'));
+        // Show the view modal
+        const viewModal = document.getElementById('viewModal');
+        if (viewModal) {
+            showModal(viewModal);
+        } else {
+            console.error("View modal not found");
+        }
+    } catch (error) {
+        console.error("Error in showAppointmentDetails:", error);
+    }
 }
 
 function fillEditForm(appointment) {
