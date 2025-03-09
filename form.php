@@ -356,29 +356,36 @@ $total_entries = $count_row['total'];
         
         .time-input {
             width: 100%;
-            padding: 6px 30px 6px 10px;
+            padding: 6px 10px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             font-size: 12px;
+            transition: all 0.3s;
             height: 30px;
             box-sizing: border-box;
-            cursor: pointer;
-            background: white;
+            padding-right: 30px; /* Space for the clock icon */
+            cursor: text;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
         }
         
         .time-dropdown-menu {
+            display: none;
             position: absolute;
             top: 100%;
             left: 0;
-            width: 200px;
-            background: white;
+            width: 100%;
+            background-color: white;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            margin-top: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
             padding: 8px;
+            margin-top: 4px;
         }
         
         .time-dropdown-menu.show {
@@ -387,14 +394,15 @@ $total_entries = $count_row['total'];
         
         .time-select-row {
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 4px;
         }
         
         .time-select-col {
-            text-align: center;
-            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .time-select-arrows {
@@ -449,7 +457,8 @@ $total_entries = $count_row['total'];
             top: 50%;
             transform: translateY(-50%);
             color: #666;
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
         }
         
         .submit-button {
@@ -890,6 +899,7 @@ $total_entries = $count_row['total'];
             const hourValue = document.querySelector('.hour-value');
             const minuteValue = document.querySelector('.minute-value');
             const ampmValue = document.querySelector('.ampm-value');
+            const clockIcon = document.querySelector('.time-clock-icon');
             
             // Set default value to current time
             const now = new Date();
@@ -933,12 +943,10 @@ $total_entries = $count_row['total'];
                 }
             });
             
-            // Toggle dropdown on clock icon click
-            timeDisplay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    e.stopPropagation();
-                    return;
-                }
+            // Toggle dropdown when clicking on the clock icon
+            clockIcon.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 timeDropdown.classList.toggle('show');
             });
             
@@ -949,59 +957,80 @@ $total_entries = $count_row['total'];
                 }
             });
             
-            // Handle hour up/down
+            // Hour up button
             document.querySelector('.hour-up').addEventListener('click', function() {
-                let hour = parseInt(hourValue.value) || 12;
-                hour = hour === 12 ? 1 : hour + 1;
-                updateTimeValues(hour, parseInt(minuteValue.value), timeAmPmInput.value);
+                let hour = parseInt(timeHourInput.value);
+                hour = hour % 12 + 1; // Cycle 1-12
+                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
             });
             
+            // Hour down button
             document.querySelector('.hour-down').addEventListener('click', function() {
-                let hour = parseInt(hourValue.value) || 12;
-                hour = hour === 1 ? 12 : hour - 1;
-                updateTimeValues(hour, parseInt(minuteValue.value), timeAmPmInput.value);
+                let hour = parseInt(timeHourInput.value);
+                hour = hour === 1 ? 12 : hour - 1; // Cycle 12-1
+                updateTimeValues(hour, parseInt(timeMinuteInput.value), timeAmPmInput.value);
             });
             
-            // Handle minute up/down
+            // Minute up button
             document.querySelector('.minute-up').addEventListener('click', function() {
-                let minute = parseInt(minuteValue.value) || 0;
-                minute = minute === 55 ? 0 : minute + 5;
-                updateTimeValues(parseInt(hourValue.value), minute, timeAmPmInput.value);
+                let minute = parseInt(timeMinuteInput.value);
+                minute = (minute + 5) % 60; // Increment by 5, cycle 0-55
+                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
             });
             
+            // Minute down button
             document.querySelector('.minute-down').addEventListener('click', function() {
-                let minute = parseInt(minuteValue.value) || 0;
-                minute = minute === 0 ? 55 : minute - 5;
-                updateTimeValues(parseInt(hourValue.value), minute, timeAmPmInput.value);
+                let minute = parseInt(timeMinuteInput.value);
+                minute = (minute - 5 + 60) % 60; // Decrement by 5, cycle 55-0
+                updateTimeValues(parseInt(timeHourInput.value), minute, timeAmPmInput.value);
             });
             
-            // Handle AM/PM toggle
-            document.querySelectorAll('.ampm-toggle').forEach(button => {
+            // AM/PM toggle
+            document.querySelectorAll('.ampm-toggle').forEach(function(button) {
                 button.addEventListener('click', function() {
                     const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
-                    updateTimeValues(parseInt(hourValue.value), parseInt(minuteValue.value), newAmPm);
+                    updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), newAmPm);
                 });
             });
-
-            // Handle keyboard navigation
-            hourValue.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    document.querySelector('.hour-up').click();
-                } else if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    document.querySelector('.hour-down').click();
+            
+            // Direct input in dropdown
+            hourValue.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value)) {
+                    this.value = '';
+                } else if (value < 1) {
+                    this.value = '1';
+                } else if (value > 12) {
+                    this.value = '12';
                 }
             });
-
-            minuteValue.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    document.querySelector('.minute-up').click();
-                } else if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    document.querySelector('.minute-down').click();
+            
+            hourValue.addEventListener('blur', function() {
+                let value = parseInt(this.value) || 12;
+                updateTimeValues(value, parseInt(timeMinuteInput.value), timeAmPmInput.value);
+            });
+            
+            minuteValue.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value)) {
+                    this.value = '';
+                } else if (value < 0) {
+                    this.value = '00';
+                } else if (value > 59) {
+                    this.value = '59';
                 }
+            });
+            
+            minuteValue.addEventListener('blur', function() {
+                let value = parseInt(this.value) || 0;
+                value = Math.round(value / 5) * 5;
+                updateTimeValues(parseInt(timeHourInput.value), value, timeAmPmInput.value);
+            });
+            
+            // AM/PM value click
+            ampmValue.addEventListener('click', function() {
+                const newAmPm = timeAmPmInput.value === 'AM' ? 'PM' : 'AM';
+                updateTimeValues(parseInt(timeHourInput.value), parseInt(timeMinuteInput.value), newAmPm);
             });
             
             // Function to update all time values
