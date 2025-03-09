@@ -155,11 +155,22 @@ if (isset($_POST['appointment_id'])) {
     error_log("department: " . $department);
     
     // Update the booking
-    $stmt = $conn->prepare("UPDATE bookings SET `name` = ?, `id_number` = ?, `group_members` = ?, 
-                          `representative_name` = ?, `set_id` = ?, `department_id` = ?, 
-                          `room_id` = ?, `booking_date` = STR_TO_DATE(?, '%Y-%m-%d'), `booking_time_from` = ?, 
-                          `booking_time_to` = ?, `reason` = ? WHERE `id` = ?");
+    $stmt = $conn->prepare("UPDATE bookings SET 
+        `name` = ?, 
+        `id_number` = ?, 
+        `group_members` = ?, 
+        `representative_name` = ?, 
+        `set_id` = ?, 
+        `department_id` = ?, 
+        `room_id` = ?, 
+        `booking_date` = ?, 
+        `booking_time_from` = ?, 
+        `booking_time_to` = ?, 
+        `reason` = ? 
+        WHERE `id` = ?");
+        
     if (!$stmt) {
+        error_log("Prepare failed: " . $conn->error);
         die('Prepare failed: ' . $conn->error);
     }
     
@@ -167,16 +178,39 @@ if (isset($_POST['appointment_id'])) {
     error_log("Final values before binding:");
     error_log("Date value: " . $date);
     error_log("Date type: " . gettype($date));
+    error_log("Set ID: " . $set);
+    error_log("Department ID: " . $department);
+    error_log("Room ID: " . $room);
     
-    $stmt->bind_param("ssssiiiisssi", $name, $id_number, $group_members, $representative_name, $set, 
-                    $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
-    if ($stmt->execute()) {
-        $stmt->close();
-        header('Location: ../index.php');
+    try {
+        $stmt->bind_param("ssssiiiisssi", 
+            $name, 
+            $id_number, 
+            $group_members, 
+            $representative_name, 
+            $set,  // This should be the ID from the sets table
+            $department, 
+            $room, 
+            $date, 
+            $time_from, 
+            $time_to, 
+            $reason, 
+            $appointment_id
+        );
+        
+        if ($stmt->execute()) {
+            $stmt->close();
+            header('Location: ../index.php');
+            exit();
+        } else {
+            error_log("Execute failed: " . $stmt->error);
+            echo "Error updating record: " . $stmt->error;
+            $stmt->close();
+        }
+    } catch (Exception $e) {
+        error_log("Error in update: " . $e->getMessage());
+        echo '<script>alert("Error updating booking. Please try again."); window.location.href = "../index.php";</script>';
         exit();
-    } else {
-        echo "Error updating record: " . $stmt->error;
-        $stmt->close();
     }
 } else {
     header('Location: ../index.php');
