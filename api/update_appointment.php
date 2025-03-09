@@ -183,12 +183,27 @@ if (isset($_POST['appointment_id'])) {
     error_log("Room ID: " . $room);
     
     try {
+        // Log all values before binding
+        error_log("Attempting to bind parameters with values:");
+        error_log("name: " . $name);
+        error_log("id_number: " . $id_number);
+        error_log("group_members: " . $group_members);
+        error_log("representative_name: " . $representative_name);
+        error_log("set_id: " . $set);
+        error_log("department_id: " . $department);
+        error_log("room_id: " . $room);
+        error_log("date: " . $date);
+        error_log("time_from: " . $time_from);
+        error_log("time_to: " . $time_to);
+        error_log("reason: " . $reason);
+        error_log("appointment_id: " . $appointment_id);
+
         $stmt->bind_param("ssssiiiisssi", 
             $name, 
             $id_number, 
             $group_members, 
             $representative_name, 
-            $set,  // This should be the ID from the sets table
+            $set,  
             $department, 
             $room, 
             $date, 
@@ -198,18 +213,26 @@ if (isset($_POST['appointment_id'])) {
             $appointment_id
         );
         
-        if ($stmt->execute()) {
-            $stmt->close();
-            header('Location: ../index.php');
-            exit();
-        } else {
-            error_log("Execute failed: " . $stmt->error);
-            echo "Error updating record: " . $stmt->error;
-            $stmt->close();
+        if (!$stmt->execute()) {
+            error_log("MySQL Error: " . $stmt->error);
+            error_log("MySQL Error Code: " . $stmt->errno);
+            throw new Exception("Database error: " . $stmt->error);
         }
+        
+        if ($stmt->affected_rows === 0) {
+            error_log("No rows were updated. Appointment ID might not exist: " . $appointment_id);
+            throw new Exception("No changes were made to the booking.");
+        }
+        
+        $stmt->close();
+        header('Location: ../index.php');
+        exit();
     } catch (Exception $e) {
-        error_log("Error in update: " . $e->getMessage());
-        echo '<script>alert("Error updating booking. Please try again."); window.location.href = "../index.php";</script>';
+        error_log("Error in update process: " . $e->getMessage());
+        echo '<script>
+            alert("Error updating booking: ' . addslashes($e->getMessage()) . '");
+            window.location.href = "../index.php";
+        </script>';
         exit();
     }
 } else {
