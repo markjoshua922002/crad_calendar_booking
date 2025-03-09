@@ -503,9 +503,12 @@ class ConflictResolver {
 
     formatTime(hour, minute, ampm) {
         if (!hour || !minute || !ampm) return null;
-        // Ensure hour is padded with leading zero if needed
-        hour = hour.toString().padStart(2, '0');
+        
+        // Convert hour to number and handle 12-hour format
+        hour = parseInt(hour, 10);
         minute = minute.toString().padStart(2, '0');
+        
+        // Format in 12-hour format
         return `${hour}:${minute} ${ampm}`;
     }
 
@@ -594,7 +597,7 @@ class ConflictResolver {
             const [toTime, toAMPM] = selected.dataset.to.split(' ');
             const [toHour, toMinute] = toTime.split(':');
             
-            // Update the form fields
+            // Update the form fields with 12-hour format values
             document.getElementById('time_from_hour').value = parseInt(fromHour, 10);
             document.getElementById('time_from_minute').value = fromMinute;
             document.getElementById('time_from_ampm').value = fromAMPM;

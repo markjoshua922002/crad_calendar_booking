@@ -17,14 +17,17 @@ $room_id = $data['room_id'];
 $time_from = date('H:i:s', strtotime($data['time_from']));
 $time_to = date('H:i:s', strtotime($data['time_to']));
 
-// Function to convert 24-hour time to 12-hour format with AM/PM
+// Function to convert time to 12-hour format with AM/PM
 function format12Hour($time) {
     if (is_numeric($time)) {
         // If timestamp is provided
-        return date('g:i A', $time);
+        $formatted = date('g:i A', $time);
+    } else {
+        // If time string is provided
+        $formatted = date('g:i A', strtotime($time));
     }
-    // If time string is provided
-    return date('g:i A', strtotime($time));
+    // Ensure single-digit hours don't have leading zeros
+    return preg_replace('/^0/', '', $formatted);
 }
 
 // Function to generate time slots before and after a given time
@@ -88,6 +91,33 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
+// Generate alternative times
+$base_time = strtotime($time_from);
+$duration = strtotime($time_to) - $base_time;
+$alternative_times = generateTimeSlots($base_time, $duration);
+
+// Filter out times that have conflicts
+$alternative_times = array_filter($alternative_times, function($time) use ($conn, $date, $room_id) {
+    // Convert 12-hour format back to 24-hour for database comparison
+    $time_from = date('H:i:s', strtotime($time['time_from']));
+    $time_to = date('H:i:s', strtotime($time['time_to']));
+    
+    $stmt = $conn->prepare("SELECT 1 FROM bookings 
+                           WHERE booking_date = ? AND room_id = ?
+                           AND ((booking_time_from <= ? AND booking_time_to >= ?) 
+                           OR (booking_time_from <= ? AND booking_time_to >= ?) 
+                           OR (? <= booking_time_from AND ? >= booking_time_to))");
+    
+    $stmt->bind_param("sissssss", $date, $room_id, 
+                      $time_to, $time_from, 
+                      $time_from, $time_to,
+                      $time_from, $time_to);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->num_rows === 0;
+});
+
 // Get alternative rooms
 $stmt = $conn->prepare("SELECT r.id, r.name 
                        FROM rooms r 
@@ -113,34 +143,13 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-// Generate alternative times
-$base_time = strtotime($time_from);
-$duration = strtotime($time_to) - $base_time;
-$alternative_times = generateTimeSlots($base_time, $duration);
-
-// Filter out times that have conflicts
-$alternative_times = array_filter($alternative_times, function($time) use ($conn, $date, $room_id) {
-    $time_from = date('H:i:s', strtotime($time['time_from']));
-    $time_to = date('H:i:s', strtotime($time['time_to']));
-    
-    $stmt = $conn->prepare("SELECT 1 FROM bookings 
-                           WHERE booking_date = ? AND room_id = ?
-                           AND ((booking_time_from <= ? AND booking_time_to >= ?) 
-                           OR (booking_time_from <= ? AND booking_time_to >= ?) 
-                           OR (? <= booking_time_from AND ? >= booking_time_to))");
-    
-    $stmt->bind_param("sissssss", $date, $room_id, 
-                      $time_to, $time_from, 
-                      $time_from, $time_to,
-                      $time_from, $time_to);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    return $result->num_rows === 0;
-});
-
 // Reindex array after filtering
 $alternative_times = array_values($alternative_times);
+
+// Sort alternative times chronologically
+usort($alternative_times, function($a, $b) {
+    return strtotime($a['time_from']) - strtotime($b['time_from']);
+});
 
 echo json_encode([
     'has_conflicts' => count($conflicts) > 0,
