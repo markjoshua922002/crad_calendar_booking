@@ -53,7 +53,7 @@ if (isset($_POST['add_booking'])) {
         if ($result->num_rows > 0) {
             $warning = "Double booking detected for the specified time, date, and room.";
         } else {
-            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, `set`, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO bookings (name, id_number, group_members, representative_name, set_id, department_id, room_id, booking_date, booking_time_from, booking_time_to, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if (!$stmt) {
                 die('Prepare failed: ' . $conn->error);
             }
