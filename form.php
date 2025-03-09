@@ -353,6 +353,7 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 8px;
             align-items: center;
+            width: 100%;
         }
         
         .time-input-container {
@@ -370,6 +371,7 @@ $total_entries = $count_row['total'];
             box-sizing: border-box;
             cursor: pointer;
             background: white;
+            text-align: center;
         }
         
         .toggle-time-input {
@@ -388,6 +390,10 @@ $total_entries = $count_row['total'];
             padding: 0;
         }
         
+        .toggle-time-input:hover {
+            color: #4285f4;
+        }
+        
         .time-dropdown {
             position: absolute;
             top: 100%;
@@ -396,11 +402,12 @@ $total_entries = $count_row['total'];
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             max-height: 200px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
+            margin-top: 2px;
         }
         
         .time-dropdown.show {
@@ -411,10 +418,13 @@ $total_entries = $count_row['total'];
             padding: 6px 10px;
             cursor: pointer;
             transition: background-color 0.2s;
+            text-align: center;
+            font-size: 12px;
         }
         
         .dropdown-item:hover {
             background-color: #f5f5f5;
+            color: #4285f4;
         }
         
         .time-input-container input:focus {
@@ -426,9 +436,10 @@ $total_entries = $count_row['total'];
         .submit-button {
             position: absolute;
             bottom: 15px;
-            right: 960px;
-            height: 40px;
-            width: 100px;
+            left: 15px;
+            right: 15px;
+            width: calc(100% - 30px);
+            height: 36px;
             background-color: #4285f4;
             color: white;
             border: none;
@@ -441,6 +452,7 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
+            margin: 0 auto;
         }
         
         .submit-button:hover {
@@ -849,7 +861,7 @@ $total_entries = $count_row['total'];
             // Set default value to current time
             const now = new Date();
             let hours = now.getHours();
-            const minutes = Math.floor(now.getMinutes() / 5) * 5;
+            const minutes = Math.round(now.getMinutes() / 5) * 5;
             const ampm = hours >= 12 ? 'PM' : 'AM';
             
             // Convert to 12-hour format
@@ -864,6 +876,7 @@ $total_entries = $count_row['total'];
             document.querySelectorAll('.toggle-time-input').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     const targetId = this.getAttribute('data-target');
                     const dropdown = document.getElementById(targetId);
                     
@@ -895,25 +908,54 @@ $total_entries = $count_row['total'];
                 }
             });
             
-            // Handle manual input
-            [timeHourInput, timeMinuteInput].forEach(input => {
-                input.addEventListener('input', function() {
-                    let value = parseInt(this.value);
-                    if (this === timeHourInput) {
-                        if (value < 1) this.value = '1';
-                        if (value > 12) this.value = '12';
-                    } else {
-                        if (value < 0) this.value = '00';
-                        if (value > 59) this.value = '59';
-                        this.value = String(value).padStart(2, '0');
+            // Handle input clicks to show dropdown
+            [timeHourInput, timeMinuteInput, timeAmPmInput].forEach(input => {
+                input.addEventListener('click', function(e) {
+                    const dropdown = this.parentElement.querySelector('.time-dropdown');
+                    if (dropdown) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close all other dropdowns
+                        document.querySelectorAll('.time-dropdown').forEach(d => {
+                            if (d !== dropdown) d.classList.remove('show');
+                        });
+                        
+                        dropdown.classList.add('show');
                     }
                 });
-                
-                input.addEventListener('blur', function() {
-                    if (this === timeMinuteInput && this.value) {
-                        this.value = String(Math.floor(parseInt(this.value) / 5) * 5).padStart(2, '0');
-                    }
-                });
+            });
+            
+            // Handle manual input for hours and minutes
+            timeHourInput.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value) || value < 1) this.value = '1';
+                else if (value > 12) this.value = '12';
+            });
+            
+            timeMinuteInput.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (isNaN(value) || value < 0) this.value = '00';
+                else if (value > 59) this.value = '55';
+                else {
+                    value = Math.round(value / 5) * 5;
+                    this.value = String(value).padStart(2, '0');
+                }
+            });
+            
+            // Format on blur
+            timeMinuteInput.addEventListener('blur', function() {
+                if (this.value === '') this.value = '00';
+                let value = parseInt(this.value);
+                value = Math.round(value / 5) * 5;
+                this.value = String(value).padStart(2, '0');
+            });
+            
+            timeHourInput.addEventListener('blur', function() {
+                if (this.value === '') this.value = '12';
+                let value = parseInt(this.value);
+                if (isNaN(value) || value < 1) this.value = '1';
+                else if (value > 12) this.value = '12';
             });
         });
     </script>
