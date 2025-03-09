@@ -1871,3 +1871,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function openBookingModal(date) {
+    const modal = document.getElementById('bookingModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.getElementById('date').value = date;
+        
+        // Initialize conflict resolver when modal opens
+        initializeConflictResolver();
+        
+        // Clear any existing conflict messages
+        const conflictModal = document.getElementById('conflictModal');
+        if (conflictModal) {
+            conflictModal.style.display = 'none';
+        }
+    }
+}

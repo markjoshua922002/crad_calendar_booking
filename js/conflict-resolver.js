@@ -644,48 +644,60 @@ class ConflictResolver {
     }
 
     showConflictAlert(data) {
+        console.log('Showing conflict alert:', data);
         const conflictModal = document.getElementById('conflictModal');
-        if (!conflictModal) return;
+        if (!conflictModal) {
+            console.error('Conflict modal not found');
+            return;
+        }
 
         // Show the conflict modal
         conflictModal.style.display = 'block';
         
         // Update conflict message
         const conflictMsg = document.getElementById('conflict-message');
-        if (conflictMsg) {
+        if (conflictMsg && data.conflicts && data.conflicts.length > 0) {
             const conflict = data.conflicts[0];
-            conflictMsg.innerHTML = `This room is already booked by ${conflict.department} from ${conflict.time_from} to ${conflict.time_to}`;
+            const timeFrom = this.formatTimeFromDB(conflict.booking_time_from);
+            const timeTo = this.formatTimeFromDB(conflict.booking_time_to);
+            conflictMsg.innerHTML = `This room is already booked from ${timeFrom} to ${timeTo}`;
         }
 
         // Update alternative times
         const altTimesContainer = document.getElementById('alternative-times');
-        if (altTimesContainer) {
-            altTimesContainer.innerHTML = data.alternative_times.map(time => {
-                const timeId = time.time_from.replace(/[:\s]/g, '_');
+        if (altTimesContainer && data.alternativeTimes && data.alternativeTimes.length > 0) {
+            altTimesContainer.innerHTML = data.alternativeTimes.map(time => {
+                const timeId = time.timeFrom.replace(/[:\s]/g, '_');
                 return `
-                    <div class="alternative-option" data-type="time" data-from="${time.time_from}" data-to="${time.time_to}">
+                    <div class="alternative-option" data-type="time" data-from="${time.timeFrom}" data-to="${time.timeTo}">
                         <input type="radio" name="alternative" id="time_${timeId}">
                         <label for="time_${timeId}">
-                            ${time.time_from} - ${time.time_to}
+                            ${time.timeFrom} - ${time.timeTo}
                             <span class="check-icon"><i class="fas fa-check"></i></span>
                         </label>
                     </div>
                 `;
             }).join('');
+            document.querySelector('.conflict-details h5:first-child').style.display = 'block';
+        } else {
+            document.querySelector('.conflict-details h5:first-child').style.display = 'none';
         }
 
         // Update alternative rooms
         const altRoomsContainer = document.getElementById('alternative-rooms');
-        if (altRoomsContainer) {
-            altRoomsContainer.innerHTML = data.alternative_rooms.map(room => `
-                <div class="alternative-option" data-type="room" data-id="${room.id}">
-                    <input type="radio" name="alternative" id="room_${room.id}">
-                    <label for="room_${room.id}">
-                        ${room.name}
+        if (altRoomsContainer && data.alternativeRooms && data.alternativeRooms.length > 0) {
+            altRoomsContainer.innerHTML = data.alternativeRooms.map(room => `
+                <div class="alternative-option" data-type="room" data-id="${room.roomId}">
+                    <input type="radio" name="alternative" id="room_${room.roomId}">
+                    <label for="room_${room.roomId}">
+                        ${room.roomName}
                         <span class="check-icon"><i class="fas fa-check"></i></span>
                     </label>
                 </div>
             `).join('');
+            document.querySelector('.conflict-details h5:last-child').style.display = 'block';
+        } else {
+            document.querySelector('.conflict-details h5:last-child').style.display = 'none';
         }
 
         // Enable/disable apply button based on selection
@@ -705,15 +717,25 @@ class ConflictResolver {
         });
 
         // Add click handler to ignore conflicts button
-        document.querySelector('.ignore-conflicts')?.addEventListener('click', () => {
-            this.hideConflictAlert();
-        });
+        const ignoreBtn = document.querySelector('.ignore-conflicts');
+        if (ignoreBtn) {
+            ignoreBtn.addEventListener('click', () => {
+                this.hideConflictAlert();
+                // Set the form to ignore conflicts
+                document.querySelector('#bookingModal form').dataset.ignoreConflicts = 'true';
+            });
+        }
     }
 
     hideConflictAlert() {
         const conflictModal = document.getElementById('conflictModal');
         if (conflictModal) {
             conflictModal.style.display = 'none';
+        }
+        // Reset the ignore conflicts flag
+        const bookingForm = document.querySelector('#bookingModal form');
+        if (bookingForm) {
+            delete bookingForm.dataset.ignoreConflicts;
         }
     }
 

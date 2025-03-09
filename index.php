@@ -204,6 +204,7 @@ while ($row = $bookings->fetch_assoc()) {
     <link rel="stylesheet" href="mycss/reminder.css?v=<?= time() ?>">
     <link rel="stylesheet" href="mycss/general.css?v=<?= time() ?>">
     <link rel="stylesheet" href="css/conflict-resolver.css?v=<?= time() ?>">
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
     <style>
         /* Remove scrollbar */
         body {
@@ -1347,34 +1348,31 @@ while ($row = $bookings->fetch_assoc()) {
 </div>
 
 <!-- Conflict Resolution Modal -->
-<div id="conflictModal" class="modal conflict-modal">
+<div id="conflictModal" class="modal conflict-modal" style="display: none;">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-exclamation-triangle"></i> Scheduling Conflict</h2>
-            <div class="ai-badge"><i class="fas fa-robot"></i> AI Assistant</div>
-        </div>
-        <div class="modal-body">
-            <div id="conflict-resolution-container">
-                <div class="conflict-alert">
-                    <p id="conflict-message"></p>
-                    
-                    <div class="conflict-details">
-                        <h5>Alternative Times</h5>
-                        <div id="alternative-times" class="alternatives-container">
-                            <!-- Alternative time slots will be inserted here -->
-                        </div>
-                        
-                        <h5>Alternative Rooms</h5>
-                        <div id="alternative-rooms" class="alternatives-container">
-                            <!-- Alternative rooms will be inserted here -->
-                        </div>
-                    </div>
-                    
-                    <div class="conflict-actions">
-                        <button type="button" class="ignore-conflicts">Keep Original Time</button>
-                        <button type="button" class="apply-alternative" disabled>Apply Selected Alternative</button>
-                    </div>
+        <div class="conflict-alert">
+            <h4>
+                <i class="fas fa-exclamation-triangle"></i>
+                Scheduling Conflict Detected
+                <span class="ai-badge"><i class="fas fa-robot"></i> AI Assistant</span>
+            </h4>
+            <p id="conflict-message">There are scheduling conflicts with your requested time. Please review the suggestions below.</p>
+            
+            <div class="conflict-details">
+                <h5>Alternative Times</h5>
+                <div id="alternative-times" class="alternatives-container">
+                    <!-- Alternative time slots will be inserted here -->
                 </div>
+                
+                <h5>Alternative Rooms</h5>
+                <div id="alternative-rooms" class="alternatives-container">
+                    <!-- Alternative rooms will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="conflict-actions">
+                <button type="button" class="ignore-conflicts">Keep Original Time</button>
+                <button type="button" class="apply-alternative" disabled>Apply Selected Alternative</button>
             </div>
         </div>
     </div>
