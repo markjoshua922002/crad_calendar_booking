@@ -849,191 +849,98 @@ function setupAppointmentClicks() {
 }
 
 function showAppointmentDetails(appointment) {
-    try {
-        console.log("Showing appointment details:", appointment);
-        
-        const viewContainer = document.getElementById('viewContainer');
-        if (!viewContainer) {
-            console.error("View container not found");
-            return;
-        }
-        
-        // Format times for display
-        const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        // Create the appointment details HTML
-        viewContainer.innerHTML = `
-            <div class="appointment-details">
-                <p><strong>Research Adviser's Name:</strong> ${appointment.name || 'N/A'}</p>
-                <p><strong>Group Number:</strong> ${appointment.id_number || 'N/A'}</p>
-                <p><strong>Set:</strong> ${appointment.set || 'N/A'}</p>
-                <p><strong>Department:</strong> ${appointment.department_name || 'N/A'}</p>
-                <p><strong>Room:</strong> ${appointment.room_name || 'N/A'}</p>
-                <p><strong>Date:</strong> ${appointment.booking_date || 'N/A'}</p>
-                <p><strong>Time:</strong> ${timeFrom} - ${timeTo}</p>
-                <p><strong>Agenda:</strong> ${appointment.reason || 'N/A'}</p>
-                <p><strong>Representative:</strong> ${appointment.representative_name || 'N/A'}</p>
-                <p><strong>Remarks:</strong> ${appointment.group_members || 'None'}</p>
+    console.log("Showing appointment details:", appointment);
+    const viewContainer = document.getElementById('viewContainer');
+    if (!viewContainer) return;
+
+    const timeFrom = formatTime(appointment.booking_time_from);
+    const timeTo = formatTime(appointment.booking_time_to);
+    const date = new Date(appointment.booking_date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    viewContainer.innerHTML = `
+        <div class="appointment-details">
+            <div class="detail-group">
+                <label>Research Adviser:</label>
+                <span>${appointment.name}</span>
             </div>
-            <div class="form-actions">
-                <button type="button" class="edit-from-view" data-id="${appointment.id}">Edit Appointment</button>
+            <div class="detail-group">
+                <label>Representative:</label>
+                <span>${appointment.representative_name}</span>
             </div>
-        `;
-        
-        // Add event listener to the edit button
-        const editButton = viewContainer.querySelector('.edit-from-view');
-        if (editButton) {
-            editButton.addEventListener('click', function() {
-                // Hide the view modal
-                const viewModal = document.getElementById('viewModal');
-                if (viewModal) {
-                    hideModal(viewModal);
-                }
-                
-                // Fill and show the edit form
-                fillEditForm(appointment);
-            });
-        }
-        
-        // Show the view modal
-        const viewModal = document.getElementById('viewModal');
-        if (viewModal) {
-            // Close any other open modals first
-            document.querySelectorAll('.modal').forEach(m => {
-                if (m.id !== 'viewModal' && m.style.display === 'flex') {
-                    hideModal(m);
-                }
-            });
-            
-            // Show the modal
-            showModal(viewModal);
-        } else {
-            console.error("View modal not found");
-        }
-    } catch (error) {
-        console.error("Error in showAppointmentDetails:", error);
-    }
+            <div class="detail-group">
+                <label>Set:</label>
+                <span>${appointment.set_name || 'N/A'}</span>
+            </div>
+            <div class="detail-group">
+                <label>Department:</label>
+                <span>${appointment.department_name}</span>
+            </div>
+            <div class="detail-group">
+                <label>Room:</label>
+                <span>${appointment.room_name}</span>
+            </div>
+            <div class="detail-group">
+                <label>Date:</label>
+                <span>${date}</span>
+            </div>
+            <div class="detail-group">
+                <label>Time:</label>
+                <span>${timeFrom} - ${timeTo}</span>
+            </div>
+            <div class="detail-group">
+                <label>Agenda:</label>
+                <span>${appointment.reason}</span>
+            </div>
+            <div class="detail-group">
+                <label>Remarks:</label>
+                <span>${appointment.group_members || 'N/A'}</span>
+            </div>
+        </div>
+        <div class="appointment-actions">
+            <button onclick="fillEditForm(${JSON.stringify(appointment).replace(/"/g, '&quot;')})" class="edit-button">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+        </div>
+    `;
+
+    showModal(document.getElementById('viewModal'));
 }
 
 function fillEditForm(appointment) {
-    try {
-        console.log("Filling edit form with appointment:", appointment);
-        
-        // Set the appointment ID
-        const appointmentIdInput = document.getElementById('appointment_id');
-        if (appointmentIdInput) {
-            appointmentIdInput.value = appointment.id;
-        }
-        
-        // Set the department
-        const departmentSelect = document.getElementById('edit_department');
-        if (departmentSelect) {
-            departmentSelect.value = appointment.department_id;
-        }
-        
-        // Set the room
-        const roomSelect = document.getElementById('edit_room');
-        if (roomSelect) {
-            roomSelect.value = appointment.room_id;
-        }
-        
-        // Set the name
-        const nameInput = document.getElementById('edit_name');
-        if (nameInput) {
-            nameInput.value = appointment.name || '';
-        }
-        
-        // Set the ID number
-        const idNumberInput = document.getElementById('edit_id_number');
-        if (idNumberInput) {
-            idNumberInput.value = appointment.id_number || '';
-        }
-        
-        // Set the set
-        const setInput = document.getElementById('edit_set');
-        if (setInput) {
-            setInput.value = appointment.set || '';
-        }
-        
-        // Set the date
-        const dateInput = document.getElementById('edit_date');
-        if (dateInput) {
-            dateInput.value = appointment.booking_date || '';
-        }
-        
-        // Set the reason
-        const reasonInput = document.getElementById('edit_reason');
-        if (reasonInput) {
-            reasonInput.value = appointment.reason || '';
-        }
-        
-        // Set the representative name
-        const representativeNameInput = document.getElementById('edit_representative_name');
-        if (representativeNameInput) {
-            representativeNameInput.value = appointment.representative_name || '';
-        }
-        
-        // Set the group members
-        const groupMembersInput = document.getElementById('edit_group_members');
-        if (groupMembersInput) {
-            groupMembersInput.value = appointment.group_members || '';
-        }
-        
-        // Set the time values
-        try {
-            // Parse the time values
-            const timeFrom = new Date(`2000-01-01T${appointment.booking_time_from}`);
-            const timeTo = new Date(`2000-01-01T${appointment.booking_time_to}`);
-            
-            // Extract hours, minutes, and AM/PM
-            const fromHour = timeFrom.getHours() % 12 || 12;
-            const fromMinute = timeFrom.getMinutes().toString().padStart(2, '0');
-            const fromAMPM = timeFrom.getHours() < 12 ? 'AM' : 'PM';
-            
-            const toHour = timeTo.getHours() % 12 || 12;
-            const toMinute = timeTo.getMinutes().toString().padStart(2, '0');
-            const toAMPM = timeTo.getHours() < 12 ? 'AM' : 'PM';
-            
-            // Set the time from values
-            const timeFromHourInput = document.getElementById('edit_time_from_hour');
-            const timeFromMinuteInput = document.getElementById('edit_time_from_minute');
-            const timeFromAMPMInput = document.getElementById('edit_time_from_ampm');
-            
-            if (timeFromHourInput) timeFromHourInput.value = fromHour;
-            if (timeFromMinuteInput) timeFromMinuteInput.value = fromMinute;
-            if (timeFromAMPMInput) timeFromAMPMInput.value = fromAMPM;
-            
-            // Set the time to values
-            const timeToHourInput = document.getElementById('edit_time_to_hour');
-            const timeToMinuteInput = document.getElementById('edit_time_to_minute');
-            const timeToAMPMInput = document.getElementById('edit_time_to_ampm');
-            
-            if (timeToHourInput) timeToHourInput.value = toHour;
-            if (timeToMinuteInput) timeToMinuteInput.value = toMinute;
-            if (timeToAMPMInput) timeToAMPMInput.value = toAMPM;
-        } catch (error) {
-            console.error("Error setting time values:", error);
-        }
-        
-        // Show the edit modal
-        const editModal = document.getElementById('editModal');
-        if (editModal) {
-            // Close any other open modals first
-            document.querySelectorAll('.modal').forEach(m => {
-                if (m.id !== 'editModal' && m.style.display === 'flex') {
-                    hideModal(m);
-                }
-            });
-            
-            // Show the modal
-            showModal(editModal);
-        } else {
-            console.error("Edit modal not found");
-        }
-    } catch (error) {
-        console.error("Error in fillEditForm:", error);
-    }
+    console.log("Filling edit form with appointment:", appointment);
+    
+    // Hide view modal and show edit modal
+    hideModal(document.getElementById('viewModal'));
+    showModal(document.getElementById('editModal'));
+
+    // Set form values
+    document.getElementById('appointment_id').value = appointment.id;
+    document.getElementById('edit_name').value = appointment.name;
+    document.getElementById('edit_representative_name').value = appointment.representative_name;
+    document.getElementById('edit_id_number').value = appointment.id_number;
+    document.getElementById('edit_set').value = appointment.set_name;
+    document.getElementById('edit_department').value = appointment.department_id;
+    document.getElementById('edit_room').value = appointment.room_id;
+    document.getElementById('edit_date').value = appointment.booking_date;
+    document.getElementById('edit_reason').value = appointment.reason;
+    document.getElementById('edit_group_members').value = appointment.group_members || '';
+
+    // Parse and set time values
+    const timeFrom = new Date(`2000-01-01 ${appointment.booking_time_from}`);
+    const timeTo = new Date(`2000-01-01 ${appointment.booking_time_to}`);
+
+    document.getElementById('edit_time_from_hour').value = timeFrom.getHours() > 12 ? timeFrom.getHours() - 12 : (timeFrom.getHours() === 0 ? 12 : timeFrom.getHours());
+    document.getElementById('edit_time_from_minute').value = timeFrom.getMinutes().toString().padStart(2, '0');
+    document.getElementById('edit_time_from_ampm').value = timeFrom.getHours() >= 12 ? 'PM' : 'AM';
+
+    document.getElementById('edit_time_to_hour').value = timeTo.getHours() > 12 ? timeTo.getHours() - 12 : (timeTo.getHours() === 0 ? 12 : timeTo.getHours());
+    document.getElementById('edit_time_to_minute').value = timeTo.getMinutes().toString().padStart(2, '0');
+    document.getElementById('edit_time_to_ampm').value = timeTo.getHours() >= 12 ? 'PM' : 'AM';
 }
 
 function setupExportCalendar() {

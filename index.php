@@ -120,10 +120,15 @@ if (isset($_POST['add_room'])) {
 $searched_appointment = null;
 if (isset($_POST['search_booking'])) {
     $search_name = $_POST['search_name'];
-    $stmt = $conn->prepare("SELECT bookings.*, departments.name as department_name, departments.color, rooms.name as room_name 
+    $stmt = $conn->prepare("SELECT bookings.*, 
+                          departments.name as department_name, 
+                          departments.color, 
+                          rooms.name as room_name,
+                          sets.name as set_name 
                           FROM bookings 
                           JOIN departments ON bookings.department_id = departments.id 
                           JOIN rooms ON bookings.room_id = rooms.id 
+                          JOIN sets ON bookings.set_id = sets.id 
                           WHERE bookings.representative_name LIKE ? OR bookings.name LIKE ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
@@ -150,10 +155,15 @@ $firstDayOfMonth = date('w', strtotime("$year-$month-01"));
 $totalDaysInMonth = date('t', strtotime("$year-$month-01"));
 
 // Fetch bookings for the current month
-$bookings = $conn->query("SELECT bookings.*, departments.name as department_name, departments.color, rooms.name as room_name 
+$bookings = $conn->query("SELECT bookings.*, 
+    departments.name as department_name, 
+    departments.color, 
+    rooms.name as room_name,
+    sets.name as set_name 
     FROM bookings 
     JOIN departments ON bookings.department_id = departments.id 
     JOIN rooms ON bookings.room_id = rooms.id 
+    JOIN sets ON bookings.set_id = sets.id 
     WHERE MONTH(booking_date) = '$month' AND YEAR(booking_date) = '$year'");
 
 $appointments = [];
