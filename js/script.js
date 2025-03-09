@@ -1123,7 +1123,31 @@ function setupDeleteAppointment() {
                                 
                                 // Only reload if deletion was successful
                                 if (data.success) {
-                                    window.location.reload();
+                                    // Update the appointments data in the hidden element
+                                    const appointmentsDataElement = document.getElementById('appointmentsData');
+                                    if (appointmentsDataElement) {
+                                        const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
+                                        
+                                        // Remove the deleted appointment from the data
+                                        Object.keys(appointmentsData).forEach(day => {
+                                            appointmentsData[day] = appointmentsData[day].filter(
+                                                appointment => appointment.id != appointmentId
+                                            );
+                                            // Remove the day if it has no appointments
+                                            if (appointmentsData[day].length === 0) {
+                                                delete appointmentsData[day];
+                                            }
+                                        });
+                                        
+                                        // Update the hidden element
+                                        appointmentsDataElement.textContent = JSON.stringify(appointmentsData);
+                                        
+                                        // Reinitialize the conflict resolver with updated data
+                                        initializeConflictResolver();
+                                        
+                                        // Reload the page to refresh the calendar view
+                                        window.location.reload();
+                                    }
                                 }
                             }, 3000);
                         }
