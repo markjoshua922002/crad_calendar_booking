@@ -1086,20 +1086,70 @@ function setupDeleteAppointment() {
                 if (confirm('Are you sure you want to delete this appointment?')) {
                     console.log(`Deleting appointment ID: ${appointmentId}`);
                     
-                    // Create a form to submit the delete request
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `api/delete_appointment.php`;
-                    
-                    const idInput = document.createElement('input');
-                    idInput.type = 'hidden';
-                    idInput.name = 'id';
-                    idInput.value = appointmentId;
-                    
-                    form.appendChild(idInput);
-                    document.body.appendChild(form);
-                    
-                    form.submit();
+                    // Use AJAX to delete the appointment
+                    fetch('api/delete_appointment.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${appointmentId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Delete result:", data);
+                        
+                        // Close the edit modal
+                        const editModal = document.getElementById('editModal');
+                        if (editModal) {
+                            hideModal(editModal);
+                        }
+                        
+                        // Show message based on response
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'}`;
+                        alertDiv.innerHTML = `
+                            <i class="fas fa-${data.success ? 'check' : 'exclamation'}-circle"></i>
+                            ${data.message}
+                        `;
+                        
+                        // Insert the alert at the top of the main content
+                        const mainContent = document.querySelector('.main-content');
+                        if (mainContent) {
+                            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                            
+                            // Remove the alert after 3 seconds
+                            setTimeout(() => {
+                                alertDiv.remove();
+                                
+                                // Only reload if deletion was successful
+                                if (data.success) {
+                                    window.location.reload();
+                                }
+                            }, 3000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error deleting appointment:", error);
+                        
+                        // Show error message
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-danger';
+                        alertDiv.innerHTML = `
+                            <i class="fas fa-exclamation-circle"></i>
+                            Error deleting appointment. Please try again.
+                        `;
+                        
+                        // Insert the alert at the top of the main content
+                        const mainContent = document.querySelector('.main-content');
+                        if (mainContent) {
+                            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                            
+                            // Remove the alert after 3 seconds
+                            setTimeout(() => {
+                                alertDiv.remove();
+                            }, 3000);
+                        }
+                    });
                 } else {
                     console.log("Delete cancelled");
                 }
