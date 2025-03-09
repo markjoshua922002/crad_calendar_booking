@@ -94,7 +94,7 @@ if (isset($_POST['add_adviser'])) {
 $rooms = $conn->query("SELECT id, name FROM rooms ORDER BY name");
 $departments = $conn->query("SELECT * FROM departments ORDER BY name");
 $groups = $conn->query("SELECT * FROM groups ORDER BY group_name");
-$sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
+$sets = $conn->query("SELECT * FROM sets ORDER BY name");
 $advisers = $conn->query("SELECT a.*, d.name as department_name FROM advisers a LEFT JOIN departments d ON a.department_id = d.id ORDER BY a.adviser_name");
 
 // Create tables if they don't exist
