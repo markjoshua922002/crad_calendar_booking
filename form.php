@@ -182,9 +182,9 @@ $total_entries = $count_row['total'];
             display: flex;
             gap: 15px;
             flex: 1;
-            overflow: hidden;
+            overflow: auto;
             min-height: 0;
-            height: calc(100vh - 180px); /* Adjust for top bar + search + padding */
+            height: calc(100vh - 180px);
         }
         
         .form-container {
@@ -196,8 +196,9 @@ $total_entries = $count_row['total'];
             display: flex;
             flex-direction: column;
             width: 28%;
-            height: fit-content;
+            height: auto;
             min-height: 0;
+            overflow-y: auto;
         }
         
         .form-container h2 {
@@ -405,18 +406,22 @@ $total_entries = $count_row['total'];
             
             .main-content {
                 height: 978px;
+                overflow-y: auto;
             }
             
             .page-layout {
-                height: 848px; /* 978px - (top-bar + search + result-count) with reduced sizes */
+                height: auto;
+                min-height: 848px;
             }
             
             .data-table-wrapper {
-                height: 778px; /* 848px - (padding + header) with reduced sizes */
+                height: auto;
+                min-height: 778px;
             }
             
             .logbook-form {
-                max-height: 778px; /* Same as data-table-wrapper */
+                height: auto;
+                min-height: 778px;
             }
         }
         
