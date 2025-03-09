@@ -24,10 +24,70 @@ if (isset($_POST['appointment_id'])) {
     $id_number = $_POST['edit_id_number'];
     $group_members = $_POST['edit_group_members'];
     $representative_name = $_POST['edit_representative_name'];
-    $set = $_POST['edit_set'];
+    $set_name = $_POST['edit_set'];
     $department = $_POST['edit_department'];
     $room = $_POST['edit_room'];
     
+    // Get set_id from name
+    $check_set = $conn->prepare("SELECT id FROM sets WHERE name = ?");
+    if (!$check_set) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $check_set->bind_param("s", $set_name);
+    $check_set->execute();
+    $set_result = $check_set->get_result();
+    if ($set_result->num_rows === 0) {
+        $check_set->close();
+        error_log("Invalid set name provided: " . $set_name);
+        echo '<script>alert("Invalid set selected."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    $set_row = $set_result->fetch_assoc();
+    $set = $set_row['id'];
+    $check_set->close();
+
+    // Debug log the set information
+    error_log("Set information:");
+    error_log("Set name: " . $set_name);
+    error_log("Set ID: " . $set);
+
+    // Also validate department_id and room_id
+    $check_dept = $conn->prepare("SELECT id FROM departments WHERE id = ?");
+    if (!$check_dept) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $check_dept->bind_param("i", $department);
+    $check_dept->execute();
+    $dept_result = $check_dept->get_result();
+    if ($dept_result->num_rows === 0) {
+        $check_dept->close();
+        error_log("Invalid department_id provided: " . $department);
+        echo '<script>alert("Invalid department selected."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    $check_dept->close();
+
+    $check_room = $conn->prepare("SELECT id FROM rooms WHERE id = ?");
+    if (!$check_room) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $check_room->bind_param("i", $room);
+    $check_room->execute();
+    $room_result = $check_room->get_result();
+    if ($room_result->num_rows === 0) {
+        $check_room->close();
+        error_log("Invalid room_id provided: " . $room);
+        echo '<script>alert("Invalid room selected."); window.location.href = "../index.php";</script>';
+        exit();
+    }
+    $check_room->close();
+    
+    // Debug log the foreign key values
+    error_log("Foreign key values:");
+    error_log("set_id: " . $set);
+    error_log("department_id: " . $department);
+    error_log("room_id: " . $room);
+
     // Validate and format the date
     $input_date = $_POST['edit_date'];
     error_log("Raw input date: " . $input_date);
