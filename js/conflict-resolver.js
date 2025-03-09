@@ -434,21 +434,27 @@ class ConflictResolver {
             'time_to_hour', 'time_to_minute', 'time_to_ampm'
         ].map(id => document.getElementById(id));
 
-        // Add change event listeners
+        // Add real-time event listeners
         if (dateInput) {
-            dateInput.addEventListener('change', () => this.checkConflicts());
-            console.log('Added date input listener');
+            ['input', 'change'].forEach(eventType => {
+                dateInput.addEventListener(eventType, () => this.debouncedCheckConflicts());
+            });
+            console.log('Added date input listeners');
         }
 
         if (roomInput) {
-            roomInput.addEventListener('change', () => this.checkConflicts());
-            console.log('Added room input listener');
+            ['input', 'change'].forEach(eventType => {
+                roomInput.addEventListener(eventType, () => this.debouncedCheckConflicts());
+            });
+            console.log('Added room input listeners');
         }
 
         timeInputs.forEach(input => {
             if (input) {
-                input.addEventListener('change', () => this.checkConflicts());
-                console.log(`Added listener for ${input.id}`);
+                ['input', 'change', 'keyup', 'blur'].forEach(eventType => {
+                    input.addEventListener(eventType, () => this.debouncedCheckConflicts());
+                });
+                console.log(`Added real-time listeners for ${input.id}`);
             }
         });
 
@@ -465,6 +471,21 @@ class ConflictResolver {
             ignoreBtn.addEventListener('click', () => this.hideConflictAlert());
             console.log('Added ignore button listener');
         }
+
+        // Initialize the debounce timer
+        this.debounceTimer = null;
+    }
+
+    debouncedCheckConflicts() {
+        // Clear any existing timeout
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+        }
+
+        // Set a new timeout
+        this.debounceTimer = setTimeout(() => {
+            this.checkConflicts();
+        }, 300); // Wait 300ms after last input before checking
     }
 
     checkConflicts() {
