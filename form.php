@@ -351,14 +351,26 @@ $total_entries = $count_row['total'];
         
         .time-picker {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
             margin-bottom: 0;
+        }
+        
+        .time-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .time-input {
+            flex: 1;
+            min-width: 100px;
             position: relative;
         }
         
-        .time-picker input[type="time"] {
+        .time-input input[type="text"] {
             width: 100%;
             padding: 6px 32px 6px 10px;
             border: 1px solid #e0e0e0;
@@ -370,30 +382,38 @@ $total_entries = $count_row['total'];
             background: white;
         }
         
-        .time-picker input[type="time"]::-webkit-calendar-picker-indicator {
-            opacity: 0;
-            cursor: pointer;
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+        .time-selects {
+            display: flex;
+            gap: 4px;
+            align-items: center;
         }
         
-        .time-picker::after {
-            content: '\f017';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 400;
+        .time-selects select {
+            padding: 6px 24px 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+            height: 30px;
+            cursor: pointer;
+            background: white;
+            min-width: 70px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+        
+        .time-input i {
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
             color: #666;
             pointer-events: none;
-            font-size: 14px;
         }
         
-        .time-picker input[type="time"]:focus {
+        .time-input input:focus,
+        .time-selects select:focus {
             outline: none;
             border-color: #4285f4;
             box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
@@ -651,8 +671,16 @@ $total_entries = $count_row['total'];
                         $inquiry = $conn->real_escape_string($_POST['inquiry']);
                         $submission_date = $conn->real_escape_string($_POST['submission_date']);
                         
-                        // Get time from the time input
+                        // Get time from the manual input
                         $time = $conn->real_escape_string($_POST['time_manual']);
+                        
+                        // Ensure time is in proper format (HH:MM:00)
+                        if (preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/', $time)) {
+                            $time .= ':00';
+                        } else {
+                            echo "<div class='error-message'><i class='fas fa-exclamation-circle'></i> Invalid time format.</div>";
+                            exit;
+                        }
                         
                         // Check if the submission date is in the past
                         $current_date = date('Y-m-d');
@@ -709,7 +737,26 @@ $total_entries = $count_row['total'];
                         <div class="form-group">
                             <label for="time">Time:</label>
                             <div class="time-picker">
-                                <input type="time" id="time_manual" name="time_manual" required>
+                                <div class="time-input-group">
+                                    <div class="time-input">
+                                        <input type="text" id="time_manual" name="time_manual" placeholder="HH:MM" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" required>
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="time-selects">
+                                        <select id="time_hour" name="time_hour">
+                                            <option value="" disabled selected>Hour</option>
+                                            <?php for ($i = 0; $i < 24; $i++): ?>
+                                                <option value="<?= sprintf("%02d", $i) ?>"><?= sprintf("%02d", $i) ?></option>
+                                            <?php endfor; ?>
+                                        </select>
+                                        <select id="time_minute" name="time_minute">
+                                            <option value="" disabled selected>Min</option>
+                                            <?php for ($i = 0; $i < 60; $i += 5): ?>
+                                                <option value="<?= sprintf("%02d", $i) ?>"><?= sprintf("%02d", $i) ?></option>
+                                            <?php endfor; ?>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -776,19 +823,52 @@ $total_entries = $count_row['total'];
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const timeInput = document.getElementById('time_manual');
+            const hourSelect = document.getElementById('time_hour');
+            const minuteSelect = document.getElementById('time_minute');
             
             // Set default value to current time
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            timeInput.value = `${hours}:${minutes}`;
+            const minutes = String(now.getMinutes() - (now.getMinutes() % 5)).padStart(2, '0');
             
-            // Handle time input changes
-            timeInput.addEventListener('change', function() {
+            timeInput.value = `${hours}:${minutes}`;
+            hourSelect.value = hours;
+            minuteSelect.value = minutes;
+            
+            // Update dropdowns when manual input changes
+            timeInput.addEventListener('input', function() {
                 if (this.value) {
-                    // Ensure the time is properly formatted
                     const [hours, minutes] = this.value.split(':');
-                    this.value = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+                    if (hours && minutes) {
+                        hourSelect.value = hours.padStart(2, '0');
+                        // Round minutes to nearest 5
+                        const roundedMinutes = Math.round(parseInt(minutes) / 5) * 5;
+                        minuteSelect.value = String(roundedMinutes).padStart(2, '0');
+                    }
+                }
+            });
+            
+            // Update manual input when dropdowns change
+            [hourSelect, minuteSelect].forEach(select => {
+                select.addEventListener('change', function() {
+                    if (hourSelect.value && minuteSelect.value) {
+                        timeInput.value = `${hourSelect.value}:${minuteSelect.value}`;
+                    }
+                });
+            });
+            
+            // Validate manual input format
+            timeInput.addEventListener('blur', function() {
+                if (this.value) {
+                    const [hours, minutes] = this.value.split(':');
+                    const h = parseInt(hours);
+                    const m = parseInt(minutes);
+                    
+                    if (h >= 0 && h < 24 && m >= 0 && m < 60) {
+                        this.value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    } else {
+                        this.value = '';
+                    }
                 }
             });
         });
