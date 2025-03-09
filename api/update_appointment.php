@@ -15,6 +15,10 @@ if ($conn->connect_error) {
 }
 
 if (isset($_POST['appointment_id'])) {
+    // Debug log all POST data
+    error_log("POST data received:");
+    error_log(print_r($_POST, true));
+
     $appointment_id = $_POST['appointment_id'];
     $name = $_POST['edit_name'];
     $id_number = $_POST['edit_id_number'];
@@ -26,20 +30,23 @@ if (isset($_POST['appointment_id'])) {
     
     // Validate and format the date
     $input_date = $_POST['edit_date'];
-    error_log("Input date: " . $input_date);
+    error_log("Raw input date: " . $input_date);
     
-    if (!strtotime($input_date)) {
-        error_log("Invalid date format received: " . $input_date);
-        echo '<script>alert("Invalid date format."); window.location.href = "../index.php";</script>';
+    // Convert date to DateTime object for validation
+    try {
+        $dateObj = new DateTime($input_date);
+        $date = $dateObj->format('Y-m-d');
+        error_log("Formatted date using DateTime: " . $date);
+    } catch (Exception $e) {
+        error_log("Date parsing error: " . $e->getMessage());
+        echo '<script>alert("Invalid date format provided."); window.location.href = "../index.php";</script>';
         exit();
     }
-    $date = date('Y-m-d', strtotime($input_date));
-    error_log("Formatted date: " . $date);
     
-    // Validate the date format
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date)) {
-        error_log("Date format validation failed: " . $date);
-        echo '<script>alert("Invalid date format. Please use YYYY-MM-DD format."); window.location.href = "../index.php";</script>';
+    // Additional date validation
+    if (!$date || $date === '1970-01-01' || $date === '0000-00-00') {
+        error_log("Invalid date after formatting: " . $date);
+        echo '<script>alert("Invalid date format."); window.location.href = "../index.php";</script>';
         exit();
     }
     
@@ -90,11 +97,17 @@ if (isset($_POST['appointment_id'])) {
     // Update the booking
     $stmt = $conn->prepare("UPDATE bookings SET `name` = ?, `id_number` = ?, `group_members` = ?, 
                           `representative_name` = ?, `set_id` = ?, `department_id` = ?, 
-                          `room_id` = ?, `booking_date` = ?, `booking_time_from` = ?, 
+                          `room_id` = ?, `booking_date` = STR_TO_DATE(?, '%Y-%m-%d'), `booking_time_from` = ?, 
                           `booking_time_to` = ?, `reason` = ? WHERE `id` = ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
+    
+    // Debug the final values before binding
+    error_log("Final values before binding:");
+    error_log("Date value: " . $date);
+    error_log("Date type: " . gettype($date));
+    
     $stmt->bind_param("ssssiiiisssi", $name, $id_number, $group_members, $representative_name, $set, 
                     $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
     if ($stmt->execute()) {
