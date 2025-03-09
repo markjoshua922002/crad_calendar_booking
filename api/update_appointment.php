@@ -171,7 +171,7 @@ if (isset($_POST['appointment_id'])) {
         `set_id` = ?, 
         `department_id` = ?, 
         `room_id` = ?, 
-        `booking_date` = STR_TO_DATE(?, '%Y-%m-%d'), 
+        `booking_date` = ?, 
         `booking_time_from` = ?, 
         `booking_time_to` = ?, 
         `reason` = ? 
@@ -243,36 +243,49 @@ if (isset($_POST['appointment_id'])) {
             throw new Exception("Database error: " . $stmt->error);
         }
         
-        if ($stmt->affected_rows === 0) {
-            error_log("No rows were updated. Appointment ID: " . $appointment_id);
-            // Check if the data is actually different
-            $verify_query = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
-            $verify_query->bind_param("i", $appointment_id);
-            $verify_query->execute();
-            $verify_result = $verify_query->get_result();
-            $updated_data = $verify_result->fetch_assoc();
-            error_log("Updated appointment data: " . print_r($updated_data, true));
-            $verify_query->close();
-            
-            // Only throw exception if data is different
-            if ($updated_data !== null && $updated_data != $old_appointment) {
-                throw new Exception("No changes were made to the booking. Data might be the same.");
-            }
-        }
-        
-        // Verify the update was successful
+        // Always verify the update was successful
         $verify_update = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
         $verify_update->bind_param("i", $appointment_id);
         $verify_update->execute();
         $verify_result = $verify_update->get_result();
         
-        if ($verify_result->num_rows > 0) {
-            $updated_booking = $verify_result->fetch_assoc();
-            error_log("Successfully updated booking: " . print_r($updated_booking, true));
-        } else {
-            error_log("Warning: Cannot find booking after update!");
+        if ($verify_result->num_rows === 0) {
+            error_log("Critical error: Booking disappeared after update!");
+            throw new Exception("Critical error: Booking disappeared after update!");
         }
+        
+        $updated_booking = $verify_result->fetch_assoc();
+        error_log("Successfully updated booking: " . print_r($updated_booking, true));
+        
+        // Verify all fields were updated correctly
+        $expected_values = [
+            'name' => $name,
+            'id_number' => $id_number,
+            'group_members' => $group_members,
+            'representative_name' => $representative_name,
+            'set_id' => $set,
+            'department_id' => $department,
+            'room_id' => $room,
+            'booking_date' => $date,
+            'booking_time_from' => $time_from,
+            'booking_time_to' => $time_to,
+            'reason' => $reason
+        ];
+        
+        foreach ($expected_values as $field => $expected) {
+            if ($updated_booking[$field] != $expected) {
+                error_log("Field mismatch after update: $field");
+                error_log("Expected: $expected");
+                error_log("Got: " . $updated_booking[$field]);
+                throw new Exception("Update verification failed: $field field mismatch");
+            }
+        }
+        
         $verify_update->close();
+        $stmt->close();
+        
+        // Set success message
+        $_SESSION['success'] = "Booking successfully updated!";
         
         // Close connection before redirecting
         $conn->close();
