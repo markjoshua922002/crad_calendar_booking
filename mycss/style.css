@@ -26,6 +26,7 @@ body {
     margin-left: 250px; /* Match sidebar width */
     transition: margin-left 0.3s ease;
     position: relative;
+    min-width: 0; /* Prevent content from pushing sidebar */
     width: calc(100% - 250px); /* Ensure proper width calculation */
 }
 
