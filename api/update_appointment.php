@@ -60,13 +60,13 @@ if (isset($_POST['appointment_id'])) {
     
     // Update the booking
     $stmt = $conn->prepare("UPDATE bookings SET `name` = ?, `id_number` = ?, `group_members` = ?, 
-                          `representative_name` = ?, `set` = ?, `department_id` = ?, 
+                          `representative_name` = ?, `set_id` = ?, `department_id` = ?, 
                           `room_id` = ?, `booking_date` = ?, `booking_time_from` = ?, 
                           `booking_time_to` = ?, `reason` = ? WHERE `id` = ?");
     if (!$stmt) {
         die('Prepare failed: ' . $conn->error);
     }
-    $stmt->bind_param("ssssissssssi", $name, $id_number, $group_members, $representative_name, $set, 
+    $stmt->bind_param("ssssiiiisssi", $name, $id_number, $group_members, $representative_name, $set, 
                     $department, $room, $date, $time_from, $time_to, $reason, $appointment_id);
     if ($stmt->execute()) {
         $stmt->close();
