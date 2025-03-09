@@ -253,7 +253,7 @@
     
     .data-container {
         max-width: 100%;
-        height: 600px; /* Fixed height on mobile */
+        height: 610px; /* Fixed height on mobile */
     }
 }
 
