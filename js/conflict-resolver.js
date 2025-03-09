@@ -38,7 +38,9 @@ class ConflictResolver {
         
         hours.forEach((hour, index) => {
             minutes.forEach(minute => {
-                slots.push(`${hour}:${minute} ${ampm[index]}`);
+                // Format hour without leading zero
+                const formattedHour = hour.toString();
+                slots.push(`${formattedHour}:${minute} ${ampm[index]}`);
             });
         });
         
@@ -217,8 +219,8 @@ class ConflictResolver {
             
             if (isAvailable) {
                 alternatives.push({
-                    timeFrom: this.convertTo12Hour(startSlot),
-                    timeTo: this.convertTo12Hour(endSlot),
+                    timeFrom: startSlot,
+                    timeTo: endSlot,
                     score: this.calculateTimeScore(startSlot, date)
                 });
             }
@@ -242,32 +244,39 @@ class ConflictResolver {
      * Convert time string to minutes since midnight
      */
     timeToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        
         const [time, modifier] = timeStr.split(' ');
         let [hours, minutes] = time.split(':').map(Number);
         
+        // Convert to 24-hour format for calculation
         if (hours === 12) {
-            hours = modifier === 'AM' ? 0 : 12;
-        } else if (modifier === 'PM') {
+            hours = modifier.toUpperCase() === 'AM' ? 0 : 12;
+        } else if (modifier.toUpperCase() === 'PM' && hours !== 12) {
             hours += 12;
         }
         
-        return (hours * 60) + minutes;
+        return (hours * 60) + parseInt(minutes || 0, 10);
     }
     
     /**
      * Convert minutes since midnight to time string
      */
     minutesToTime(minutes) {
+        if (!minutes && minutes !== 0) return '';
+        
         let hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
         const modifier = hours >= 12 ? 'PM' : 'AM';
         
+        // Convert to 12-hour format
         if (hours > 12) {
             hours -= 12;
         } else if (hours === 0) {
             hours = 12;
         }
         
+        // Format without leading zeros on hours
         return `${hours}:${mins.toString().padStart(2, '0')} ${modifier}`;
     }
     
@@ -278,8 +287,18 @@ class ConflictResolver {
     calculateTimeScore(timeSlot, date) {
         let score = 50; // Base score
         
+        // Parse the time slot
+        const [time, modifier] = timeSlot.split(' ');
+        let hour = parseInt(time.split(':')[0], 10);
+        
+        // Convert to 24-hour for scoring
+        if (modifier === 'PM' && hour !== 12) {
+            hour += 12;
+        } else if (modifier === 'AM' && hour === 12) {
+            hour = 0;
+        }
+        
         // Prefer business hours (9 AM - 4 PM)
-        const hour = parseInt(timeSlot.split(':')[0], 10);
         if (hour >= 9 && hour <= 16) {
             score += 20;
         }
