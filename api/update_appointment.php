@@ -191,25 +191,36 @@ if (isset($_POST['appointment_id'])) {
     error_log("Room ID: " . $room);
     
     try {
-        // Ensure date is in correct format
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            throw new Exception("Invalid date format. Expected YYYY-MM-DD, got: " . $date);
-        }
+        // Log the SQL query for debugging
+        $debug_query = "UPDATE bookings SET 
+            name = '$name', 
+            id_number = '$id_number', 
+            group_members = '$group_members', 
+            representative_name = '$representative_name', 
+            set_id = $set, 
+            department_id = $department, 
+            room_id = $room, 
+            booking_date = '$date', 
+            booking_time_from = '$time_from', 
+            booking_time_to = '$time_to', 
+            reason = '$reason' 
+            WHERE id = $appointment_id";
+        error_log("Debug SQL Query: " . $debug_query);
 
-        // Log all values before binding
-        error_log("Attempting to bind parameters with values:");
-        error_log("name: " . $name);
-        error_log("id_number: " . $id_number);
-        error_log("group_members: " . $group_members);
-        error_log("representative_name: " . $representative_name);
-        error_log("set_id: " . $set);
-        error_log("department_id: " . $department);
-        error_log("room_id: " . $room);
-        error_log("date: " . $date);
-        error_log("time_from: " . $time_from);
-        error_log("time_to: " . $time_to);
-        error_log("reason: " . $reason);
-        error_log("appointment_id: " . $appointment_id);
+        // Verify appointment exists before update
+        $check_appointment = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
+        $check_appointment->bind_param("i", $appointment_id);
+        $check_appointment->execute();
+        $appointment_result = $check_appointment->get_result();
+        
+        if ($appointment_result->num_rows === 0) {
+            error_log("Appointment not found with ID: " . $appointment_id);
+            throw new Exception("Appointment not found.");
+        }
+        
+        $old_appointment = $appointment_result->fetch_assoc();
+        error_log("Old appointment data: " . print_r($old_appointment, true));
+        $check_appointment->close();
 
         $stmt->bind_param("ssssiiiisssi", 
             $name, 
@@ -233,9 +244,35 @@ if (isset($_POST['appointment_id'])) {
         }
         
         if ($stmt->affected_rows === 0) {
-            error_log("No rows were updated. Appointment ID might not exist: " . $appointment_id);
-            throw new Exception("No changes were made to the booking.");
+            error_log("No rows were updated. Appointment ID: " . $appointment_id);
+            // Check if the data is actually different
+            $verify_query = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
+            $verify_query->bind_param("i", $appointment_id);
+            $verify_query->execute();
+            $verify_result = $verify_query->get_result();
+            $updated_data = $verify_result->fetch_assoc();
+            error_log("Updated appointment data: " . print_r($updated_data, true));
+            $verify_query->close();
+            
+            // Only throw exception if data is different
+            if ($updated_data !== null && $updated_data != $old_appointment) {
+                throw new Exception("No changes were made to the booking. Data might be the same.");
+            }
         }
+        
+        // Verify the update was successful
+        $verify_update = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
+        $verify_update->bind_param("i", $appointment_id);
+        $verify_update->execute();
+        $verify_result = $verify_update->get_result();
+        
+        if ($verify_result->num_rows > 0) {
+            $updated_booking = $verify_result->fetch_assoc();
+            error_log("Successfully updated booking: " . print_r($updated_booking, true));
+        } else {
+            error_log("Warning: Cannot find booking after update!");
+        }
+        $verify_update->close();
         
         $stmt->close();
         header('Location: ../index.php');
