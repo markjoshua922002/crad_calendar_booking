@@ -759,9 +759,7 @@ $total_entries = $count_row['total'];
                             <div class="time-picker">
                                 <div class="time-input-container">
                                     <input type="number" id="time_hour" name="time_hour" min="1" max="12" placeholder="Hour" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown">
-                                        <i class="fas fa-caret-down"></i>
-                                    </button>
+                                    <button type="button" class="toggle-time-input" data-target="time_hour_dropdown"><i class="fas fa-caret-down"></i></button>
                                     <div class="time-dropdown" id="time_hour_dropdown">
                                         <?php for ($i = 1; $i <= 12; $i++): ?>
                                             <div class="dropdown-item" data-value="<?= $i ?>"><?= $i ?></div>
@@ -770,9 +768,7 @@ $total_entries = $count_row['total'];
                                 </div>
                                 <div class="time-input-container">
                                     <input type="number" id="time_minute" name="time_minute" min="0" max="59" placeholder="Min" required>
-                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown">
-                                        <i class="fas fa-caret-down"></i>
-                                    </button>
+                                    <button type="button" class="toggle-time-input" data-target="time_minute_dropdown"><i class="fas fa-caret-down"></i></button>
                                     <div class="time-dropdown" id="time_minute_dropdown">
                                         <?php for ($i = 0; $i < 60; $i += 5): ?>
                                             <div class="dropdown-item" data-value="<?= sprintf("%02d", $i) ?>"><?= sprintf("%02d", $i) ?></div>
@@ -781,9 +777,7 @@ $total_entries = $count_row['total'];
                                 </div>
                                 <div class="time-input-container">
                                     <input type="text" id="time_ampm" name="time_ampm" value="AM" readonly required>
-                                    <button type="button" class="toggle-time-input" data-target="time_ampm_dropdown">
-                                        <i class="fas fa-caret-down"></i>
-                                    </button>
+                                    <button type="button" class="toggle-time-input" data-target="time_ampm_dropdown"><i class="fas fa-caret-down"></i></button>
                                     <div class="time-dropdown" id="time_ampm_dropdown">
                                         <div class="dropdown-item" data-value="AM">AM</div>
                                         <div class="dropdown-item" data-value="PM">PM</div>
