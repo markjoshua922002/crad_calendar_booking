@@ -377,9 +377,9 @@ $total_entries = $count_row['total'];
         .submit-button {
             position: absolute;
             bottom: 15px;
-            left: 15px;
-            right: 15px;
+            right: 960px;
             height: 40px;
+            width: 100px;
             background-color: #4285f4;
             color: white;
             border: none;
