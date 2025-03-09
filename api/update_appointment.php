@@ -104,6 +104,11 @@ if (isset($_POST['appointment_id'])) {
             !checkdate($dateParts[1], $dateParts[2], $dateParts[0])) {
             throw new Exception("Invalid date components");
         }
+        
+        // Verify the date is a valid MySQL date
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            throw new Exception("Date format is not valid for MySQL");
+        }
     } catch (Exception $e) {
         error_log("Date parsing error: " . $e->getMessage());
         error_log("Input date was: " . $input_date);
@@ -192,19 +197,32 @@ if (isset($_POST['appointment_id'])) {
     
     try {
         // Log the SQL query for debugging
-        $debug_query = "UPDATE bookings SET 
-            name = '$name', 
-            id_number = '$id_number', 
-            group_members = '$group_members', 
-            representative_name = '$representative_name', 
-            set_id = $set, 
-            department_id = $department, 
-            room_id = $room, 
-            booking_date = '$date', 
-            booking_time_from = '$time_from', 
-            booking_time_to = '$time_to', 
-            reason = '$reason' 
-            WHERE id = $appointment_id";
+        $debug_query = sprintf("UPDATE bookings SET 
+            name = '%s', 
+            id_number = '%s', 
+            group_members = '%s', 
+            representative_name = '%s', 
+            set_id = %d, 
+            department_id = %d, 
+            room_id = %d, 
+            booking_date = '%s', 
+            booking_time_from = '%s', 
+            booking_time_to = '%s', 
+            reason = '%s' 
+            WHERE id = %d",
+            $conn->real_escape_string($name),
+            $conn->real_escape_string($id_number),
+            $conn->real_escape_string($group_members),
+            $conn->real_escape_string($representative_name),
+            $set,
+            $department,
+            $room,
+            $conn->real_escape_string($date),
+            $conn->real_escape_string($time_from),
+            $conn->real_escape_string($time_to),
+            $conn->real_escape_string($reason),
+            $appointment_id
+        );
         error_log("Debug SQL Query: " . $debug_query);
 
         // Verify appointment exists before update
@@ -222,6 +240,10 @@ if (isset($_POST['appointment_id'])) {
         error_log("Old appointment data: " . print_r($old_appointment, true));
         $check_appointment->close();
 
+        // Format date for MySQL
+        $mysql_date = date('Y-m-d', strtotime($date));
+        error_log("Formatted MySQL date: " . $mysql_date);
+
         $stmt->bind_param("ssssiiiisssi", 
             $name, 
             $id_number, 
@@ -230,7 +252,7 @@ if (isset($_POST['appointment_id'])) {
             $set,  
             $department, 
             $room, 
-            $date, 
+            $mysql_date,  // Use formatted date
             $time_from, 
             $time_to, 
             $reason, 
