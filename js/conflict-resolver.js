@@ -503,6 +503,9 @@ class ConflictResolver {
 
     formatTime(hour, minute, ampm) {
         if (!hour || !minute || !ampm) return null;
+        // Ensure hour is padded with leading zero if needed
+        hour = hour.toString().padStart(2, '0');
+        minute = minute.toString().padStart(2, '0');
         return `${hour}:${minute} ${ampm}`;
     }
 
@@ -523,15 +526,18 @@ class ConflictResolver {
         // Update alternative times
         const altTimesContainer = document.getElementById('alternative-times');
         if (altTimesContainer) {
-            altTimesContainer.innerHTML = data.alternative_times.map(time => `
-                <div class="alternative-option" data-type="time" data-from="${time.time_from}" data-to="${time.time_to}">
-                    <input type="radio" name="alternative" id="time_${time.time_from}">
-                    <label for="time_${time.time_from}">
-                        ${time.time_from} - ${time.time_to}
-                        <span class="check-icon"><i class="fas fa-check"></i></span>
-                    </label>
-                </div>
-            `).join('');
+            altTimesContainer.innerHTML = data.alternative_times.map(time => {
+                const timeId = time.time_from.replace(/[:\s]/g, '_');
+                return `
+                    <div class="alternative-option" data-type="time" data-from="${time.time_from}" data-to="${time.time_to}">
+                        <input type="radio" name="alternative" id="time_${timeId}">
+                        <label for="time_${timeId}">
+                            ${time.time_from} - ${time.time_to}
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                        </label>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Update alternative rooms
@@ -582,15 +588,18 @@ class ConflictResolver {
         if (!selected) return;
 
         if (selected.dataset.type === 'time') {
-            // Apply alternative time
-            const [fromHour, fromMinute, fromAMPM] = selected.dataset.from.split(/[:\s]/);
-            const [toHour, toMinute, toAMPM] = selected.dataset.to.split(/[:\s]/);
+            // Parse the time strings
+            const [fromTime, fromAMPM] = selected.dataset.from.split(' ');
+            const [fromHour, fromMinute] = fromTime.split(':');
+            const [toTime, toAMPM] = selected.dataset.to.split(' ');
+            const [toHour, toMinute] = toTime.split(':');
             
-            document.getElementById('time_from_hour').value = parseInt(fromHour);
+            // Update the form fields
+            document.getElementById('time_from_hour').value = parseInt(fromHour, 10);
             document.getElementById('time_from_minute').value = fromMinute;
             document.getElementById('time_from_ampm').value = fromAMPM;
             
-            document.getElementById('time_to_hour').value = parseInt(toHour);
+            document.getElementById('time_to_hour').value = parseInt(toHour, 10);
             document.getElementById('time_to_minute').value = toMinute;
             document.getElementById('time_to_ampm').value = toAMPM;
         } else if (selected.dataset.type === 'room') {

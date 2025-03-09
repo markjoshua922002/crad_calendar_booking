@@ -15,6 +15,11 @@ $room_id = $data['room_id'];
 $time_from = date('H:i:s', strtotime($data['time_from']));
 $time_to = date('H:i:s', strtotime($data['time_to']));
 
+// Function to convert 24-hour time to 12-hour format with AM/PM
+function format12Hour($time) {
+    return date('g:i A', strtotime($time));
+}
+
 // Check for conflicts
 $stmt = $conn->prepare("SELECT b.*, r.name as room_name, d.name as department_name, d.color 
                        FROM bookings b 
@@ -34,8 +39,8 @@ while ($row = $result->fetch_assoc()) {
     $conflicts[] = [
         'room_name' => $row['room_name'],
         'department' => $row['department_name'],
-        'time_from' => date('g:i A', strtotime($row['booking_time_from'])),
-        'time_to' => date('g:i A', strtotime($row['booking_time_to'])),
+        'time_from' => format12Hour($row['booking_time_from']),
+        'time_to' => format12Hour($row['booking_time_to']),
         'color' => $row['color']
     ];
 }
@@ -67,13 +72,15 @@ while ($row = $result->fetch_assoc()) {
 
 // Get alternative times (30 min before and after, in 30 min increments)
 $base_time_from = strtotime($time_from);
+$base_time_to = strtotime($time_to);
+$duration = $base_time_to - $base_time_from;
 $alternative_times = [];
 
 for ($i = -2; $i <= 2; $i++) {
     if ($i == 0) continue; // Skip the current time
     
     $alt_time_from = strtotime(($i * 30) . ' minutes', $base_time_from);
-    $alt_time_to = strtotime(($i * 30) . ' minutes', strtotime($time_to));
+    $alt_time_to = $alt_time_from + $duration;
     
     // Check if this alternative time has conflicts
     $stmt = $conn->prepare("SELECT 1 FROM bookings 
@@ -94,11 +101,16 @@ for ($i = -2; $i <= 2; $i++) {
     
     if ($conflict_check->num_rows === 0) {
         $alternative_times[] = [
-            'time_from' => date('g:i A', $alt_time_from),
-            'time_to' => date('g:i A', $alt_time_to)
+            'time_from' => format12Hour($alt_time_from_sql),
+            'time_to' => format12Hour($alt_time_to_sql)
         ];
     }
 }
+
+// Sort alternative times chronologically
+usort($alternative_times, function($a, $b) {
+    return strtotime($a['time_from']) - strtotime($b['time_from']);
+});
 
 echo json_encode([
     'has_conflicts' => count($conflicts) > 0,
