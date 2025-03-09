@@ -1117,39 +1117,53 @@ function setupDeleteAppointment() {
                         if (mainContent) {
                             mainContent.insertBefore(alertDiv, mainContent.firstChild);
                             
-                            // Remove the alert after 3 seconds
-                            setTimeout(() => {
-                                alertDiv.remove();
-                                
-                                // Only reload if deletion was successful
-                                if (data.success) {
-                                    // Update the appointments data in the hidden element
-                                    const appointmentsDataElement = document.getElementById('appointmentsData');
-                                    if (appointmentsDataElement) {
-                                        const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
-                                        
-                                        // Remove the deleted appointment from the data
-                                        Object.keys(appointmentsData).forEach(day => {
-                                            appointmentsData[day] = appointmentsData[day].filter(
-                                                appointment => appointment.id != appointmentId
-                                            );
-                                            // Remove the day if it has no appointments
-                                            if (appointmentsData[day].length === 0) {
-                                                delete appointmentsData[day];
-                                            }
-                                        });
-                                        
-                                        // Update the hidden element
-                                        appointmentsDataElement.textContent = JSON.stringify(appointmentsData);
-                                        
-                                        // Reinitialize the conflict resolver with updated data
-                                        initializeConflictResolver();
-                                        
-                                        // Reload the page to refresh the calendar view
-                                        window.location.reload();
+                            // Only proceed if deletion was successful
+                            if (data.success) {
+                                // Update the appointments data in the hidden element
+                                const appointmentsDataElement = document.getElementById('appointmentsData');
+                                if (appointmentsDataElement) {
+                                    const appointmentsData = JSON.parse(appointmentsDataElement.textContent || '{}');
+                                    
+                                    // Remove the deleted appointment from the data
+                                    Object.keys(appointmentsData).forEach(day => {
+                                        appointmentsData[day] = appointmentsData[day].filter(
+                                            appointment => appointment.id != appointmentId
+                                        );
+                                        // Remove the day if it has no appointments
+                                        if (appointmentsData[day].length === 0) {
+                                            delete appointmentsData[day];
+                                        }
+                                    });
+                                    
+                                    // Update the hidden element
+                                    appointmentsDataElement.textContent = JSON.stringify(appointmentsData);
+                                    
+                                    // Reset conflict resolver
+                                    if (conflictResolver) {
+                                        conflictResolver = null;
                                     }
+                                    
+                                    // Hide any existing conflict containers
+                                    const conflictContainer = document.getElementById('conflict-resolution-container');
+                                    if (conflictContainer) {
+                                        conflictContainer.style.display = 'none';
+                                    }
+                                    
+                                    // Reinitialize conflict resolver with new data
+                                    initializeConflictResolver();
+                                    
+                                    // Remove the alert after 3 seconds and reload
+                                    setTimeout(() => {
+                                        alertDiv.remove();
+                                        window.location.reload(); // Reload to refresh calendar view
+                                    }, 3000);
                                 }
-                            }, 3000);
+                            } else {
+                                // Remove the alert after 3 seconds
+                                setTimeout(() => {
+                                    alertDiv.remove();
+                                }, 3000);
+                            }
                         }
                     })
                     .catch(error => {
