@@ -22,13 +22,26 @@ if (isset($_POST['add_booking'])) {
     $id_number = $_POST['id_number'];
     $group_members = $_POST['group_members'];
     $representative_name = $_POST['representative_name'];
-    $set = $_POST['set'];
+    $set_id = $_POST['set'];
+    
+    // Get set name from database
+    $set_stmt = $conn->prepare("SELECT set_name FROM sets WHERE id = ?");
+    if (!$set_stmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+    $set_stmt->bind_param("i", $set_id);
+    $set_stmt->execute();
+    $set_result = $set_stmt->get_result();
+    $set_row = $set_result->fetch_assoc();
+    $set = $set_row['set_name'];
+    $set_stmt->close();
+    
     $department = $_POST['department'];
     $room = $_POST['room'];
     $date = date('Y-m-d', strtotime($_POST['date']));
     
     // Debug: Log the values being processed
-    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set=$set, Department=$department, Room=$room, Date=$date");
+    error_log("Booking Details: Name=$name, ID Number=$id_number, Group Members=$group_members, Representative Name=$representative_name, Set ID=$set_id, Set Name=$set, Department=$department, Room=$room, Date=$date");
     
     // Combine time fields
     $time_from = date('H:i:s', strtotime($_POST['time_from_hour'] . ':' . $_POST['time_from_minute'] . ' ' . $_POST['time_from_ampm']));
@@ -977,7 +990,7 @@ while ($row = $bookings->fetch_assoc()) {
                             $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['id']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -1143,7 +1156,7 @@ while ($row = $bookings->fetch_assoc()) {
                             $sets = $conn->query("SELECT * FROM sets ORDER BY set_name");
                             while ($set = $sets->fetch_assoc()): 
                             ?>
-                            <option value="<?= htmlspecialchars($set['set_name']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
+                            <option value="<?= htmlspecialchars($set['id']) ?>"><?= htmlspecialchars($set['set_name']) ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
