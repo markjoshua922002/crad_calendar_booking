@@ -157,6 +157,10 @@ $conn->close();
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>
                 </a>
+                <a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : '' ?>">
+                    <i class="fas fa-cogs"></i>
+                    <span>Admin</span>
+                </a>
             </div>
             
             <div class="sidebar-footer">
@@ -183,6 +187,9 @@ $conn->close();
             
             <div class="analytics-container">
                 <div class="analytics-header">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <h1>Bookings by Department - <?php echo date('F Y'); ?></h1>
                 </div>
                 <div class="chart-container">

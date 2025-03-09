@@ -146,213 +146,215 @@ foreach ($create_tables as $sql) {
     <link rel="stylesheet" href="css/admin.css?v=<?= time() ?>">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="assets/bcplogo.png" alt="BCP Logo" class="sidebar-logo">
-            <h2>BCP CRAD</h2>
-        </div>
-        
-        <div class="sidebar-menu">
-            <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Calendar</span>
-            </a>
-            <a href="form.php" class="<?= basename($_SERVER['PHP_SELF']) == 'form.php' ? 'active' : '' ?>">
-                <i class="fas fa-book"></i>
-                <span>Logbook</span>
-            </a>
-            <a href="analytics.php" class="<?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'active' : '' ?>">
-                <i class="fas fa-chart-bar"></i>
-                <span>Analytics</span>
-            </a>
-            <a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : '' ?>">
-                <i class="fas fa-cogs"></i>
-                <span>Admin</span>
-            </a>
-        </div>
-        
-        <div class="sidebar-footer">
-            <a href="logout.php" class="logout-button">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="main-content">
-        <div class="content-header">
-            <button id="menu-toggle" class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/bcplogo.png" alt="BCP Logo" class="sidebar-logo">
+                <h2>BCP CRAD</h2>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="form.php" class="<?= basename($_SERVER['PHP_SELF']) == 'form.php' ? 'active' : '' ?>">
+                    <i class="fas fa-book"></i>
+                    <span>Logbook</span>
+                </a>
+                <a href="analytics.php" class="<?= basename($_SERVER['PHP_SELF']) == 'analytics.php' ? 'active' : '' ?>">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : '' ?>">
+                    <i class="fas fa-cogs"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="logout.php" class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </div>
 
-        <?php if ($success_message): ?>
-        <div class="alert alert-success">
-            <?= $success_message ?>
-        </div>
-        <?php endif; ?>
+        <!-- Main Content -->
+        <div class="main-content" id="main-content">
+            <div class="content-header">
+                <button id="menu-toggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+            </div>
 
-        <?php if ($error_message): ?>
-        <div class="alert alert-danger">
-            <?= $error_message ?>
-        </div>
-        <?php endif; ?>
+            <?php if ($success_message): ?>
+            <div class="alert alert-success">
+                <?= $success_message ?>
+            </div>
+            <?php endif; ?>
 
-        <div class="admin-container">
-            <div class="admin-cards">
-                <!-- Rooms Card -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-door-open"></i> Rooms</h3>
-                    <p>Manage rooms available for booking</p>
-                    <button class="btn" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Add Room</button>
+            <?php if ($error_message): ?>
+            <div class="alert alert-danger">
+                <?= $error_message ?>
+            </div>
+            <?php endif; ?>
+
+            <div class="admin-container">
+                <div class="admin-cards">
+                    <!-- Rooms Card -->
+                    <div class="admin-card">
+                        <h3><i class="fas fa-door-open"></i> Rooms</h3>
+                        <p>Manage rooms available for booking</p>
+                        <button class="btn" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Add Room</button>
+                        
+                        <?php if ($rooms->num_rows > 0): ?>
+                        <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Room Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($room = $rooms->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($room['name']) ?></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <?php else: ?>
+                        <div class="empty-state">
+                            <p>No rooms added yet</p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                     
-                    <?php if ($rooms->num_rows > 0): ?>
-                    <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Room Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($room = $rooms->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($room['name']) ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <!-- Departments Card -->
+                    <div class="admin-card">
+                        <h3><i class="fas fa-building"></i> Departments</h3>
+                        <p>Manage academic departments</p>
+                        <button class="btn" onclick="openModal('departmentModal')"><i class="fas fa-plus"></i> Add Department</button>
+                        
+                        <?php if ($departments->num_rows > 0): ?>
+                        <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Department Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($department = $departments->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($department['name']) ?></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <?php else: ?>
+                        <div class="empty-state">
+                            <p>No departments added yet</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php else: ?>
-                    <div class="empty-state">
-                        <p>No rooms added yet</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Departments Card -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-building"></i> Departments</h3>
-                    <p>Manage academic departments</p>
-                    <button class="btn" onclick="openModal('departmentModal')"><i class="fas fa-plus"></i> Add Department</button>
                     
-                    <?php if ($departments->num_rows > 0): ?>
-                    <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Department Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($department = $departments->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($department['name']) ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <!-- Groups Card -->
+                    <div class="admin-card">
+                        <h3><i class="fas fa-users"></i> Groups</h3>
+                        <p>Manage student groups</p>
+                        <button class="btn" onclick="openModal('groupModal')"><i class="fas fa-plus"></i> Add Group</button>
+                        
+                        <?php if ($groups->num_rows > 0): ?>
+                        <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Group Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($group = $groups->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($group['group_name']) ?></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <?php else: ?>
+                        <div class="empty-state">
+                            <p>No groups added yet</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php else: ?>
-                    <div class="empty-state">
-                        <p>No departments added yet</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Groups Card -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-users"></i> Groups</h3>
-                    <p>Manage student groups</p>
-                    <button class="btn" onclick="openModal('groupModal')"><i class="fas fa-plus"></i> Add Group</button>
                     
-                    <?php if ($groups->num_rows > 0): ?>
-                    <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Group Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($group = $groups->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($group['group_name']) ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <!-- Sets Card -->
+                    <div class="admin-card">
+                        <h3><i class="fas fa-layer-group"></i> Sets</h3>
+                        <p>Manage student sets</p>
+                        <button class="btn" onclick="openModal('setModal')"><i class="fas fa-plus"></i> Add Set</button>
+                        
+                        <?php if ($sets->num_rows > 0): ?>
+                        <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Set Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($set = $sets->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($set['name']) ?></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <?php else: ?>
+                        <div class="empty-state">
+                            <p>No sets added yet</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php else: ?>
-                    <div class="empty-state">
-                        <p>No groups added yet</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Sets Card -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-layer-group"></i> Sets</h3>
-                    <p>Manage student sets</p>
-                    <button class="btn" onclick="openModal('setModal')"><i class="fas fa-plus"></i> Add Set</button>
                     
-                    <?php if ($sets->num_rows > 0): ?>
-                    <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Set Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($set = $sets->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($set['name']) ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <!-- Advisers Card -->
+                    <div class="admin-card">
+                        <h3><i class="fas fa-user-tie"></i> Research Advisers</h3>
+                        <p>Manage research advisers</p>
+                        <button class="btn" onclick="openModal('adviserModal')"><i class="fas fa-plus"></i> Add Adviser</button>
+                        
+                        <?php if ($advisers->num_rows > 0): ?>
+                        <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Adviser Name</th>
+                                    <th>Department</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($adviser = $advisers->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($adviser['adviser_name']) ?></td>
+                                    <td><?= htmlspecialchars($adviser['department_name'] ?? 'N/A') ?></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                        <?php else: ?>
+                        <div class="empty-state">
+                            <p>No advisers added yet</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php else: ?>
-                    <div class="empty-state">
-                        <p>No sets added yet</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Advisers Card -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-user-tie"></i> Research Advisers</h3>
-                    <p>Manage research advisers</p>
-                    <button class="btn" onclick="openModal('adviserModal')"><i class="fas fa-plus"></i> Add Adviser</button>
-                    
-                    <?php if ($advisers->num_rows > 0): ?>
-                    <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Adviser Name</th>
-                                <th>Department</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($adviser = $advisers->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($adviser['adviser_name']) ?></td>
-                                <td><?= htmlspecialchars($adviser['department_name'] ?? 'N/A') ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                    </div>
-                    <?php else: ?>
-                    <div class="empty-state">
-                        <p>No advisers added yet</p>
-                    </div>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>

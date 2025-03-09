@@ -561,6 +561,10 @@ $total_entries = $count_row['total'];
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>
                 </a>
+                <a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : '' ?>">
+                    <i class="fas fa-cogs"></i>
+                    <span>Admin</span>
+                </a>
             </div>
             
             <div class="sidebar-footer">
