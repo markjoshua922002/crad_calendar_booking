@@ -354,21 +354,32 @@ $total_entries = $count_row['total'];
             gap: 6px;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 0; /* Remove bottom margin */
+            margin-bottom: 0;
+            position: relative;
         }
         
         .time-picker input[type="time"] {
-            flex: 1;
-            min-width: 120px;
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+            height: 30px;
+            box-sizing: border-box;
+            cursor: pointer;
         }
         
-        .time-picker select {
-            flex: 1;
-            min-width: 70px;
+        .time-picker input[type="time"]::-webkit-calendar-picker-indicator {
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
-        .time-picker input[type="time"]:focus,
-        .time-picker select:focus {
+        .time-picker input[type="time"]:focus {
             outline: none;
             border-color: #4285f4;
             box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
@@ -626,21 +637,9 @@ $total_entries = $count_row['total'];
                         $inquiry = $conn->real_escape_string($_POST['inquiry']);
                         $submission_date = $conn->real_escape_string($_POST['submission_date']);
                         
-                        // Get time components and build the time string
-                        $hour = intval($_POST['time_hour']);
-                        $minute = intval($_POST['time_minute']);
-                        $ampm = $_POST['time_ampm'];
+                        // Get time from the time input
+                        $time = $conn->real_escape_string($_POST['time_manual']);
                         
-                        // Convert to 24-hour format for database
-                        if ($ampm === 'PM' && $hour < 12) {
-                            $hour += 12;
-                        } else if ($ampm === 'AM' && $hour === 12) {
-                            $hour = 0;
-                        }
-                        
-                        // Format time as HH:MM:SS
-                        $time = sprintf("%02d:%02d:00", $hour, $minute);
-
                         // Check if the submission date is in the past
                         $current_date = date('Y-m-d');
                         if ($submission_date < $current_date) {
@@ -697,25 +696,6 @@ $total_entries = $count_row['total'];
                             <label for="time">Time:</label>
                             <div class="time-picker">
                                 <input type="time" id="time_manual" name="time_manual" required>
-                                <span style="color: #666;">or select:</span>
-                                <select id="time_hour" name="time_hour">
-                                    <option value="" disabled selected>Hour</option>
-                                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                                        <option value="<?= $i ?>"><?= sprintf("%02d", $i) ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                
-                                <select id="time_minute" name="time_minute">
-                                    <option value="" disabled selected>Min</option>
-                                    <?php for ($i = 0; $i < 60; $i += 5): ?>
-                                        <option value="<?= str_pad($i, 2, '0', STR_PAD_LEFT) ?>"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                
-                                <select id="time_ampm" name="time_ampm">
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
                             </div>
                         </div>
                         
@@ -780,43 +760,22 @@ $total_entries = $count_row['total'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/sidebar.js?v=<?= time() ?>"></script>
     <script>
-        // Time picker synchronization
         document.addEventListener('DOMContentLoaded', function() {
-            const timeManual = document.getElementById('time_manual');
-            const timeHour = document.getElementById('time_hour');
-            const timeMinute = document.getElementById('time_minute');
-            const timeAmPm = document.getElementById('time_ampm');
-
-            // Update dropdowns when manual time changes
-            timeManual.addEventListener('change', function() {
+            const timeInput = document.getElementById('time_manual');
+            
+            // Set default value to current time
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            timeInput.value = `${hours}:${minutes}`;
+            
+            // Handle time input changes
+            timeInput.addEventListener('change', function() {
                 if (this.value) {
-                    const time = new Date(`2000-01-01T${this.value}`);
-                    let hours = time.getHours();
-                    const minutes = time.getMinutes();
-                    const ampm = hours >= 12 ? 'PM' : 'AM';
-                    
-                    // Convert to 12-hour format
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-
-                    timeHour.value = hours;
-                    timeMinute.value = minutes - (minutes % 5); // Round to nearest 5
-                    timeAmPm.value = ampm;
+                    // Ensure the time is properly formatted
+                    const [hours, minutes] = this.value.split(':');
+                    this.value = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
                 }
-            });
-
-            // Update manual time when dropdowns change
-            [timeHour, timeMinute, timeAmPm].forEach(el => {
-                el.addEventListener('change', function() {
-                    if (timeHour.value && timeMinute.value && timeAmPm.value) {
-                        let hours = parseInt(timeHour.value);
-                        if (timeAmPm.value === 'PM' && hours !== 12) hours += 12;
-                        if (timeAmPm.value === 'AM' && hours === 12) hours = 0;
-                        
-                        const timeString = `${String(hours).padStart(2, '0')}:${timeMinute.value}`;
-                        timeManual.value = timeString;
-                    }
-                });
             });
         });
     </script>
