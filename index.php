@@ -24,17 +24,32 @@ if (isset($_POST['add_booking'])) {
     $representative_name = $_POST['representative_name'];
     $set_id = $_POST['set'];
     
-    // Get set name from database
+    // Validate set_id is not empty
+    if (empty($set_id)) {
+        die('Error: Set selection is required');
+    }
+    
+    // Get set name from database with error handling
     $set_stmt = $conn->prepare("SELECT set_name FROM sets WHERE id = ?");
     if (!$set_stmt) {
         die('Prepare failed: ' . $conn->error);
     }
     $set_stmt->bind_param("i", $set_id);
-    $set_stmt->execute();
+    if (!$set_stmt->execute()) {
+        die('Execute failed: ' . $set_stmt->error);
+    }
     $set_result = $set_stmt->get_result();
+    if ($set_result->num_rows === 0) {
+        die('Error: Invalid set selected');
+    }
     $set_row = $set_result->fetch_assoc();
     $set = $set_row['set_name'];
     $set_stmt->close();
+    
+    // Validate set name was retrieved successfully
+    if (empty($set)) {
+        die('Error: Could not retrieve set name');
+    }
     
     $department = $_POST['department'];
     $room = $_POST['room'];
