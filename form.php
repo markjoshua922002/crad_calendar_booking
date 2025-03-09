@@ -313,11 +313,11 @@ $total_entries = $count_row['total'];
         }
         
         .form-group {
-            margin-bottom: 10px; /* Reduced spacing */
+            margin-bottom: 8px; /* Reduced from 10px */
         }
         
         .form-group:last-child {
-            margin-bottom: 60px; /* Add space for submit button */
+            margin-bottom: 0; /* Remove extra space after last form group */
         }
         
         .form-group label {
@@ -354,7 +354,7 @@ $total_entries = $count_row['total'];
             gap: 6px;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 10px; /* Add space after time picker */
+            margin-bottom: 0; /* Remove bottom margin */
         }
         
         .time-picker input[type="time"] {
@@ -375,8 +375,8 @@ $total_entries = $count_row['total'];
         }
         
         .submit-button {
-            position: absolute; /* Position at bottom of form */
-            bottom: 20px;
+            position: absolute;
+            bottom: 15px; /* Reduced from 20px */
             left: 0;
             right: 0;
             height: 40px;
@@ -393,6 +393,8 @@ $total_entries = $count_row['total'];
             justify-content: center;
             gap: 8px;
             transition: background-color 0.3s;
+            margin: 0 auto; /* Center the button */
+            max-width: calc(100% - 30px); /* Add some padding on sides */
         }
         
         .submit-button:hover {
@@ -427,10 +429,11 @@ $total_entries = $count_row['total'];
         .logbook-form {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            height: calc(100% - 80px); /* Increased space for form content */
-            padding-bottom: 20px;
-            position: relative; /* For absolute positioning of submit button */
+            gap: 8px; /* Reduced from 12px */
+            height: calc(100% - 50px); /* Reduced from 80px to give more space */
+            padding-bottom: 70px; /* Increased to make room for submit button */
+            position: relative;
+            overflow-y: auto; /* Add scroll if content is too long */
         }
         
         /* Specific for 1920x978 resolution with zoom out */
