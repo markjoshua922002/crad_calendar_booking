@@ -391,7 +391,6 @@ $total_entries = $count_row['total'];
         .logbook-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
         
         /* Specific for 1920x978 resolution with zoom out */
