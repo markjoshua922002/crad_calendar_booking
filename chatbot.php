@@ -271,6 +271,8 @@
                 this.toggleButton = document.querySelector('.chatbot-toggle');
                 this.minimizeButton = document.querySelector('.minimize-chat');
                 this.closeButton = document.querySelector('.close-chat');
+                this.departmentsList = document.getElementById('departmentsList');
+                this.departmentsContainer = document.getElementById('departmentsContainer');
                 
                 this.currentBooking = {
                     department: '',
@@ -288,9 +290,11 @@
                 
                 this.bookings = [];
                 this.currentStep = 'start';
+                this.departments = [];
                 
                 this.setupEventListeners();
                 this.initialize();
+                this.fetchDepartments();
             }
 
             initialize() {
@@ -421,9 +425,42 @@
                 }
             }
 
+            async fetchDepartments() {
+                try {
+                    const response = await fetch('api/get_departments.php');
+                    const data = await response.json();
+                    this.departments = data;
+                } catch (error) {
+                    console.error('Error fetching departments:', error);
+                }
+            }
+
+            showDepartments() {
+                this.departmentsContainer.innerHTML = '';
+                this.departments.forEach(dept => {
+                    const deptElement = document.createElement('div');
+                    deptElement.className = 'department-item';
+                    deptElement.innerHTML = `
+                        <span class="department-color" style="background-color: ${dept.color}"></span>
+                        <span>${dept.name}</span>
+                    `;
+                    deptElement.onclick = () => this.selectDepartment(dept);
+                    this.departmentsContainer.appendChild(deptElement);
+                });
+                this.departmentsList.style.display = 'block';
+            }
+
+            selectDepartment(department) {
+                this.currentBooking.department = department.name;
+                this.addMessage('user', `Selected department: ${department.name}`);
+                this.departmentsList.style.display = 'none';
+                this.askForRoom();
+            }
+
             startBooking() {
                 this.currentStep = 'department';
-                this.addMessage('bot', 'Please enter the department name:');
+                this.addMessage('bot', 'Please select a department from the list below:');
+                this.showDepartments();
             }
 
             askForRoom() {
