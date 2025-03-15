@@ -245,7 +245,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             transform: scale(0.9);
             width: 111.11%;
             height: 111.11%;
-            overflow: hidden; /* Prevent page scrolling */
+            overflow-y: auto; /* Allow page scrolling */
         }
         
         /* App container for proper layout */
@@ -255,7 +255,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             position: relative;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
-            overflow-y: auto; /* Enable scrolling at container level */
+            overflow: visible; /* Show all content */
         }
         
         /* Fix for main content positioning */
@@ -268,8 +268,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             width: calc(100% - 250px);
             display: flex;
             flex-direction: column;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100vh;
         }
         
         /* Dashboard layout */
