@@ -1606,7 +1606,7 @@ function fetchWeather() {
     
     // Add a timestamp to prevent caching
     const timestamp = new Date().getTime();
-    const url = `api/get_weather.php?_=${timestamp}`;
+    const url = `api/get_weather_fixed.php?_=${timestamp}`;
     
     fetch(url)
         .then(response => {

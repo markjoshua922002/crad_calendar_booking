@@ -74,47 +74,120 @@ ini_set('display_errors', 1);
     <h1>Weather API Test</h1>
     
     <div class="card">
-        <h2>Direct PHP Test</h2>
+        <h2>Original API Test</h2>
         <?php
-        // Test the API directly with PHP
+        // Test the original API
         $apiUrl = 'api/get_weather.php';
         
+        echo "<p>Testing: $apiUrl</p>";
+        
         try {
-            $context = stream_context_create([
-                'http' => [
-                    'timeout' => 5
-                ]
-            ]);
-            
-            $response = file_get_contents($apiUrl, false, $context);
-            
-            if ($response === FALSE) {
-                echo '<p>Error: Failed to fetch weather data</p>';
-                echo '<pre>' . print_r(error_get_last(), true) . '</pre>';
-            } else {
-                $data = json_decode($response, true);
+            // Use cURL to test
+            if (function_exists('curl_init')) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $apiUrl);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
                 
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    echo '<p>Error: Failed to decode JSON response</p>';
-                    echo '<pre>' . json_last_error_msg() . '</pre>';
-                    echo '<p>Raw response:</p>';
-                    echo '<pre>' . htmlspecialchars($response) . '</pre>';
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                
+                echo "<p>HTTP Code: $httpCode</p>";
+                
+                if ($response === FALSE) {
+                    echo '<p>Error: ' . curl_error($ch) . '</p>';
                 } else {
-                    echo '<p>Weather data successfully retrieved:</p>';
-                    echo '<pre>' . print_r($data, true) . '</pre>';
+                    $data = json_decode($response, true);
                     
-                    // Display the weather
-                    echo '<div class="weather-display">';
-                    echo '<div class="weather-icon">';
-                    echo '<img src="https://openweathermap.org/img/wn/' . $data['icon'] . '.png" alt="Weather icon" width="50" height="50">';
-                    echo '</div>';
-                    echo '<div class="weather-info">';
-                    echo '<span class="temperature">' . round($data['temperature']) . '°C</span>';
-                    echo '<span class="description">' . $data['description'] . '</span>';
-                    echo '<span class="city">' . $data['city'] . '</span>';
-                    echo '</div>';
-                    echo '</div>';
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        echo '<p>Error: Failed to decode JSON response</p>';
+                        echo '<pre>' . json_last_error_msg() . '</pre>';
+                        echo '<p>Raw response:</p>';
+                        echo '<pre>' . htmlspecialchars($response) . '</pre>';
+                    } else {
+                        echo '<p>Weather data successfully retrieved:</p>';
+                        echo '<pre>' . print_r($data, true) . '</pre>';
+                        
+                        if (!isset($data['error'])) {
+                            // Display the weather
+                            echo '<div class="weather-display">';
+                            echo '<div class="weather-icon">';
+                            echo '<img src="https://openweathermap.org/img/wn/' . $data['icon'] . '.png" alt="Weather icon" width="50" height="50">';
+                            echo '</div>';
+                            echo '<div class="weather-info">';
+                            echo '<span class="temperature">' . round($data['temperature']) . '°C</span>';
+                            echo '<span class="description">' . $data['description'] . '</span>';
+                            echo '<span class="city">' . $data['city'] . '</span>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    }
                 }
+                
+                curl_close($ch);
+            } else {
+                echo '<p>cURL is not available</p>';
+            }
+        } catch (Exception $e) {
+            echo '<p>Exception: ' . $e->getMessage() . '</p>';
+        }
+        ?>
+    </div>
+    
+    <div class="card">
+        <h2>Fixed API Test</h2>
+        <?php
+        // Test the fixed API
+        $apiUrl = 'api/get_weather_fixed.php';
+        
+        echo "<p>Testing: $apiUrl</p>";
+        
+        try {
+            // Use cURL to test
+            if (function_exists('curl_init')) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $apiUrl);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+                
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                
+                echo "<p>HTTP Code: $httpCode</p>";
+                
+                if ($response === FALSE) {
+                    echo '<p>Error: ' . curl_error($ch) . '</p>';
+                } else {
+                    $data = json_decode($response, true);
+                    
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        echo '<p>Error: Failed to decode JSON response</p>';
+                        echo '<pre>' . json_last_error_msg() . '</pre>';
+                        echo '<p>Raw response:</p>';
+                        echo '<pre>' . htmlspecialchars($response) . '</pre>';
+                    } else {
+                        echo '<p>Weather data successfully retrieved:</p>';
+                        echo '<pre>' . print_r($data, true) . '</pre>';
+                        
+                        if (!isset($data['error'])) {
+                            // Display the weather
+                            echo '<div class="weather-display">';
+                            echo '<div class="weather-icon">';
+                            echo '<img src="https://openweathermap.org/img/wn/' . $data['icon'] . '.png" alt="Weather icon" width="50" height="50">';
+                            echo '</div>';
+                            echo '<div class="weather-info">';
+                            echo '<span class="temperature">' . round($data['temperature']) . '°C</span>';
+                            echo '<span class="description">' . $data['description'] . '</span>';
+                            echo '<span class="city">' . $data['city'] . '</span>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    }
+                }
+                
+                curl_close($ch);
+            } else {
+                echo '<p>cURL is not available</p>';
             }
         } catch (Exception $e) {
             echo '<p>Exception: ' . $e->getMessage() . '</p>';
@@ -127,16 +200,21 @@ ini_set('display_errors', 1);
         <div id="js-result">
             <p>Testing API with JavaScript fetch...</p>
         </div>
-        <button id="test-button">Test Again</button>
+        <button id="test-original">Test Original API</button>
+        <button id="test-fixed">Test Fixed API</button>
     </div>
     
     <script>
         // Test the API with JavaScript fetch
-        function testWeatherAPI() {
+        function testWeatherAPI(apiUrl) {
             const resultDiv = document.getElementById('js-result');
-            resultDiv.innerHTML = '<p>Fetching weather data...</p>';
+            resultDiv.innerHTML = '<p>Fetching weather data from ' + apiUrl + '...</p>';
             
-            fetch('api/get_weather.php')
+            // Add timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            const url = apiUrl + '?_=' + timestamp;
+            
+            fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok: ' + response.status);
@@ -146,34 +224,44 @@ ini_set('display_errors', 1);
                 .then(data => {
                     console.log('Weather data:', data);
                     
-                    let html = '<p>Weather data successfully retrieved:</p>';
+                    let html = '<p>Weather data successfully retrieved from ' + apiUrl + ':</p>';
                     html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
                     
-                    // Display the weather
-                    html += '<div class="weather-display">';
-                    html += '<div class="weather-icon">';
-                    html += '<img src="https://openweathermap.org/img/wn/' + data.icon + '.png" alt="Weather icon" width="50" height="50">';
-                    html += '</div>';
-                    html += '<div class="weather-info">';
-                    html += '<span class="temperature">' + Math.round(data.temperature) + '°C</span>';
-                    html += '<span class="description">' + data.description + '</span>';
-                    html += '<span class="city">' + data.city + '</span>';
-                    html += '</div>';
-                    html += '</div>';
+                    if (!data.error) {
+                        // Display the weather
+                        html += '<div class="weather-display">';
+                        html += '<div class="weather-icon">';
+                        html += '<img src="https://openweathermap.org/img/wn/' + data.icon + '.png" alt="Weather icon" width="50" height="50">';
+                        html += '</div>';
+                        html += '<div class="weather-info">';
+                        html += '<span class="temperature">' + Math.round(data.temperature) + '°C</span>';
+                        html += '<span class="description">' + data.description + '</span>';
+                        html += '<span class="city">' + data.city + '</span>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
                     
                     resultDiv.innerHTML = html;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    resultDiv.innerHTML = '<p>Error: ' + error.message + '</p>';
+                    resultDiv.innerHTML = '<p>Error fetching from ' + apiUrl + ': ' + error.message + '</p>';
                 });
         }
         
         // Run the test when the page loads
-        document.addEventListener('DOMContentLoaded', testWeatherAPI);
+        document.addEventListener('DOMContentLoaded', function() {
+            testWeatherAPI('api/get_weather_fixed.php');
+        });
         
-        // Run the test again when the button is clicked
-        document.getElementById('test-button').addEventListener('click', testWeatherAPI);
+        // Run the tests when the buttons are clicked
+        document.getElementById('test-original').addEventListener('click', function() {
+            testWeatherAPI('api/get_weather.php');
+        });
+        
+        document.getElementById('test-fixed').addEventListener('click', function() {
+            testWeatherAPI('api/get_weather_fixed.php');
+        });
     </script>
 </body>
 </html> 
