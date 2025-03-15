@@ -410,7 +410,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
         .top-bar .weather-widget {
             display: flex;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(215, 215, 215, 0.8);
             border-radius: 8px;
             padding: 8px 12px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
