@@ -275,7 +275,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             gap: 20px;
             flex: 1;
-            height: calc(100vh - 95px); /* Slightly increased space for calendar */
+            height: auto; /* Changed from fixed height to auto */
+            min-height: calc(100vh - 95px);
             overflow: hidden;
         }
         
@@ -284,7 +285,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: auto; /* Changed from 100% to auto */
             overflow: hidden;
         }
         
@@ -329,8 +330,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             gap: 5px;
             padding: 10px;
             overflow-y: auto;
-            height: calc(100% - 20px); /* Adjust to ensure all dates are visible */
-            min-height: 500px; /* Ensure minimum height for content */
+            height: auto; /* Changed from calc(100% - 20px) to auto */
+            min-height: 500px;
         }
         
         /* Dashboard sidebar */
@@ -340,7 +341,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             flex-direction: column;
             gap: 20px;
-            height: 100%; /* Full height of parent */
+            height: auto; /* Changed from 100% to auto */
             overflow-y: auto;
             padding-right: 10px;
             margin-right: 0;
