@@ -245,7 +245,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             transform: scale(0.9);
             width: 111.11%;
             height: 111.11%;
-            overflow-y: auto; /* Allow page scrolling */
+            overflow-y: auto;
         }
         
         /* App container for proper layout */
@@ -255,7 +255,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             position: relative;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
-            overflow: visible; /* Show all content */
+            max-height: 100vh; /* Limit maximum height */
         }
         
         /* Fix for main content positioning */
