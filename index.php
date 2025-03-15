@@ -245,17 +245,17 @@ error_log("Final appointments array: " . print_r($appointments, true));
             transform: scale(0.9);
             width: 111.11%;
             height: 111.11%;
-            overflow: hidden;
+            overflow: hidden; /* Prevent page scrolling */
         }
         
         /* App container for proper layout */
         .app-container {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
-            max-width: 2133px;
+            max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
-            overflow: hidden;
+            overflow-y: auto; /* Enable scrolling at container level */
         }
         
         /* Fix for main content positioning */
