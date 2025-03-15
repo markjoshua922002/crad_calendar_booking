@@ -245,28 +245,31 @@ error_log("Final appointments array: " . print_r($appointments, true));
             transform: scale(0.9);
             width: 111.11%;
             height: 111.11%;
+            overflow: hidden;
         }
         
         /* App container for proper layout */
         .app-container {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
             position: relative;
-            max-width: 2133px; /* 1920px * 1.11 */
+            max-width: 2133px;
             margin: 0 auto;
+            overflow: hidden;
         }
         
         /* Fix for main content positioning */
         .main-content {
             flex: 1;
             padding: 15px 20px;
-            margin-left: 250px; /* Match sidebar width */
+            margin-left: 250px;
             transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 250px); /* Match sidebar width */
+            width: calc(100% - 250px);
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100%;
+            overflow: hidden;
         }
         
         /* Dashboard layout */
@@ -274,7 +277,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             gap: 20px;
             flex: 1;
-            height: calc(100vh - 100px); /* Fixed height instead of min-height */
+            height: calc(100% - 100px); /* Subtract top bar height */
+            overflow: hidden;
         }
         
         /* Calendar section */
@@ -282,7 +286,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100%; /* Full height of parent */
+            height: 100%;
+            overflow: hidden;
         }
         
         .calendar-section .card {
@@ -293,8 +298,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 0;
-            height: 100%; /* Full height of parent */
-            overflow: hidden; /* Prevent content overflow */
+            height: 100%;
+            overflow: hidden;
         }
         
         .calendar-section .card-header {
@@ -307,7 +312,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Contain the overflow */
+            overflow: hidden;
         }
         
         .weekday-header {
@@ -325,8 +330,8 @@ error_log("Final appointments array: " . print_r($appointments, true));
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
             padding: 10px;
-            overflow-y: auto; /* Allow calendar grid to scroll */
-            min-height: 0; /* Allow flex container to shrink */
+            overflow-y: auto;
+            height: 100%;
         }
         
         /* Dashboard sidebar */
@@ -337,30 +342,30 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex-direction: column;
             gap: 20px;
             height: 100%; /* Full height of parent */
-            overflow-y: auto; /* Allow sidebar to scroll if content is too long */
-            padding-right: 0; /* Remove right padding to align scrollbar to edge */
-            margin-right: 0; /* Remove right margin */
-            position: relative; /* Ensure proper stacking context */
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-right: 0;
+            position: relative;
         }
         
         /* Sidebar scrollbar styling */
         .dashboard-sidebar::-webkit-scrollbar {
-            width: 8px; /* Width of the scrollbar */
-            position: absolute; /* Position the scrollbar */
-            right: 0; /* Align to the right edge */
+            width: 8px;
+            position: absolute;
+            right: 0;
         }
         
         .dashboard-sidebar::-webkit-scrollbar-track {
-            background: transparent; /* Make the track transparent */
+            background: transparent;
         }
         
         .dashboard-sidebar::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent thumb */
-            border-radius: 4px; /* Rounded corners */
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
         }
         
         .dashboard-sidebar::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(0, 0, 0, 0.3); /* Darker on hover */
+            background-color: rgba(0, 0, 0, 0.3);
         }
         
         /* Card styling within sidebar */
@@ -390,12 +395,13 @@ error_log("Final appointments array: " . print_r($appointments, true));
         /* When sidebar is collapsed */
         .sidebar.collapsed + .main-content,
         .sidebar-collapsed .main-content {
-            margin-left: 70px; /* Match collapsed sidebar width */
-            width: calc(100% - 70px); /* Match collapsed sidebar width */
+            margin-left: 70px;
+            width: calc(100% - 70px);
         }
         
         /* Fix for top bar positioning */
         .top-bar {
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             margin-bottom: 30px;
