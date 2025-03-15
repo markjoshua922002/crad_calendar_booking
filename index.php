@@ -275,6 +275,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             gap: 20px;
             flex: 1;
+            height: calc(100vh - 115px); /* Account for top bar and padding */
             overflow: hidden;
         }
         
@@ -283,7 +284,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 100px); /* Restore original height */
+            height: 100%; /* Match parent height */
             overflow: hidden;
         }
         
@@ -328,7 +329,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             gap: 5px;
             padding: 10px;
             overflow-y: auto;
-            min-height: 600px; /* Set minimum height */
+            height: 100%; /* Fill available space */
         }
         
         /* Dashboard sidebar */
