@@ -948,34 +948,94 @@ function showAppointmentDetails(appointment) {
 function fillEditForm(appointment) {
     console.log("Filling edit form with appointment:", appointment);
     
-    // Hide view modal and show edit modal
-    hideModal(document.getElementById('viewModal'));
-    showModal(document.getElementById('editModal'));
+    try {
+        // Hide view modal and show edit modal
+        hideModal(document.getElementById('viewModal'));
+        showModal(document.getElementById('editModal'));
 
-    // Set form values
-    document.getElementById('appointment_id').value = appointment.id;
-    document.getElementById('edit_name').value = appointment.name;
-    document.getElementById('edit_representative_name').value = appointment.representative_name;
-    document.getElementById('edit_id_number').value = appointment.id_number;
-    document.getElementById('edit_set').value = appointment.set_name;
-    document.getElementById('edit_department').value = appointment.department_id;
-    document.getElementById('edit_room').value = appointment.room_id;
-    document.getElementById('edit_date').value = appointment.booking_date;
-    document.getElementById('edit_reason').value = appointment.reason;
-    document.getElementById('edit_group_members').value = appointment.group_members || '';
+        // Set form values
+        document.getElementById('appointment_id').value = appointment.id;
+        document.getElementById('edit_name').value = appointment.name;
+        document.getElementById('edit_representative_name').value = appointment.representative_name;
+        document.getElementById('edit_id_number').value = appointment.id_number;
+        document.getElementById('edit_set').value = appointment.set_name;
+        document.getElementById('edit_department').value = appointment.department_id;
+        document.getElementById('edit_room').value = appointment.room_id;
+        
+        // Format date properly for the date input
+        const bookingDate = new Date(appointment.booking_date);
+        const formattedDate = bookingDate.toISOString().split('T')[0];
+        document.getElementById('edit_date').value = formattedDate;
+        
+        document.getElementById('edit_reason').value = appointment.reason;
+        document.getElementById('edit_group_members').value = appointment.group_members || '';
 
-    // Parse and set time values
-    const timeFrom = new Date(`2000-01-01 ${appointment.booking_time_from}`);
-    const timeTo = new Date(`2000-01-01 ${appointment.booking_time_to}`);
+        // Parse and set time values
+        const timeFrom = new Date(`2000-01-01 ${appointment.booking_time_from}`);
+        const timeTo = new Date(`2000-01-01 ${appointment.booking_time_to}`);
 
-    document.getElementById('edit_time_from_hour').value = timeFrom.getHours() > 12 ? timeFrom.getHours() - 12 : (timeFrom.getHours() === 0 ? 12 : timeFrom.getHours());
-    document.getElementById('edit_time_from_minute').value = timeFrom.getMinutes().toString().padStart(2, '0');
-    document.getElementById('edit_time_from_ampm').value = timeFrom.getHours() >= 12 ? 'PM' : 'AM';
+        // Set hours (12-hour format)
+        document.getElementById('edit_time_from_hour').value = timeFrom.getHours() > 12 ? 
+            timeFrom.getHours() - 12 : (timeFrom.getHours() === 0 ? 12 : timeFrom.getHours());
+        document.getElementById('edit_time_to_hour').value = timeTo.getHours() > 12 ? 
+            timeTo.getHours() - 12 : (timeTo.getHours() === 0 ? 12 : timeTo.getHours());
 
-    document.getElementById('edit_time_to_hour').value = timeTo.getHours() > 12 ? timeTo.getHours() - 12 : (timeTo.getHours() === 0 ? 12 : timeTo.getHours());
-    document.getElementById('edit_time_to_minute').value = timeTo.getMinutes().toString().padStart(2, '0');
-    document.getElementById('edit_time_to_ampm').value = timeTo.getHours() >= 12 ? 'PM' : 'AM';
+        // Set minutes (pad with leading zero if needed)
+        document.getElementById('edit_time_from_minute').value = timeFrom.getMinutes().toString().padStart(2, '0');
+        document.getElementById('edit_time_to_minute').value = timeTo.getMinutes().toString().padStart(2, '0');
+
+        // Set AM/PM
+        document.getElementById('edit_time_from_ampm').value = timeFrom.getHours() >= 12 ? 'PM' : 'AM';
+        document.getElementById('edit_time_to_ampm').value = timeTo.getHours() >= 12 ? 'PM' : 'AM';
+    } catch (error) {
+        console.error("Error filling edit form:", error);
+        alert("Error loading appointment details. Please try again.");
+    }
 }
+
+// Add form submission handler
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    try {
+        // Validate required fields
+        const requiredFields = [
+            'edit_name',
+            'edit_representative_name',
+            'edit_department',
+            'edit_room',
+            'edit_date',
+            'edit_time_from_hour',
+            'edit_time_from_minute',
+            'edit_time_to_hour',
+            'edit_time_to_minute'
+        ];
+
+        for (const fieldId of requiredFields) {
+            const field = document.getElementById(fieldId);
+            if (!field.value) {
+                alert(`Please fill in all required fields (${fieldId.replace('edit_', '')}).`);
+                field.focus();
+                return;
+            }
+        }
+
+        // Validate date
+        const dateField = document.getElementById('edit_date');
+        const selectedDate = new Date(dateField.value);
+        if (isNaN(selectedDate.getTime())) {
+            alert('Please enter a valid date.');
+            dateField.focus();
+            return;
+        }
+
+        // Submit the form
+        this.submit();
+    } catch (error) {
+        console.error("Error submitting edit form:", error);
+        alert("Error updating appointment. Please try again.");
+    }
+});
 
 function setupExportCalendar() {
     const exportButton = document.getElementById('exportCalendar');
