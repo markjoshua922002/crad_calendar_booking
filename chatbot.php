@@ -18,8 +18,8 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            z-index: 1000;
-            transition: all 0.3s ease;
+            z-index: 9999;
+            transition: transform 0.3s ease;
         }
 
         .chatbot-header {
@@ -109,11 +109,18 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 10000;
+            transition: transform 0.3s ease;
         }
 
         .chatbot-container.minimized {
-            transform: translateY(calc(100% + 20px));
+            transform: translateY(120%);
+            pointer-events: none;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.05);
+            background: #357ae8;
         }
 
         .options-container {
