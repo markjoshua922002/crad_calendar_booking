@@ -393,6 +393,39 @@ error_log(print_r($appointments, true));
             border-bottom: 1px solid #e0e0e0;
             position: relative;
             gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        /* Weather Widget Styles for top bar */
+        .top-bar .weather-widget {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            height: 50px;
+            margin-right: auto;
+            margin-left: 20px;
+        }
+        
+        @media (max-width: 992px) {
+            .top-bar {
+                flex-wrap: wrap;
+            }
+            
+            .top-bar .weather-widget {
+                order: 2;
+                margin: 10px 0;
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            .user-controls {
+                order: 3;
+                width: 100%;
+            }
         }
         
         .menu-toggle {
@@ -510,30 +543,6 @@ error_log(print_r($appointments, true));
             cursor: pointer;
         }
         
-        /* Responsive adjustments for top bar */
-        @media (max-width: 768px) {
-            .top-bar {
-                flex-wrap: nowrap;
-            }
-            
-            .top-content {
-                flex-wrap: wrap;
-            }
-            
-            .page-title {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            
-            .user-controls {
-                width: 100%;
-                margin-top: 15px;
-                justify-content: flex-start;
-                gap: 10px;
-            }
-        }
-        
         /* Prevent body scrolling when modal is open */
         body.modal-open {
             overflow: hidden;
@@ -632,33 +641,6 @@ error_log(print_r($appointments, true));
             max-width: 800px;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                margin: 10px auto;
-            }
-            
-            .modal.show {
-                padding: 10px;
-            }
-        }
-        
-        /* Mobile view */
-        @media (max-width: 576px) {
-            .modal.show {
-                padding: 0;
-            }
-            
-            .modal-content {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                border-radius: 0;
-                max-height: none;
-            }
-        }
-
         /* Alert styles */
         .alert {
             padding: 15px 20px;
@@ -710,21 +692,6 @@ error_log(print_r($appointments, true));
             flex: 0 0 auto;
         }
 
-        .weather-widget {
-            display: flex;
-            align-items: center;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin: 0 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            min-width: 180px;
-            flex: 0 0 auto;
-            height: 50px;
-            position: relative;
-            z-index: 1;
-        }
-
         .weather-loading {
             display: flex;
             justify-content: center;
@@ -773,29 +740,6 @@ error_log(print_r($appointments, true));
             width: 45px;
             height: 45px;
             object-fit: contain;
-        }
-
-        @media (max-width: 768px) {
-            .calendar-navigation {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .weather-widget {
-                margin: 10px 0;
-                width: 100%;
-                justify-content: center;
-                order: 3;
-            }
-            
-            .month-year {
-                text-align: center;
-                margin: 10px 0;
-            }
-            
-            .nav-arrow {
-                margin: 0 10px;
-            }
         }
     </style>
 </head>
@@ -847,6 +791,19 @@ error_log(print_r($appointments, true));
                     <p><?= date('l, F j, Y') ?></p>
                 </div>
             </div>
+            <div id="weather-widget" class="weather-widget">
+                <div class="weather-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading weather...
+                </div>
+                <div class="weather-content" style="display: none;">
+                    <img id="weather-icon" src="" alt="Weather icon">
+                    <div class="weather-info">
+                        <span id="weather-temp"></span>
+                        <span id="weather-desc"></span>
+                        <span id="weather-city"></span>
+                    </div>
+                </div>
+            </div>
             <div class="user-controls">
                 <button id="openBookingModal" class="action-button primary">
                     <i class="fas fa-plus"></i> New Booking
@@ -889,19 +846,6 @@ error_log(print_r($appointments, true));
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                             <h2 class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></h2>
-                            <div id="weather-widget" class="weather-widget">
-                                <div class="weather-loading">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading weather...
-                                </div>
-                                <div class="weather-content" style="display: none;">
-                                    <img id="weather-icon" src="" alt="Weather icon">
-                                    <div class="weather-info">
-                                        <span id="weather-temp"></span>
-                                        <span id="weather-desc"></span>
-                                        <span id="weather-city"></span>
-                                    </div>
-                                </div>
-                            </div>
                             <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-arrow">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
