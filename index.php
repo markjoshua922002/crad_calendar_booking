@@ -236,6 +236,11 @@ error_log("Final appointments array: " . print_r($appointments, true));
     <link rel="stylesheet" href="css/conflict-resolver.css?v=<?= time() ?>">
     <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
     <style>
+        html {
+            height: 100vh;
+            overflow: hidden;
+        }
+
         /* Remove scrollbar */
         body {
             background-color: #C9E6F0;
@@ -244,7 +249,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             font-size: 12px;
             transform: scale(0.9);
             width: 111.11%;
-            height: 111.11%;
+            height: 100vh;
             overflow-y: auto;
         }
         
@@ -255,7 +260,6 @@ error_log("Final appointments array: " . print_r($appointments, true));
             position: relative;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
-            max-height: 100vh; /* Limit maximum height */
         }
         
         /* Fix for main content positioning */
