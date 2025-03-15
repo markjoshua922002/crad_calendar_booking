@@ -696,6 +696,68 @@ error_log(print_r($appointments, true));
                 opacity: 1;
             }
         }
+
+        /* Weather Widget Styles */
+        .calendar-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .month-year {
+            margin: 0 15px;
+        }
+
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 5px 10px;
+            margin: 0 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+        }
+
+        .weather-loading {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .weather-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        #weather-temp {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        #weather-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-navigation {
+                flex-wrap: wrap;
+            }
+            
+            .weather-widget {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -788,6 +850,19 @@ error_log(print_r($appointments, true));
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                             <h2 class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></h2>
+                            <div id="weather-widget" class="weather-widget">
+                                <div class="weather-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <div class="weather-content" style="display: none;">
+                                    <img id="weather-icon" src="" alt="Weather icon">
+                                    <div class="weather-info">
+                                        <span id="weather-temp"></span>
+                                        <span id="weather-desc"></span>
+                                        <span id="weather-city"></span>
+                                    </div>
+                                </div>
+                            </div>
                             <a href="index.php?month=<?= ($month == 12) ? 1 : $month+1 ?>&year=<?= ($month == 12) ? $year+1 : $year ?>" class="nav-arrow">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
@@ -1528,6 +1603,38 @@ document.getElementById('addRoomForm').addEventListener('submit', function(e) {
         alert('Error: ' + error.message);
     });
 });
+
+// Weather Widget
+document.addEventListener('DOMContentLoaded', function() {
+    fetchWeather();
+});
+
+function fetchWeather() {
+    fetch('api/get_weather.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayWeather(data);
+        })
+        .catch(error => {
+            console.error('Error fetching weather data:', error);
+            document.querySelector('.weather-loading').innerHTML = '<span>Weather unavailable</span>';
+        });
+}
+
+function displayWeather(data) {
+    document.querySelector('.weather-loading').style.display = 'none';
+    document.querySelector('.weather-content').style.display = 'flex';
+    
+    document.getElementById('weather-temp').textContent = `${Math.round(data.temperature)}°C`;
+    document.getElementById('weather-desc').textContent = data.description;
+    document.getElementById('weather-city').textContent = data.city;
+    document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.icon}.png`;
+}
 </script>
 </body>
 </html>
