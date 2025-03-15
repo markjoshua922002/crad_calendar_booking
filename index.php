@@ -344,6 +344,27 @@ error_log("Final appointments array: " . print_r($appointments, true));
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .day:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .day.current-day {
+            border-color: #4285f4;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+        }
+        
+        .day.has-appointments {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+        
+        .day.empty {
+            background: #f8f9fa;
+            border: 1px solid #edf0f2;
+            box-shadow: none;
         }
         
         .day-content {
