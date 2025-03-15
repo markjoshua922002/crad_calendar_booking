@@ -1597,14 +1597,22 @@ function fetchWeather() {
     console.log('Fetching weather data from API...');
     
     // Show loading state
-    document.querySelector('.weather-loading').style.display = 'flex';
-    document.querySelector('.weather-content').style.display = 'none';
+    const loadingElement = document.querySelector('.weather-loading');
+    const contentElement = document.querySelector('.weather-content');
     
-    fetch('api/get_weather.php')
+    loadingElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading weather...';
+    loadingElement.style.display = 'flex';
+    contentElement.style.display = 'none';
+    
+    // Add a timestamp to prevent caching
+    const timestamp = new Date().getTime();
+    const url = `api/get_weather.php?_=${timestamp}`;
+    
+    fetch(url)
         .then(response => {
             console.log('Weather API response received:', response.status);
             if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.status);
+                throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
             }
             return response.json();
         })
@@ -1617,10 +1625,16 @@ function fetchWeather() {
         })
         .catch(error => {
             console.error('Error fetching weather data:', error);
-            document.querySelector('.weather-loading').innerHTML = '<span>Weather unavailable</span>';
+            loadingElement.innerHTML = `<span><i class="fas fa-exclamation-circle"></i> Weather unavailable</span>
+                                        <button id="retry-weather" style="margin-left: 10px; padding: 2px 5px; font-size: 10px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 3px; cursor: pointer;">Retry</button>`;
             
-            // Try again after 30 seconds
-            setTimeout(fetchWeather, 30000);
+            // Add event listener to retry button
+            document.getElementById('retry-weather').addEventListener('click', function() {
+                fetchWeather();
+            });
+            
+            // Try again after 60 seconds
+            setTimeout(fetchWeather, 60000);
         });
 }
 
@@ -1635,16 +1649,26 @@ function displayWeather(data) {
         document.getElementById('weather-desc').textContent = data.description;
         document.getElementById('weather-city').textContent = data.city;
         
-        // Set weather icon
+        // Set weather icon - use HTTPS
         const iconUrl = `https://openweathermap.org/img/wn/${data.icon}.png`;
         console.log('Setting weather icon:', iconUrl);
-        document.getElementById('weather-icon').src = iconUrl;
+        
+        // Preload the image to ensure it loads properly
+        const img = new Image();
+        img.onload = function() {
+            document.getElementById('weather-icon').src = iconUrl;
+        };
+        img.onerror = function() {
+            console.error('Failed to load weather icon');
+            document.getElementById('weather-icon').style.display = 'none';
+        };
+        img.src = iconUrl;
         
         // Add event to refresh weather data every 30 minutes
         setTimeout(fetchWeather, 30 * 60 * 1000);
     } catch (error) {
         console.error('Error displaying weather data:', error);
-        document.querySelector('.weather-loading').innerHTML = '<span>Error displaying weather</span>';
+        document.querySelector('.weather-loading').innerHTML = '<span><i class="fas fa-exclamation-circle"></i> Error displaying weather</span>';
     }
 }
 </script>
