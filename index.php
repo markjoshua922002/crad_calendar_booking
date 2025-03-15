@@ -1672,5 +1672,6 @@ function displayWeather(data) {
     }
 }
 </script>
+    <?php include 'chatbot.php'; ?>
 </body>
 </html>

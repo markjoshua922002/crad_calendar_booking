@@ -1471,9 +1471,9 @@ function initializeConflictResolver() {
     
     if (!appointmentsData || !roomsData || !departmentsData) {
         console.error('Missing required data elements');
-        return;
-    }
-
+            return;
+        }
+        
     try {
         // Parse the JSON data
         const appointments = JSON.parse(appointmentsData.textContent);
@@ -1483,7 +1483,7 @@ function initializeConflictResolver() {
         // Convert appointments object to array and flatten it
         const flatAppointments = [];
         Object.keys(appointments).forEach(day => {
-            appointments[day].forEach(appointment => {
+                appointments[day].forEach(appointment => {
                 if (appointment && appointment.booking_date) {
                     flatAppointments.push(appointment);
                 }
@@ -1514,7 +1514,7 @@ function setupConflictDetection() {
         console.error('Booking form not found');
         return;
     }
-
+    
     const inputs = [
         { id: 'date', events: ['input', 'change'] },
         { id: 'room', events: ['input', 'change'] },
