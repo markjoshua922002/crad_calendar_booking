@@ -184,12 +184,23 @@ if (!$bookings_stmt) {
     die("Failed to prepare bookings query");
 }
 
+// Debug log the query parameters
+error_log("Fetching bookings for month: $month, year: $year");
+
 $bookings_stmt->bind_param("ii", $month, $year);
 $bookings_stmt->execute();
 $bookings_result = $bookings_stmt->get_result();
 
+// Debug log the number of results
+$num_rows = $bookings_result->num_rows;
+error_log("Number of bookings found: $num_rows");
+
 $appointments = [];
 while ($row = $bookings_result->fetch_assoc()) {
+    // Debug log each booking
+    error_log("Processing booking: " . print_r($row, true));
+    
+    // Use intval to ensure proper integer day value
     $day = intval(date('j', strtotime($row['booking_date'])));
     if (!isset($appointments[$day])) {
         $appointments[$day] = [];
@@ -199,9 +210,8 @@ while ($row = $bookings_result->fetch_assoc()) {
 
 $bookings_stmt->close();
 
-// Debug log the appointments array
-error_log("Appointments array for month $month, year $year:");
-error_log(print_r($appointments, true));
+// Debug log the final appointments array
+error_log("Final appointments array: " . print_r($appointments, true));
 ?>
 
 <!DOCTYPE html>
