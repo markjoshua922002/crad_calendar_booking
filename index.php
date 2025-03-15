@@ -275,8 +275,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             gap: 20px;
             flex: 1;
-            height: auto; /* Changed from fixed height to auto */
-            min-height: calc(100vh - 95px);
+            height: calc(100vh - 115px); /* Fixed height accounting for top bar */
             overflow: hidden;
         }
         
@@ -285,7 +284,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: auto; /* Changed from 100% to auto */
+            height: 100%;
             overflow: hidden;
         }
         
@@ -327,11 +326,30 @@ error_log("Final appointments array: " . print_r($appointments, true));
             flex: 1;
             display: grid;
             grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(6, 1fr); /* Fixed 6 rows for all possible calendar layouts */
             gap: 5px;
             padding: 10px;
-            overflow-y: auto;
-            height: auto; /* Changed from calc(100% - 20px) to auto */
-            min-height: 500px;
+            overflow: hidden; /* Remove scrolling */
+            height: 100%; /* Take full height */
+        }
+        
+        /* Day cells */
+        .day {
+            min-height: 0; /* Allow days to shrink */
+            display: flex;
+            flex-direction: column;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: #fff;
+        }
+        
+        .day-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
         
         /* Dashboard sidebar */
@@ -341,11 +359,10 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             flex-direction: column;
             gap: 20px;
-            height: auto; /* Changed from 100% to auto */
+            height: 100%;
             overflow-y: auto;
             padding-right: 10px;
             margin-right: 0;
-            position: relative;
         }
         
         /* Sidebar scrollbar styling */
