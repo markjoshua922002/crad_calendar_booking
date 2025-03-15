@@ -249,14 +249,13 @@ error_log("Final appointments array: " . print_r($appointments, true));
             font-size: 12px;
             transform: scale(0.9);
             width: 111.11%;
-            height: 100vh;
+            height: 111.11%;
             overflow-y: auto;
         }
         
         /* App container for proper layout */
         .app-container {
             display: flex;
-            min-height: 100vh;
             position: relative;
             max-width: 2133px; /* 1920px * 1.11 */
             margin: 0 auto;
@@ -272,7 +271,6 @@ error_log("Final appointments array: " . print_r($appointments, true));
             width: calc(100% - 250px);
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
         
         /* Dashboard layout */
