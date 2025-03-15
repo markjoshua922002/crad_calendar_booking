@@ -162,6 +162,66 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Add styles for departments list */
+        .departments-list {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .departments-header {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-departments {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 0 5px;
+        }
+
+        .departments-container {
+            padding: 10px;
+        }
+
+        .department-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .department-item:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .department-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -188,6 +248,16 @@
             <button id="send-message">
                 <i class="fas fa-paper-plane"></i>
             </button>
+        </div>
+    </div>
+
+    <div class="departments-list" id="departmentsList" style="display: none;">
+        <div class="departments-header">
+            Select a Department:
+            <button class="close-departments" onclick="closeDepartmentsList()">×</button>
+        </div>
+        <div class="departments-container" id="departmentsContainer">
+            <!-- Departments will be loaded here dynamically -->
         </div>
     </div>
 
@@ -479,6 +549,103 @@
         // Initialize the chatbot when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             window.chatbot = new BookingChatbot();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatbot = document.getElementById('chatbot');
+            const minimizeBtn = document.getElementById('minimizeChatbot');
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendMessage');
+            const departmentsList = document.getElementById('departmentsList');
+            const departmentsContainer = document.getElementById('departmentsContainer');
+
+            let departments = [];
+
+            // Fetch departments from the server
+            function fetchDepartments() {
+                fetch('api/get_departments.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        departments = data;
+                    })
+                    .catch(error => console.error('Error fetching departments:', error));
+            }
+
+            // Initialize by fetching departments
+            fetchDepartments();
+
+            function showDepartments() {
+                departmentsContainer.innerHTML = ''; // Clear existing departments
+                departments.forEach(dept => {
+                    const deptElement = document.createElement('div');
+                    deptElement.className = 'department-item';
+                    deptElement.innerHTML = `
+                        <span class="department-color" style="background-color: ${dept.color}"></span>
+                        <span>${dept.name}</span>
+                    `;
+                    deptElement.onclick = () => selectDepartment(dept);
+                    departmentsContainer.appendChild(deptElement);
+                });
+                departmentsList.style.display = 'block';
+            }
+
+            function selectDepartment(department) {
+                addMessage(`Selected department: ${department.name}`, 'user-message');
+                addMessage(`Great! You've selected ${department.name}. What would you like to do next?`, 'bot-message');
+                departmentsList.style.display = 'none';
+            }
+
+            function closeDepartmentsList() {
+                departmentsList.style.display = 'none';
+            }
+
+            minimizeBtn.addEventListener('click', () => {
+                chatbot.classList.toggle('minimized');
+                minimizeBtn.innerHTML = chatbot.classList.contains('minimized') ? 
+                    '<i class="fas fa-expand"></i>' : 
+                    '<i class="fas fa-minus"></i>';
+            });
+
+            function addMessage(text, className) {
+                const message = document.createElement('div');
+                message.className = `message ${className}`;
+                message.textContent = text;
+                chatMessages.appendChild(message);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function handleUserInput() {
+                const text = userInput.value.trim().toLowerCase();
+                if (text === '') return;
+
+                addMessage(text, 'user-message');
+                userInput.value = '';
+
+                // Handle department selection
+                if (text.includes('department') || text.includes('select department')) {
+                    showDepartments();
+                    addMessage("Please select a department from the list below.", 'bot-message');
+                    return;
+                }
+
+                // Add other chatbot responses here
+                let response = "I'm here to help! You can ask me about:";
+                response += "\n- Selecting a department";
+                response += "\n- Booking a schedule";
+                response += "\n- Checking available rooms";
+                response += "\n- Viewing appointments";
+                
+                addMessage(response, 'bot-message');
+            }
+
+            sendButton.addEventListener('click', handleUserInput);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleUserInput();
+            });
+
+            // Make functions available globally
+            window.closeDepartmentsList = closeDepartmentsList;
         });
     </script>
 </body>
