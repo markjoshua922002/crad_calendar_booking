@@ -275,7 +275,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
             display: flex;
             gap: 20px;
             flex: 1;
-            height: calc(100vh - 115px); /* Fixed height accounting for top bar */
+            height: calc(100vh - 115px);
             overflow: hidden;
         }
         
@@ -301,9 +301,9 @@ error_log("Final appointments array: " . print_r($appointments, true));
         }
         
         .calendar-section .card-header {
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-bottom: 1px solid #e0e0e0;
-            flex-shrink: 0; /* Prevent header from shrinking */
+            flex-shrink: 0;
         }
         
         .calendar-body {
@@ -316,26 +316,28 @@ error_log("Final appointments array: " . print_r($appointments, true));
         .weekday-header {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            padding: 10px;
+            padding: 8px 10px;
             background: #f8f9fa;
             border-bottom: 1px solid #e0e0e0;
-            flex-shrink: 0; /* Prevent header from shrinking */
+            flex-shrink: 0;
         }
         
         .calendar {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            grid-template-rows: repeat(6, 1fr); /* Fixed 6 rows for all possible calendar layouts */
+            grid-template-rows: repeat(6, minmax(0, 1fr)); /* Use minmax to ensure equal distribution */
             gap: 5px;
             padding: 10px;
-            overflow: hidden; /* Remove scrolling */
-            height: 100%; /* Take full height */
+            overflow: hidden;
+            height: 100%;
         }
         
         /* Day cells */
         .day {
-            min-height: 0; /* Allow days to shrink */
+            position: relative;
+            min-height: 0;
+            height: 100%;
             display: flex;
             flex-direction: column;
             padding: 5px;
@@ -346,6 +348,7 @@ error_log("Final appointments array: " . print_r($appointments, true));
         
         .day-content {
             flex: 1;
+            min-height: 0;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -773,6 +776,25 @@ error_log("Final appointments array: " . print_r($appointments, true));
             width: 45px;
             height: 45px;
             object-fit: contain;
+        }
+
+        /* Adjust day events to be more compact */
+        .day-event {
+            padding: 2px 4px;
+            font-size: 11px;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+            font-size: 12px;
         }
     </style>
 </head>
