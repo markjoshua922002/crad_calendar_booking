@@ -702,10 +702,12 @@ error_log(print_r($appointments, true));
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         .month-year {
             margin: 0 15px;
+            flex: 0 0 auto;
         }
 
         .weather-widget {
@@ -713,21 +715,34 @@ error_log(print_r($appointments, true));
             align-items: center;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 8px;
-            padding: 5px 10px;
+            padding: 8px 12px;
             margin: 0 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            min-width: 150px;
+            min-width: 180px;
+            flex: 0 0 auto;
+            height: 50px;
+            position: relative;
+            z-index: 1;
         }
 
         .weather-loading {
             display: flex;
             justify-content: center;
+            align-items: center;
             width: 100%;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .weather-loading i {
+            margin-right: 8px;
+            color: #4285f4;
         }
 
         .weather-content {
             display: flex;
             align-items: center;
+            width: 100%;
         }
 
         .weather-info {
@@ -735,27 +750,51 @@ error_log(print_r($appointments, true));
             flex-direction: column;
             margin-left: 10px;
             font-size: 12px;
+            line-height: 1.4;
         }
 
         #weather-temp {
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        #weather-desc {
+            text-transform: capitalize;
+            color: #666;
+        }
+
+        #weather-city {
+            font-size: 11px;
+            color: #888;
         }
 
         #weather-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
         }
 
         @media (max-width: 768px) {
             .calendar-navigation {
                 flex-wrap: wrap;
+                justify-content: center;
             }
             
             .weather-widget {
-                margin-top: 10px;
+                margin: 10px 0;
                 width: 100%;
                 justify-content: center;
+                order: 3;
+            }
+            
+            .month-year {
+                text-align: center;
+                margin: 10px 0;
+            }
+            
+            .nav-arrow {
+                margin: 0 10px;
             }
         }
     </style>
@@ -852,7 +891,7 @@ error_log(print_r($appointments, true));
                             <h2 class="month-year"><?= date('F Y', strtotime("$year-$month-01")) ?></h2>
                             <div id="weather-widget" class="weather-widget">
                                 <div class="weather-loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <i class="fas fa-spinner fa-spin"></i> Loading weather...
                                 </div>
                                 <div class="weather-content" style="display: none;">
                                     <img id="weather-icon" src="" alt="Weather icon">
@@ -1606,34 +1645,63 @@ document.getElementById('addRoomForm').addEventListener('submit', function(e) {
 
 // Weather Widget
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, fetching weather data...');
     fetchWeather();
 });
 
 function fetchWeather() {
+    console.log('Fetching weather data from API...');
+    
+    // Show loading state
+    document.querySelector('.weather-loading').style.display = 'flex';
+    document.querySelector('.weather-content').style.display = 'none';
+    
     fetch('api/get_weather.php')
         .then(response => {
+            console.log('Weather API response received:', response.status);
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok: ' + response.status);
             }
             return response.json();
         })
         .then(data => {
+            console.log('Weather data:', data);
+            if (data.error) {
+                throw new Error(data.message || 'Unknown error');
+            }
             displayWeather(data);
         })
         .catch(error => {
             console.error('Error fetching weather data:', error);
             document.querySelector('.weather-loading').innerHTML = '<span>Weather unavailable</span>';
+            
+            // Try again after 30 seconds
+            setTimeout(fetchWeather, 30000);
         });
 }
 
 function displayWeather(data) {
-    document.querySelector('.weather-loading').style.display = 'none';
-    document.querySelector('.weather-content').style.display = 'flex';
+    console.log('Displaying weather data:', data);
     
-    document.getElementById('weather-temp').textContent = `${Math.round(data.temperature)}°C`;
-    document.getElementById('weather-desc').textContent = data.description;
-    document.getElementById('weather-city').textContent = data.city;
-    document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.icon}.png`;
+    try {
+        document.querySelector('.weather-loading').style.display = 'none';
+        document.querySelector('.weather-content').style.display = 'flex';
+        
+        document.getElementById('weather-temp').textContent = `${Math.round(data.temperature)}°C`;
+        document.getElementById('weather-desc').textContent = data.description;
+        document.getElementById('weather-city').textContent = data.city;
+        
+        // Set weather icon
+        const iconUrl = `https://openweathermap.org/img/wn/${data.icon}.png`;
+        console.log('Setting weather icon:', iconUrl);
+        document.getElementById('weather-icon').src = iconUrl;
+        
+        // Add event to refresh weather data every 30 minutes
+        setTimeout(fetchWeather, 30 * 60 * 1000);
+    } catch (error) {
+        console.error('Error displaying weather data:', error);
+        document.querySelector('.weather-loading').innerHTML = '<span>Error displaying weather</span>';
+    }
 }
 </script>
 </body>
